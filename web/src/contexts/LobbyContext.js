@@ -50,22 +50,21 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
   // Setup socket event listeners for lobby-related events
   useEffect(() => {
     if (!socket) {
-      console.log('[Lobby] No socket connection available');
+      // No socket connection available
       return;
     }
     
-    console.log('[Lobby] Setting up socket event listeners');
+    // Set up socket event listeners for lobby functionality
     
     // Game list updates
     socket.on('gameList', (games) => {
-      console.log('[Lobby] Received game list:', games);
+      console.log(`[Lobby] Games available: ${games.length}`);
       setLobbyState(prevState => ({ ...prevState, gameList: games }));
     });
     
     // Game joined response (after creation or joining)
     socket.on('gameJoined', (data) => {
-      console.log('[Lobby] Game joined event:', data);
-      
+      console.log(`[Lobby] Game joined: ${data.game?.id}`);
       try {
         if (!data || !data.game) {
           throw new Error('No game data received');
@@ -85,7 +84,7 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
           view: 'game'
         }));
         
-        console.log('[Lobby] Game state updated successfully');
+        // Game state updated successfully
         
         // Notify parent component
         if (onGameJoined) {
@@ -107,7 +106,7 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     
     // Clean up listeners
     return () => {
-      console.log('[Lobby] Cleaning up socket event listeners');
+      // Remove all event listeners when component unmounts
       socket.off('gameList');
       socket.off('gameJoined');
       socket.off('error');
@@ -118,12 +117,7 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
    * Create a new game with the current player as host
    */
   const createGame = () => {
-    console.log('[Lobby] createGame called, socket state:', { 
-      hasSocket: !!socket,
-      isConnected,
-      socketId: socket?.id
-    });
-
+    console.log('[Lobby] Creating new game');
     if (!socket) {
       const error = 'Not connected to server';
       console.error('[Lobby]', error);
@@ -132,7 +126,7 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     }
     
     if (socket && isConnected) {
-      console.log('[Lobby] Emitting createGame event');
+      // Socket is connected and authenticated, send create game request
       socket.emit('createGame');
     } else {
       const error = 'Not connected to server';
@@ -159,7 +153,7 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     }
     
     if (socket && isConnected) {
-      console.log('[Lobby] Joining game:', gameIdToJoin);
+      console.log(`[Lobby] Joining game: ${gameIdToJoin}`);
       socket.emit('joinGame', { gameId: gameIdToJoin });
     } else {
       setError('Not connected to server');
@@ -180,7 +174,7 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     
     // Then fetch the updated user balance
     if (socket && isConnected) {
-      console.log('[Lobby] Requesting updated balance on return to lobby');
+      // Request updated balance when returning to lobby
       socket.emit('getBalance');
     }
   };

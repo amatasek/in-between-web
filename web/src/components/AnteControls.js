@@ -24,8 +24,7 @@ const AnteControls = () => {
   const isPlayerReady = myPlayer?.isReady;
   const hasEnoughChips = playerBalance >= anteAmount;
   
-  console.log('AnteControls rendering, isPlayerReady:', isPlayerReady);
-  console.log('playerUnready function exists:', !!playerUnready);
+  // Player state and readiness is managed by the game context
   
   return (
     <div className={styles.anteControlsWrapper}>
@@ -54,11 +53,8 @@ const AnteControls = () => {
           <button 
             className={styles.backOutButton}
             onClick={() => {
-              console.log('Back Out button clicked');
-              console.log('playerUnready function:', playerUnready);
               if (typeof playerUnready === 'function') {
                 playerUnready();
-                console.log('playerUnready function called');
               } else {
                 console.error('playerUnready is not a function');
               }

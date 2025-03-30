@@ -26,11 +26,9 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   /** @type {[GameState|null, React.Dispatch<React.SetStateAction<GameState|null>>]} */
   const [gameState, setGameState] = useState(initialGameState);
   
-  // If we have an initial game state, log it
+  // Initialize with the provided game state if available
   useEffect(() => {
-    if (initialGameState) {
-      console.log('GameProvider initialized with game state:', initialGameState);
-    }
+    // No need to log the initial state
   }, []);
   /** @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]} */
   const [error, setError] = useState(null);
@@ -48,7 +46,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     // Handle gameJoined event - initial game state
     socket.on('gameJoined', (data) => {
       if (data && data.game) {
-        console.log('Game joined with initial state:', data);
         setGameState({...data.game});
       }
     });
@@ -56,7 +53,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     // Game state updates
     socket.on('gameState', (state) => {
       if (state && state.id) {
-        console.log(`[CLIENT:${state.id}] Game state updated - Phase: ${state.phase}`);
+        // Process game state update
         
         // Check for dealer change notification
         if (state.dealerChanged) {
@@ -85,7 +82,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     // Legacy handler for backward compatibility
     socket.on('gameUpdate', (state) => {
       if (state && state.id) {
-        console.log(`[CLIENT:${state.id}] Legacy gameUpdate received`);
+        // Handle legacy game update format
         setGameState({...state});
       }
     });
@@ -111,7 +108,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     try {
       socket.emit('placeBet', { amount, gameId });
-      console.log('Placing bet:', amount);
     } catch (err) {
       console.error('Error placing bet:', err);
       setError('Failed to place bet. Please try again.');
@@ -123,7 +119,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     try {
       socket.emit('payAnte', { gameId });
-      console.log('Paying ante');
     } catch (err) {
       console.error('Error paying ante:', err);
       setError('Failed to pay ante. Please try again.');
@@ -135,7 +130,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     try {
       socket.emit('dealCards', { gameId });
-      console.log('Dealing cards');
     } catch (err) {
       console.error('Error dealing cards:', err);
       setError('Failed to deal cards. Please try again.');
@@ -147,7 +141,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     try {
       socket.emit('revealMiddleCard', { gameId });
-      console.log('Revealing middle card');
     } catch (err) {
       console.error('Error revealing middle card:', err);
       setError('Failed to reveal middle card. Please try again.');
@@ -159,7 +152,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     try {
       socket.emit('nextRound', { gameId });
-      console.log('Moving to next round');
     } catch (err) {
       console.error('Error moving to next round:', err);
       setError('Failed to move to next round. Please try again.');
@@ -173,7 +165,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     try {
       // Server is listening for 'ready' event, not 'playerReady'
       socket.emit('ready');
-      console.log('Player ready (paying ante)');
     } catch (err) {
       console.error('Error setting player ready:', err);
       setError('Failed to set player ready. Please try again.');
@@ -186,7 +177,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     try {
       socket.emit('unready');
-      console.log('Player becoming unready');
     } catch (err) {
       console.error('Error setting player unready:', err);
       setError('Failed to set player unready. Please try again.');

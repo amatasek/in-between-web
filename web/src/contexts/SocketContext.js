@@ -33,11 +33,11 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      console.log('No auth token found, skipping socket connection');
+      // Skip socket connection if no auth token is available
       return;
     }
 
-    console.log('[Socket] Initializing socket connection with auth token');
+    // Initialize socket connection with auth token
     const newSocket = io('http://localhost:3002', {
       auth: { token },
       reconnection: true,
@@ -47,16 +47,16 @@ export const SocketProvider = ({ children }) => {
       timeout: 10000
     });
     
-    // Log all transport events for debugging
+    // Socket transport events
     newSocket.on('transport', transport => {
-      console.log('[Socket] Transport:', transport.name);
+      console.log(`[Socket] Transport: ${transport}`);
     });
     
     setSocket(newSocket);
 
     // Socket connection status
     newSocket.on('connect', () => {
-      console.log('[Socket] Connected to game server');
+      console.log(`[Socket] Connected: ${newSocket.id}`);
       // Note: We don't set isConnected to true here yet
       // We'll wait for the 'authenticated' event to confirm full authentication
       setError(null);
@@ -64,7 +64,7 @@ export const SocketProvider = ({ children }) => {
     
     // Listen for authentication confirmation
     newSocket.on('authenticated', () => {
-      console.log('[Socket] Socket authenticated successfully');
+      console.log('[Socket] Authentication successful');
       setIsConnected(true); // Now we can set isConnected to true
     });
 
@@ -80,7 +80,7 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('disconnect', () => {
-      console.log('Disconnected from game server');
+      console.log('[Socket] Disconnected from server');
       setIsConnected(false);
     });
 
@@ -91,7 +91,7 @@ export const SocketProvider = ({ children }) => {
 
     // Cleanup on unmount
     return () => {
-      console.log('Cleaning up socket connection');
+      // Clean up socket connection and event listeners
       if (newSocket) {
         newSocket.off('connect');
         newSocket.off('disconnect');

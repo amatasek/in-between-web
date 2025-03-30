@@ -19,12 +19,7 @@ const AuthPage = () => {
     setError(null);
     const endpoint = `http://localhost:3002/auth/${mode}`;
     
-    console.log('[Client] Sending auth request:', {
-      mode,
-      endpoint,
-      username,
-      hasPassword: !!password
-    });
+    console.log(`[Auth] ${mode.toUpperCase()} attempt: ${username}`);
 
     try {
       const requestBody = { username, password };
@@ -37,15 +32,9 @@ const AuthPage = () => {
         body: JSON.stringify(requestBody),
       });
 
-      console.log('[Client] Response status:', response.status);
-      
       let data;
       try {
         data = await response.json();
-        console.log('[Client] Response data:', {
-          ...data,
-          token: data.token ? data.token.substring(0, 10) + '...' : undefined
-        });
       } catch (error) {
         console.error('[Client] Error parsing response:', error);
         throw new Error('Invalid response from server');
@@ -65,15 +54,9 @@ const AuthPage = () => {
         throw new Error('Invalid server response format');
       }
 
-      console.log('[Client] Auth successful:', { 
-        userId: data.user.id,
-        username: data.user.username,
-        token: data.token.substring(0, 10) + '...' 
-      });
-      
+      console.log(`[Auth] ${mode.toUpperCase()} successful: ${data.user.username}`);
       try {
         login(data.user, data.token);
-        console.log('[Client] Login callback completed');
       } catch (error) {
         console.error('[Client] Error in login callback:', error);
         throw new Error('Failed to initialize user session');

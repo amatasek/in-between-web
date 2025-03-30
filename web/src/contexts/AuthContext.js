@@ -14,11 +14,9 @@ export const AuthProvider = ({ children }) => {
   // Listen for balance updates from the server
   useEffect(() => {
     if (socket && user) {
-      console.log('[Auth] Setting up balance update listener');
-      
       // Listen for balance updates
       socket.on('balanceUpdate', (data) => {
-        console.log('[Auth] Received balance update:', data);
+        console.log(`[Auth] Balance update: ${data.balance}`);
         if (data && typeof data.balance === 'number') {
           // Update user with new balance
           const updatedUser = {
@@ -29,7 +27,8 @@ export const AuthProvider = ({ children }) => {
           // Update state and local storage
           setUser(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
-          console.log('[Auth] Updated user balance:', data.balance);
+          console.log(`[Auth] User balance updated: ${data.balance}`);
+          
         }
       });
       
@@ -53,10 +52,8 @@ export const AuthProvider = ({ children }) => {
           logout(); // Clear invalid data
           return;
         }
-        console.log('[Auth] Restored user session:', { 
-          username: parsedUser.username,
-          id: parsedUser.id
-        });
+        console.log(`[Auth] Session restored: ${parsedUser.username}`);
+        
         setUser(parsedUser);
       }
     } catch (error) {
@@ -68,10 +65,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData, token) => {
-    console.log('[Auth] Login called with:', { 
-      userData: { ...userData, token: undefined },
-      hasToken: !!token
-    });
+    console.log(`[Auth] Login: ${userData.username}`);
+    
     
     if (!userData || !userData.username || !userData.id || typeof userData.balance !== 'number') {
       console.error('[Auth] Invalid user data:', userData);
@@ -92,7 +87,8 @@ export const AuthProvider = ({ children }) => {
       setUser(userToStore);
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userToStore));
-      console.log('[Auth] Login successful, user state updated');
+      console.log(`[Auth] Login successful: ${userToStore.username}`);
+      
     } catch (error) {
       console.error('[Auth] Error during login:', error);
       throw error;
@@ -100,7 +96,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log('[Auth] Logging out user');
+    console.log('[Auth] Logout');
+    
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
