@@ -3,13 +3,10 @@ const nextConfig = {
   // Enable static HTML export
   output: 'export',
   
-  // Disable basePath to use root
-  basePath: '',
+  // Set production asset prefix to handle GitHub Pages
+  assetPrefix: process.env.NODE_ENV === 'production' ? '.' : '',
   
-  // Use a dot prefix for assets to make them relative
-  assetPrefix: '.',
-  
-  // Configure trailing slash to ensure proper path resolution
+  // Add trailing slash for better path resolution
   trailingSlash: true,
   
   // Configure images to use unoptimized for static export
@@ -26,7 +23,10 @@ const nextConfig = {
     return config;
   },
   
-  transpilePackages: ['react-native-web']
+  transpilePackages: ['react-native-web'],
+  
+  // Disable source maps in production
+  productionBrowserSourceMaps: false,
 };
 
-module.exports = nextConfig;
+export default nextConfig;
