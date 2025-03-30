@@ -1,17 +1,30 @@
-const { STARTING_BALANCE } = require('../constants/GameConstants');
+const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
+const balanceService = require('../services/BalanceService');
 
 /**
  * Player Model - Manages player state and actions
  */
 class Player {
-  constructor(id, name) {
-    this.id = id;
+  constructor(id, name, userId) {
+    this.id = id;           // Socket ID
+    this.userId = userId;    // Database User ID
     this.name = name;
-    this.balance = STARTING_BALANCE; // Starting chips from constants
+    this.balance = 0;       // Will be loaded from database
     this.isReady = false;
     this.isConnected = true;
     this.currentBet = 0;
     this.joinedAt = Date.now();
+  }
+
+  async loadBalance() {
+    if (!this.userId) return false;
+    try {
+      this.balance = await balanceService.getBalance(this.userId);
+      return true;
+    } catch (error) {
+      console.error('[Player] Error loading balance:', error);
+      return false;
+    }
   }
   
   placeBet(amount) {
@@ -27,18 +40,28 @@ class Player {
     this.currentBet = 0;
   }
   
-  addChips(amount) {
-    const currentBalance = Number(this.balance || 0);
-    this.balance = currentBalance + Number(amount);
-  }
-  
-  removeChips(amount) {
-    const currentBalance = Number(this.balance || 0);
-    if (currentBalance < amount) {
+  async addChips(amount, reason) {
+    if (!this.userId) return false;
+    try {
+      const result = await balanceService.updateBalance(this.userId, amount, reason);
+      this.balance = result.balance;
+      return true;
+    } catch (error) {
+      console.error('[Player] Error adding chips:', error);
       return false;
     }
-    this.balance = currentBalance - Number(amount);
-    return true;
+  }
+  
+  async removeChips(amount, reason) {
+    if (!this.userId) return false;
+    try {
+      const result = await balanceService.updateBalance(this.userId, -amount, reason);
+      this.balance = result.balance;
+      return true;
+    } catch (error) {
+      console.error('[Player] Error removing chips:', error);
+      return false;
+    }
   }
   
   setReady(isReady) {
@@ -52,6 +75,7 @@ class Player {
   toJSON() {
     return {
       id: this.id,
+      userId: this.userId,
       name: this.name,
       balance: this.balance,
       isReady: this.isReady,

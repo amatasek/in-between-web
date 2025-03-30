@@ -62,13 +62,13 @@ function App() {
   );
 }
 
-// Export the wrapped component with SocketProvider
+// Export the wrapped component with proper provider hierarchy
 export default function Home() {
   return (
-    <AuthProvider>
     <SocketProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </SocketProvider>
-    </AuthProvider>
   );
 }

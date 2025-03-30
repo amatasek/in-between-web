@@ -5,7 +5,7 @@ import { useSocket } from '../contexts/SocketContext';
 
 const AnteControls = () => {
   // Get game state and actions from context
-  const { gameState, playerReady, withdrawAnte } = useGameContext();
+  const { gameState, playerReady, playerUnready } = useGameContext();
   const { socket } = useSocket();
   
   if (!gameState) return null;
@@ -25,7 +25,7 @@ const AnteControls = () => {
   const hasEnoughChips = playerBalance >= anteAmount;
   
   console.log('AnteControls rendering, isPlayerReady:', isPlayerReady);
-  console.log('withdrawAnte function exists:', !!withdrawAnte);
+  console.log('playerUnready function exists:', !!playerUnready);
   
   return (
     <div className={styles.anteControlsWrapper}>
@@ -55,12 +55,12 @@ const AnteControls = () => {
             className={styles.backOutButton}
             onClick={() => {
               console.log('Back Out button clicked');
-              console.log('withdrawAnte function:', withdrawAnte);
-              if (typeof withdrawAnte === 'function') {
-                withdrawAnte();
-                console.log('withdrawAnte function called');
+              console.log('playerUnready function:', playerUnready);
+              if (typeof playerUnready === 'function') {
+                playerUnready();
+                console.log('playerUnready function called');
               } else {
-                console.error('withdrawAnte is not a function');
+                console.error('playerUnready is not a function');
               }
             }}
           >

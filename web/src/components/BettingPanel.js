@@ -79,7 +79,7 @@ const BettingPanel = () => {
           
           <button
             className={`${styles.betButton} ${styles.extremeButton} ${styles.potButton}`}
-            onClick={() => placeBet(-1)}
+            onClick={() => placeBet(potAmount)}
           >
             POT (${potAmount})
           </button>

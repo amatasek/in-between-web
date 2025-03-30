@@ -18,4 +18,6 @@ const GamePhases = {
   RESULTS: 'results'
 };
 
-module.exports = GamePhases;
+module.exports = {
+  GamePhases
+};

@@ -53,11 +53,27 @@ class CardService {
   }
 
   /**
+   * Ensure a deck is available for the game
+   * @param {Game} game - The game object
+   * @returns {Game} The game with a deck
+   */
+  ensureDeckAvailable(game) {
+    if (!game || game.deck?.length > 0) return game;
+    
+    gameLog(game, 'Creating new deck for game');
+    game.deck = this.shuffleDeck(this.createDeck());
+    gameLog(game, `Deck created with ${game.deck.length} cards`);
+    
+    return game;
+  }
+
+  /**
    * Deal the first card (left card)
    * @param {Game} game - The game object
-   * @returns {Object} The first card
+   * @returns {Game} The game with the first card dealt
    */
   dealFirstCard(game) {
+    game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
     // Check if we need to reshuffle
@@ -71,15 +87,19 @@ class CardService {
     gameLog(game, `Dealt first card: ${firstCard.value}${firstCard.suit} (left position)`);
     gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
     
-    return firstCard;
+    // Update game state
+    game.firstCard = firstCard;
+    
+    return game;
   }
   
   /**
    * Deal the second card (right card)
    * @param {Game} game - The game object
-   * @returns {Object} The second card
+   * @returns {Game} The game with the second card dealt
    */
   dealSecondCard(game) {
+    game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
     // Check if we need to reshuffle
@@ -93,7 +113,10 @@ class CardService {
     gameLog(game, `Dealt second card: ${secondCard.value}${secondCard.suit} (right position)`);
     gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
     
-    return secondCard;
+    // Update game state
+    game.secondCard = secondCard;
+    
+    return game;
   }
 
   /**
@@ -102,6 +125,7 @@ class CardService {
    * @returns {Object} The middle card that was dealt
    */
   dealThirdCard(game) {
+    game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
     // Check if we need to reshuffle
@@ -114,10 +138,13 @@ class CardService {
     const thirdCard = game.deck.pop();
     thirdCard.revealed = true; // It's revealed immediately
     
+    // Update game state
+    game.thirdCard = thirdCard;
+    
     gameLog(game, `Dealt third card: ${thirdCard.value}${thirdCard.suit} (middle position)`);
     gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
     
-    return thirdCard;
+    return game;
   }
 
   /**
@@ -169,17 +196,22 @@ class CardService {
 
   /**
    * Compare card values to determine if middle card is between the outer cards
-   * @param {Object} lowerCard - The card with the lower value
-   * @param {Object} middleCard - The middle card to check
-   * @param {Object} higherCard - The card with the higher value
+   * @param {Object} firstCard - First card (left)
+   * @param {Object} thirdCard - Third card (middle)
+   * @param {Object} secondCard - Second card (right)
    * @returns {Boolean} True if middle card is between the outer cards
    */
-  isCardBetween(lowerCard, middleCard, higherCard) {
-    const lowerValue = this.valueMap[lowerCard.value];
-    const middleValue = this.valueMap[middleCard.value];
-    const higherValue = this.valueMap[higherCard.value];
+  isCardBetween(firstCard, thirdCard, secondCard) {
+    const firstValue = this.getCardValue(firstCard);
+    const secondValue = this.getCardValue(secondCard);
+    const thirdValue = this.getCardValue(thirdCard);
     
-    return middleValue > lowerValue && middleValue < higherValue;
+    // Determine which outer card has the lower value and which has the higher value
+    const lowerValue = Math.min(firstValue, secondValue);
+    const higherValue = Math.max(firstValue, secondValue);
+    
+    // Check if the middle card's value is between the outer cards' values
+    return thirdValue > lowerValue && thirdValue < higherValue;
   }
 
   /**
@@ -189,6 +221,17 @@ class CardService {
    */
   getCardValue(card) {
     return this.valueMap[card.value];
+  }
+
+  /**
+   * Check if middle card matches either outside card
+   * @param {Object} firstCard - First card (left)
+   * @param {Object} thirdCard - Third card (middle)
+   * @param {Object} secondCard - Second card (right)
+   * @returns {Boolean} True if middle card matches either outside card
+   */
+  isCardTie(firstCard, thirdCard, secondCard) {
+    return thirdCard.value === firstCard.value || thirdCard.value === secondCard.value;
   }
 }
 

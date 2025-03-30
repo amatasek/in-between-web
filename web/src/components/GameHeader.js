@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './styles/GameHeader.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
-import { TIMERS } from '../constants/GameConstants';
+import { TIMERS } from '../../../shared/constants/GameConstants';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {

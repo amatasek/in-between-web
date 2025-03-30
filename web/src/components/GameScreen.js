@@ -57,16 +57,18 @@ const GameScreen = ({ onReturnToLobby }) => {
         <PotDisplay />
       </div>
       
-      {phase === 'results' ? (
+      {/* Always show the CardDisplay component */}
+      <CardDisplay />
+      
+      {phase === 'waiting' ? (
+        /* Show ante controls during waiting phase */
+        <AnteControls />
+      ) : phase === 'results' ? (
         /* Show the results panel during results phase */
         <ResultsPanel />
       ) : (
-        /* Show the regular game content during other phases */
-        <>
-          <CardDisplay />
-          <AnteControls />
-          <BettingPanel />
-        </>
+        /* Show the betting panel during other phases */
+        <BettingPanel />
       )}
       
       

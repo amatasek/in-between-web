@@ -14,26 +14,40 @@ const cors = require('cors');
 // Import our service modules
 const GameService = require('./src/services/GameService');
 const SocketService = require('./src/services/SocketService');
+const authRoutes = require('./src/routes/auth');
+const balanceRoutes = require('./src/routes/balance');
 
 // Create and configure Express app
 const app = express();
 
-// Configure CORS with specific options for browser preview
+// Configure CORS
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:*'],
-  methods: ['GET', 'POST', 'OPTIONS'],
+  origin: true, // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
 // Add CORS headers to all responses
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  const origin = req.headers.origin;
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
   res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
   next();
 });
 
 app.use(express.json());
+
+// Mount routes
+app.use('/auth', authRoutes);
+app.use('/balance', balanceRoutes);
 
 // Static file serving
 app.use(express.static(path.join(__dirname, '../web/public')));

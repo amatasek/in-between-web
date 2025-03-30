@@ -5,8 +5,8 @@
 /** @typedef {import('../../../shared/types').Dealer} Dealer */
 
 // Import game constants
-const GamePhases = require('../constants/GamePhases');
-const { ANTE_AMOUNT, STARTING_BALANCE, FULL_DECK_SIZE } = require('../constants/GameConstants');
+const { GamePhases } = require('../../../shared/constants/GamePhases');
+const { ANTE_AMOUNT, STARTING_BALANCE, FULL_DECK_SIZE } = require('../../../shared/constants/GameConstants');
 
 /**
  * Creates a new game state object

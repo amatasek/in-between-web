@@ -1,4 +1,6 @@
-const { ANTE_AMOUNT } = require('../constants/GameConstants');
+const { ANTE_AMOUNT } = require('../../../shared/constants/GameConstants');
+const { GamePhases } = require('../../../shared/constants/GamePhases');
+const { gameLog } = require('../utils/logger');
 
 /**
  * Game Model - Core game state and operations
@@ -13,9 +15,10 @@ class Game {
     // Seat-based player management
     this.MAX_SEATS = 32;
     this.seats = Array(this.MAX_SEATS).fill(null); // Array of player IDs or null for empty seats
+    this.seatInfo = Array(this.MAX_SEATS).fill(null); // Array of player info objects
+    
     this.nextSeatIndex = 0; // Next available seat index
-    this.phase = 'waiting';
-    this.status = 'waiting';
+    this.phase = GamePhases.WAITING;
     this.pot = 0;
     this.anteAmount = ANTE_AMOUNT; // Fixed ante amount from constants
     this.round = 1;
@@ -43,6 +46,13 @@ class Game {
     // Host always gets seat 0
     if (isHost) {
       this.seats[0] = playerId;
+      this.seatInfo[0] = {
+        playerId,
+        name: this.players[playerId]?.name || 'Host',
+        isHost: true,
+        isDealer: true,
+        joinedAt: Date.now()
+      };
       this.nextSeatIndex = 1; // Next player will be at seat 1
       return 0;
     }
@@ -53,6 +63,13 @@ class Game {
       if (this.seats[seatIndex] === null) {
         // Seat is available
         this.seats[seatIndex] = playerId;
+        this.seatInfo[seatIndex] = {
+          playerId,
+          name: this.players[playerId]?.name || `Player ${seatIndex + 1}`,
+          isHost: false,
+          isDealer: false,
+          joinedAt: Date.now()
+        };
         return seatIndex;
       }
     }
@@ -77,22 +94,50 @@ class Game {
   getNextPlayerInOrder(playerId) {
     // Find the current player's seat
     const currentSeat = this.getPlayerSeat(playerId);
-    if (currentSeat === -1) return null;
-    
-    // Find the next occupied seat
-    for (let i = 1; i <= this.MAX_SEATS; i++) {
-      const nextSeatIndex = (currentSeat + i) % this.MAX_SEATS;
-      const nextPlayerId = this.seats[nextSeatIndex];
-      
-      if (nextPlayerId && this.players[nextPlayerId]?.isConnected) {
-        return nextPlayerId;
-      }
+    if (currentSeat === -1) {
+      gameLog(this, `WARNING: Could not find seat for player ID: ${playerId}`);
+      return null;
     }
     
-    // If no other players found, return the current player
-    return playerId;
+    gameLog(this, `Finding next player after ${this.players[playerId]?.name} (seat ${currentSeat})`);
+    
+    // Get all connected players in seat order
+    const connectedPlayers = this.getConnectedPlayersInOrder();
+    if (connectedPlayers.length <= 1) {
+      gameLog(this, `Only one connected player, returning same player`);
+      return playerId;
+    }
+    
+    // Find the index of the current player in the connected players array
+    const currentIndex = connectedPlayers.indexOf(playerId);
+    if (currentIndex === -1) {
+      gameLog(this, `Current player ${playerId} not found in connected players list`);
+      return connectedPlayers[0]; // Return the first connected player
+    }
+    
+    // Get the next player in the array, wrapping around if necessary
+    const nextIndex = (currentIndex + 1) % connectedPlayers.length;
+    const nextPlayerId = connectedPlayers[nextIndex];
+    
+    gameLog(this, `Next player: ${this.players[nextPlayerId]?.name} (ID: ${nextPlayerId})`);
+    return nextPlayerId;
   }
   
+  /**
+   * Get the first non-dealer player (player in position 1)
+   * @returns {string} The player ID in seat 1 or null if none
+   */
+  /**
+   * Recalculate the number of players in the game
+   * This should be called whenever players are added or removed
+   */
+  recalculatePlayerCount() {
+    // Count non-null seats
+    const count = this.seats.filter(playerId => playerId !== null).length;
+    gameLog(this, `Recalculated player count: ${count} players`);
+    return count;
+  }
+
   /**
    * Get the first non-dealer player (player in position 1)
    * @returns {string} The player ID in seat 1 or null if none
@@ -180,13 +225,23 @@ class Game {
   }
 
   toJSON() {
-    // Prepare playerInfo with seat numbers (1-indexed for UI)
+    // Prepare playerInfo with seat information
     const playerInfo = {};
-    Object.entries(this.players).forEach(([playerId, player]) => {
-      const seatIndex = this.getPlayerSeat(playerId);
+    this.seats.forEach((playerId, index) => {
+      if (!playerId) return;
+      
+      const player = this.players[playerId];
+      const seat = this.seatInfo[index];
+      
+      if (!player || !seat) return;
+      
       playerInfo[playerId] = {
         ...player.toJSON(),
-        seatNumber: seatIndex !== -1 ? seatIndex + 1 : null, // 1-based seat number for UI
+        seatNumber: index + 1,
+        name: seat.name,
+        isHost: seat.isHost,
+        isDealer: seat.isDealer,
+        joinedAt: seat.joinedAt
       };
     });
     
@@ -197,7 +252,6 @@ class Game {
       playerOrder: this.playerOrder,
       seats: this.seats,
       phase: this.phase,
-      status: this.status,
       pot: this.pot,
       anteAmount: this.anteAmount,
       round: this.round,
@@ -209,8 +263,7 @@ class Game {
       thirdCard: this.thirdCard,
       deckCount: this.deckCount,
       deckSize: this.deck.length,
-      result: this.result,
-      seats: this.seats
+      result: this.result
     };
   }
 
@@ -219,7 +272,7 @@ class Game {
   }
 
   isPlayersTurn(playerId) {
-    return this.currentPlayerId === playerId && this.phase === 'betting';
+    return this.currentPlayerId === playerId && this.phase === GamePhases.BETTING;
   }
   
   /**

@@ -4,19 +4,17 @@
   align-items: center;
   background-color: rgba(52, 73, 94, 0.9);
   border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1rem 0;
+  padding: 1rem;
+  margin: 1rem auto;
   width: 90%;
-  max-width: 700px;
+  max-width: 500px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.5s ease-out;
 }
 
+/* Hide the card result section since we're now showing the actual cards */
 .cardResult {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
+  display: none;
 }
 
 .cardValueContainer {

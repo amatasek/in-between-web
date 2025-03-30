@@ -1,5 +1,6 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
+const { STARTING_BALANCE } = require('../../../../shared/constants/GameConstants');
 
 // Database instances
 const userDb = new PouchDB('users');
@@ -13,20 +14,35 @@ userDb.createIndex({
 class DatabaseService {
   // User operations
   async createUser({ username, hashedPassword }) {
-    const existingUser = await this.getUserByUsername(username);
-    if (existingUser) {
-      throw new Error('Username already exists');
+    console.log('[DB] Creating user:', { username });
+    try {
+      const existingUser = await this.getUserByUsername(username);
+      console.log('[DB] Existing user check:', { exists: !!existingUser });
+      
+      if (existingUser) {
+        throw new Error('Username already exists');
+      }
+
+      const user = {
+        _id: `user_${username}`,
+        type: 'user',
+        username,
+        password: hashedPassword,
+        balance: STARTING_BALANCE, // Starting balance from constants
+        transactions: [], // Track balance changes
+        createdAt: new Date().toISOString()
+      };
+
+      console.log('[DB] Attempting to save user:', { _id: user._id });
+      const result = await userDb.put(user);
+      console.log('[DB] User saved successfully:', result);
+      
+      user._rev = result.rev; // Add the revision ID
+      return user;
+    } catch (error) {
+      console.error('[DB] Error creating user:', error);
+      throw error;
     }
-
-    const user = {
-      _id: `user_${username}`,
-      type: 'user',
-      username,
-      password: hashedPassword,
-      createdAt: new Date().toISOString()
-    };
-
-    return userDb.put(user);
   }
 
   async getUserByUsername(username) {
@@ -34,7 +50,8 @@ class DatabaseService {
       selector: {
         type: 'user',
         username: username
-      }
+      },
+      fields: ['_id', '_rev', 'username', 'password', 'balance', 'transactions', 'createdAt']
     });
 
     return result.docs[0];
@@ -63,6 +80,44 @@ class DatabaseService {
       _id: user._id,
       _rev: user._rev
     };
+
+    return userDb.put(updatedUser);
+  }
+
+  async updateBalance(userId, amount, reason) {
+    console.log('[DB] Updating balance:', { userId, amount, reason });
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const newBalance = (user.balance || 0) + amount;
+    if (newBalance < 0) {
+      throw new Error('Insufficient funds');
+    }
+
+    const transaction = {
+      timestamp: new Date().toISOString(),
+      amount,
+      reason,
+      previousBalance: user.balance,
+      newBalance
+    };
+
+    const updatedUser = {
+      ...user,
+      balance: newBalance,
+      transactions: [...(user.transactions || []), transaction],
+      _id: user._id,
+      _rev: user._rev
+    };
+
+    console.log('[DB] Saving updated balance:', { 
+      userId,
+      oldBalance: user.balance,
+      newBalance,
+      reason
+    });
 
     return userDb.put(updatedUser);
   }

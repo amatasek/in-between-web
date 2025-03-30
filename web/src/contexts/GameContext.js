@@ -180,16 +180,16 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     }
   }, [socket, gameId]);
   
-  // Player withdraw ante function
-  const withdrawAnte = useCallback(() => {
+  // Player unready function (withdraw ante)
+  const playerUnready = useCallback(() => {
     if (!socket || !gameId) return;
     
     try {
-      socket.emit('withdrawAnte');
-      console.log('Player withdrawing ante');
+      socket.emit('unready');
+      console.log('Player becoming unready');
     } catch (err) {
-      console.error('Error withdrawing ante:', err);
-      setError('Failed to withdraw ante. Please try again.');
+      console.error('Error setting player unready:', err);
+      setError('Failed to set player unready. Please try again.');
     }
   }, [socket, gameId]);
 
@@ -200,7 +200,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
    * @property {(amount: number) => void} placeBet - Function to place a bet
    * @property {() => void} payAnte - Function to pay the ante
    * @property {() => void} playerReady - Function to set player ready (pay ante)
-   * @property {() => void} withdrawAnte - Function to withdraw ante
+   * @property {() => void} playerUnready - Function to set player unready (withdraw ante)
    * @property {() => void} dealCards - Function to deal cards
    * @property {() => void} revealMiddleCard - Function to reveal the middle card
    * @property {() => void} nextRound - Function to move to the next round
@@ -219,7 +219,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     placeBet,
     payAnte,
     playerReady,
-    withdrawAnte,
+    playerUnready,
     dealCards,
     revealMiddleCard,
     nextRound,

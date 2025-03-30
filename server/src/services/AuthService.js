@@ -24,41 +24,81 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     // Create user in database
-    const result = await db.createUser({
+    const user = await db.createUser({
       username,
       hashedPassword
     });
 
     // Generate JWT token
-    const token = this.generateToken(result.id);
+    const token = await this.generateToken(user._id);
 
     return {
-      userId: result.id,
+      user: { 
+        id: user._id, 
+        username: user.username,
+        balance: user.balance || 0
+      },
       token
     };
   }
 
   async login(username, password) {
+    console.log('[AUTH] Login attempt:', { username });
+    
     const user = await db.getUserByUsername(username);
     if (!user) {
+      console.log('[AUTH] User not found:', { username });
       throw new Error('Invalid username or password');
     }
+
+    console.log('[AUTH] User found:', { 
+      username,
+      hasPassword: !!user.password,
+      storedPassword: user.password
+    });
+
+    if (!user.password) {
+      console.log('[AUTH] No password set for user:', { username });
+      throw new Error('Invalid username or password');
+    }
+
+    console.log('[AUTH] Comparing passwords:', {
+      providedPassword: password,
+      storedHashedPassword: user.password
+    });
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
+      console.log('[AUTH] Invalid password for user:', { username });
       throw new Error('Invalid username or password');
     }
 
-    const token = this.generateToken(user._id);
+    const token = await this.generateToken(user._id);
+    console.log('[AUTH] Login successful:', { 
+      username, 
+      userId: user._id,
+      balance: user.balance || 0
+    });
 
     return {
-      userId: user._id,
+      user: { 
+        id: user._id, 
+        username: user.username,
+        balance: user.balance || 0
+      },
       token
     };
   }
 
-  generateToken(userId) {
-    return jwt.sign({ userId }, JWT_SECRET, {
+  async generateToken(userId) {
+    // Get full user info to include in token
+    const user = await db.getUserById(userId);
+    if (!user) throw new Error('User not found');
+    
+    return jwt.sign({ 
+      userId,
+      username: user.username
+    }, JWT_SECRET, {
       expiresIn: '24h'
     });
   }

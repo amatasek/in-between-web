@@ -6,17 +6,57 @@ import { useAuth } from '../contexts/AuthContext';
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
   const { lobbyState, createGame, joinGame } = useLobby();
-  const { error, gameList } = lobbyState;
-  const { user } = useAuth();
+  const { error: lobbyError, gameList } = lobbyState;
+  const { user, logout } = useAuth();
   const [gameIdInput, setGameIdInput] = useState('');
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    try {
+      // Check if user exists and has required properties
+      if (!user) {
+        console.log('[Lobby] No user data found');
+        setError('Please log in to continue');
+        return;
+      }
+
+      if (!user.username || !user.id) {
+        console.error('[Lobby] Invalid user data:', user);
+        setError('Invalid user data');
+        logout(); // Clear invalid session
+        return;
+      }
+
+      console.log('[Lobby] Current user state:', {
+        username: user.username,
+        id: user.id
+      });
+
+      setError(null);
+    } catch (err) {
+      console.error('[Lobby] Error processing user data:', err);
+      setError('Error loading user data');
+      logout(); // Clear potentially corrupted session
+    }
+  }, [user, logout]);
   
   const handleCreateGame = () => {
+    if (!user?.id) {
+      setError('Please log in to create a game');
+      return;
+    }
+    
+    // Create game directly - username will be handled by the server
     createGame();
   };
   
   const handleJoinGame = () => {
+    if (!user?.id) {
+      setError('Please log in to join a game');
+      return;
+    }
     if (!gameIdInput.trim()) {
-      // Don't try to join with an empty game ID
+      setError('Please enter a game ID');
       return;
     }
     joinGame(gameIdInput);
@@ -42,14 +82,29 @@ const Lobby = () => {
       <div className={styles.formContainer}>
         <div className={styles.formSection}>
           <div className={styles.welcomeMessage}>
-            Welcome, {user.username}!
+            <div className={styles.welcomeHeader}>
+              {error ? (
+                <div className={styles.error}>{error}</div>
+              ) : (
+                <div className={styles.welcomeText}>Welcome, {user?.username || 'Player'}!</div>
+              )}
+              <div className={styles.balanceDisplay}>
+                Balance: ${Number(user?.balance) || 0}
+              </div>
+              <button 
+                className={`${styles.actionButton} ${styles.logoutButton}`}
+                onClick={logout}
+              >
+                Logout
+              </button>
+            </div>
           </div>
           
           <div className={styles.buttonGroup}>
             <button 
               className={`${styles.actionButton} ${styles.createButton}`}
               onClick={handleCreateGame}
-              disabled={!playerName.trim()}
+              disabled={!user?.username}
             >
               Create New Game
             </button>
@@ -102,7 +157,7 @@ const Lobby = () => {
                 <button 
                   className={styles.joinGameButton}
                   onClick={() => joinGame(game.id)}
-                  disabled={!playerName.trim()}
+                  disabled={!user}
                 >
                   Join
                 </button>

@@ -115,7 +115,7 @@ const CardDisplay = () => {
       )}
       
       
-      <div className={`${styles.cardsRow} ${phase === 'dealing' ? styles.dealingPhase : ''}`}>
+      <div className={`${styles.cardsRow} ${phase === 'dealing' ? styles.dealingPhase : ''} ${phase === 'revealing' ? styles.revealingPhase : ''}`}>
         {renderCardLayout()}
       </div>
       

@@ -3,14 +3,27 @@
  */
 const socketIo = require('socket.io');
 const { gameLog } = require('../utils/logger');
-
-// We'll load the GameService lazily to avoid circular dependencies
-let GameService;
+const gameStateService = require('./GameStateService');
+const playerManagementService = require('./PlayerManagementService');
+const GameService = require('./GameService');
+const gameTimerService = require('./GameTimerService');
+const CardService = require('./CardService');
+const { GamePhases } = require('../../../shared/constants/GamePhases');
+const jwt = require('jsonwebtoken');
+const db = require('./db/DatabaseService');
 
 class SocketService {
   constructor() {
     this.io = null;
     this.connectedSockets = new Map(); // Maps socket.id to gameId
+  }
+  
+  verifyToken(token) {
+    try {
+      return jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    } catch (error) {
+      throw new Error('Invalid token');
+    }
   }
 
   /**
@@ -27,8 +40,47 @@ class SocketService {
       }
     });
 
+    // Add middleware to verify auth token
+    this.io.use(async (socket, next) => {
+      try {
+        const token = socket.handshake.auth.token;
+        if (!token) {
+          console.error('[SOCKET_SERVICE] No auth token for socket:', socket.id);
+          next(new Error('Authentication token required'));
+          return;
+        }
+        
+        // Verify token and get user from DB
+        const tokenData = this.verifyToken(token);
+        const user = await db.getUserById(tokenData.userId);
+        if (!user) {
+          console.error('[SOCKET_SERVICE] User not found:', tokenData.userId);
+          next(new Error('User not found'));
+          return;
+        }
+        
+        // Attach user info to socket
+        socket.user = {
+          userId: user._id,
+          username: user.username
+        };
+        
+        console.log('[SOCKET_SERVICE] Authenticated socket connection:', {
+          socketId: socket.id,
+          username: user.username,
+          userId: user._id
+        });
+        next();
+      } catch (error) {
+        console.error('[SOCKET_SERVICE] Auth error:', error.message);
+        next(new Error(error.message));
+      }
+    });
+
     this.setupEventHandlers();
     console.log('[SOCKET_SERVICE] Socket.IO initialized');
+    
+    return this.io;
   }
 
   /**
@@ -37,10 +89,7 @@ class SocketService {
   setupEventHandlers() {
     if (!this.io) return;
     
-    // Lazy-load GameService to avoid circular dependencies
-    if (!GameService) {
-      GameService = require('./GameService');
-    }
+
 
     this.io.on('connection', (socket) => {
       console.log(`[SOCKET_SERVICE] New connection: ${socket.id}`);
@@ -49,75 +98,85 @@ class SocketService {
       this.sendGameListToClient(socket);
 
       // Event: Create a new game
-      socket.on('createGame', (playerName) => {
+      socket.on('createGame', async () => {
+        console.log('[SOCKET_SERVICE] Received createGame event from socket:', socket.id);
         try {
-          // Check if playerName is directly provided as a string (not in an object)
-          if (!playerName || typeof playerName !== 'string' || !playerName.trim()) {
-            socket.emit('error', { message: 'Player name is required' });
+          // Get user from socket (attached by auth middleware)
+          const user = socket.user;
+          if (!user) {
+            console.error('[SOCKET_SERVICE] No user attached to socket');
+            socket.emit('error', { message: 'Authentication required' });
             return;
           }
+          
+          console.log('[SOCKET_SERVICE] Creating game for user:', user);
           
           // Generate a random game ID
           const gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-          // Create game and add player
+          // Create game using GameStateService
           const game = GameService.createGame(gameId, socket.id);
-          GameService.addPlayer(game, socket.id, playerName);
+          
+          // Add player using PlayerManagementService
+          await GameService.addPlayer(game, socket.id, user.username || `Player ${socket.id.slice(0,4)}`, user.userId);
           
           // Join socket to game room
           socket.join(gameId);
           this.connectedSockets.set(socket.id, gameId);
           
-          // Make sure the game has a valid phase before sending
-          const gameState = game.toJSON();
-          
-          // Log the game state before sending
-          console.log(`[SOCKET_SERVICE] Game created with ID ${gameId}, phase: ${gameState.phase}`);
-          
-          // Send game state to player with proper phase
+          // Send game state to player
           socket.emit('gameJoined', { 
-            game: gameState,
+            game: game.toJSON(),
             playerId: socket.id
           });
           
-          gameLog(game, `Game created by ${playerName} (${socket.id})`);
+          gameLog(game, `Game created by ${user.username} (${socket.id})`);
         } catch (error) {
           console.error(`[SOCKET_SERVICE] Error creating game:`, error);
-          socket.emit('error', { message: 'Failed to create game' });
+          socket.emit('error', { message: error.message || 'Failed to create game' });
         }
       });
 
       // Event: Join an existing game
-      socket.on('joinGame', (data) => {
+      socket.on('joinGame', async (data) => {
+        let currentGame;
         try {
-          const { gameId, playerName } = data;
-          if (!gameId || !playerName) {
-            socket.emit('error', { message: 'Game ID and player name are required' });
+          const { gameId } = data;
+          const user = socket.user;
+          
+          if (!user) {
+            console.error('[SOCKET_SERVICE] No user attached to socket');
+            socket.emit('error', { message: 'Authentication required' });
+            return;
+          }
+          
+          if (!gameId) {
+            socket.emit('error', { message: 'Game ID is required' });
             return;
           }
 
-          const game = GameService.games[gameId];
-          if (!game) {
+          currentGame = gameStateService.getGame(gameId);
+          if (!currentGame) {
             socket.emit('error', { message: 'Game not found' });
             return;
           }
 
           // Check if game is full
-          const connectedPlayers = Object.values(game.players).filter(p => p.isConnected);
+          const connectedPlayers = Object.values(currentGame.players).filter(p => p.isConnected);
           if (connectedPlayers.length >= 6) {
             socket.emit('error', { message: 'Game is full' });
             return;
           }
 
           // Add player to game
-          GameService.addPlayer(game, socket.id, playerName);
+          await GameService.addPlayer(currentGame, socket.id, user.username || `Player ${socket.id.slice(0,4)}`, user.userId);
           
           // Join socket to game room
           socket.join(gameId);
           this.connectedSockets.set(socket.id, gameId);
           
           // Make sure the game has a valid phase before sending
-          const gameState = game.toJSON();
+          const gameState = currentGame.toJSON();
           
           // Log the game state before sending
           console.log(`[SOCKET_SERVICE] Player joined game ${gameId}, phase: ${gameState.phase}`);
@@ -129,29 +188,34 @@ class SocketService {
           });
           
           // Broadcast updated game state to all players
-          this.broadcastGameState(game);
+          this.broadcastGameState(currentGame);
           
           // Update the game list for all clients in the lobby
           this.broadcastGameList();
           
-          gameLog(game, `Player ${playerName} (${socket.id}) joined the game`);
+          gameLog(currentGame, `Player ${user.username} (${socket.id}) joined the game`);
         } catch (error) {
           console.error(`[SOCKET_SERVICE] Error joining game:`, error);
+          console.error(`[Lobby] Error processing game join:`, { 
+            gameId: currentGame?.id || data?.gameId,
+            username: socket.user?.username,
+            error: error.message 
+          });
           socket.emit('error', { message: 'Failed to join game' });
         }
       });
 
       // Event: Player ready (paid ante)
-      socket.on('ready', () => {
+      socket.on('ready', async () => {
         try {
           const gameId = this.connectedSockets.get(socket.id);
           if (!gameId) return;
 
-          const game = GameService.games[gameId];
+          let game = gameStateService.getGame(gameId);
           if (!game) return;
 
           // Mark player as ready
-          GameService.playerReady(game, socket.id);
+          game = await GameService.playerReady(game, socket.id);
           
           // Broadcast updated game state
           this.broadcastGameState(game);
@@ -160,33 +224,34 @@ class SocketService {
         }
       });
       
-      // Event: Player withdraws ante
-      socket.on('withdrawAnte', () => {
+      // Event: Player becomes unready (withdraws ante)
+      socket.on('unready', async () => {
         try {
           const gameId = this.connectedSockets.get(socket.id);
           if (!gameId) return;
 
-          const game = GameService.games[gameId];
+          let game = gameStateService.getGame(gameId);
           if (!game) return;
 
-          // Allow player to withdraw their ante
-          GameService.playerWithdrawAnte(game, socket.id);
+          // Mark player as unready and return their ante
+          game = await playerManagementService.playerUnready(game, socket.id);
           
           // Broadcast updated game state
           this.broadcastGameState(game);
         } catch (error) {
-          console.error(`[SOCKET_SERVICE] Error in withdrawAnte event:`, error);
+          console.error(`[SOCKET_SERVICE] Error in unready event:`, error);
+          this.sendError(socket.id, 'Failed to set player unready. Please try again.');
         }
       });
 
       // Event: Place a bet
-      socket.on('placeBet', (data) => {
+      socket.on('placeBet', async (data) => {
         try {
           const { amount } = data;
           const gameId = this.connectedSockets.get(socket.id);
           if (!gameId) return;
 
-          const game = GameService.games[gameId];
+          const game = gameStateService.getGame(gameId);
           if (!game) return;
 
           // Validate it's the player's turn
@@ -195,14 +260,11 @@ class SocketService {
             return;
           }
 
-          // Place the bet
-          GameService.placeBet(game, socket.id, amount);
-          
-          // Automatically reveal the card after a valid bet
-          GameService.revealCard(game);
+          // Place the bet - GameService will handle all phase transitions and timers
+          const updatedGame = await GameService.placeBet(game, socket.id, amount);
           
           // Broadcast updated game state
-          this.broadcastGameState(game);
+          this.broadcastGameState(updatedGame);
         } catch (error) {
           console.error(`[SOCKET_SERVICE] Error placing bet:`, error);
         }
@@ -218,27 +280,55 @@ class SocketService {
         }
       });
 
+      // Event: Get updated user balance
+      socket.on('getBalance', async () => {
+        try {
+          // Get user from socket (attached by auth middleware)
+          const user = socket.user;
+          if (!user || !user.userId) {
+            console.error('[SOCKET_SERVICE] No valid user attached to socket');
+            socket.emit('error', { message: 'Authentication required' });
+            return;
+          }
+          
+          // Get the latest balance from the database
+          const dbUser = await db.getUserById(user.userId);
+          if (!dbUser) {
+            console.error('[SOCKET_SERVICE] User not found in database:', user.userId);
+            socket.emit('error', { message: 'User not found' });
+            return;
+          }
+          
+          console.log(`[SOCKET_SERVICE] Sending updated balance to user ${user.username}: ${dbUser.balance}`);
+          
+          // Send the updated balance to the client
+          socket.emit('balanceUpdate', { balance: dbUser.balance });
+        } catch (error) {
+          console.error('[SOCKET_SERVICE] Error fetching balance:', error);
+          socket.emit('error', { message: 'Failed to fetch balance' });
+        }
+      });
+
       // Event: Disconnect
       socket.on('disconnect', () => {
         try {
           console.log(`[SOCKET_SERVICE] Disconnection: ${socket.id}`);
           
           const gameId = this.connectedSockets.get(socket.id);
-          if (gameId) {
+          if (gameId && GameService.games && GameService.games[gameId]) {
             const game = GameService.games[gameId];
-            if (game) {
-              // Remove player from game
-              GameService.removePlayer(game, socket.id);
-              
-              // Broadcast updated game state
-              this.broadcastGameState(game);
-              
-              // Clean up if all players disconnected
-              const connectedPlayers = Object.values(game.players).filter(p => p.isConnected);
-              if (connectedPlayers.length === 0) {
-                gameLog(game, 'All players disconnected, cleaning up game');
-                delete GameService.games[gameId];
-              }
+            
+            // Remove player from game
+            GameService.removePlayer(game, socket.id);
+            
+            // Broadcast updated game state
+            this.broadcastGameState(game);
+            
+            // Clean up if all players disconnected
+            const connectedPlayers = Object.values(game.players).filter(p => p.isConnected);
+            if (connectedPlayers.length === 0) {
+              gameLog(game, 'All players disconnected, cleaning up game');
+              delete GameService.games[gameId];
             }
             
             // Leave room and remove from connected sockets map

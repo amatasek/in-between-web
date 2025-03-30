@@ -32,9 +32,26 @@ export const SocketProvider = ({ children }) => {
   // Initialize Socket.IO connection
   useEffect(() => {
     const token = localStorage.getItem('token');
+    if (!token) {
+      console.log('No auth token found, skipping socket connection');
+      return;
+    }
+
+    console.log('[Socket] Initializing socket connection with auth token');
     const newSocket = io('http://localhost:3002', {
-      auth: { token }
+      auth: { token },
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ['websocket', 'polling'],
+      timeout: 10000
     });
+    
+    // Log all transport events for debugging
+    newSocket.on('transport', transport => {
+      console.log('[Socket] Transport:', transport.name);
+    });
+    
     setSocket(newSocket);
 
     // Socket connection status
@@ -42,6 +59,17 @@ export const SocketProvider = ({ children }) => {
       console.log('Connected to game server');
       setIsConnected(true);
       setError(null);
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('[Socket] Connection error:', {
+        message: error.message,
+        description: error.description,
+        type: error.type,
+        data: error.data
+      });
+      setError('Failed to connect to game server: ' + error.message);
+      setIsConnected(false);
     });
 
     newSocket.on('disconnect', () => {
@@ -57,7 +85,16 @@ export const SocketProvider = ({ children }) => {
     // Cleanup on unmount
     return () => {
       console.log('Cleaning up socket connection');
-      newSocket.disconnect();
+      if (newSocket) {
+        newSocket.off('connect');
+        newSocket.off('disconnect');
+        newSocket.off('connect_error');
+        newSocket.off('error');
+        newSocket.disconnect();
+        setSocket(null);
+        setIsConnected(false);
+        setError(null);
+      }
     };
   }, []);
 

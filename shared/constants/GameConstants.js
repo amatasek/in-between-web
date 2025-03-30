@@ -6,7 +6,7 @@
 const GAME_CONSTANTS = {
   // Game configuration
   ANTE_AMOUNT: 1,  // Fixed ante amount - always $1
-  STARTING_BALANCE: 20,  // Starting player balance - $20
+  STARTING_BALANCE: 100,  // Starting player balance - $100
   FULL_DECK_SIZE: 52,  // Number of cards in a full deck
   
   // Timer durations (in milliseconds)
@@ -16,7 +16,7 @@ const GAME_CONSTANTS = {
     DEAL_THIRD_CARD_DELAY: 2000,    // Delay before revealing the third card (2 seconds)
     DEALING_DURATION: 3000,         // Total duration of dealing phase (3 seconds)
     BETTING_DURATION: 30000,        // Duration for betting phase (30 seconds)
-    REVEALING_DURATION: 2000,       // Duration for revealing phase
+    REVEALING_DURATION: 3000,       // Duration for revealing phase
     RESULTS_DURATION: 5000          // Duration to show results before moving to next round (5 seconds)
   }
 };
@@ -24,7 +24,9 @@ const GAME_CONSTANTS = {
 // Support both CommonJS and ES modules
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = GAME_CONSTANTS;
+} else if (typeof exports !== 'undefined') {
+  exports.TIMERS = GAME_CONSTANTS.TIMERS;
+  exports.default = GAME_CONSTANTS;
+} else {
+  globalThis.GAME_CONSTANTS = GAME_CONSTANTS;
 }
-
-export const { TIMERS } = GAME_CONSTANTS;
-export default GAME_CONSTANTS;
