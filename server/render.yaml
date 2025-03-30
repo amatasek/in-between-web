@@ -3,7 +3,7 @@ services:
     name: in-between-api
     env: node
     buildCommand: npm install
-    startCommand: node src/index.js
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
