@@ -1,0 +1,66 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies for web
+        run: |
+          cd web
+          npm ci
+      
+      - name: Install dependencies for server
+        run: |
+          cd server
+          npm ci
+      
+      - name: Build web app
+        run: |
+          cd web
+          npm run build
+        env:
+          REACT_APP_API_URL: ${{ secrets.API_URL }}
+      
+      - name: Deploy to hosting provider
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./web/build/
+          server-dir: ${{ secrets.FTP_WEB_DIRECTORY }}
+      
+      - name: Deploy server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.SERVER_DIRECTORY }}
+            git pull
+            npm ci
+            pm2 restart in-between-server

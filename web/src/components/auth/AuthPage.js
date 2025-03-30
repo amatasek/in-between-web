@@ -76,7 +76,7 @@ const AuthPage = () => {
   return (
     <Box className={styles.authPage}>
       <Typography variant="h4" component="h1" className={styles.title}>
-        In Between
+        In Between <span className={styles.liveTag}>LIVE</span>
       </Typography>
       
       <Typography variant="subtitle1" className={styles.subtitle}>

@@ -75,7 +75,7 @@ const Lobby = () => {
   return (
     <div className={styles.lobbyContainer}>
       <div className={styles.logoContainer}>
-        <h1 className={styles.gameTitle}>In Between</h1>
+        <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
         <p className={styles.gameSubtitle}>A classic card betting game</p>
       </div>
       
