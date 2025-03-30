@@ -44,6 +44,8 @@ jobs:
           # Create .env.production file with environment variables
           echo 'NEXT_PUBLIC_API_URL=https://in-between-api.onrender.com' > .env.production
           echo 'NEXT_PUBLIC_SOCKET_URL=https://in-between-api.onrender.com' >> .env.production
+          # Add a .env.local file as well to ensure environment variables are available during build
+          cp .env.production .env.local
           # Build the app
           npm run build
           # Ensure the out directory exists

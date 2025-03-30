@@ -3,8 +3,9 @@ const nextConfig = {
   // Enable static HTML export
   output: 'export',
   
-  // Configure asset prefix for GitHub Pages
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/' : '',
+  // Configure base path and asset prefix for GitHub Pages
+  basePath: '',
+  assetPrefix: '',
   
   // Configure trailing slash to ensure proper path resolution
   trailingSlash: true,
