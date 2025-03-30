@@ -1,14 +1,41 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
 const path = require('path');
+const fs = require('fs');
 const { STARTING_BALANCE } = require('../../../../shared/constants/GameConstants');
 
-// Use absolute path for database files
-const DB_PATH = path.resolve(__dirname, '../../../../db');
+// Import config
+const config = require('../../config');
 
-// Database instances with absolute paths
-const userDb = new PouchDB(path.join(DB_PATH, 'users'));
-const gameDb = new PouchDB(path.join(DB_PATH, 'games'));
+// Ensure the database directory exists
+try {
+  if (!fs.existsSync(config.dbPath)) {
+    console.log(`[DB] Creating database directory: ${config.dbPath}`);
+    fs.mkdirSync(config.dbPath, { recursive: true });
+  }
+  
+  // Test write access to the directory
+  const testFile = path.join(config.dbPath, '.db-write-test');
+  fs.writeFileSync(testFile, 'test');
+  fs.unlinkSync(testFile);
+  console.log(`[DB] Successfully verified write access to: ${config.dbPath}`);
+} catch (error) {
+  console.error(`[DB] Error with database directory ${config.dbPath}:`, error.message);
+  throw new Error(`Cannot access database directory: ${error.message}`);
+}
+
+console.log(`[DB] Using database path: ${config.dbPath}`);
+
+// Use absolute paths for PouchDB to avoid path resolution issues
+const userDbPath = path.resolve(config.dbPath, 'users');
+const gameDbPath = path.resolve(config.dbPath, 'games');
+
+console.log(`[DB] User database path: ${userDbPath}`);
+console.log(`[DB] Game database path: ${gameDbPath}`);
+
+// Database instances with configured path
+const userDb = new PouchDB(userDbPath);
+const gameDb = new PouchDB(gameDbPath);
 
 // Create indexes for efficient querying
 userDb.createIndex({

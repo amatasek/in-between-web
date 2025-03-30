@@ -36,3 +36,6 @@ Thumbs.db
 
 # Database
 db/
+
+# Allow database service file
+!server/src/services/db/DatabaseService.js

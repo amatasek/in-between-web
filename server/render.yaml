@@ -12,7 +12,7 @@ services:
       - key: CORS_ORIGIN
         value: https://in-between.live
       - key: DB_PATH
-        value: /tmp/db
+        value: /var/data/db
     disk:
       name: data
       mountPath: /var/data/db
