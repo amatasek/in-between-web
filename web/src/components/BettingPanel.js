@@ -125,8 +125,7 @@ const BettingPanel = () => {
     );
   };
   
-  // No waiting message shown - removed as requested
-  
+
   return (
     <div className={styles.bettingPanel}>
       {renderBettingControls()}

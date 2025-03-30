@@ -2,7 +2,6 @@ const gameStateService = require('./GameStateService');
 const playerManagementService = require('./PlayerManagementService');
 const bettingService = require('./BettingService');
 const CardService = require('./CardService');
-const gameTimerService = require('./GameTimerService');
 const gameTimingService = require('./GameTimingService');
 const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
@@ -32,7 +31,7 @@ class GameService {
     if (!game) return game;
     
     // Clear any existing timeouts
-    gameTimerService.clearGameTimeouts(game.id);
+    gameTimingService.clearGameTimeouts(game.id);
     
     // Store the current player before starting a new round
     const currentPlayerId = game.currentPlayerId;
@@ -271,7 +270,7 @@ class GameService {
   }
 
   cleanupGame(gameId) {
-    gameTimerService.clearGameTimeouts(gameId);
+    gameTimingService.clearGameTimeouts(gameId);
     gameStateService.removeGame(gameId);
   }
   

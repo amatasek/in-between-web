@@ -12,60 +12,7 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Hide the card result section since we're now showing the actual cards */
-.cardResult {
-  display: none;
-}
-
-.cardValueContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.cardValue {
-  background-color: #ecf0f1;
-  color: #2c3e50;
-  font-size: 1.8rem;
-  font-weight: bold;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  min-width: 70px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.cardSuit {
-  font-size: 1.4rem;
-  margin-left: 4px;
-}
-
-.hearts, .diamonds {
-  color: #e74c3c;
-}
-
-.clubs, .spades {
-  color: #2c3e50;
-}
-
-.cardLabel {
-  color: #ecf0f1;
-  font-size: 0.9rem;
-  margin-top: 0.25rem;
-}
-
-.leftCard {
-  color: #3498db;
-}
-
-.middleCard {
-  color: #f1c40f;
-}
-
-.rightCard {
-  color: #3498db;
-}
+/* These card display styles were removed as they are not used (cardResult has display: none) */
 
 .resultContent {
   display: flex;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styles from './styles/CardDisplay.module.css';
 import { useGameContext } from '../contexts/GameContext';
 
@@ -20,15 +20,7 @@ const CardDisplay = () => {
     deckNumber 
   } = gameState;
   
-  // Add logging to help debug card rendering
-  useEffect(() => {
-    console.log('[CLIENT] Card State:', { 
-      firstCard, 
-      secondCard, 
-      thirdCard, 
-      phase 
-    });
-  }, [firstCard, secondCard, thirdCard, phase]);
+  // Card state is managed by the game context
   
   const dealerName = dealer?.name;
   const cardLabels = {
@@ -118,12 +110,6 @@ const CardDisplay = () => {
       <div className={`${styles.cardsRow} ${phase === 'dealing' ? styles.dealingPhase : ''} ${phase === 'revealing' ? styles.revealingPhase : ''}`}>
         {renderCardLayout()}
       </div>
-      
-      {phase === 'cardReveal' && (
-        <div className={styles.cardRevealContainer}>
-          <p className={styles.cardRevealText}>Card revealed!</p>
-        </div>
-      )}
     </div>
   );
 };

@@ -22,43 +22,7 @@ const ResultsPanel = () => {
 
   return (
     <div className={styles.resultsPanel}>
-      <div className={styles.cardResult}>
-        <div className={styles.cardValueContainer}>
-          <div className={styles.cardValue}>
-            {gameState.firstCard?.value}
-            <span className={`${styles.cardSuit} ${styles[gameState.firstCard?.suit?.toLowerCase()]}`}>
-              {gameState.firstCard?.suit === 'Hearts' ? '♥' : 
-               gameState.firstCard?.suit === 'Diamonds' ? '♦' : 
-               gameState.firstCard?.suit === 'Clubs' ? '♣' : '♠'}
-            </span>
-          </div>
-          <div className={`${styles.cardLabel} ${styles.leftCard}`}>Left</div>
-        </div>
-        
-        <div className={styles.cardValueContainer}>
-          <div className={styles.cardValue}>
-            {gameState.thirdCard?.value}
-            <span className={`${styles.cardSuit} ${styles[gameState.thirdCard?.suit?.toLowerCase()]}`}>
-              {gameState.thirdCard?.suit === 'Hearts' ? '♥' : 
-               gameState.thirdCard?.suit === 'Diamonds' ? '♦' : 
-               gameState.thirdCard?.suit === 'Clubs' ? '♣' : '♠'}
-            </span>
-          </div>
-          <div className={`${styles.cardLabel} ${styles.middleCard}`}>Middle</div>
-        </div>
-        
-        <div className={styles.cardValueContainer}>
-          <div className={styles.cardValue}>
-            {gameState.secondCard?.value}
-            <span className={`${styles.cardSuit} ${styles[gameState.secondCard?.suit?.toLowerCase()]}`}>
-              {gameState.secondCard?.suit === 'Hearts' ? '♥' : 
-               gameState.secondCard?.suit === 'Diamonds' ? '♦' : 
-               gameState.secondCard?.suit === 'Clubs' ? '♣' : '♠'}
-            </span>
-          </div>
-          <div className={`${styles.cardLabel} ${styles.rightCard}`}>Right</div>
-        </div>
-      </div>
+      {/* Card display section removed - cards are now visible in the game board */}
 
       <div className={styles.resultContent}>
         <h2 className={`${styles.resultText} ${styles[result.outcome + 'Text']}`}>

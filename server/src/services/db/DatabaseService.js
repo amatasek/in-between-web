@@ -1,10 +1,14 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
+const path = require('path');
 const { STARTING_BALANCE } = require('../../../../shared/constants/GameConstants');
 
-// Database instances
-const userDb = new PouchDB('users');
-const gameDb = new PouchDB('games');
+// Use absolute path for database files
+const DB_PATH = path.resolve(__dirname, '../../../../db');
+
+// Database instances with absolute paths
+const userDb = new PouchDB(path.join(DB_PATH, 'users'));
+const gameDb = new PouchDB(path.join(DB_PATH, 'games'));
 
 // Create indexes for efficient querying
 userDb.createIndex({
@@ -100,38 +104,48 @@ class DatabaseService {
       timestamp: new Date().toISOString(),
       amount,
       reason,
-      previousBalance: user.balance,
+      oldBalance: user.balance,
       newBalance
     };
 
-    const updatedUser = {
-      ...user,
+    console.log('[DB] Saving updated balance:', transaction);
+
+    // Add the transaction to the history
+    if (!user.transactions) {
+      user.transactions = [];
+    }
+    user.transactions.push(transaction);
+
+    // Update the balance
+    user.balance = newBalance;
+
+    // Save the updated user
+    return this.updateUser(user._id, {
       balance: newBalance,
-      transactions: [...(user.transactions || []), transaction],
-      _id: user._id,
-      _rev: user._rev
-    };
-
-    console.log('[DB] Saving updated balance:', { 
-      userId,
-      oldBalance: user.balance,
-      newBalance,
-      reason
+      transactions: user.transactions
     });
-
-    return userDb.put(updatedUser);
   }
 
-  // Game operations (placeholder for future implementation)
-  async createGame(gameData) {
-    const game = {
-      _id: `game_${Date.now()}`,
-      type: 'game',
-      ...gameData,
-      createdAt: new Date().toISOString()
+  async getBalance(userId) {
+    const user = await this.getUserById(userId);
+    return user ? user.balance : 0;
+  }
+
+  // Game operations
+  async saveGame(game) {
+    const gameDoc = {
+      _id: game.id,
+      ...game
     };
 
-    return gameDb.put(game);
+    try {
+      const existingGame = await gameDb.get(game.id);
+      gameDoc._rev = existingGame._rev;
+    } catch (error) {
+      // Game doesn't exist yet, which is fine
+    }
+
+    return gameDb.put(gameDoc);
   }
 
   async getGame(gameId) {
@@ -143,6 +157,25 @@ class DatabaseService {
       }
       throw error;
     }
+  }
+
+  async deleteGame(gameId) {
+    try {
+      const game = await gameDb.get(gameId);
+      return gameDb.remove(game);
+    } catch (error) {
+      if (error.name === 'not_found') {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async getAllGames() {
+    const result = await gameDb.allDocs({
+      include_docs: true
+    });
+    return result.rows.map(row => row.doc);
   }
 }
 

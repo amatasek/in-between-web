@@ -2,8 +2,8 @@ const Player = require('../models/Player');
 const { gameLog } = require('../utils/logger');
 const { ANTE_AMOUNT } = require('../../../shared/constants/GameConstants');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
-const gameTimerService = require('./GameTimerService');
 const CardService = require('./CardService');
+const gameTimingService = require('./GameTimingService');
 const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
 
 class PlayerManagementService {

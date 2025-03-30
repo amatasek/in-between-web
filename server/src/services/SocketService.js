@@ -6,8 +6,8 @@ const { gameLog } = require('../utils/logger');
 const gameStateService = require('./GameStateService');
 const playerManagementService = require('./PlayerManagementService');
 const GameService = require('./GameService');
-const gameTimerService = require('./GameTimerService');
 const CardService = require('./CardService');
+const gameTimingService = require('./GameTimingService');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const jwt = require('jsonwebtoken');
 const db = require('./db/DatabaseService');
@@ -70,6 +70,14 @@ class SocketService {
           username: user.username,
           userId: user._id
         });
+        
+        // Store authentication info for later use when the socket is fully connected
+        socket.authInfo = {
+          authenticated: true,
+          username: user.username,
+          userId: user._id
+        };
+        
         next();
       } catch (error) {
         console.error('[SOCKET_SERVICE] Auth error:', error.message);
@@ -93,6 +101,12 @@ class SocketService {
 
     this.io.on('connection', (socket) => {
       console.log(`[SOCKET_SERVICE] New connection: ${socket.id}`);
+      
+      // If the socket was authenticated in middleware, emit the authenticated event
+      if (socket.authInfo && socket.authInfo.authenticated) {
+        console.log(`[SOCKET_SERVICE] Emitting authenticated event to socket: ${socket.id}`);
+        socket.emit('authenticated');
+      }
       
       // Send the current list of games to the newly connected client
       this.sendGameListToClient(socket);

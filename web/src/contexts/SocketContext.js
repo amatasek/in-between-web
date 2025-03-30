@@ -56,9 +56,16 @@ export const SocketProvider = ({ children }) => {
 
     // Socket connection status
     newSocket.on('connect', () => {
-      console.log('Connected to game server');
-      setIsConnected(true);
+      console.log('[Socket] Connected to game server');
+      // Note: We don't set isConnected to true here yet
+      // We'll wait for the 'authenticated' event to confirm full authentication
       setError(null);
+    });
+    
+    // Listen for authentication confirmation
+    newSocket.on('authenticated', () => {
+      console.log('[Socket] Socket authenticated successfully');
+      setIsConnected(true); // Now we can set isConnected to true
     });
 
     newSocket.on('connect_error', (error) => {
