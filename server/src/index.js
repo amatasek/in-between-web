@@ -19,18 +19,37 @@ const authRoutes = require('./routes/auth');
 
 // Setup Express app
 const app = express();
-// In development, allow all origins for easier testing
-const corsOptions = process.env.NODE_ENV === 'production' 
-  ? {
-      origin: config.corsOrigin || 'https://in-between.live',
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    }
-  : {
-      origin: true, // Allow all origins in development
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    };
+// Handle CORS configuration based on environment
+let corsOptions;
+
+if (process.env.NODE_ENV === 'production') {
+  // In production, use the configured origins
+  const allowedOrigins = config.corsOrigin ? config.corsOrigin.split(',') : ['https://in-between.live'];
+  console.log(`[SERVER] CORS allowed origins: ${allowedOrigins.join(', ')}`);
+  
+  corsOptions = {
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl, etc)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.indexOf(origin.trim()) !== -1) {
+        callback(null, true);
+      } else {
+        console.log(`[SERVER] CORS blocked origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  };
+} else {
+  // In development, allow all origins for easier testing
+  corsOptions = {
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  };
+}
 
 app.use(cors(corsOptions));
 
