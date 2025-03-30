@@ -59,6 +59,10 @@ jobs:
       - name: Create 404 page
         run: cp web/out/index.html web/out/404.html
       
+      # Create .nojekyll file to prevent Jekyll processing
+      - name: Create .nojekyll file
+        run: touch web/out/.nojekyll
+      
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
