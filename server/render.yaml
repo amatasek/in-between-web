@@ -7,6 +7,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: RENDER
+        value: "true"
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
@@ -16,4 +18,4 @@ services:
     disk:
       name: data
       mountPath: /var/data/db
-      sizeGB: 1
+      sizeGB: 4
