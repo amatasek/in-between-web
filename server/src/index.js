@@ -7,6 +7,10 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs');
+
+// Import config
+const config = require('./config');
 
 // Import services
 const SocketService = require('./services/SocketService');
@@ -16,7 +20,7 @@ const authRoutes = require('./routes/auth');
 // Setup Express app
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:56268'],
+  origin: config.corsOrigin || ['http://localhost:3000', 'http://127.0.0.1:56268', 'https://in-between.live'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
@@ -28,11 +32,39 @@ app.use('/auth', authRoutes);
 
 // Serve static files from the web build directory in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../web/build')));
+  // Check multiple possible locations for the web build
+  const possibleBuildPaths = [
+    path.join(__dirname, '../../web/build'),
+    path.join(__dirname, '../../../web/build'),
+    '/opt/render/project/src/web/build'
+  ];
   
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../web/build/index.html'));
-  });
+  let webBuildPath = null;
+  
+  // Find the first path that exists
+  for (const buildPath of possibleBuildPaths) {
+    if (fs.existsSync(buildPath)) {
+      const indexPath = path.join(buildPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        webBuildPath = buildPath;
+        console.log(`Found web build at: ${webBuildPath}`);
+        break;
+      }
+    }
+  }
+  
+  if (webBuildPath) {
+    app.use(express.static(webBuildPath));
+    
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api/') || req.path.startsWith('/auth/')) {
+        return next();
+      }
+      res.sendFile(path.join(webBuildPath, 'index.html'));
+    });
+  } else {
+    console.log('No web build directory found. Running in API-only mode.');
+  }
 }
 
 // Create HTTP server
