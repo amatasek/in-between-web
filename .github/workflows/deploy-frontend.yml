@@ -18,7 +18,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout code
@@ -63,3 +65,4 @@ jobs:
           folder: web/out
           branch: gh-pages
           clean: true
+          token: ${{ github.token }}
