@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('./db/DatabaseService');
+const config = require('../config');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; // In production, use environment variable
+// Use JWT secret from centralized config
+const JWT_SECRET = config.jwtSecret
 const SALT_ROUNDS = 10;
 
 class AuthService {
