@@ -35,10 +35,11 @@ jobs:
       - name: Build web app
         run: |
           cd web
-          npm run export
+          npm run build
+          npm run start -- --port 3000 & sleep 5 && mkdir -p out && wget -r -P out -nH --cut-dirs=1 http://localhost:3000 && kill %1
         env:
-          REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL || 'https://in-between-api.onrender.com' }}
-          REACT_APP_SOCKET_URL: ${{ vars.REACT_APP_SOCKET_URL || 'https://in-between-api.onrender.com' }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'https://in-between-api.onrender.com' }}
+          NEXT_PUBLIC_SOCKET_URL: ${{ vars.NEXT_PUBLIC_SOCKET_URL || 'https://in-between-api.onrender.com' }}
       
       # Create a CNAME file for the custom domain
       - name: Create CNAME file
@@ -46,11 +47,11 @@ jobs:
       
       # Copy index.html to 404.html for SPA routing
       - name: Create 404 page
-        run: cp web/out/index.html web/out/404.html
+        run: cp web/out/localhost/index.html web/out/localhost/404.html
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: web/out
+          folder: web/out/localhost
           branch: gh-pages
           clean: true

@@ -38,7 +38,7 @@ export const SocketProvider = ({ children }) => {
     }
 
     // Initialize socket connection with auth token
-    const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:3001';
+    const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
     const newSocket = io(SOCKET_URL, {
       auth: { token },
       reconnection: true,
