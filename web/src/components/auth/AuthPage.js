@@ -18,7 +18,7 @@ const AuthPage = () => {
 
     setError(null);
     // Get API URL from environment or use localhost as fallback
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
     const endpoint = `${API_URL}/auth/${mode}`;
     
     console.log(`[Auth] ${mode.toUpperCase()} attempt: ${username}`);

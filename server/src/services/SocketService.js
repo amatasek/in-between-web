@@ -11,6 +11,7 @@ const gameTimingService = require('./GameTimingService');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const jwt = require('jsonwebtoken');
 const db = require('./db/DatabaseService');
+const config = require('../config');
 
 class SocketService {
   constructor() {
@@ -20,7 +21,7 @@ class SocketService {
   
   verifyToken(token) {
     try {
-      return jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      return jwt.verify(token, config.jwtSecret);
     } catch (error) {
       throw new Error('Invalid token');
     }

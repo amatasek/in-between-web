@@ -19,11 +19,37 @@ const authRoutes = require('./routes/auth');
 
 // Setup Express app
 const app = express();
-app.use(cors({
-  origin: config.corsOrigin || ['http://localhost:3000', 'http://127.0.0.1:56268', 'https://in-between.live'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-}));
+// In development, allow all origins for easier testing
+const corsOptions = process.env.NODE_ENV === 'production' 
+  ? {
+      origin: config.corsOrigin || 'https://in-between.live',
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    }
+  : {
+      origin: true, // Allow all origins in development
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    };
+
+app.use(cors(corsOptions));
+
+// Add CORS headers to all responses for development
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && process.env.NODE_ENV !== 'production') {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
