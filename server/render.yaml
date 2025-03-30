@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: in-between-api
+    env: node
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://in-between.live
+      - key: DB_PATH
+        value: /var/data/db
+    disk:
+      name: data
+      mountPath: /var/data/db
+      sizeGB: 1
