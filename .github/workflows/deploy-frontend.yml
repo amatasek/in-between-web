@@ -41,8 +41,6 @@ jobs:
       - name: Build web app
         run: |
           cd web
-          # Create next.config.js file for static export
-          echo 'module.exports = { output: "export" };' > next.config.js
           # Create .env.production file with environment variables
           echo 'NEXT_PUBLIC_API_URL=https://in-between-api.onrender.com' > .env.production
           echo 'NEXT_PUBLIC_SOCKET_URL=https://in-between-api.onrender.com' >> .env.production
