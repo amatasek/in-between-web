@@ -1,6 +1,9 @@
 name: Deploy Frontend to GitHub Pages
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       environment:
@@ -25,21 +28,26 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache-dependency-path: 'web/package-lock.json'
           cache: 'npm'
       
       - name: Install dependencies
         run: |
           cd web
-          npm ci
+          npm install
       
       - name: Build web app
         run: |
           cd web
+          # Create next.config.js file for static export
+          echo 'module.exports = { output: "export" };' > next.config.js
+          # Create .env.production file with environment variables
+          echo 'NEXT_PUBLIC_API_URL=https://in-between-api.onrender.com' > .env.production
+          echo 'NEXT_PUBLIC_SOCKET_URL=https://in-between-api.onrender.com' >> .env.production
+          # Build the app
           npm run build
-          npm run start -- --port 3000 & sleep 5 && mkdir -p out && wget -r -P out -nH --cut-dirs=1 http://localhost:3000 && kill %1
-        env:
-          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'https://in-between-api.onrender.com' }}
-          NEXT_PUBLIC_SOCKET_URL: ${{ vars.NEXT_PUBLIC_SOCKET_URL || 'https://in-between-api.onrender.com' }}
+          # Ensure the out directory exists
+          mkdir -p out
       
       # Create a CNAME file for the custom domain
       - name: Create CNAME file
@@ -47,11 +55,11 @@ jobs:
       
       # Copy index.html to 404.html for SPA routing
       - name: Create 404 page
-        run: cp web/out/localhost/index.html web/out/localhost/404.html
+        run: cp web/out/index.html web/out/404.html
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: web/out/localhost
+          folder: web/out
           branch: gh-pages
           clean: true
