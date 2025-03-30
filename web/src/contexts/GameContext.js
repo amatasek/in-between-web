@@ -43,12 +43,10 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   useEffect(() => {
     if (!socket) return;
     
-    // Handle gameJoined event - initial game state
-    socket.on('gameJoined', (data) => {
-      if (data && data.game) {
-        setGameState({...data.game});
-      }
-    });
+    // The gameJoined event is now handled exclusively in LobbyContext
+    // This prevents duplicate event handling issues that were causing
+    // game joining problems. By centralizing this event handling, we ensure
+    // consistent state transitions between lobby and game views.
 
     // Game state updates
     socket.on('gameState', (state) => {
@@ -95,7 +93,8 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     // Clean up game-specific event listeners
     return () => {
-      socket.off('gameJoined');
+      // We don't clean up the gameJoined event here anymore since it's now
+      // exclusively handled by LobbyContext
       socket.off('gameState');
       socket.off('gameUpdate');
       socket.off('gameError');

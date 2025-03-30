@@ -64,30 +64,40 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     
     // Game joined response (after creation or joining)
     socket.on('gameJoined', (data) => {
-      console.log(`[Lobby] Game joined: ${data.game?.id}`);
+      console.log(`[Lobby] Game joined event received:`, data);
       try {
         if (!data || !data.game) {
+          console.error('[Lobby] No game data in gameJoined event:', data);
           throw new Error('No game data received');
         }
         
         if (!data.game.id || !data.game.phase) {
+          console.error('[Lobby] Invalid game structure in gameJoined event:', data.game);
           throw new Error('Invalid game data structure');
         }
         
-        // First store the complete game state
-        setLobbyState(prevState => ({
-          ...prevState,
+        console.log(`[Lobby] Setting game state and changing view to game for: ${data.game.id}`);
+        
+        // Force a complete state reset to ensure clean transition
+        const newState = {
+          playerName: lobbyState.playerName,
+          gameList: lobbyState.gameList,
           gameId: data.game.id,
           gameState: data.game,
+          view: 'game',
           error: null,
-          // Only change the view after we have a valid game state
-          view: 'game'
-        }));
+          isAuthenticated: lobbyState.isAuthenticated
+        };
+        
+        console.log('[Lobby] New lobby state after game join:', newState);
+        setLobbyState(newState);
         
         // Game state updated successfully
+        console.log(`[Lobby] Successfully joined game: ${data.game.id}`);
         
         // Notify parent component
         if (onGameJoined) {
+          console.log(`[Lobby] Notifying parent component of game join: ${data.game.id}`);
           onGameJoined(data.game.id);
         }
       } catch (error) {
@@ -126,8 +136,33 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     }
     
     if (socket && isConnected) {
-      // Socket is connected and authenticated, send create game request
-      socket.emit('createGame');
+      // First check if we're already in a game and need to leave it
+      if (lobbyState.gameId) {
+        console.log(`[Lobby] Already in game ${lobbyState.gameId}, leaving before creating new game`);
+        // Leave the current game first
+        const currentGameId = lobbyState.gameId;
+        socket.emit('leaveGameLobby', { gameId: currentGameId });
+      }
+      
+      // Reset state completely - create a fresh state object
+      const freshState = {
+        playerName: lobbyState.playerName,
+        gameList: lobbyState.gameList,
+        gameId: null,
+        gameState: null,
+        view: 'lobby',
+        error: null,
+        isAuthenticated: lobbyState.isAuthenticated
+      };
+      
+      console.log('[Lobby] Resetting state before creating game:', freshState);
+      setLobbyState(freshState);
+      
+      // Create the game after a short delay to ensure state is reset
+      setTimeout(() => {
+        console.log('[Lobby] Emitting createGame event');
+        socket.emit('createGame');
+      }, 200);
     } else {
       const error = 'Not connected to server';
       console.error('[Lobby]', error);
@@ -153,8 +188,33 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     }
     
     if (socket && isConnected) {
-      console.log(`[Lobby] Joining game: ${gameIdToJoin}`);
-      socket.emit('joinGame', { gameId: gameIdToJoin });
+      // First check if we're already in a game and need to leave it
+      if (lobbyState.gameId) {
+        console.log(`[Lobby] Already in game ${lobbyState.gameId}, leaving before joining new game`);
+        // Leave the current game first
+        const currentGameId = lobbyState.gameId;
+        socket.emit('leaveGameLobby', { gameId: currentGameId });
+      }
+      
+      // Reset state completely - create a fresh state object
+      const freshState = {
+        playerName: lobbyState.playerName,
+        gameList: lobbyState.gameList,
+        gameId: null,
+        gameState: null,
+        view: 'lobby',
+        error: null,
+        isAuthenticated: lobbyState.isAuthenticated
+      };
+      
+      console.log('[Lobby] Resetting state before joining game:', freshState);
+      setLobbyState(freshState);
+      
+      // Join the game after a short delay to ensure state is reset
+      setTimeout(() => {
+        console.log(`[Lobby] Emitting joinGame event for game: ${gameIdToJoin}`);
+        socket.emit('joinGame', { gameId: gameIdToJoin });
+      }, 200);
     } else {
       setError('Not connected to server');
     }
@@ -165,17 +225,36 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
    * Also fetches the updated user balance
    */
   const returnToLobby = () => {
-    // First update the view state
+    console.log('[Lobby] Returning to lobby');
+    
+    // Get the current gameId before resetting state
+    const currentGameId = lobbyState.gameId;
+    
+    // Reset the lobby state completely
     setLobbyState(prevState => ({
-      ...prevState,
+      playerName: prevState.playerName,
+      gameList: prevState.gameList,
+      gameId: null,
+      gameState: null,  // Fully clear game state
       view: 'lobby',
-      gameId: null
+      error: null,
+      isAuthenticated: prevState.isAuthenticated
     }));
     
     // Then fetch the updated user balance
     if (socket && isConnected) {
+      console.log('[Lobby] Emitting events to refresh lobby data');
+      
+      // Tell the server we're leaving the game (new event)
+      if (currentGameId) {
+        socket.emit('leaveGameLobby', { gameId: currentGameId });
+      }
+      
       // Request updated balance when returning to lobby
       socket.emit('getBalance');
+      
+      // Request fresh game list
+      socket.emit('getGameList');
     }
   };
   

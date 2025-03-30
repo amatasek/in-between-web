@@ -2,21 +2,29 @@ import React, { useState, useEffect } from 'react';
 import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useSocket } from '../contexts/SocketContext';
+import { CircularProgress, Box, Typography } from '@mui/material';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
   const { lobbyState, createGame, joinGame } = useLobby();
   const { error: lobbyError, gameList } = lobbyState;
   const { user, logout } = useAuth();
+  const { isConnected } = useSocket();
   const [gameIdInput, setGameIdInput] = useState('');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // We'll handle loading state manually instead of using an effect
+
+  // Check user data and socket connection status
   useEffect(() => {
     try {
       // Check if user exists and has required properties
       if (!user) {
         console.log('[Lobby] No user data found');
         setError('Please log in to continue');
+        setIsLoading(false);
         return;
       }
 
@@ -24,6 +32,7 @@ const Lobby = () => {
         console.error('[Lobby] Invalid user data:', user);
         setError('Invalid user data');
         logout(); // Clear invalid session
+        setIsLoading(false);
         return;
       }
 
@@ -32,13 +41,25 @@ const Lobby = () => {
         id: user.id
       });
 
-      setError(null);
+      // Only stop loading when socket is connected
+      if (isConnected) {
+        console.log('[Lobby] Socket connected, ready to create/join games');
+        setIsLoading(false);
+        setError(null);
+        
+        // We've removed the localStorage approach since we fixed the core issue
+        // with duplicate event handlers in GameContext and LobbyContext
+      } else {
+        console.log('[Lobby] Waiting for socket connection...');
+        setIsLoading(true);
+      }
     } catch (err) {
       console.error('[Lobby] Error processing user data:', err);
       setError('Error loading user data');
       logout(); // Clear potentially corrupted session
+      setIsLoading(false);
     }
-  }, [user, logout]);
+  }, [user, logout, isConnected]);
   
   const handleCreateGame = () => {
     if (!user?.id) {
@@ -46,7 +67,14 @@ const Lobby = () => {
       return;
     }
     
-    // Create game directly - username will be handled by the server
+    // First clear any errors
+    setError(null);
+    
+    // Show loading state
+    setIsLoading(true);
+    
+    // Simply call the createGame function directly
+    // Since we fixed the duplicate event handler issue, this works correctly now
     createGame();
   };
   
@@ -59,7 +87,19 @@ const Lobby = () => {
       setError('Please enter a game ID');
       return;
     }
-    joinGame(gameIdInput);
+    
+    // First clear any errors
+    setError(null);
+    
+    // Show loading state
+    setIsLoading(true);
+    
+    // Simply call the joinGame function directly
+    // Since we fixed the duplicate event handler issue, this works correctly now
+    joinGame(gameIdInput.trim());
+    
+    // Clear the input field
+    setGameIdInput('');
   };
   
   const handleGameIdChange = (e) => {
@@ -71,6 +111,61 @@ const Lobby = () => {
       handleJoinGame();
     }
   };
+  
+  // Loading overlay component that shows during game transitions
+  const LoadingOverlay = () => (
+    <Box sx={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(26, 26, 46, 0.9)',
+      zIndex: 1000,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 3
+    }}>
+      <CircularProgress size={60} sx={{ color: '#3498db' }} />
+      <Typography variant="h6" sx={{ color: '#ecf0f1', mt: 2 }}>
+        Connecting to game...
+      </Typography>
+      <Typography variant="body1" sx={{ color: '#bdc3c7', textAlign: 'center', maxWidth: '80%' }}>
+        Please wait while we establish a connection to the game.
+      </Typography>
+    </Box>
+  );
+
+  // Render loading state while socket is connecting
+  if (isLoading) {
+    return (
+      <div className={styles.lobbyContainer}>
+        <div className={styles.logoContainer}>
+          <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
+          <p className={styles.gameSubtitle}>A classic card betting game</p>
+        </div>
+        
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          height: '50vh',
+          gap: 3
+        }}>
+          <CircularProgress size={60} sx={{ color: '#3498db' }} />
+          <Typography variant="h6" sx={{ color: '#ecf0f1', mt: 2 }}>
+            Connecting to game server...
+          </Typography>
+          <Typography variant="body1" sx={{ color: '#bdc3c7', textAlign: 'center', maxWidth: '80%' }}>
+            Please wait while we establish a secure connection to the game server.
+          </Typography>
+        </Box>
+      </div>
+    );
+  }
   
   return (
     <div className={styles.lobbyContainer}>

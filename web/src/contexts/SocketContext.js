@@ -31,6 +31,11 @@ export const SocketProvider = ({ children }) => {
 
   // Initialize Socket.IO connection
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     const token = localStorage.getItem('token');
     if (!token) {
       // Skip socket connection if no auth token is available

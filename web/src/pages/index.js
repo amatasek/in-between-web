@@ -15,22 +15,41 @@ import { AuthProvider, useAuth } from '../contexts/AuthContext';
 // A component that uses the lobby context to determine what to show
 const LobbyContent = () => {
   const { user } = useAuth();
-  const { lobbyState, returnToLobby } = useLobby();
-  const { gameId, gameState } = lobbyState;
+  const { lobbyState, returnToLobby, joinGame } = useLobby();
+  const { gameId, gameState, view } = lobbyState;
+  
+  // Add detailed logging for debugging
+  React.useEffect(() => {
+    console.log('[App] LobbyContent state changed:', { 
+      gameId, 
+      view,
+      hasGameState: !!gameState,
+      user: user?.username
+    });
+  }, [gameId, view, gameState, user]);
+  
+  // We've removed all page reload approaches since we fixed the core issue
+  // with the duplicate event handlers in GameContext and LobbyContext
   
   // If not logged in, show auth page
   if (!user) {
     return <AuthPage />;
   }
 
-  // If there's no gameId, show the lobby, otherwise show the game
-  return !gameId ? (
-    <Lobby />
-  ) : (
-    <GameProvider gameId={gameId} initialGameState={gameState}>
-      <GameScreen onReturnToLobby={returnToLobby} />
-    </GameProvider>
-  );
+  // IMPORTANT: We're using a strict view-based approach to determine what to show
+  // This ensures we respect the view state from LobbyContext regardless of other state
+  if (view === 'game' && gameId) {
+    console.log('[App] Rendering game view for game:', gameId);
+    return (
+      <GameProvider gameId={gameId} initialGameState={gameState}>
+        <GameScreen onReturnToLobby={returnToLobby} />
+      </GameProvider>
+    );
+  } else {
+    // Default to lobby view for any other state
+    console.log('[App] Rendering lobby view');
+    return <Lobby />;
+  }
 };
 
 // Main App component that switches between lobby and game views

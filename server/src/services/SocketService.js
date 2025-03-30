@@ -323,6 +323,49 @@ class SocketService {
           socket.emit('error', { message: 'Failed to fetch balance' });
         }
       });
+      
+      // Event: Leave game and return to lobby (without disconnecting)
+      socket.on('leaveGameLobby', (data) => {
+        try {
+          console.log(`[SOCKET_SERVICE] Player ${socket.id} leaving game lobby: ${data.gameId}`);
+          
+          // Check if the socket is associated with a game
+          const currentGameId = this.connectedSockets.get(socket.id);
+          
+          // If there's a mismatch, use the game ID from the socket map
+          const gameId = currentGameId || data.gameId;
+          
+          if (gameId && GameService.games && GameService.games[gameId]) {
+            const game = GameService.games[gameId];
+            
+            // Remove player from game
+            GameService.removePlayer(game, socket.id);
+            
+            // Broadcast updated game state
+            this.broadcastGameState(game);
+            
+            // Leave the game room but keep the socket connected
+            socket.leave(gameId);
+            
+            // Remove from connected sockets map
+            this.connectedSockets.delete(socket.id);
+            
+            console.log(`[SOCKET_SERVICE] Player ${socket.id} successfully left game ${gameId}`);
+            
+            // Send confirmation to client
+            socket.emit('leftGame', { success: true });
+            
+            // Send updated game list
+            this.sendGameListToClient(socket);
+          } else {
+            console.log(`[SOCKET_SERVICE] No game found for player ${socket.id} to leave`);
+            socket.emit('leftGame', { success: true });
+          }
+        } catch (error) {
+          console.error(`[SOCKET_SERVICE] Error in leaveGameLobby:`, error);
+          socket.emit('error', { message: 'Failed to leave game' });
+        }
+      });
 
       // Event: Disconnect
       socket.on('disconnect', () => {
