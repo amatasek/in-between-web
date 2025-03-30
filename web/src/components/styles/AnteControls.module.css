@@ -1,0 +1,117 @@
+.anteControlsWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.buttonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.anteButton, .backOutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(44, 62, 80, 0.9);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  width: 150px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.anteButton {
+  border: 2px solid #2ecc71;
+}
+
+.anteButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(46, 204, 113, 0.4);
+}
+
+.anteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border: 2px solid #95a5a6;
+}
+
+.backOutButton {
+  border: 2px solid #e74c3c;
+}
+
+.backOutButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(231, 76, 60, 0.4);
+}
+
+.anteIcon, .backOutIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.5rem;
+}
+
+.anteIcon {
+  color: #2ecc71;
+  filter: drop-shadow(0 0 3px rgba(46, 204, 113, 0.5));
+}
+
+.backOutIcon {
+  color: #e74c3c;
+  filter: drop-shadow(0 0 3px rgba(231, 76, 60, 0.5));
+}
+
+.buttonInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.buttonLabel {
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.anteButton .buttonLabel {
+  color: #2ecc71;
+}
+
+.backOutButton .buttonLabel {
+  color: #e74c3c;
+}
+
+.buttonAmount {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.anteButton .buttonAmount {
+  color: #2ecc71;
+  text-shadow: 0 0 5px rgba(46, 204, 113, 0.3);
+}
+
+.backOutButton .buttonAmount {
+  color: #e74c3c;
+  text-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+}
+
+.notEnoughChipsText {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+  background-color: rgba(231, 76, 60, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-align: center;
+}

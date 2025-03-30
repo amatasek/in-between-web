@@ -1,0 +1,115 @@
+.gameScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0.5rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  color: #ecf0f1;
+  font-size: 1.5rem;
+}
+
+.errorContainer {
+  background-color: rgba(231, 76, 60, 0.2);
+  border-left: 4px solid #e74c3c;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.errorText {
+  color: #e74c3c;
+  margin: 0;
+}
+
+.potDisplayWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+}
+
+.resultsContainer {
+  background-color: rgba(52, 73, 94, 0.8);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.resultContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.resultText {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+}
+
+.winText {
+  color: #2ecc71;
+  text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.tieText {
+  color: #f39c12;
+  text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+}
+
+.loseText {
+  color: #e74c3c;
+  text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+}
+
+.winningsText {
+  color: #f1c40f;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.countdownContainer {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.countdownText {
+  color: #ecf0f1;
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.countdownBar {
+  height: 8px;
+  background-color: #3498db;
+  border-radius: 4px;
+  transition: width 1s linear;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.7);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
