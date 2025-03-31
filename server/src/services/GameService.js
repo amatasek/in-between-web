@@ -49,7 +49,7 @@ class GameService {
       game.currentPlayerId = currentPlayerId;
     }
     
-    // Log the current player for debugging
+    // Log the current player for the round
     gameLog(game, `Starting round ${game.round} with current player: ${game.players[game.currentPlayerId]?.name}`);
     
     // Start dealing sequence

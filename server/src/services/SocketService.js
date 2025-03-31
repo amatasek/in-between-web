@@ -586,8 +586,6 @@ class SocketService {
       game.dealerRotationNotification = null;
     }
     
-    // Debug log to check if waitingForAceDecision is included in the game state
-
     
     // Ensure waitingForAceDecision is explicitly included in the game state
     gameState.waitingForAceDecision = !!game.waitingForAceDecision;

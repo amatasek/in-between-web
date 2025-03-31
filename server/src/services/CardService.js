@@ -81,9 +81,8 @@ class CardService {
       this.handleDeckRenewal(game);
     }
     
-    // TESTING: Force the first card to be a 4
+    // Deal the first card (left position)
     const firstCard = game.deck.pop();
-    firstCard.value = '4'; // Force the card to be a 4
     
     gameLog(game, `Dealt first card: ${firstCard.value}${firstCard.suit} (left position)`);
     gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
@@ -111,8 +110,7 @@ class CardService {
     // Deal second card (right position)
     const secondCard = game.deck.pop();
     
-    // TESTING: Force the second card to be a 4
-    secondCard.value = '4';
+    // Second card is now dealt
     
     gameLog(game, `Dealt second card: ${secondCard.value}${secondCard.suit} (right position)`);
     gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
