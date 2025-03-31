@@ -52,6 +52,14 @@ const Lobby = () => {
       } else {
         console.log('[Lobby] Waiting for socket connection...');
         setIsLoading(true);
+        
+        // Set a timeout to prevent getting stuck on loading screen
+        const timeoutId = setTimeout(() => {
+          console.log('[Lobby] Socket connection timeout, proceeding anyway');
+          setIsLoading(false);
+        }, 3000); // 3 seconds timeout
+        
+        return () => clearTimeout(timeoutId);
       }
     } catch (err) {
       console.error('[Lobby] Error processing user data:', err);

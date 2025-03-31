@@ -145,6 +145,9 @@ class SocketService {
             playerId: socket.id
           });
           
+          // Broadcast updated game list to all clients in the lobby
+          this.broadcastGameList();
+          
           gameLog(game, `Game created by ${user.username} (${socket.id})`);
         } catch (error) {
           console.error(`[SOCKET_SERVICE] Error creating game:`, error);
@@ -341,8 +344,13 @@ class SocketService {
             // Remove player from game
             GameService.removePlayer(game, socket.id);
             
-            // Broadcast updated game state
-            this.broadcastGameState(game);
+            // Check if game is now empty and should be cleaned up
+            const wasGameRemoved = this.cleanupGameIfEmpty(game);
+            
+            if (!wasGameRemoved) {
+              // Only broadcast game state if the game wasn't removed
+              this.broadcastGameState(game);
+            }
             
             // Leave the game room but keep the socket connected
             socket.leave(gameId);
@@ -379,14 +387,12 @@ class SocketService {
             // Remove player from game
             GameService.removePlayer(game, socket.id);
             
-            // Broadcast updated game state
-            this.broadcastGameState(game);
+            // Check if game is now empty and should be cleaned up
+            const wasGameRemoved = this.cleanupGameIfEmpty(game);
             
-            // Clean up if all players disconnected
-            const connectedPlayers = Object.values(game.players).filter(p => p.isConnected);
-            if (connectedPlayers.length === 0) {
-              gameLog(game, 'All players disconnected, cleaning up game');
-              delete GameService.games[gameId];
+            if (!wasGameRemoved) {
+              // Only broadcast game state if the game wasn't removed
+              this.broadcastGameState(game);
             }
             
             // Leave room and remove from connected sockets map
@@ -476,6 +482,30 @@ class SocketService {
     // Send game list to all connected clients
     this.io.emit('gameList', gameList);
     console.log(`[SOCKET_SERVICE] Broadcasting list of ${gameList.length} available games`);
+  }
+  
+  /**
+   * Check if a game is empty and clean it up if it is
+   * @param {Object} game - The game to check
+   * @returns {boolean} - True if the game was cleaned up, false otherwise
+   */
+  cleanupGameIfEmpty(game) {
+    if (!game) return false;
+    
+    // Check if there are any connected players
+    const connectedPlayers = Object.values(game.players).filter(p => p.isConnected);
+    
+    if (connectedPlayers.length === 0) {
+      gameLog(game, 'All players left, removing game');
+      delete GameService.games[game.id];
+      
+      // Broadcast updated game list after removal
+      this.broadcastGameList();
+      
+      return true;
+    }
+    
+    return false;
   }
 
   /**
