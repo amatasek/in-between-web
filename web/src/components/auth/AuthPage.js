@@ -3,6 +3,7 @@ import { Box, Button, Typography } from '@mui/material';
 import AuthForm from './AuthForm';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './AuthPage.module.css';
+import AppHeader from '../common/AppHeader';
 
 const AuthPage = () => {
   const [mode, setMode] = useState('login');
@@ -77,13 +78,7 @@ const AuthPage = () => {
 
   return (
     <Box className={styles.authPage}>
-      <Typography variant="h4" component="h1" className={styles.title}>
-        In Between <span className={styles.liveTag}>LIVE</span>
-      </Typography>
-      
-      <Typography variant="subtitle1" className={styles.subtitle}>
-        The classic card game of chance and strategy
-      </Typography>
+      <AppHeader />
       
       <Box className={styles.formContainer}>
         {error && (

@@ -3,7 +3,8 @@ import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
-import { CircularProgress, Box, Typography } from '@mui/material';
+import { CircularProgress, Box, Typography, TextField, useMediaQuery } from '@mui/material';
+import AppHeader from './common/AppHeader';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
@@ -14,6 +15,8 @@ const Lobby = () => {
   const [gameIdInput, setGameIdInput] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isMobile = useMediaQuery('(max-width:600px)');
+  const isSmallMobile = useMediaQuery('(max-width:400px)');
 
   // We'll handle loading state manually instead of using an effect
 
@@ -150,10 +153,7 @@ const Lobby = () => {
   if (isLoading) {
     return (
       <div className={styles.lobbyContainer}>
-        <div className={styles.logoContainer}>
-          <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
-          <p className={styles.gameSubtitle}>A classic card betting game</p>
-        </div>
+        <AppHeader />
         
         <Box sx={{ 
           display: 'flex', 
@@ -177,10 +177,7 @@ const Lobby = () => {
   
   return (
     <div className={styles.lobbyContainer}>
-      <div className={styles.logoContainer}>
-        <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
-        <p className={styles.gameSubtitle}>A classic card betting game</p>
-      </div>
+      <AppHeader />
       
       <div className={styles.formContainer}>
         <div className={styles.formSection}>
@@ -215,15 +212,43 @@ const Lobby = () => {
             <div className={styles.orDivider}>or</div>
             
             <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Game ID</label>
               <div className={styles.joinInputGroup}>
-                <input
-                  type="text"
-                  className={`${styles.textInput} ${styles.gameIdInput}`}
+                <TextField
+                  label="Game ID"
+                  variant="outlined"
+                  fullWidth
                   value={gameIdInput}
                   onChange={handleGameIdChange}
                   onKeyPress={handleKeyPress}
-                  placeholder="Enter game ID"
+                  size={isSmallMobile ? "small" : "medium"}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--info-light)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'var(--info)',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: 'var(--info)',
+                      },
+                      backgroundColor: 'white',
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: 'var(--info-light)',
+                      fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                    },
+                    '& .MuiOutlinedInput-input': {
+                      color: 'var(--text-dark)',
+                      fontWeight: 500,
+                      padding: isSmallMobile ? '12px 14px' : '16.5px 14px',
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: 'var(--info)',
+                    },
+                    marginBottom: 0,
+                    flex: 1,
+                  }}
                 />
                 <button 
                   className={`${styles.actionButton} ${styles.joinButton}`}

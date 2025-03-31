@@ -1,11 +1,15 @@
 .lobbyContainer {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  max-width: 600px;
-  margin: 0 auto;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 2rem;
   box-sizing: border-box;
+  background-color: #1a2a3a;
+  background-image: linear-gradient(to bottom right, #1a2a3a, #2c3e50);
+  min-height: 100vh;
 }
 
 /* Responsive adjustments for mobile */
@@ -21,22 +25,9 @@
   }
 }
 
-.logoContainer {
-  text-align: center;
-  margin-bottom: 2rem;
-}
+/* Logo container styles moved to GameHeader.module.css */
 
-.gameTitle {
-  font-size: 3rem;
-  color: #ecf0f1;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-align: center;
-}
+/* Game title styles moved to GameHeader.module.css */
 
 /* Responsive font sizes */
 @media (max-width: 600px) {
@@ -78,23 +69,21 @@
   }
 }
 
-.gameSubtitle {
-  font-size: 1.2rem;
-  color: #bdc3c7;
-  margin: 0;
-}
+/* Game subtitle styles moved to GameHeader.module.css */
 
 .formContainer {
   width: 100%;
-  background-color: #2c3e50;
+  max-width: 600px;
+  background-color: white;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   margin-bottom: 2rem;
-  background-image: linear-gradient(120deg, #2c3e50, #34495e);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: var(--button-transition);
 }
 
 /* Responsive padding for mobile */
@@ -227,26 +216,24 @@
 }
 
 .inputLabel {
-  display: block;
-  font-size: 1rem;
-  color: #ecf0f1;
-  margin-bottom: 0.5rem;
+  display: none; /* Hide the label */
 }
 
 .textInput {
   width: 100%;
   padding: 0.8rem;
-  background-color: #34495e;
-  border: 1px solid #7f8c8d;
-  border-radius: 4px;
-  color: #ecf0f1;
+  background-color: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--info-light);
+  border-radius: var(--radius-md);
+  color: var(--text-dark);
   font-size: 1rem;
   transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: var(--shadow-sm);
 }
 
 .textInput:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--info);
   box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
@@ -283,16 +270,16 @@
 }
 
 .createButton {
-  background: var(--gradient-success);
+  background: linear-gradient(to right, var(--info), var(--success));
   color: white;
   position: relative;
   overflow: hidden;
 }
 
 .createButton:hover:not(:disabled) {
-  box-shadow: var(--button-shadow-hover);
+  background: linear-gradient(to right, var(--info-dark), var(--success-dark));
+  box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
-  filter: brightness(1.05);
 }
 
 .orDivider {
@@ -335,10 +322,7 @@
   .joinButton {
     width: 100% !important;
     margin-top: 0.25rem;
-  }
-  
-  .gameIdInput {
-    width: 100%;
+    height: 48px; /* Slightly smaller height for mobile */
   }
 }
 
@@ -349,18 +333,20 @@
 }
 
 .joinButton {
-  background: var(--gradient-info);
+  background: var(--info);
   color: white;
   flex: 0 0 auto;
   width: auto !important; /* Override the width: 100% from actionButton */
   min-width: 80px;
   text-transform: none;
+  height: 56px; /* Match height of Material UI TextField */
+  margin-top: 0; /* Remove top margin */
 }
 
 .joinButton:hover:not(:disabled) {
+  background: var(--info-dark);
   box-shadow: var(--button-shadow-hover);
   transform: translateY(-2px);
-  filter: brightness(1.05);
 }
 
 .errorMessage {
@@ -401,15 +387,17 @@
 /* Game List Styles */
 .gameListContainer {
   width: 100%;
-  background-color: #2c3e50;
+  max-width: 600px;
+  background-color: white;
   padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   margin-top: 2rem;
   margin-bottom: 2rem;
-  background-image: linear-gradient(120deg, #34495e, #2c3e50);
   min-height: 200px;
   box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: var(--button-transition);
 }
 
 @media (max-width: 400px) {
@@ -423,13 +411,14 @@
 
 .gameListTitle {
   font-size: 1.5rem;
-  color: #ecf0f1;
+  color: var(--text-dark);
   margin-top: 0;
   margin-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding-bottom: 0.5rem;
   display: flex;
   align-items: center;
+  font-weight: 600;
 }
 
 .gameListTitle::before {
@@ -448,17 +437,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #34495e;
+  background-color: rgba(52, 152, 219, 0.1);
   padding: 1rem;
-  border-radius: 8px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(52, 152, 219, 0.2);
 }
 
 .gameListItem:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #3a526d;
+  box-shadow: var(--shadow-md);
+  background-color: rgba(52, 152, 219, 0.2);
 }
 
 .gameListInfo {
@@ -469,38 +459,39 @@
 .gameListId {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #ecf0f1;
+  color: var(--info-dark);
 }
 
 .gameListPlayers {
   font-size: 0.9rem;
-  color: #bdc3c7;
+  color: var(--text-dark);
   margin-top: 0.25rem;
 }
 
 .joinGameButton {
-  background-color: #2ecc71;
+  background: var(--info);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-md);
+  padding: var(--button-padding-sm);
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .joinGameButton:hover:not(:disabled) {
-  background-color: #27ae60;
+  background: var(--info-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .joinGameButton:disabled {
-  background-color: #95a5a6;
+  background: var(--gradient-neutral);
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
+  box-shadow: var(--shadow-sm);
+  opacity: 0.7;
 }
 
 /* Empty state styles */
@@ -512,6 +503,9 @@
   padding: 2rem;
   min-height: 150px;
   text-align: center;
+  background-color: rgba(52, 152, 219, 0.05);
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(52, 152, 219, 0.2);
 }
 
 .emptyStateIcon {
@@ -522,12 +516,13 @@
 
 .emptyStateMessage {
   font-size: 1.2rem;
-  color: #ecf0f1;
+  color: var(--text-dark);
   margin: 0.5rem 0;
+  font-weight: 500;
 }
 
 .emptyStateHint {
   font-size: 1rem;
-  color: #bdc3c7;
+  color: var(--text-secondary);
   margin: 0.5rem 0;
 }

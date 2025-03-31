@@ -25,52 +25,17 @@
   }
 }
 
-.title {
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-lg);
-  font-weight: bold;
-  font-size: 2.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
+/* Title styles moved to GameHeader.module.css */
 
-@media (max-width: 600px) {
-  .title {
-    font-size: 2rem;
-    margin-bottom: var(--spacing-md);
-  }
-}
+/* Title media queries moved to GameHeader.module.css */
 
-@media (max-width: 400px) {
-  .title {
-    font-size: 1.75rem;
-  }
-}
+/* Title media queries moved to GameHeader.module.css */
 
-.subtitle {
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-lg);
-  text-align: center;
-  font-size: 1.2rem;
-}
+/* Subtitle styles moved to GameHeader.module.css */
 
-@media (max-width: 600px) {
-  .subtitle {
-    font-size: 1.1rem;
-    margin-bottom: var(--spacing-md);
-  }
-}
+/* Subtitle media queries moved to GameHeader.module.css */
 
-@media (max-width: 400px) {
-  .subtitle {
-    font-size: 1rem;
-  }
-}
+/* Subtitle media queries moved to GameHeader.module.css */
 
 .error {
   margin: var(--spacing-md) 0;
