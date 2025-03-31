@@ -86,6 +86,14 @@
   transition: var(--button-transition);
 }
 
+.gradientDivider {
+  height: 2px;
+  width: 100%;
+  margin: 0.25rem 0 0.5rem 0;
+  background: linear-gradient(to right, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.8), rgba(52, 152, 219, 0.2));
+  border-radius: 1px;
+}
+
 /* Responsive padding for mobile */
 @media (max-width: 600px) {
   .formContainer {
@@ -115,7 +123,7 @@
 .welcomeMessage {
   font-size: 1.2rem;
   color: #ecf0f1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   padding: 1rem;
   background: linear-gradient(120deg, #2c3e50, #3498db);
   border-radius: 8px;
@@ -282,72 +290,21 @@
   transform: translateY(-2px);
 }
 
-.orDivider {
-  display: flex;
-  align-items: center;
-  color: #bdc3c7;
-  width: 100%;
-  margin: 1rem 0;
-}
+/* Removed unused orDivider styles */
 
-.orDivider::before,
-.orDivider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #7f8c8d;
-}
 
-.orDivider::before {
-  margin-right: 0.5rem;
-}
 
-.orDivider::after {
-  margin-left: 0.5rem;
-}
 
-.joinInputGroup {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-}
 
-/* Responsive layout for mobile */
-@media (max-width: 480px) {
-  .joinInputGroup {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .joinButton {
-    width: 100% !important;
-    margin-top: 0.25rem;
-    height: 48px; /* Slightly smaller height for mobile */
-  }
-}
 
-.gameIdInput {
-  flex: 1;
-  min-width: 0; /* Reset min-width to prevent overflow */
-  width: 100%;
-}
 
-.joinButton {
-  background: var(--info);
-  color: white;
-  flex: 0 0 auto;
-  width: auto !important; /* Override the width: 100% from actionButton */
-  min-width: 80px;
-  text-transform: none;
-  height: 56px; /* Match height of Material UI TextField */
-  margin-top: 0; /* Remove top margin */
-}
+/* Removed unused join section styles */
 
-.joinButton:hover:not(:disabled) {
-  background: var(--info-dark);
-  box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
-}
+
+
+
+
+
 
 .errorMessage {
   color: #e74c3c;
@@ -410,21 +367,29 @@
 }
 
 .gameListTitle {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: var(--text-dark);
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding-bottom: 0.5rem;
   display: flex;
   align-items: center;
   font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
-.gameListTitle::before {
-  content: '🎮';
-  margin-right: 0.5rem;
-  font-size: 1.3rem;
+.searchContainer {
+  margin-bottom: 0.75rem;
+  width: 100%;
+}
+
+.searchIcon {
+  font-size: 1.2rem;
+  color: var(--info);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gameListWrapper {

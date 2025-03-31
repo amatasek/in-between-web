@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
-import { CircularProgress, Box, Typography, TextField, useMediaQuery } from '@mui/material';
+import { CircularProgress, Box, Typography, TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
+import CoinIcon from './common/CoinIcon';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
@@ -12,7 +13,7 @@ const Lobby = () => {
   const { error: lobbyError, gameList } = lobbyState;
   const { user, logout } = useAuth();
   const { isConnected } = useSocket();
-  const [gameIdInput, setGameIdInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -89,13 +90,9 @@ const Lobby = () => {
     createGame();
   };
   
-  const handleJoinGame = () => {
+  const handleJoinGame = (gameId) => {
     if (!user?.id) {
       setError('Please log in to join a game');
-      return;
-    }
-    if (!gameIdInput.trim()) {
-      setError('Please enter a game ID');
       return;
     }
     
@@ -105,23 +102,24 @@ const Lobby = () => {
     // Show loading state
     setIsLoading(true);
     
-    // Simply call the joinGame function directly
-    // Since we fixed the duplicate event handler issue, this works correctly now
-    joinGame(gameIdInput.trim());
+    // Call the joinGame function with the selected game ID
+    joinGame(gameId);
+  };
+  
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  
+  // Filter games based on search query
+  const filteredGameList = useMemo(() => {
+    if (!searchQuery.trim() || !gameList) return gameList;
     
-    // Clear the input field
-    setGameIdInput('');
-  };
-  
-  const handleGameIdChange = (e) => {
-    setGameIdInput(e.target.value);
-  };
-  
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleJoinGame();
-    }
-  };
+    const query = searchQuery.trim().toLowerCase();
+    return gameList.filter(game => 
+      game.id.toLowerCase().includes(query) ||
+      (game.hostName && game.hostName.toLowerCase().includes(query))
+    );
+  }, [gameList, searchQuery]);
   
   // Loading overlay component that shows during game transitions
   const LoadingOverlay = () => (
@@ -189,7 +187,7 @@ const Lobby = () => {
                 <div className={styles.welcomeText}>Welcome, {user?.username || 'Player'}!</div>
               )}
               <div className={styles.balanceDisplay}>
-                Balance: ${Number(user?.balance) || 0}
+                Balance: <CoinIcon size="medium" />{Number(user?.balance) || 0}
               </div>
               <button 
                 className={`${styles.actionButton} ${styles.logoutButton}`}
@@ -200,6 +198,8 @@ const Lobby = () => {
             </div>
           </div>
           
+          <div className={styles.gradientDivider}></div>
+          
           <div className={styles.buttonGroup}>
             <button 
               className={`${styles.actionButton} ${styles.createButton}`}
@@ -208,57 +208,6 @@ const Lobby = () => {
             >
               Create New Game
             </button>
-            
-            <div className={styles.orDivider}>or</div>
-            
-            <div className={styles.inputGroup}>
-              <div className={styles.joinInputGroup}>
-                <TextField
-                  label="Game ID"
-                  variant="outlined"
-                  fullWidth
-                  value={gameIdInput}
-                  onChange={handleGameIdChange}
-                  onKeyPress={handleKeyPress}
-                  size={isSmallMobile ? "small" : "medium"}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: 'var(--info-light)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'var(--info)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: 'var(--info)',
-                      },
-                      backgroundColor: 'white',
-                    },
-                    '& .MuiInputLabel-root': {
-                      color: 'var(--info-light)',
-                      fontSize: isSmallMobile ? '0.9rem' : '1rem',
-                    },
-                    '& .MuiOutlinedInput-input': {
-                      color: 'var(--text-dark)',
-                      fontWeight: 500,
-                      padding: isSmallMobile ? '12px 14px' : '16.5px 14px',
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: 'var(--info)',
-                    },
-                    marginBottom: 0,
-                    flex: 1,
-                  }}
-                />
-                <button 
-                  className={`${styles.actionButton} ${styles.joinButton}`}
-                  onClick={handleJoinGame}
-                  disabled={!user || !gameIdInput.trim()}
-                >
-                  Join
-                </button>
-              </div>
-            </div>
           </div>
         </div>
         
@@ -272,9 +221,55 @@ const Lobby = () => {
       {/* Game List Section - Always shown */}
       <div className={styles.gameListContainer}>
         <h2 className={styles.gameListTitle}>Available Games</h2>
-        {gameList && gameList.length > 0 ? (
+        
+        {/* Search bar for filtering games */}
+        <div className={styles.searchContainer}>
+          <TextField
+            placeholder="Search games by ID"
+            variant="outlined"
+            fullWidth
+            value={searchQuery}
+            onChange={handleSearchChange}
+            size={isSmallMobile ? "small" : "medium"}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <span className={styles.searchIcon}>🔍</span>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'var(--info-light)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'var(--info)',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: 'var(--info)',
+                },
+                backgroundColor: 'white',
+              },
+              '& .MuiInputLabel-root': {
+                color: 'var(--info-light)',
+              },
+              '& .MuiOutlinedInput-input': {
+                color: 'var(--text-dark)',
+                fontWeight: 500,
+                padding: isSmallMobile ? '8px 10px' : '10px 12px',
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: 'var(--info)',
+              },
+              marginBottom: '0.75rem',
+            }}
+          />
+        </div>
+        
+        {filteredGameList && filteredGameList.length > 0 ? (
           <div className={styles.gameListWrapper}>
-            {gameList.map(game => (
+            {filteredGameList.map(game => (
               <div key={game.id} className={styles.gameListItem}>
                 <div className={styles.gameListInfo}>
                   <div className={styles.gameListId}>{game.id}</div>
@@ -284,7 +279,7 @@ const Lobby = () => {
                 </div>
                 <button 
                   className={styles.joinGameButton}
-                  onClick={() => joinGame(game.id)}
+                  onClick={() => handleJoinGame(game.id)}
                   disabled={!user}
                 >
                   Join
@@ -295,8 +290,14 @@ const Lobby = () => {
         ) : (
           <div className={styles.emptyGameList}>
             <div className={styles.emptyStateIcon}>🃏</div>
-            <p className={styles.emptyStateMessage}>No games in progress</p>
-            <p className={styles.emptyStateHint}>Create a new game to get started!</p>
+            <p className={styles.emptyStateMessage}>
+              {searchQuery.trim() ? 'No matching games found' : 'No games in progress'}
+            </p>
+            <p className={styles.emptyStateHint}>
+              {searchQuery.trim() 
+                ? 'Try a different search or create a new game' 
+                : 'Create a new game to get started!'}
+            </p>
           </div>
         )}
       </div>
