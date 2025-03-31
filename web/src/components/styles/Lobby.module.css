@@ -5,6 +5,20 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+  .lobbyContainer {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .lobbyContainer {
+    padding: 0.5rem;
+  }
 }
 
 .logoContainer {
@@ -21,6 +35,20 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  text-align: center;
+}
+
+/* Responsive font sizes */
+@media (max-width: 600px) {
+  .gameTitle {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .gameTitle {
+    font-size: 2rem;
+  }
 }
 
 .liveTag {
@@ -66,6 +94,21 @@
   background-image: linear-gradient(120deg, #2c3e50, #34495e);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Responsive padding for mobile */
+@media (max-width: 600px) {
+  .formContainer {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .formContainer {
+    padding: 1rem 1rem 1.5rem 1rem;
+    border-radius: 8px;
+  }
 }
 
 .formSection {
@@ -109,33 +152,78 @@
   white-space: nowrap;
 }
 
+@media (max-width: 400px) {
+  .balanceDisplay {
+    margin: 0.25rem 0;
+    font-size: 1.2rem;
+    padding: 0.4rem 0.8rem;
+    align-self: flex-start;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+  }
+}
+
 .welcomeHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 400px) {
+  .welcomeHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding-bottom: 0.8rem;
+    position: static;
+  }
+  
+  .welcomeText {
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+    display: block;
+  }
 }
 
 .logoutButton {
-  background-color: #e74c3c;
+  background: var(--gradient-secondary);
   color: white;
-  padding: 0.1rem 0.2rem;
-  font-size: 0.6rem;
-  border-radius: 1px;
+  padding: var(--button-padding-sm);
+  font-size: 0.85rem;
+  border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: var(--button-transition);
   min-width: 25px;
   line-height: 1;
-  transform: scale(0.8);
+  box-shadow: var(--button-shadow);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: none;
+}
+
+@media (max-width: 400px) {
+  .logoutButton {
+    position: static;
+    align-self: flex-start;
+    margin-top: 0.2rem;
+  }
 }
 
 .logoutButton:hover {
-  background-color: #c0392b;
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
+  filter: brightness(1.05);
 }
 
 .logoutButton:active {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: var(--button-shadow);
+  filter: brightness(0.95);
 }
 
 .inputLabel {
@@ -170,37 +258,41 @@
 }
 
 .actionButton {
-  padding: 0.8rem 1.5rem;
+  padding: var(--button-padding-lg);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  transition: var(--button-transition);
   width: 100%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--button-shadow);
   display: flex;
   justify-content: center;
   align-items: center;
+  letter-spacing: 0.5px;
+  text-transform: none;
 }
 
 .actionButton:disabled {
-  background-color: #95a5a6;
+  background: var(--gradient-neutral);
   cursor: not-allowed;
   transform: none;
+  opacity: 0.7;
+  box-shadow: var(--shadow-sm);
 }
 
 .createButton {
-  background-color: #2ecc71;
+  background: var(--gradient-success);
   color: white;
   position: relative;
   overflow: hidden;
 }
 
 .createButton:hover:not(:disabled) {
-  background-color: #27ae60;
+  box-shadow: var(--button-shadow-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.05);
 }
 
 .orDivider {
@@ -233,6 +325,23 @@
   width: 100%;
 }
 
+/* Responsive layout for mobile */
+@media (max-width: 480px) {
+  .joinInputGroup {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .joinButton {
+    width: 100% !important;
+    margin-top: 0.25rem;
+  }
+  
+  .gameIdInput {
+    width: 100%;
+  }
+}
+
 .gameIdInput {
   flex: 1;
   min-width: 0; /* Reset min-width to prevent overflow */
@@ -240,16 +349,18 @@
 }
 
 .joinButton {
-  background-color: #3498db;
+  background: var(--gradient-info);
   color: white;
   flex: 0 0 auto;
   width: auto !important; /* Override the width: 100% from actionButton */
   min-width: 80px;
+  text-transform: none;
 }
 
 .joinButton:hover:not(:disabled) {
-  background-color: #2980b9;
+  box-shadow: var(--button-shadow-hover);
   transform: translateY(-2px);
+  filter: brightness(1.05);
 }
 
 .errorMessage {
@@ -298,6 +409,16 @@
   margin-bottom: 2rem;
   background-image: linear-gradient(120deg, #34495e, #2c3e50);
   min-height: 200px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 400px) {
+  .gameListContainer {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 }
 
 .gameListTitle {

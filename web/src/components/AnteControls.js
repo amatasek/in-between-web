@@ -63,7 +63,6 @@ const AnteControls = () => {
             <span className={styles.backOutIcon}>✕</span>
             <div className={styles.buttonInfo}>
               <h3 className={styles.buttonLabel}>BACK OUT</h3>
-              <span className={styles.buttonAmount}>-${anteAmount}</span>
             </div>
           </button>
         </div>

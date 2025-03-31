@@ -2,13 +2,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(44, 62, 80, 0.9);
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-  margin-bottom: 0.5rem;
+  background: var(--gradient-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--spacing-sm);
   width: 150px;
-  border: 2px solid #f1c40f;
+  border: 2px solid var(--accent);
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .potDisplayContainer {
+    width: 140px;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .potDisplayContainer {
+    width: 130px;
+    padding: 0.3rem 0.6rem;
+  }
 }
 
 .potIconWrapper {
@@ -17,6 +32,20 @@
   justify-content: center;
   margin-right: 0.75rem;
   font-size: 1.6rem;
+}
+
+@media (max-width: 600px) {
+  .potIconWrapper {
+    margin-right: 0.5rem;
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .potIconWrapper {
+    margin-right: 0.4rem;
+    font-size: 1.2rem;
+  }
 }
 
 .potIcon {
@@ -44,4 +73,16 @@
   font-weight: bold;
   color: #f1c40f;
   text-shadow: 0 0 5px rgba(241, 196, 15, 0.3);
+}
+
+@media (max-width: 600px) {
+  .potAmount {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .potAmount {
+    font-size: 1.1rem;
+  }
 }

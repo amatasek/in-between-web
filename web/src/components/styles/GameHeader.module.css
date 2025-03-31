@@ -2,11 +2,39 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1.5rem;
-  background-color: #2c3e50;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: var(--spacing-md) var(--spacing-md);
+  background: linear-gradient(120deg, #2c3e50, #3498db);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-lg);
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .headerContainer {
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .headerContainer {
+    padding: 0.6rem 0.8rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .headerContainer {
+    padding: 0.4rem 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+    width: 100%;
+    max-width: none;
+  }
 }
 
 .headerLeft {
@@ -17,12 +45,37 @@
   margin-right: 1.5rem;
 }
 
+@media (max-width: 600px) {
+  .headerLeft {
+    margin-right: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .headerLeft {
+    margin-right: 0.5rem;
+    flex: 0 1 auto;
+  }
+}
+
 .gameTitle {
   font-size: 1.5rem;
   color: #ecf0f1;
   margin: 0;
   font-weight: bold;
   white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .gameTitle {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .gameTitle {
+    font-size: 1rem;
+  }
 }
 
 .gameIdText {
@@ -32,12 +85,46 @@
   white-space: nowrap;
 }
 
+@media (max-width: 600px) {
+  .gameIdText {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .gameIdText {
+    font-size: 0.7rem;
+    margin-top: 0.1rem;
+  }
+}
+
 .headerCenter {
   display: flex;
   align-items: center;
-  flex: 2;
   justify-content: center;
-  margin: 0 1.5rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+
+
+@media (max-width: 600px) {
+  .headerCenter {
+    width: 70%;
+  }
+}
+
+@media (max-width: 400px) {
+  .headerCenter {
+    width: 80%;
+    position: relative;
+    left: 0;
+    transform: none;
+    margin: 0.4rem auto 0;
+    order: 3;
+  }
 }
 
 .gamePhase {
@@ -45,15 +132,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.8rem 1.5rem;
-  border-radius: 20px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-xl);
   font-weight: bold;
   text-align: center;
   min-width: 180px;
-  color: #ecf0f1;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   transition: background-color 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .gamePhase {
+    padding: 0.6rem 1rem;
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 400px) {
+  .gamePhase {
+    padding: 0.5rem 0.75rem;
+    min-width: 120px;
+    margin: 0.5rem 0;
+  }
 }
 
 .phaseIcon {
@@ -85,14 +187,37 @@
 }
 
 .leaveButton {
-  padding: 0.5rem 1rem;
-  border: none;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(231, 76, 60, 0.7);
   border-radius: 4px;
-  background-color: #e74c3c;
+  background: transparent;
   color: white;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
+  font-weight: normal;
+  transition: all 0.2s ease;
+  z-index: 2;
+  letter-spacing: normal;
+  text-transform: none;
+  font-size: 0.85rem;
+}
+
+.leaveButton:hover {
+  background-color: rgba(231, 76, 60, 0.15);
+  border-color: rgba(231, 76, 60, 0.9);
+}
+
+@media (max-width: 600px) {
+  .leaveButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .leaveButton {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
 }
 
 .leaveButton:hover {

@@ -14,17 +14,39 @@
 }
 
 .card {
-  width: 100px;
-  height: 140px;
-  border-radius: 8px;
+  width: 120px;
+  height: 168px;
+  border-radius: var(--radius-md);
   background-color: white;
   position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ccc;
+  border: 1px solid var(--neutral-light);
   transform-origin: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Responsive card sizes */
+@media (max-width: 600px) {
+  .card {
+    width: 100px;
+    height: 140px;
+  }
+  .cardsRow {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .card {
+    width: 85px;
+    height: 119px;
+  }
+  .cardsRow {
+    gap: 0.5rem;
+  }
 }
 
 /* Dealing animations */

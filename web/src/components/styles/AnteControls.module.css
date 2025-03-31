@@ -3,6 +3,13 @@
   justify-content: center;
   width: 100%;
   margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .anteControlsWrapper {
+    margin-bottom: 0.75rem;
+  }
 }
 
 .buttonContainer {
@@ -16,38 +23,64 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(44, 62, 80, 0.9);
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-  width: 150px;
-  border: none;
+  background: var(--gradient-primary);
+  padding: var(--spacing-md) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 160px;
+  border: 2px solid;
   cursor: pointer;
   transition: all 0.3s ease;
+  height: 52px; /* Fixed height to prevent bouncing */
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .anteButton, .backOutButton {
+    width: 150px;
+    padding: 0.7rem 0.8rem;
+    height: 50px; /* Fixed height for medium screens */
+  }
+}
+
+@media (max-width: 400px) {
+  .anteButton, .backOutButton {
+    width: 140px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    height: 48px; /* Fixed height for small screens */
+  }
 }
 
 .anteButton {
-  border: 2px solid #2ecc71;
+  border-color: var(--success);
 }
 
 .anteButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(46, 204, 113, 0.4);
+  box-shadow: var(--shadow-lg), 0 0 10px rgba(46, 204, 113, 0.3);
+  border-color: var(--success-light);
+  transform: translateY(-1px);
 }
 
 .anteButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  border: 2px solid #95a5a6;
+  border: 2px solid var(--neutral);
+  box-shadow: var(--shadow-sm);
 }
 
 .backOutButton {
-  border: 2px solid #e74c3c;
+  border-color: var(--secondary);
 }
 
+
+
+
+
 .backOutButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(231, 76, 60, 0.4);
+  box-shadow: var(--shadow-lg), 0 0 10px rgba(231, 76, 60, 0.3);
+  border-color: var(--secondary-light);
+  transform: translateY(-1px);
 }
 
 .anteIcon, .backOutIcon {
@@ -66,6 +99,7 @@
 .backOutIcon {
   color: #e74c3c;
   filter: drop-shadow(0 0 3px rgba(231, 76, 60, 0.5));
+  margin-right: 0.5rem;
 }
 
 .buttonInfo {
@@ -107,11 +141,12 @@
 }
 
 .notEnoughChipsText {
-  color: #e74c3c;
+  color: var(--secondary);
   font-size: 0.9rem;
-  margin-top: 0.8rem;
+  margin-top: var(--spacing-md);
   background-color: rgba(231, 76, 60, 0.1);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
   text-align: center;
+  box-shadow: var(--shadow-sm);
 }

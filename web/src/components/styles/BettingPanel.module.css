@@ -5,6 +5,14 @@
   margin-bottom: 1.5rem;
   width: 100%;
   max-width: 600px;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+  .bettingPanel {
+    padding: 0 0.5rem;
+  }
 }
 
 .anteSection {
@@ -35,6 +43,15 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 400px) {
+  .anteButton, .backOutButton {
+    width: 160px;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
 }
 
 .anteButton {
@@ -140,13 +157,22 @@
   text-align: center;
 }
 
+@media (max-width: 400px) {
+  .betText {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    padding: 0 0.5rem;
+  }
+}
+
 .currentCardsInfo {
   background-color: rgba(52, 152, 219, 0.2);
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  margin-bottom: 1rem;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   width: 100%;
   text-align: center;
+  box-shadow: var(--shadow-sm);
 }
 
 .currentCardsInfo p {
@@ -163,6 +189,13 @@
   gap: 1rem;
 }
 
+@media (max-width: 400px) {
+  .extremeOptionsRow {
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+}
+
 .betButtons {
   display: flex;
   flex-wrap: wrap;
@@ -171,29 +204,46 @@
   width: 100%;
 }
 
+@media (max-width: 400px) {
+  .betButtons {
+    gap: 0.6rem;
+  }
+}
+
 .betButton {
-  padding: 0.7rem 1.5rem;
-  background-color: #3498db;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--gradient-info);
   color: white;
   font-weight: bold;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
   min-width: 80px;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 400px) {
+  .betButton {
+    padding: 0.8rem 0;
+    min-width: 70px;
+    width: 30%;
+    font-size: 1.1rem;
+  }
 }
 
 .betButton:hover:not(:disabled) {
-  background-color: #2980b9;
+  background: linear-gradient(135deg, var(--info-light) 0%, var(--info) 100%);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .betButton:disabled {
-  background-color: #95a5a6;
+  background: var(--gradient-neutral);
   cursor: not-allowed;
   opacity: 0.7;
+  box-shadow: var(--shadow-sm);
 }
 
 .disabledButton {
@@ -209,21 +259,29 @@
   font-size: 1.1rem;
 }
 
+@media (max-width: 400px) {
+  .extremeButton {
+    padding: 0.9rem 0.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+}
+
 .passButton {
-  background-color: #7f8c8d;
+  background: var(--gradient-neutral);
 }
 
 .passButton:hover {
-  background-color: #576364;
+  background: linear-gradient(135deg, var(--neutral) 0%, var(--neutral-dark) 80%);
 }
 
 .potButton {
-  background-color: #f1c40f;
-  color: #2c3e50;
+  background: var(--gradient-accent);
+  color: var(--text-dark);
 }
 
 .potButton:hover {
-  background-color: #f39c12;
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
 }
 
 .customBetContainer {
@@ -231,6 +289,13 @@
   width: 100%;
   max-width: 200px;
   gap: 0.5rem;
+}
+
+@media (max-width: 400px) {
+  .customBetContainer {
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
 }
 
 .customBetInput {
