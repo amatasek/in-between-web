@@ -18,6 +18,17 @@ class GameStateService {
     return game;
   }
 
+  /**
+   * Save the game state
+   * @param {Object} game - The game to save
+   * @returns {Object} The saved game
+   */
+  saveGame(game) {
+    if (!game || !game.id) return game;
+    this.games[game.id] = game;
+    return game;
+  }
+
   startRound(game) {
     if (!game) return game;
     

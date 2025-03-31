@@ -33,6 +33,7 @@ class Game {
     this.result = null;
     this.lastUpdated = Date.now();
     this.pendingTransition = null;
+    this.waitingForAceDecision = false;
   }
 
   /**
@@ -263,7 +264,8 @@ class Game {
       thirdCard: this.thirdCard,
       deckCount: this.deckCount,
       deckSize: this.deck.length,
-      result: this.result
+      result: this.result,
+      waitingForAceDecision: this.waitingForAceDecision
     };
   }
 

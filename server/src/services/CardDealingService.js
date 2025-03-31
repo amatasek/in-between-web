@@ -10,10 +10,20 @@ class CardDealingService {
     game.firstCard = null;
     game.secondCard = null;
     game.thirdCard = null;
+    game.waitingForAceDecision = false;
     
     // Deal first card
     game.firstCard = CardService.dealFirstCard(game);
     gameLog(game, `First card dealt: ${game.firstCard.value}${game.firstCard.suit}`);
+    
+    // Check if the first card is an Ace
+    if (game.firstCard.value === 'A') {
+      game.waitingForAceDecision = true;
+
+      gameLog(game, `First card is an Ace. Waiting for player to choose high/low`);
+    }
+    
+
     
     game.updateTimestamp();
     return game;
