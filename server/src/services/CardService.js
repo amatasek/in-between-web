@@ -81,8 +81,9 @@ class CardService {
       this.handleDeckRenewal(game);
     }
     
-    // Deal first card (left position)
+    // TESTING: Force the first card to be a 4
     const firstCard = game.deck.pop();
+    firstCard.value = '4'; // Force the card to be a 4
     
     gameLog(game, `Dealt first card: ${firstCard.value}${firstCard.suit} (left position)`);
     gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
@@ -109,6 +110,9 @@ class CardService {
     
     // Deal second card (right position)
     const secondCard = game.deck.pop();
+    
+    // TESTING: Force the second card to be a 4
+    secondCard.value = '4';
     
     gameLog(game, `Dealt second card: ${secondCard.value}${secondCard.suit} (right position)`);
     gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
@@ -220,6 +224,10 @@ class CardService {
    * @returns {Number} The numeric value of the card
    */
   getCardValue(card) {
+    // Handle Ace as low (1) if isAceLow is true
+    if (card.value === 'A' && card.isAceLow === true) {
+      return 1;
+    }
     return this.valueMap[card.value];
   }
 
@@ -231,7 +239,41 @@ class CardService {
    * @returns {Boolean} True if middle card matches either outside card
    */
   isCardTie(firstCard, thirdCard, secondCard) {
-    return thirdCard.value === firstCard.value || thirdCard.value === secondCard.value;
+    // Compare the numerical values to account for Ace high/low setting
+    const thirdValue = this.getCardValue(thirdCard);
+    const firstValue = this.getCardValue(firstCard);
+    const secondValue = this.getCardValue(secondCard);
+    
+    return thirdValue === firstValue || thirdValue === secondValue;
+  }
+  
+  /**
+   * Check if all three cards are aces (special case for 3x penalty)
+   * @param {Object} firstCard - First card
+   * @param {Object} secondCard - Second card
+   * @param {Object} thirdCard - Third card
+   * @returns {Boolean} True if all three cards are aces
+   */
+  isTripleAceTie(firstCard, secondCard, thirdCard) {
+    // First check if all cards exist
+    if (!firstCard || !secondCard || !thirdCard) return false;
+    
+    // Then check if all three are aces
+    return firstCard.value === 'A' && secondCard.value === 'A' && thirdCard.value === 'A';
+  }
+  
+  /**
+   * Check if the first two cards match but aren't Aces, making the player eligible for a second chance
+   * @param {Object} firstCard - The first card
+   * @param {Object} secondCard - The second card
+   * @returns {Boolean} True if the cards match and aren't Aces
+   */
+  isSecondChanceEligible(firstCard, secondCard) {
+    // First check if both cards exist
+    if (!firstCard || !secondCard) return false;
+    
+    // Then check if they have the same value but aren't Aces
+    return firstCard.value === secondCard.value && firstCard.value !== 'A';
   }
 }
 

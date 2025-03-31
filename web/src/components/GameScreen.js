@@ -7,6 +7,8 @@ import PlayerList from './PlayerList';
 import PotDisplay from './PotDisplay';
 import AnteControls from './AnteControls';
 import ResultsPanel from './ResultsPanel';
+import AceChoicePanel from './AceChoicePanel';
+import SecondChancePanel from './SecondChancePanel';
 
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
@@ -72,6 +74,11 @@ const GameScreen = ({ onReturnToLobby }) => {
           <BettingPanel />
         )}
         
+        {/* Show the Ace choice panel when needed */}
+        <AceChoicePanel />
+        
+        {/* Show the Second Chance panel when needed */}
+        <SecondChancePanel />
         
         <PlayerList />
       </div>

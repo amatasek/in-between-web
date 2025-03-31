@@ -5,7 +5,6 @@ const CardService = require('./CardService');
 const gameTimingService = require('./GameTimingService');
 const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
-const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
 
 /**
  * GameService - Orchestrates the game flow by coordinating between specialized services
@@ -68,7 +67,9 @@ class GameService {
     // Use the GameTimingService to handle the dealing sequence with proper timing
     const services = {
       CardService,
-      broadcastFn: (updatedGame) => this.broadcastGameState(updatedGame)
+      broadcastFn: (updatedGame) => this.broadcastGameState(updatedGame),
+      saveGameFn: this.saveGame,
+      getGameFn: this.getGameById
     };
     
     // GameTimingService will handle all the timing and state transitions
@@ -98,31 +99,118 @@ class GameService {
   async startBettingPhase(game) {
     if (!game) return game;
     
+    // Check for second chance eligibility before moving to betting phase
+    if (game.firstCard && game.secondCard) {
+      const isSecondChanceEligible = this.checkForSecondChance(game);
+      if (isSecondChanceEligible) {
+        // Don't move to betting phase yet, wait for player's decision
+        return game;
+      }
+    }
+    
     game.phase = GamePhases.BETTING;
-    console.log(`[DEBUG] Setting game phase to BETTING for game ${game.id}`);
+
     gameLog(game, `Betting phase started for ${game.players[game.currentPlayerId].name}`);
     
     // Use GameTimingService to handle the betting sequence with auto-pass
     const services = {
       getGameFn: (gameId) => {
         const retrievedGame = gameStateService.getGame(gameId);
-        console.log(`[DEBUG] getGameFn called for game ${gameId}, found game: ${!!retrievedGame}, phase: ${retrievedGame?.phase}`);
+
         return retrievedGame;
       },
       broadcastFn: (updatedGame) => {
-        console.log(`[DEBUG] broadcastFn called with game ${updatedGame?.id}, phase: ${updatedGame?.phase}`);
+
         this.broadcastGameState(updatedGame);
       }
     };
     
-    console.log(`[DEBUG] Calling handleBettingSequence for game ${game.id}, currentPlayer: ${game.currentPlayerId}`);
+
     
     // GameTimingService will handle the auto-pass timeout
     await gameTimingService.handleBettingSequence(game, services);
     
-    console.log(`[DEBUG] handleBettingSequence completed for game ${game.id}`);
+
     
     return game;
+  }
+  
+  /**
+   * Check for matching pair after dealing the second card
+   * @param {Object} game - The game object
+   * @returns {Boolean} - True if a matching pair is detected
+   */
+  checkForSecondChance(game) {
+    if (!game || !game.firstCard || !game.secondCard) return false;
+    
+    // Check if the first two cards form a matching pair (but aren't Aces)
+    const isSecondChanceEligible = CardService.isSecondChanceEligible(game.firstCard, game.secondCard);
+    
+    if (isSecondChanceEligible) {
+      game.waitingForSecondChance = true;
+      gameLog(game, `Matching pair detected! Waiting for player to decide whether to take a second chance`);
+    }
+    
+    return isSecondChanceEligible;
+  }
+  
+  /**
+   * Handle player's decision on a second chance opportunity
+   * @param {Object} game - The game object
+   * @param {String} playerId - The player's ID
+   * @param {Boolean} anteAgain - Whether the player chose to ante up again
+   * @returns {Object} The updated game object
+   */
+  async handleSecondChance(game, playerId, anteAgain) {
+    if (!game) return game;
+    
+    // Verify it's the player's turn
+    if (game.currentPlayerId !== playerId) {
+      gameLog(game, `Not ${game.players[playerId]?.name}'s turn to make a second chance decision`);
+      return game;
+    }
+    
+    // Reset the waiting flag
+    game.waitingForSecondChance = false;
+    
+    if (anteAgain) {
+      // Player chose to ante up again
+      const player = game.players[playerId];
+      const anteAmount = game.anteAmount || 1; // Default to 1 if not specified
+      
+      // Remove the ante amount from the player's balance and add it to the pot
+      const success = await player.removeChips(anteAmount, `Game ${game.id}: Ante Up Again`);
+      
+      if (success) {
+        game.pot += anteAmount;
+        gameLog(game, `${player.name} antes up again with ${anteAmount}`);
+        
+        // Reset cards and start a new dealing sequence
+        game.firstCard = null;
+        game.secondCard = null;
+        game.thirdCard = null;
+        
+        // Return to the dealing phase (it's already in the dealing phase)
+        return game;
+      } else {
+        // If player doesn't have enough chips, treat it as a pass
+        gameLog(game, `${player.name} doesn't have enough chips to ante up again, treating as pass`);
+        return await this.placeBet(game, playerId, 0);
+      }
+    } else {
+      // Player chose to pass
+      const player = game.players[playerId];
+      gameLog(game, `${player.name} chose to pass after matching pair`);
+      
+      // Reset the waiting flag
+      game.waitingForSecondChance = false;
+      
+      // First move to betting phase so placeBet will work correctly
+      game.phase = GamePhases.BETTING;
+      
+      // Now call placeBet with amount=0 to handle the pass
+      return await this.placeBet(game, playerId, 0);
+    }
   }
 
   async placeBet(game, playerId, amount) {
@@ -133,7 +221,7 @@ class GameService {
     
     // If player passed (amount is 0), handle the phase transition
     if (amount === 0) {
-      console.log(`[DEBUG] Player ${game.players[playerId]?.name} passed, setting up for next player`);
+
       
       // Reset cards for the next player
       updatedGame.firstCard = null;
@@ -165,6 +253,16 @@ class GameService {
     return updatedGame;
   }
 
+  /**
+   * Save the game state
+   * @param {Object} game - The game to save
+   * @returns {Object} The saved game
+   */
+  async saveGame(game) {
+    if (!game) return game;
+    return gameStateService.saveGame(game);
+  }
+
   async processGameOutcome(game) {
     if (!game) return game;
     
@@ -183,6 +281,7 @@ class GameService {
     // Determine outcome
     const isWin = CardService.isCardBetween(firstCard, thirdCard, secondCard);
     const isTie = CardService.isCardTie(firstCard, thirdCard, secondCard);
+    const isTripleAceTie = CardService.isTripleAceTie(firstCard, secondCard, thirdCard);
     
     try {
       let winnings = 0;
@@ -196,13 +295,29 @@ class GameService {
           game.pot -= potPayment;
           gameLog(game, `${player.name} WINS ${potPayment}`);
         }
-      } else if (isTie) {
-        // Tie penalty
-        winnings = -player.currentBet;
-        const success = await player.removeChips(player.currentBet, `Game ${game.id}: Tie`);
+      } else if (isTripleAceTie) {
+        // Triple Ace tie - 3x penalty
+        winnings = -player.currentBet * 3;
+        
+        // Calculate additional penalty (original bet is already in the pot)
+        const additionalPenalty = player.currentBet * 2;
+        const success = await player.removeChips(additionalPenalty, `Game ${game.id}: Triple Ace Tie`);
+        
         if (success) {
-          game.pot += player.currentBet;
-          gameLog(game, `TIE! ${player.name} pays ${player.currentBet}`);
+          game.pot += additionalPenalty;
+          gameLog(game, `TRIPLE ACE TIE! ${player.name} pays ${player.currentBet * 3} total (3x penalty)`);
+        }
+      } else if (isTie) {
+        // Regular tie - 2x penalty
+        winnings = -player.currentBet * 2;
+        
+        // Calculate additional penalty (original bet is already in the pot)
+        const additionalPenalty = player.currentBet;
+        const success = await player.removeChips(additionalPenalty, `Game ${game.id}: Tie`);
+        
+        if (success) {
+          game.pot += additionalPenalty;
+          gameLog(game, `TIE! ${player.name} pays ${player.currentBet * 2} total (2x penalty)`);
         }
       } else {
         gameLog(game, `${player.name} LOSES ${player.currentBet}`);
@@ -211,34 +326,13 @@ class GameService {
       // Store result
       game.result = {
         playerId: player.id,
-        outcome: isWin ? 'win' : isTie ? 'tie' : 'lose',
-        winnings
+        outcome: isWin ? 'win' : (isTie || isTripleAceTie) ? 'tie' : 'lose',
+        winnings,
+        isTripleAceTie: isTripleAceTie // Flag to indicate a triple ace tie for special handling
       };
       
       // Reset bet
       player.resetBet();
-      
-      // Handle player elimination
-      if (player.balance <= 0) {
-        gameLog(game, `${player.name} eliminated (no chips)`);
-        delete game.players[player.id];
-        game.recalculatePlayerCount();
-        
-        // Check for game over
-        if (game.playerCount <= 1) {
-          const lastPlayer = Object.values(game.players)[0];
-          if (lastPlayer) {
-            await lastPlayer.addChips(game.pot, `Game ${game.id}: Last Player`);
-            game.pot = 0;
-            game.phase = 'gameOver';
-            game.winner = {
-              id: lastPlayer.id,
-              name: lastPlayer.name,
-              balance: lastPlayer.balance
-            };
-          }
-        }
-      }
       
       // Use GameTimingService to handle the results sequence
       const services = {

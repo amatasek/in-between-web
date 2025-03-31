@@ -9,6 +9,7 @@ const GameService = require('./GameService');
 const CardService = require('./CardService');
 const gameTimingService = require('./GameTimingService');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
+const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
 const jwt = require('jsonwebtoken');
 const db = require('./db/DatabaseService');
 const config = require('../config');
@@ -298,6 +299,168 @@ class SocketService {
         }
       });
 
+      // Event: Second chance decision
+      socket.on('secondChance', async (data) => {
+        try {
+          // Get user from socket (attached by auth middleware)
+          const user = socket.user;
+          if (!user || !user.userId) {
+            console.error('[SOCKET_SERVICE] No valid user attached to socket');
+            socket.emit('error', { message: 'Authentication required' });
+            return;
+          }
+          
+          // Get the game the player is in
+          const gameId = this.connectedSockets.get(socket.id);
+          if (!gameId) {
+            console.error('[SOCKET_SERVICE] Player not in a game');
+            socket.emit('error', { message: 'You are not in a game' });
+            return;
+          }
+          
+          // Get the game
+          const gameStateService = require('./GameStateService');
+          const game = gameStateService.getGame(gameId);
+          if (!game) {
+            console.error('[SOCKET_SERVICE] Game not found:', gameId);
+            socket.emit('error', { message: 'Game not found' });
+            return;
+          }
+          
+          // Validate that it's the player's turn
+          if (game.currentPlayerId !== socket.id) {
+            console.error('[SOCKET_SERVICE] Not player\'s turn');
+            socket.emit('error', { message: 'Not your turn' });
+            return;
+          }
+          
+          // Validate that we're waiting for a second chance decision
+          if (!game.waitingForSecondChance) {
+            console.error('[SOCKET_SERVICE] Not waiting for second chance decision');
+            socket.emit('error', { message: 'No second chance needed' });
+            return;
+          }
+          
+          // Get the anteAgain value from the data
+          const anteAgain = !!data.anteAgain;
+          
+          // If player chose to ante up again
+          if (anteAgain) {
+            // Handle the player's decision to ante up again
+            const updatedGame = await GameService.handleSecondChance(game, socket.id, true);
+            
+            if (updatedGame.firstCard === null) {
+              gameLog(updatedGame, `${user.username} chose to ante up again for a new hand`);
+              
+              // Use GameTimingService to continue the dealing sequence
+              const gameTimingService = require('./GameTimingService');
+              
+              await gameTimingService.handleDealingSequence(updatedGame, {
+                CardService: require('./CardService'),
+                broadcastFn: (updatedGame) => this.broadcastGameState(updatedGame),
+                getGameFn: (gameId) => gameStateService.getGame(gameId),
+                saveGameFn: (game) => GameService.saveGame(game)
+              });
+            }
+          } else {
+            // Player chose to pass - this will reset the game state for the next player
+            gameLog(game, `${user.username} chose to pass after matching pair`);
+            
+            // Handle the player's decision to pass
+            // This will change the phase to BETTING and call placeBet with amount=0
+            // which will handle the transition to the next player and start the dealing sequence
+            await GameService.handleSecondChance(game, socket.id, false);
+            
+            // No need to broadcast here as placeBet will trigger the appropriate broadcasts
+          }
+          
+        } catch (error) {
+          console.error(`[SOCKET_SERVICE] Error handling second chance:`, error);
+          socket.emit('error', { message: 'Error handling second chance' });
+        }
+      });
+      
+      // Event: Choose Ace value (high or low)
+      socket.on('chooseAceValue', async (data) => {
+        try {
+          // Get user from socket (attached by auth middleware)
+          const user = socket.user;
+          if (!user || !user.userId) {
+            console.error('[SOCKET_SERVICE] No valid user attached to socket');
+            socket.emit('error', { message: 'Authentication required' });
+            return;
+          }
+          
+          // Get the game the player is in
+          const gameId = this.connectedSockets.get(socket.id);
+          if (!gameId) {
+            console.error('[SOCKET_SERVICE] Player not in a game');
+            socket.emit('error', { message: 'You are not in a game' });
+            return;
+          }
+          
+          // Get the game
+          const gameStateService = require('./GameStateService');
+          const game = gameStateService.getGame(gameId);
+          if (!game) {
+            console.error('[SOCKET_SERVICE] Game not found:', gameId);
+            socket.emit('error', { message: 'Game not found' });
+            return;
+          }
+          
+          // Validate that it's the player's turn
+          if (game.currentPlayerId !== socket.id) {
+            console.error('[SOCKET_SERVICE] Not player\'s turn');
+            socket.emit('error', { message: 'Not your turn' });
+            return;
+          }
+          
+          // Validate that we're waiting for an Ace decision
+          if (!game.waitingForAceDecision || game.firstCard.value !== 'A') {
+            console.error('[SOCKET_SERVICE] Not waiting for Ace decision');
+            socket.emit('error', { message: 'No Ace decision needed' });
+            return;
+          }
+          
+          // Get the isAceLow value from the data
+          const isAceLow = !!data.isAceLow;
+          
+          // Update the card
+          game.firstCard.isAceLow = isAceLow;
+          game.waitingForAceDecision = false;
+          
+          console.log(`[SOCKET_SERVICE] Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
+          gameLog(game, `Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
+          
+          // Save the game with updated Ace choice
+          await GameService.saveGame(game);
+          
+          // Broadcast updated game state
+          this.broadcastGameState(game);
+          
+          // If we're in the dealing phase and waiting for Ace decision, resume the dealing sequence
+          if (game.phase === GamePhases.DEALING) {
+
+            gameLog(game, `Resuming dealing sequence after Ace choice`);
+            
+            // Resume the dealing sequence by dealing the second card
+            const gameTimingService = require('./GameTimingService');
+            
+            // Continue with the dealing sequence using the specialized method
+            gameTimingService.resumeDealingAfterAceChoice(game, {
+              CardService: require('./CardService'),
+              broadcastFn: (updatedGame) => this.broadcastGameState(updatedGame),
+              getGameFn: (gameId) => gameStateService.getGame(gameId),
+              saveGameFn: (game) => GameService.saveGame(game)
+            });            
+          }
+          
+        } catch (error) {
+          console.error(`[SOCKET_SERVICE] Error choosing Ace value:`, error);
+          socket.emit('error', { message: 'Error choosing Ace value' });
+        }
+      });
+      
       // Event: Get updated user balance
       socket.on('getBalance', async () => {
         try {
@@ -422,6 +585,15 @@ class SocketService {
       // Clear notification after sending once
       game.dealerRotationNotification = null;
     }
+    
+    // Debug log to check if waitingForAceDecision is included in the game state
+
+    
+    // Ensure waitingForAceDecision is explicitly included in the game state
+    gameState.waitingForAceDecision = !!game.waitingForAceDecision;
+    
+    // Add waitingForSecondChance flag for the matching pair feature
+    gameState.waitingForSecondChance = !!game.waitingForSecondChance;
     
     // Broadcast game state to all players in the game room
     this.io.to(game.id).emit('gameState', gameState);
