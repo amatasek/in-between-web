@@ -1,35 +1,59 @@
 .authForm {
   max-width: 400px;
   width: 100%;
-  margin: 1rem auto;
-  padding: 2rem;
+  margin: var(--spacing-md) auto;
+  padding: var(--spacing-lg);
   background-color: rgba(44, 62, 80, 0.8);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  transition: var(--button-transition);
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .authForm {
+    padding: var(--spacing-md);
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 400px) {
+  .authForm {
+    padding: var(--spacing-sm);
+    margin: var(--spacing-sm) auto;
+    max-width: 95%;
+    width: 95%;
+  }
 }
 
 .authForm:hover {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-xl);
   transform: translateY(-2px);
 }
 
 .authForm form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--spacing-md);
 }
 
 .authForm h2 {
-  color: #7fbbda;
-  margin-bottom: 1.5rem;
+  color: var(--info);
+  margin-bottom: var(--spacing-md);
   text-align: center;
   font-weight: 600;
   letter-spacing: 0.5px;
   position: relative;
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 400px) {
+  .authForm h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-sm);
+  }
 }
 
 .authForm h2::after {
@@ -40,8 +64,15 @@
   transform: translateX(-50%);
   width: 50px;
   height: 3px;
-  background: linear-gradient(to right, #3498db, #2ecc71);
-  border-radius: 3px;
+  background: linear-gradient(to right, var(--info), var(--success));
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 400px) {
+  .authForm h2::after {
+    width: 40px;
+    height: 2px;
+  }
 }
 
 .inputField {

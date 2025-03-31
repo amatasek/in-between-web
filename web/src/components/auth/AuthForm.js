@@ -6,6 +6,7 @@ import {
   Typography,
   Paper,
   Alert,
+  useMediaQuery,
 } from '@mui/material';
 import styles from './AuthForm.module.css';
 
@@ -13,6 +14,8 @@ const AuthForm = ({ onSubmit, mode }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const isMobile = useMediaQuery('(max-width:600px)');
+  const isSmallMobile = useMediaQuery('(max-width:400px)');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,12 +30,12 @@ const AuthForm = ({ onSubmit, mode }) => {
 
   return (
     <Paper className={styles.authForm} elevation={0}>
-      <Typography variant="h5" component="h2" gutterBottom sx={{ color: '#3498db', fontWeight: 600 }}>
+      <Typography variant="h5" component="h2" gutterBottom sx={{ color: 'var(--info)', fontWeight: 600 }}>
         {mode === 'login' ? 'Welcome Back' : 'Create Account'}
       </Typography>
       
       {error && (
-        <Alert severity="error" sx={{ mb: 2, backgroundColor: 'rgba(231, 76, 60, 0.2)', color: '#ecf0f1' }}>
+        <Alert severity="error" sx={{ mb: 2, backgroundColor: 'rgba(231, 76, 60, 0.2)', color: 'var(--text-primary)' }}>
           {error}
         </Alert>
       )}
@@ -46,31 +49,35 @@ const AuthForm = ({ onSubmit, mode }) => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
+          size={isSmallMobile ? "small" : "medium"}
           inputProps={{ minLength: 3 }}
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: '#7fbbda',
+                borderColor: 'var(--info-light)',
               },
               '&:hover fieldset': {
-                borderColor: '#6bafd3',
+                borderColor: 'var(--info)',
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#7fbbda',
+                borderColor: 'var(--info)',
               },
               backgroundColor: 'rgba(255, 255, 255, 0.1)',
             },
             '& .MuiInputLabel-root': {
-              color: '#7fbbda',
+              color: 'var(--info-light)',
+              fontSize: isSmallMobile ? '0.9rem' : '1rem',
             },
             '& .MuiOutlinedInput-input': {
-              color: '#2c3e50',
+              color: 'var(--text-dark)',
               fontWeight: 500,
               backgroundColor: 'rgba(255, 255, 255, 0.85)',
+              padding: isSmallMobile ? '12px 14px' : '16.5px 14px',
             },
             '& .MuiInputLabel-root.Mui-focused': {
-              color: '#3498db',
+              color: 'var(--info)',
             },
+            marginBottom: isSmallMobile ? '0.5rem' : '1rem',
           }}
         />
         
@@ -83,31 +90,35 @@ const AuthForm = ({ onSubmit, mode }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          size={isSmallMobile ? "small" : "medium"}
           inputProps={{ minLength: 6 }}
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: '#7fbbda',
+                borderColor: 'var(--info-light)',
               },
               '&:hover fieldset': {
-                borderColor: '#6bafd3',
+                borderColor: 'var(--info)',
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#7fbbda',
+                borderColor: 'var(--info)',
               },
               backgroundColor: 'rgba(255, 255, 255, 0.1)',
             },
             '& .MuiInputLabel-root': {
-              color: '#7fbbda',
+              color: 'var(--info-light)',
+              fontSize: isSmallMobile ? '0.9rem' : '1rem',
             },
             '& .MuiOutlinedInput-input': {
-              color: '#2c3e50',
+              color: 'var(--text-dark)',
               fontWeight: 500,
               backgroundColor: 'rgba(255, 255, 255, 0.85)',
+              padding: isSmallMobile ? '12px 14px' : '16.5px 14px',
             },
             '& .MuiInputLabel-root.Mui-focused': {
-              color: '#3498db',
+              color: 'var(--info)',
             },
+            marginBottom: isSmallMobile ? '0.5rem' : '1rem',
           }}
         />
 
@@ -118,15 +129,16 @@ const AuthForm = ({ onSubmit, mode }) => {
           size="large"
           className={styles.submitButton}
           sx={{
-            mt: 3,
-            background: 'linear-gradient(to right, #3498db, #2ecc71)',
-            textTransform: 'uppercase',
+            mt: isSmallMobile ? 2 : 3,
+            background: 'linear-gradient(to right, var(--info), var(--success))',
+            textTransform: 'none',
             fontWeight: 'bold',
-            letterSpacing: '1px',
-            padding: '12px',
+            letterSpacing: '0.5px',
+            padding: isSmallMobile ? '10px' : '12px',
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
             '&:hover': {
-              background: 'linear-gradient(to right, #2980b9, #27ae60)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              background: 'linear-gradient(to right, var(--info-dark), var(--success-dark))',
+              boxShadow: 'var(--shadow-lg)',
               transform: 'translateY(-2px)'
             }
           }}
