@@ -99,7 +99,28 @@ class GameService {
     if (!game) return game;
     
     game.phase = GamePhases.BETTING;
+    console.log(`[DEBUG] Setting game phase to BETTING for game ${game.id}`);
     gameLog(game, `Betting phase started for ${game.players[game.currentPlayerId].name}`);
+    
+    // Use GameTimingService to handle the betting sequence with auto-pass
+    const services = {
+      getGameFn: (gameId) => {
+        const retrievedGame = gameStateService.getGame(gameId);
+        console.log(`[DEBUG] getGameFn called for game ${gameId}, found game: ${!!retrievedGame}, phase: ${retrievedGame?.phase}`);
+        return retrievedGame;
+      },
+      broadcastFn: (updatedGame) => {
+        console.log(`[DEBUG] broadcastFn called with game ${updatedGame?.id}, phase: ${updatedGame?.phase}`);
+        this.broadcastGameState(updatedGame);
+      }
+    };
+    
+    console.log(`[DEBUG] Calling handleBettingSequence for game ${game.id}, currentPlayer: ${game.currentPlayerId}`);
+    
+    // GameTimingService will handle the auto-pass timeout
+    await gameTimingService.handleBettingSequence(game, services);
+    
+    console.log(`[DEBUG] handleBettingSequence completed for game ${game.id}`);
     
     return game;
   }
@@ -112,6 +133,8 @@ class GameService {
     
     // If player passed (amount is 0), handle the phase transition
     if (amount === 0) {
+      console.log(`[DEBUG] Player ${game.players[playerId]?.name} passed, setting up for next player`);
+      
       // Reset cards for the next player
       updatedGame.firstCard = null;
       updatedGame.secondCard = null;

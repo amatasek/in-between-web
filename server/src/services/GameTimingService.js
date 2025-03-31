@@ -5,6 +5,7 @@
 const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
+const gameStateService = require('./GameStateService');
 
 class GameTimingService {
   constructor() {
@@ -44,6 +45,7 @@ class GameTimingService {
    */
   async handleDealingSequence(game, services) {
     const { CardService, broadcastFn } = services;
+    const getGameFn = services.getGameFn || ((gameId) => gameStateService.getGame(gameId));
     
     if (!game) return game;
     
@@ -106,6 +108,46 @@ class GameTimingService {
           // Move to betting phase
           game.phase = GamePhases.BETTING;
           gameLog(game, `Starting betting phase for player: ${game.players[game.currentPlayerId]?.name}`);
+          
+          // Set up auto-pass timer for the betting phase
+          const currentPlayerId = game.currentPlayerId;
+          const playerName = game.players[currentPlayerId]?.name || 'Unknown player';
+          const currentRound = game.round;
+          
+          // Clear any existing auto-bet timeout
+          if (this.timeouts[game.id].autoBet) {
+            clearTimeout(this.timeouts[game.id].autoBet);
+          }
+          
+          // Use the standard betting duration from game constants
+          const betTimeoutDuration = GAME_CONSTANTS.TIMERS.BETTING_DURATION;
+          console.log(`[DEBUG] Setting auto-pass timeout for ${betTimeoutDuration}ms for player ${playerName} in game ${game.id}, round ${currentRound}`);
+          
+          // Set timer for auto-pass if player doesn't respond within the betting duration
+          this.timeouts[game.id].autoBet = setTimeout(async () => {
+            try {
+              // Get the latest game state
+              const currentGame = getGameFn(game.id);
+              if (!currentGame) return;
+              
+              // Check if we're still in betting phase, it's still this player's turn, and we're in the same round
+              if (currentGame.phase === GamePhases.BETTING && 
+                  currentGame.currentPlayerId === currentPlayerId && 
+                  currentGame.round === currentRound) {
+                
+                console.log(`[DEBUG] Auto-passing for player ${playerName} after timeout`);
+                gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
+                
+                // Use the GameService's placeBet method to handle the pass
+                const gameService = require('./GameService');
+                await gameService.placeBet(currentGame, currentPlayerId, 0);
+              }
+            } catch (error) {
+              console.error(`Error in auto-pass timeout for game ${game.id}:`, error);
+            }
+          }, betTimeoutDuration);
+          
+          // Broadcast the updated game state
           broadcastFn(game);
         }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
       }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
@@ -267,6 +309,37 @@ class GameTimingService {
     
     return game;
   }
+
+  /**
+   * Handle the betting sequence with proper timing
+   * @param {Object} game - The game object
+   * @param {Object} services - Services needed for the sequence
+   * @returns {Object} The updated game object
+   */
+  async handleBettingSequence(game, services) {
+    const { getGameFn, broadcastFn } = services;
+    
+    if (!game) return game;
+    
+    // Store the current player ID to ensure it's preserved throughout the sequence
+    const currentPlayerId = game.currentPlayerId;
+    if (!currentPlayerId) {
+      gameLog(game, `WARNING: Current player is undefined at start of betting sequence`);
+      return game;
+    }
+    
+    const playerName = game.players[currentPlayerId]?.name || 'Unknown player';
+    gameLog(game, `Starting betting sequence for player: ${playerName}`);
+    
+    this.ensureGameTimeouts(game.id);
+    this.clearPhaseTimeouts(game.id, 'betting');
+    
+    // Note: Auto-pass timer is set up in handleDealingSequence when transitioning to betting phase
+    
+    return game;
+  }
+
+
 
   /**
    * Clear timeouts for a specific phase

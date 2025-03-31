@@ -2,6 +2,7 @@ import React from 'react';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import styles from './styles/ResultsPanel.module.css';
+import CurrencyAmount from './common/CurrencyAmount';
 
 /**
  * Results panel component that displays the outcome of a hand during the results phase
@@ -31,7 +32,7 @@ const ResultsPanel = () => {
         
         {result.winnings > 0 && (
           <p className={styles.winningsText}>
-            Winnings: ${result.winnings}
+            Winnings: <CurrencyAmount amount={result.winnings} size="medium" />
           </p>
         )}
         

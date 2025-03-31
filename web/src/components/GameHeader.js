@@ -3,12 +3,13 @@ import styles from './styles/GameHeader.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { TIMERS } from '../../../shared/constants/GameConstants';
+import { ICONS } from '../constants/UIConstants';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
   waiting: { text: 'Waiting for Players', icon: '👥' },
-  dealing: { text: 'Dealing Cards', icon: '🃏' },
-  revealing: { text: 'Revealing Cards', icon: '🎭' },
+  dealing: { text: 'Dealing Cards', icon: ICONS.DEALER },
+  revealing: { text: 'Revealing Cards', icon: ICONS.CARDS },
   results: { text: 'Round Results', icon: '🏆' }
   // betting phase is handled dynamically to show player name
 };
@@ -66,24 +67,24 @@ const GameHeader = ({ handleLeaveGame }) => {
         // It's YOUR turn to bet
         phaseInfo = {
           text: `Pass or Bet`,
-          icon: '💰'
+          icon: ICONS.COIN
         };
       } else {
         // It's someone else's turn
         phaseInfo = {
           text: `${currentPlayer.name} is Betting`,
-          icon: '💰'
+          icon: ICONS.COIN
         };
       }
     } else {
-      phaseInfo = { text: 'Betting Round', icon: '💰' };
+      phaseInfo = { text: 'Betting Round', icon: ICONS.COIN };
     }
   }
   
   return (
     <div className={styles.headerContainer}>
       <div className={styles.headerLeft}>
-        <h1 className={styles.gameTitle}>In Between</h1>
+        <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
         <p className={styles.gameIdText}>Game #{gameId}</p>
       </div>
       

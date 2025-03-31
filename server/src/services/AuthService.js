@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('./db/DatabaseService');
 const config = require('../config');
+const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
 
 // Use JWT secret from centralized config
 const JWT_SECRET = config.jwtSecret
@@ -74,19 +75,26 @@ class AuthService {
       console.log('[AUTH] Invalid password for user:', { username });
       throw new Error('Invalid username or password');
     }
-
-    const token = await this.generateToken(user._id);
+    
+    // Reset user balance to STARTING_BALANCE on each login
+    await db.updateUser(user._id, { balance: STARTING_BALANCE });
+    console.log('[AUTH] Reset user balance to:', STARTING_BALANCE);
+    
+    // Get the updated user with the reset balance
+    const updatedUser = await db.getUserById(user._id);
+    
+    const token = await this.generateToken(updatedUser._id);
     console.log('[AUTH] Login successful:', { 
       username, 
-      userId: user._id,
-      balance: user.balance || 0
+      userId: updatedUser._id,
+      balance: updatedUser.balance
     });
 
     return {
       user: { 
-        id: user._id, 
-        username: user.username,
-        balance: user.balance || 0
+        id: updatedUser._id, 
+        username: updatedUser.username,
+        balance: updatedUser.balance
       },
       token
     };

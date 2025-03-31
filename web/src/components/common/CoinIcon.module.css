@@ -1,0 +1,21 @@
+.coinIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 3px;
+  position: relative;
+  top: 0px;
+  line-height: 1;
+}
+
+.small {
+  font-size: 0.85em;
+}
+
+.medium {
+  font-size: 1em;
+}
+
+.large {
+  font-size: 1.2em;
+}

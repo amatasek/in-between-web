@@ -1,3 +1,17 @@
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 2rem;
+  box-sizing: border-box;
+  background-color: #1a2a3a;
+  background-image: linear-gradient(to bottom right, #1a2a3a, #2c3e50);
+  min-height: 100vh;
+}
+
 .gameScreen {
   display: flex;
   flex-direction: column;
@@ -7,13 +21,22 @@
   margin: 0 auto;
   padding: 0.5rem;
   box-sizing: border-box;
-  border-radius: var(--radius-lg);
 }
 
 /* Responsive adjustments for mobile */
 @media (max-width: 600px) {
+  .gameContainer {
+    padding: 1rem;
+  }
+  
   .gameScreen {
     padding: 0.25rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .gameContainer {
+    padding: 0.5rem;
   }
 }
 

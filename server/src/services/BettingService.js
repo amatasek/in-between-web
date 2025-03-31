@@ -53,6 +53,8 @@ class BettingService {
       return game;
     }
   }
+  
+
 }
 
 module.exports = new BettingService();

@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import styles from './styles/PlayerList.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
+import CurrencyAmount from './common/CurrencyAmount';
+import { ICONS } from '../constants/UIConstants';
 
 const PlayerList = () => {
   const { gameState } = useGameContext();
@@ -61,7 +63,7 @@ const PlayerList = () => {
                 <span className={styles.playerName}>
                   {player.name}
                   {isCurrentUser && ' (You)'}
-                  {isDealer && ' 🃏'}
+                  {isDealer && ` ${ICONS.DEALER}`}
                 </span>
               </div>
               <div className={styles.playerBalanceContainer}>
@@ -110,7 +112,7 @@ const BalanceDisplay = ({ balance }) => {
 
   return (
     <span className={`${styles.playerBalance} ${animationClass}`}>
-      ${balance}
+      <CurrencyAmount amount={balance} />
     </span>
   );
 };

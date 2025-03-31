@@ -44,35 +44,37 @@ const GameScreen = ({ onReturnToLobby }) => {
 
 
   return (
-    <div className={styles.gameScreen}>
-      <GameHeader handleLeaveGame={handleLeaveGame} />
-      
-      {error && (
-        <div className={styles.errorContainer}>
-          <p className={styles.errorText}>{error}</p>
+    <div className={styles.gameContainer}>
+      <div className={styles.gameScreen}>
+        <GameHeader handleLeaveGame={handleLeaveGame} />
+        
+        {error && (
+          <div className={styles.errorContainer}>
+            <p className={styles.errorText}>{error}</p>
+          </div>
+        )}
+        
+        <div className={styles.potDisplayWrapper}>
+          <PotDisplay />
         </div>
-      )}
-      
-      <div className={styles.potDisplayWrapper}>
-        <PotDisplay />
+        
+        {/* Always show the CardDisplay component */}
+        <CardDisplay />
+        
+        {phase === 'waiting' ? (
+          /* Show ante controls during waiting phase */
+          <AnteControls />
+        ) : phase === 'results' ? (
+          /* Show the results panel during results phase */
+          <ResultsPanel />
+        ) : (
+          /* Show the betting panel during other phases */
+          <BettingPanel />
+        )}
+        
+        
+        <PlayerList />
       </div>
-      
-      {/* Always show the CardDisplay component */}
-      <CardDisplay />
-      
-      {phase === 'waiting' ? (
-        /* Show ante controls during waiting phase */
-        <AnteControls />
-      ) : phase === 'results' ? (
-        /* Show the results panel during results phase */
-        <ResultsPanel />
-      ) : (
-        /* Show the betting panel during other phases */
-        <BettingPanel />
-      )}
-      
-      
-      <PlayerList />
     </div>
   );
 };

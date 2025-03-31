@@ -2,6 +2,8 @@ import React from 'react';
 import styles from './styles/AnteControls.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
+import CurrencyAmount from './common/CurrencyAmount';
+import { ICONS } from '../constants/UIConstants';
 
 const AnteControls = () => {
   // Get game state and actions from context
@@ -36,15 +38,15 @@ const AnteControls = () => {
             onClick={playerReady}
             disabled={!hasEnoughChips}
           >
-            <span className={styles.anteIcon}>✓</span>
+            <span className={styles.anteIcon}>{ICONS.CHECK}</span>
             <div className={styles.buttonInfo}>
               <h3 className={styles.buttonLabel}>ANTE</h3>
-              <span className={styles.buttonAmount}>${anteAmount}</span>
+              <span className={styles.buttonAmount}><CurrencyAmount amount={anteAmount} /></span>
             </div>
           </button>
           
           {!hasEnoughChips && (
-            <p className={styles.notEnoughChipsText}>Not enough chips (${anteAmount} required)</p>
+            <p className={styles.notEnoughChipsText}>Not enough chips (<CurrencyAmount amount={anteAmount} /> required)</p>
           )}
         </div>
       ) : (

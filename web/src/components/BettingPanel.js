@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './styles/BettingPanel.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
+import CurrencyAmount from './common/CurrencyAmount';
 
 const BettingPanel = () => {
   // Get game state and actions from context
@@ -66,7 +67,7 @@ const BettingPanel = () => {
     
     return (
       <div className={styles.betContainer}>
-        <p className={styles.betText}>Place your bet (Min: $1, Max: ${Math.min(potAmount, playerBalance)})</p>
+        <p className={styles.betText}>Place your bet (Min: <CurrencyAmount amount={1} />, Max: <CurrencyAmount amount={Math.min(potAmount, playerBalance)} />)</p>
         
         {/* Extreme options row */}
         <div className={styles.extremeOptionsRow}>
@@ -81,7 +82,7 @@ const BettingPanel = () => {
             className={`${styles.betButton} ${styles.extremeButton} ${styles.potButton}`}
             onClick={() => placeBet(potAmount)}
           >
-            POT (${potAmount})
+            POT (<CurrencyAmount amount={potAmount} />)
           </button>
         </div>
         
@@ -97,7 +98,7 @@ const BettingPanel = () => {
                 onClick={() => placeBet(amount)}
                 disabled={disabled}
               >
-                ${amount}
+                <CurrencyAmount amount={amount} />
               </button>
             );
           })}

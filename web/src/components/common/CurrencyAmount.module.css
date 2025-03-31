@@ -1,0 +1,12 @@
+.currencyAmount {
+  color: #f1c40f;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.currencyAmount span {
+  display: inline-flex;
+  align-items: center;
+}

@@ -433,6 +433,8 @@ class SocketService {
     gameLog(game, `Game state broadcast - Phase: ${game.phase}, Current player: ${game.players[game.currentPlayerId]?.name}`);
   }
   
+
+  
   /**
    * Get the current list of available games
    * @returns {Array} List of available games

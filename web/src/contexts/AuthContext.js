@@ -1,11 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useSocket } from './SocketContext';
+import WelcomePopup from '../components/common/WelcomePopup';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   
   // Get socket from socket context to listen for balance updates
   const socketData = useSocket();
@@ -89,6 +91,9 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userToStore));
       console.log(`[Auth] Login successful: ${userToStore.username}`);
       
+      // Show welcome popup when user logs in
+      setShowWelcomePopup(true);
+      
     } catch (error) {
       console.error('[Auth] Error during login:', error);
       throw error;
@@ -101,15 +106,27 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setShowWelcomePopup(false);
   };
 
   if (loading) {
     return null; // or a loading spinner
   }
+  
+  const handleCloseWelcomePopup = () => {
+    setShowWelcomePopup(false);
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
+      {showWelcomePopup && user && (
+        <WelcomePopup 
+          username={user.username} 
+          balance={user.balance} 
+          onClose={handleCloseWelcomePopup} 
+        />
+      )}
     </AuthContext.Provider>
   );
 };

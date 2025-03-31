@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { CircularProgress, Box, Typography, TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
-import CoinIcon from './common/CoinIcon';
+import CurrencyAmount from './common/CurrencyAmount';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
@@ -187,7 +187,7 @@ const Lobby = () => {
                 <div className={styles.welcomeText}>Welcome, {user?.username || 'Player'}!</div>
               )}
               <div className={styles.balanceDisplay}>
-                Balance: <CoinIcon size="medium" />{Number(user?.balance) || 0}
+                Balance: <CurrencyAmount amount={Number(user?.balance) || 0} size="medium" />
               </div>
               <button 
                 className={`${styles.actionButton} ${styles.logoutButton}`}
