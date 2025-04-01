@@ -1,0 +1,133 @@
+.aceChoiceContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.aceChoiceContent {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: slideUp 0.4s ease-out;
+}
+
+.aceChoiceTitle {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: #2c3e50;
+}
+
+.aceChoiceDescription {
+  font-size: 16px;
+  margin-bottom: 24px;
+  color: #7f8c8d;
+}
+
+.aceChoiceButtons {
+  display: flex;
+  justify-content: space-around;
+  gap: 16px;
+}
+
+.aceChoiceButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  max-width: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aceChoiceButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.aceChoiceButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.aceHighButton {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.aceHighButton:hover {
+  background-color: #2980b9;
+}
+
+.aceLowButton {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.aceLowButton:hover {
+  background-color: #27ae60;
+}
+
+.buttonContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .aceChoiceContent {
+    padding: 16px;
+  }
+  
+  .aceChoiceTitle {
+    font-size: 20px;
+  }
+  
+  .aceChoiceDescription {
+    font-size: 14px;
+  }
+  
+  .aceChoiceButton {
+    padding: 10px 16px;
+    font-size: 16px;
+  }
+}
