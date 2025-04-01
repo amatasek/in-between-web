@@ -491,3 +491,39 @@
   color: var(--text-secondary);
   margin: 0.5rem 0;
 }
+
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.rulesButton {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.rulesButton:hover {
+  background-color: #27ae60;
+}
+
+.logoutButton {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.logoutButton:hover {
+  background-color: #c0392b;
+}
+
+/* Additional style overrides to prevent conflicts */
+.welcomeHeader .actionButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: auto; /* Override any width: 100% on other action buttons */
+}

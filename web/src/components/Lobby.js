@@ -6,6 +6,7 @@ import { useSocket } from '../contexts/SocketContext';
 import { CircularProgress, Box, Typography, TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
 import CurrencyAmount from './common/CurrencyAmount';
+import RulesModal from './common/RulesModal';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
@@ -16,6 +17,7 @@ const Lobby = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
   const isSmallMobile = useMediaQuery('(max-width:400px)');
 
@@ -189,14 +191,28 @@ const Lobby = () => {
               <div className={styles.balanceDisplay}>
                 Balance: <CurrencyAmount amount={Number(user?.balance) || 0} size="medium" />
               </div>
-              <button 
-                className={`${styles.actionButton} ${styles.logoutButton}`}
-                onClick={logout}
-              >
-                Logout
-              </button>
+              <div className={styles.buttonContainer}>
+                <button 
+                  className={`${styles.actionButton} ${styles.rulesButton}`}
+                  onClick={() => setIsRulesOpen(true)}
+                >
+                  Review Rules
+                </button>
+                <button 
+                  className={`${styles.actionButton} ${styles.logoutButton}`}
+                  onClick={logout}
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
+          
+          {/* Add the RulesModal component */}
+          <RulesModal
+            open={isRulesOpen}
+            onClose={() => setIsRulesOpen(false)}
+          />
           
           <div className={styles.gradientDivider}></div>
           
