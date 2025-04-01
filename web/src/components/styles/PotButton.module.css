@@ -1,0 +1,359 @@
+/* PotButton.module.css - The most epic button in gaming history */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+
+.potButton {
+  position: relative;
+  width: 100%;
+  min-height: 45px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: visible;
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1;
+  /* Main button has no background - it's built from layers */
+  background: transparent;
+  /* Create perspective for 3D effects */
+  perspective: 1000px;
+  /* Ensure the button doesn't collapse */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Give some breathing room around the button */
+  margin: 2px 0;
+  flex: 1;
+}
+
+/* Layer 1: Outer glow effect */
+.potButton::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 10px;
+  background: radial-gradient(ellipse at center, rgba(205, 127, 50, 0.8) 0%, rgba(205, 127, 50, 0.4) 50%, rgba(205, 127, 50, 0) 70%);
+  filter: blur(4px);
+  opacity: 0.8;
+  z-index: -5;
+  animation: pulseGlow 2s infinite alternate;
+}
+
+/* Layer 2: Bronze border with double thickness and texture */
+.shimmerBorder {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #cd7f32 0%, #b87333 20%, #e3c4a8 40%, #8b4513 60%, #cd7f32 80%, #b87333 100%);
+  background-size: 300% 300%;
+  border-radius: 10px;
+  z-index: -1;
+  animation: shimmerGoldBorder 3s infinite linear;
+  /* Add texture to the bronze */
+  box-shadow: 
+    inset 0 0 6px rgba(255, 255, 255, 0.6),
+    inset 0 0 10px rgba(205, 127, 50, 0.4),
+    0 0 8px rgba(139, 69, 19, 0.5);
+}
+
+/* Layer 3: Inner bronze trim */
+.potButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px;
+  border: 2px solid rgba(205, 127, 50, 0.7);
+  box-shadow: inset 0 0 8px rgba(139, 69, 19, 0.5);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Layer 4: Silver metallic background with 3D depth */
+.buttonBackground {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e8e8e8 0%, #d8d8d8 20%, #f5f5f5 40%, #ffffff 50%, #e8e8e8 60%, #d0d0d0 80%, #e8e8e8 100%);
+  background-size: 200% 200%;
+  z-index: 0;
+  animation: shimmerSilver 3s infinite linear;
+  /* 3D effect with inset shadow */
+  box-shadow: 
+    inset 0 2px 5px rgba(255, 255, 255, 0.9),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.2);
+  /* Subtle texture */
+  background-blend-mode: overlay;
+}
+
+/* Layer 5: Multiple light reflection effects */
+.reflectionEffect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* First reflection - horizontal sweep */
+.reflectionEffect::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0) 40%, 
+    rgba(255,255,255,0.8) 50%, 
+    rgba(255,255,255,0) 60%, 
+    rgba(255,255,255,0) 100%);
+  transform: rotate(25deg);
+  animation: sweepReflection 4s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Second reflection - circular highlight */
+.reflectionEffect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(255,255,255,0.8) 0%, 
+    rgba(255,255,255,0.3) 20%, 
+    rgba(255,255,255,0) 50%);
+  opacity: 0.7;
+  animation: pulseHighlight 3s infinite alternate;
+}
+
+/* Layer 6: Button content container with 3D transform */
+.buttonContent {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 0.8rem 1rem;
+  /* Create subtle 3D effect for content */
+  transform: translateZ(5px);
+  transition: transform 0.2s;
+}
+
+/* Layer 7: POT text with premium styling and 3D effect */
+.potText {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #2c3e50;
+  letter-spacing: 1px;
+  /* Create dramatic 3D text effect */
+  text-shadow: 
+    0 1px 0 #fff,
+    0 2px 0 #f8f8f8,
+    0 3px 0 #eee,
+    0 4px 0 rgba(0, 0, 0, 0.1),
+    0 5px 8px rgba(0, 0, 0, 0.2);
+  /* Subtle text animation */
+  animation: textPulse 2s infinite alternate;
+  /* Position adjustment */
+  position: relative;
+  top: -1px;
+}
+
+/* Layer 8: Pot amount with special styling */
+.potAmount {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  position: relative;
+  /* Create a special highlight just for the currency */
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 2px 6px;
+  /* Subtle glow for the amount */
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* Layer 9: Dramatic hover effects */
+.potButton:hover:not(:disabled) {
+  transform: translateY(-5px) scale(1.08);
+}
+
+.potButton:hover:not(:disabled) .buttonBackground {
+  animation: shimmerSilverFast 1.5s infinite linear;
+  box-shadow: 
+    inset 0 3px 7px rgba(255, 255, 255, 0.9),
+    inset 0 -3px 7px rgba(0, 0, 0, 0.2);
+}
+
+.potButton:hover:not(:disabled) .shimmerBorder {
+  animation: shimmerGoldBorderFast 1.2s infinite linear;
+  box-shadow: 
+    inset 0 0 15px rgba(255, 255, 255, 0.8),
+    inset 0 0 30px rgba(255, 215, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.7);
+}
+
+.potButton:hover:not(:disabled) .buttonContent {
+  transform: translateZ(8px);
+}
+
+.potButton:hover:not(:disabled) .potText {
+  animation: textPulseFast 1s infinite alternate;
+}
+
+/* Layer 10: Particle effects on hover */
+.potButton:hover:not(:disabled)::before {
+  animation: pulseGlowFast 1s infinite alternate;
+  opacity: 1;
+}
+
+/* Active (pressed) state with dramatic effects */
+.potButton:active:not(:disabled) {
+  transform: translateY(2px) scale(0.97);
+  transition: all 0.1s;
+}
+
+.potButton:active:not(:disabled) .buttonBackground {
+  box-shadow: 
+    inset 0 2px 10px rgba(0, 0, 0, 0.3),
+    inset 0 -1px 3px rgba(255, 255, 255, 0.7);
+}
+
+.potButton:active:not(:disabled) .buttonContent {
+  transform: translateZ(2px);
+}
+
+.potButton:active:not(:disabled) .shimmerBorder {
+  opacity: 0.9;
+  box-shadow: 
+    inset 0 0 5px rgba(255, 255, 255, 0.4),
+    inset 0 0 10px rgba(255, 215, 0, 0.3),
+    0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* Disabled state */
+.potButton:disabled,
+.potButton.disabled {
+  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%) !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  pointer-events: none !important;
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+.potButton:disabled .shimmerBorder,
+.potButton.disabled .shimmerBorder {
+  background: #a0a0a0 !important;
+  animation: none !important;
+}
+
+/* Epic animations collection */
+@keyframes shimmerSilver {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
+}
+
+@keyframes shimmerSilverFast {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
+}
+
+@keyframes shimmerGoldBorder {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+@keyframes shimmerGoldBorderFast {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+@keyframes sweepReflection {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes pulseHighlight {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.8; }
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.5; filter: blur(8px); }
+  100% { opacity: 0.9; filter: blur(12px); }
+}
+
+@keyframes pulseGlowFast {
+  0% { opacity: 0.7; filter: blur(8px); }
+  100% { opacity: 1; filter: blur(15px); }
+}
+
+@keyframes textPulse {
+  0% { text-shadow: 
+    0 1px 0 #fff,
+    0 2px 0 #f8f8f8,
+    0 3px 0 #eee,
+    0 4px 0 #ddd,
+    0 5px 0 rgba(0, 0, 0, 0.1),
+    0 6px 10px rgba(0, 0, 0, 0.2); }
+  100% { text-shadow: 
+    0 1px 0 #fff,
+    0 2px 0 #f8f8f8,
+    0 3px 0 #eee,
+    0 4px 0 #ddd,
+    0 5px 0 rgba(0, 0, 0, 0.1),
+    0 8px 15px rgba(0, 0, 0, 0.3); }
+}
+
+@keyframes textPulseFast {
+  0% { text-shadow: 
+    0 1px 0 #fff,
+    0 2px 0 #f8f8f8,
+    0 3px 0 #eee,
+    0 4px 0 #ddd,
+    0 5px 0 rgba(0, 0, 0, 0.1),
+    0 6px 10px rgba(0, 0, 0, 0.2); }
+  100% { text-shadow: 
+    0 1px 0 #fff,
+    0 2px 0 #f8f8f8,
+    0 3px 0 #eee,
+    0 4px 0 #ddd,
+    0 6px 0 rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.3); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+  .potButton {
+    min-height: 50px;
+    padding: 10px 15px;
+  }
+  
+  .potText {
+    font-size: 1.2rem;
+  }
+}

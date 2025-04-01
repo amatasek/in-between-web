@@ -120,12 +120,11 @@ export function GameScreen() {
             {/* First card (left) */}
             <View style={[styles.card, styles.sideCard]}>
               {gameState.currentCards?.[0] && (
-                <Text style={[
-                  styles.cardText,
-                  { color: gameState.currentCards[0].suit === '♥' || gameState.currentCards[0].suit === '♦' ? '#ff0000' : '#000000' }
-                ]}>
-                  {gameState.currentCards[0].value}{gameState.currentCards[0].suit}
-                </Text>
+                <Card 
+                  value={gameState.currentCards[0].value} 
+                  suit={gameState.currentCards[0].suit} 
+                  isAceLow={gameState.currentCards[0].isAceLow}
+                />
               )}
             </View>
             
@@ -138,25 +137,22 @@ export function GameScreen() {
               {gameState.currentCards?.[2] && !gameState.currentCards[2].revealed ? (
                 <Text style={styles.cardBack}>?</Text>
               ) : gameState.currentCards?.[2] && (
-                <Text style={[
-                  styles.cardText,
-                  styles.middleCardText,
-                  { color: gameState.currentCards[2].suit === '♥' || gameState.currentCards[2].suit === '♦' ? '#ff0000' : '#000000' }
-                ]}>
-                  {gameState.currentCards[2].value}{gameState.currentCards[2].suit}
-                </Text>
+                <Card 
+                  value={gameState.currentCards[2].value} 
+                  suit={gameState.currentCards[2].suit} 
+                  isAceLow={gameState.currentCards[2].isAceLow}
+                />
               )}
             </View>
             
             {/* Second card (right) */}
             <View style={[styles.card, styles.sideCard]}>
               {gameState.currentCards?.[1] && (
-                <Text style={[
-                  styles.cardText,
-                  { color: gameState.currentCards[1].suit === '♥' || gameState.currentCards[1].suit === '♦' ? '#ff0000' : '#000000' }
-                ]}>
-                  {gameState.currentCards[1].value}{gameState.currentCards[1].suit}
-                </Text>
+                <Card 
+                  value={gameState.currentCards[1].value} 
+                  suit={gameState.currentCards[1].suit} 
+                  isAceLow={gameState.currentCards[1].isAceLow}
+                />
               )}
             </View>
           </View>
@@ -509,6 +505,11 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  aceIndicator: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 5,
   },
   middleCardText: {
     fontSize: 30, // Larger text for middle card

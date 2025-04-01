@@ -23,6 +23,14 @@ const GameHeader = ({ handleLeaveGame }) => {
   // Timer effect for phases
   useEffect(() => {
     let timer;
+    
+    // Check if we're waiting for an Ace decision - pause timer if true
+    if (gameState?.waitingForAceDecision) {
+      // Don't set up a timer, but keep the current timeLeft value
+      console.log('[DEBUG] Pausing phase timer due to Ace decision');
+      return;
+    }
+    
     if (currentPhase === 'dealing') {
       setTimeLeft(TIMERS.DEALING_DURATION);
       timer = setInterval(() => {
@@ -50,10 +58,15 @@ const GameHeader = ({ handleLeaveGame }) => {
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [currentPhase]);
+  }, [currentPhase, gameState?.waitingForAceDecision]);
   
   // Get the phase display information
   let phaseInfo = phaseDisplayMap[currentPhase] || { text: 'Unknown Phase', icon: '❓' };
+  
+  // Override phase info if waiting for Ace decision
+  if (gameState?.waitingForAceDecision && currentPhase === 'dealing') {
+    phaseInfo = { text: 'Choosing Ace Value', icon: ICONS.DEALER };
+  }
   
   // Check if current user is the current player
   const isCurrentPlayersTurn = socket && gameState?.currentPlayerId === socket.id;

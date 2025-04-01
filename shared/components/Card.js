@@ -1,14 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export function Card({ value, suit }) {
+export function Card({ value, suit, isAceLow }) {
   const color = suit === '♥' || suit === '♦' ? '#ff0000' : '#000000';
+  const showAceIndicator = value === 'A';
   
   return (
     <View style={styles.card}>
       <Text style={[styles.cardText, { color }]}>
         {value}{suit}
       </Text>
+      {showAceIndicator && (
+        <Text style={[styles.aceIndicator, { color }]}>
+          {isAceLow ? 'LOW' : 'HIGH'}
+        </Text>
+      )}
     </View>
   );
 }
@@ -29,5 +35,10 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  aceIndicator: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 5,
   },
 });

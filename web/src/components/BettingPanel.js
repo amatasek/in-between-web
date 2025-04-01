@@ -3,6 +3,7 @@ import styles from './styles/BettingPanel.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import CurrencyAmount from './common/CurrencyAmount';
+import PotButton from './PotButton';
 
 const BettingPanel = () => {
   // Get game state and actions from context
@@ -78,12 +79,11 @@ const BettingPanel = () => {
             PASS
           </button>
           
-          <button
-            className={`${styles.betButton} ${styles.extremeButton} ${styles.potButton}`}
+          <PotButton 
+            amount={potAmount}
             onClick={() => placeBet(potAmount)}
-          >
-            POT (<CurrencyAmount amount={potAmount} />)
-          </button>
+            disabled={potAmount > playerBalance}
+          />
         </div>
         
         {/* Standard bet options */}

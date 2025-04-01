@@ -5,34 +5,41 @@ import { useGameContext } from '../contexts/GameContext';
 import { useAuth } from '../contexts/AuthContext';
 import ArrowIcon from './icons/ArrowIcon';
 
+// Helper function to conditionally log only in development
+const debugLog = (...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(...args);
+  }
+};
+
 const AceChoicePanel = () => {
   const { socket } = useSocket();
   const { gameState } = useGameContext();
   const { user } = useAuth();
   
-  console.log('[DEBUG] AceChoicePanel - gameState:', gameState);
-  console.log('[DEBUG] AceChoicePanel - waitingForAceDecision:', gameState?.waitingForAceDecision);
+  debugLog('[DEBUG] AceChoicePanel - gameState:', gameState);
+  debugLog('[DEBUG] AceChoicePanel - waitingForAceDecision:', gameState?.waitingForAceDecision);
   
   const handleAceChoice = (isAceLow) => {
-    console.log(`[DEBUG] Player chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
+    debugLog(`[DEBUG] Player chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
     socket.emit('chooseAceValue', { isAceLow });
   };
   
   // Only show if we're waiting for an Ace decision
   if (!gameState?.waitingForAceDecision) {
-    console.log('[DEBUG] AceChoicePanel - Not showing panel because waitingForAceDecision is falsy');
+    debugLog('[DEBUG] AceChoicePanel - Not showing panel because waitingForAceDecision is falsy');
     return null;
   }
   
-  console.log('[DEBUG] AceChoicePanel - Showing panel because waitingForAceDecision is true');
+  debugLog('[DEBUG] AceChoicePanel - Showing panel because waitingForAceDecision is true');
   
   // Check if it's the current player's turn
   const isCurrentPlayersTurn = socket?.id === gameState.currentPlayerId;
   const currentPlayerName = gameState.players[gameState.currentPlayerId]?.name || 'Current player';
   
-  console.log('[DEBUG] AceChoicePanel - socket.id:', socket?.id);
-  console.log('[DEBUG] AceChoicePanel - currentPlayerId:', gameState.currentPlayerId);
-  console.log('[DEBUG] AceChoicePanel - isCurrentPlayersTurn:', isCurrentPlayersTurn);
+  debugLog('[DEBUG] AceChoicePanel - socket.id:', socket?.id);
+  debugLog('[DEBUG] AceChoicePanel - currentPlayerId:', gameState.currentPlayerId);
+  debugLog('[DEBUG] AceChoicePanel - isCurrentPlayersTurn:', isCurrentPlayersTurn);
   
   return (
     <div className={styles.aceChoiceContainer}>

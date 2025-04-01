@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './styles/CardDisplay.module.css';
 import { useGameContext } from '../contexts/GameContext';
+import ArrowIcon from './icons/ArrowIcon';
 
 const CardDisplay = () => {
   const { gameState } = useGameContext();
@@ -54,16 +55,30 @@ const CardDisplay = () => {
     );
     
     const isRed = isRedSuit(card.suit);
+    const isAce = card.value === 'A';
+    const isAceLow = card.isAceLow;
+    const isMiddleCard = index === 1; // Index 1 is the middle card position
     
     return (
-      <div key={`${card.value}-${card.suit}`} 
-        className={`${styles.card} ${isRed ? styles.redCard : styles.blackCard}`}
+      <div key={`${card.value}-${card.suit}-${index}`} 
+        className={`${styles.card} ${isRed ? styles.redCard : styles.blackCard} ${isAce ? styles.aceCard : ''}`}
       >
+        {isAce && !isMiddleCard && (
+          <div className={`${styles.aceIndicator} ${isAceLow ? styles.aceLow : styles.aceHigh} ${isRed ? styles.redCard : styles.blackCard}`}>
+            {isAceLow ? (
+              <span className={styles.indicatorContent}>LOW <ArrowIcon direction="down" color={isRed ? '#e74c3c' : '#2c3e50'} size={16} /></span>
+            ) : (
+              <span className={styles.indicatorContent}>HIGH <ArrowIcon direction="up" color={isRed ? '#e74c3c' : '#2c3e50'} size={16} /></span>
+            )}
+          </div>
+        )}
         <div className={styles.cardCorner}>
           <div className={styles.cardValue}>{cardLabels[card.value]}</div>
           <div className={styles.cardSuit}>{suitSymbols[card.suit]}</div>
         </div>
-        <div className={styles.cardCenter}>{suitSymbols[card.suit]}</div>
+        <div className={styles.cardCenter}>
+          {suitSymbols[card.suit]}
+        </div>
         <div className={`${styles.cardCorner} ${styles.bottomRight}`}>
           <div className={styles.cardValue}>{cardLabels[card.value]}</div>
           <div className={styles.cardSuit}>{suitSymbols[card.suit]}</div>
@@ -77,17 +92,22 @@ const CardDisplay = () => {
     // Create an array of 3 nulls to represent the card slots
     let displayCards = [null, null, null];
     
+    // Check if we have a valid game state with cards
+    if (!firstCard && !secondCard && !thirdCard) {
+      return displayCards.map((card, index) => renderCard(card, index));
+    }
+    
     // Handle the individual card properties
     if (firstCard) {
-      displayCards[0] = firstCard; // Left position
+      displayCards[0] = {...firstCard}; // Left position - use spread operator to create a copy
     }
     
     if (secondCard) {
-      displayCards[2] = secondCard; // Right position
+      displayCards[2] = {...secondCard}; // Right position - use spread operator to create a copy
     }
     
     if (thirdCard) {
-      displayCards[1] = thirdCard; // Middle position
+      displayCards[1] = {...thirdCard}; // Middle position - use spread operator to create a copy
     }
     
     return displayCards.map((card, index) => renderCard(card, index));

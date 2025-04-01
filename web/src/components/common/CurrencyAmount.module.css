@@ -10,3 +10,22 @@
   display: inline-flex;
   align-items: center;
 }
+
+/* Dark pill-shaped background */
+.pillBackground {
+  background-color: rgba(44, 62, 80, 0.75);
+  border-radius: 20px;
+  padding: 4px 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #f1c40f;
+  /* Make the gold color pop against the dark background */
+  text-shadow: 0 0 5px rgba(241, 196, 15, 0.3);
+}
+
+/* Standard dark background */
+.darkBackground {
+  background-color: rgba(44, 62, 80, 0.75);
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: #f1c40f;
+}

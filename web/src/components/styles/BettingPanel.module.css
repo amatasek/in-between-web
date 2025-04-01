@@ -276,21 +276,138 @@
 }
 
 .potButton {
-  background: var(--gradient-accent);
-  color: var(--text-dark);
+  background: linear-gradient(135deg, #e8e8e8 0%, #d8d8d8 20%, #f5f5f5 40%, #ffffff 50%, #e8e8e8 60%, #d0d0d0 80%, #e8e8e8 100%);
+  background-size: 200% 200%;
+  color: #2c3e50;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+  font-weight: 800;
+  letter-spacing: 1px;
+  border: 4px solid transparent;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: shimmerSilver 3s infinite linear;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmering gold border effect */
+.potButton::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #f6e27a 0%, #d4af37 20%, #f2f2f2 40%, #a67c00 60%, #f6e27a 80%, #d4af37 100%);
+  background-size: 300% 300%;
+  border-radius: 10px;
+  z-index: -1;
+  animation: shimmerGoldBorder 3s infinite linear;
+}
+
+/* Light reflection effect */
+.potButton::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 60%);
+  opacity: 0.3;
+  transform: rotate(30deg);
+  animation: shimmerEffect 4s infinite linear;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .potButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 20%, #ffffff 40%, #f5f5f5 60%, #e8e8e8 80%, #ffffff 100%);
+  background-size: 200% 200%;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+  animation: shimmerSilverFast 2s infinite linear;
+  letter-spacing: 1.5px;
+}
+
+.potButton:hover:not(:disabled)::before {
+  animation: shimmerGoldBorderFast 1.5s infinite linear;
+}
+
+.potButton:active:not(:disabled) {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.5), inset 0 2px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.1s;
 }
 
 .potButton:disabled,
 .potButton.disabledButton {
-  background: var(--gradient-neutral) !important;
+  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%) !important;
+  border-color: #a0a0a0 !important;
   cursor: not-allowed !important;
   opacity: 0.7 !important;
-  box-shadow: var(--shadow-sm) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
   pointer-events: none !important;
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+@keyframes shimmerSilver {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+@keyframes shimmerSilverFast {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+@keyframes shimmerGoldBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+@keyframes shimmerGoldBorderFast {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+@keyframes shimmerEffect {
+  0% {
+    transform: rotate(0deg) translate(-50%, -50%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  75% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: rotate(360deg) translate(-50%, -50%);
+    opacity: 0;
+  }
 }
 
 .customBetContainer {
