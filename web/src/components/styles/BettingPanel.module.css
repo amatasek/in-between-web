@@ -280,8 +280,17 @@
   color: var(--text-dark);
 }
 
-.potButton:hover {
+.potButton:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+}
+
+.potButton:disabled,
+.potButton.disabledButton {
+  background: var(--gradient-neutral) !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+  box-shadow: var(--shadow-sm) !important;
+  pointer-events: none !important;
 }
 
 .customBetContainer {
