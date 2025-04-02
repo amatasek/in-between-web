@@ -16,6 +16,7 @@ const config = require('./config');
 const SocketService = require('./services/SocketService');
 const GameService = require('./services/GameService');
 const authRoutes = require('./routes/auth');
+const preferencesRoutes = require('./routes/preferences');
 
 // Setup Express app
 const app = express();
@@ -72,8 +73,9 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Mount auth routes
+// Mount routes
 app.use('/auth', authRoutes);
+app.use('/preferences', preferencesRoutes);
 
 // Serve static files from the web build directory in production
 if (process.env.NODE_ENV === 'production') {

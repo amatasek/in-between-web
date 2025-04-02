@@ -11,6 +11,7 @@ import { SocketProvider } from '../contexts/SocketContext';
 import { LobbyProvider, useLobby } from '../contexts/LobbyContext';
 import { GameProvider } from '../contexts/GameContext';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { PreferencesProvider } from '../contexts/PreferencesContext';
 
 // A component that uses the lobby context to determine what to show
 const LobbyContent = () => {
@@ -86,7 +87,9 @@ export default function Home() {
   return (
     <SocketProvider>
       <AuthProvider>
-        <App />
+        <PreferencesProvider>
+          <App />
+        </PreferencesProvider>
       </AuthProvider>
     </SocketProvider>
   );

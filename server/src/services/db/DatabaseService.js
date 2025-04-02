@@ -61,6 +61,9 @@ class DatabaseService {
         password: hashedPassword,
         balance: STARTING_BALANCE, // Starting balance from constants
         transactions: [], // Track balance changes
+        preferences: {
+          autoAnte: false // Auto-ante feature default setting
+        },
         createdAt: new Date().toISOString()
       };
 
@@ -82,7 +85,7 @@ class DatabaseService {
         type: 'user',
         username: username
       },
-      fields: ['_id', '_rev', 'username', 'password', 'balance', 'transactions', 'createdAt']
+      fields: ['_id', '_rev', 'username', 'password', 'balance', 'transactions', 'preferences', 'createdAt']
     });
 
     return result.docs[0];
@@ -113,6 +116,45 @@ class DatabaseService {
     };
 
     return userDb.put(updatedUser);
+  }
+  
+  async updatePreference(userId, key, value) {
+    console.log('[DB] Updating preference:', { userId, key, value });
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    // Initialize preferences object if it doesn't exist
+    if (!user.preferences) {
+      user.preferences = {};
+    }
+    
+    // Update the specific preference
+    const preferences = {
+      ...user.preferences,
+      [key]: value
+    };
+    
+    // Update the user with the new preferences
+    const result = await this.updateUser(user._id, { preferences });
+    
+    console.log('[DB] Preference updated:', { userId, key, value, result });
+    return {
+      userId,
+      preferences
+    };
+  }
+  
+  async getPreferences(userId) {
+    console.log('[DB] Getting preferences:', { userId });
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    // Return preferences or empty object if none exist
+    return user.preferences || {};
   }
 
   async updateBalance(userId, amount, reason) {
