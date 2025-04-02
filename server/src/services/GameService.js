@@ -19,11 +19,37 @@ class GameService {
   }
 
   async addPlayer(game, playerId, name, userId) {
-    return playerManagementService.addPlayer(game, playerId, name, userId);
+    // Create a reference to the broadcast function for auto-ante
+    const broadcastFn = (updatedGame) => this.broadcastGameState(updatedGame);
+    return playerManagementService.addPlayer(game, playerId, name, userId, broadcastFn);
   }
 
   removePlayer(game, playerId) {
     return playerManagementService.removePlayer(game, playerId);
+  }
+  
+  /**
+   * Safely remove a player from the game, returning their ante if appropriate
+   * @param {Object} game - The game object
+   * @param {String} playerId - The player's ID
+   * @returns {Object} The updated game object
+   */
+  async safeRemovePlayer(game, playerId) {
+    if (!game || !game.players[playerId]) return game;
+    
+    // Check if player is anted up and game is in waiting phase
+    if (game.phase === 'waiting' && game.players[playerId]?.isReady) {
+      // Withdraw the player's ante before removing them
+      gameLog(game, `Player ${game.players[playerId]?.name} is anted up, returning ante before leaving`);
+      try {
+        game = await playerManagementService.playerUnready(game, playerId);
+      } catch (error) {
+        gameLog(game, `Error returning ante: ${error.message}`);
+      }
+    }
+    
+    // Remove player from game
+    return this.removePlayer(game, playerId);
   }
 
   async startRound(game) {
@@ -337,7 +363,8 @@ class GameService {
       // Use GameTimingService to handle the results sequence
       const services = {
         startNextRoundFn: async (game) => await this.startNextRound(game),
-        broadcastFn: (game) => this.broadcastGameState(game)
+        broadcastFn: (game) => this.broadcastGameState(game),
+        playerReadyFn: async (game, playerId) => await this.playerReady(game, playerId)
       };
       
       // GameTimingService will handle all the timing and state transitions

@@ -6,6 +6,7 @@ const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
 const gameStateService = require('./GameStateService');
+const db = require('./db/DatabaseService');
 
 class GameTimingService {
   constructor() {
@@ -288,7 +289,7 @@ class GameTimingService {
    * @returns {Object} The updated game object
    */
   async handleResultsSequence(game, services) {
-    const { startNextRoundFn, broadcastFn } = services;
+    const { startNextRoundFn, broadcastFn, playerReadyFn } = services;
     
     if (!game) return game;
     
@@ -330,6 +331,35 @@ class GameTimingService {
             player.isReady = false;
             gameLog(game, `Reset ready state for player: ${player.name}`);
           });
+          
+          // Apply auto-ante for players who have it enabled - using batch preference loading
+          setTimeout(async () => {
+            // Get all player user IDs who aren't ready
+            const userIds = Object.values(game.players)
+              .filter(player => player.userId && !player.isReady)
+              .map(player => player.userId);
+            
+            if (userIds.length > 0) {
+              // Load all preferences in a single batch operation
+              const preferencesMap = await db.getPreferencesForUsers(userIds);
+              
+              // Apply auto-ante for eligible players
+              for (const [playerId, player] of Object.entries(game.players)) {
+                try {
+                  // The playerReadyFn will throw an error if player is already ready
+                  if (player.userId && preferencesMap[player.userId]?.autoAnte) {
+                    game = await playerReadyFn(game, playerId);
+                    gameLog(game, `Auto-ante applied for ${player.name}`);
+                  }
+                } catch (error) {
+                  // Log the error but continue processing other players
+                  gameLog(game, `Auto-ante error for ${player.name}: ${error.message}`);
+                }
+              }
+              
+              broadcastFn(game);
+            }
+          }, 100);
           
           // Broadcast the waiting state
           gameLog(game, `Pot is empty, waiting for players to ante up for a new game`);

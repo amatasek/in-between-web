@@ -157,6 +157,43 @@ class DatabaseService {
     return user.preferences || {};
   }
 
+  /**
+   * Get preferences for multiple users in a single batch operation
+   * @param {Array<string>} userIds - Array of user IDs
+   * @returns {Object} Map of user IDs to their preferences
+   */
+  async getPreferencesForUsers(userIds) {
+    if (!userIds || !userIds.length) {
+      return {};
+    }
+    
+    console.log('[DB] Getting preferences for multiple users:', { count: userIds.length });
+    
+    // Create a map to store results
+    const preferencesMap = {};
+    
+    try {
+      // Get all users in a single batch operation
+      const result = await userDb.allDocs({
+        keys: userIds,
+        include_docs: true
+      });
+      
+      // Process results and extract preferences
+      result.rows.forEach(row => {
+        if (row.doc && !row.error) {
+          preferencesMap[row.id] = row.doc.preferences || {};
+        }
+      });
+      
+      console.log('[DB] Successfully loaded preferences for users:', { count: Object.keys(preferencesMap).length });
+    } catch (error) {
+      console.error('[DB] Error loading batch preferences:', error);
+    }
+    
+    return preferencesMap;
+  }
+
   async updateBalance(userId, amount, reason) {
     console.log('[DB] Updating balance:', { userId, amount, reason });
     const user = await this.getUserById(userId);

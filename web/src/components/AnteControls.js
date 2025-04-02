@@ -35,36 +35,30 @@ const AnteControls = () => {
   
   return (
     <div className={styles.anteControlsWrapper}>
-      {!isPlayerReady ? (
-        // Player is not ready - show Ante button and Auto-Ante toggle
-        <div className={styles.controlsContainer}>
-          <div className={styles.buttonContainer}>
-            <button 
-              className={styles.anteButton}
-              onClick={playerReady}
-              disabled={!hasEnoughChips}
-            >
-              <span className={styles.anteIcon}>{ICONS.CHECK}</span>
-              <div className={styles.buttonInfo}>
-                <h3 className={styles.buttonLabel}>ANTE</h3>
-                <span className={styles.buttonAmount}><CurrencyAmount amount={anteAmount} /></span>
-              </div>
-            </button>
-            
-            {!hasEnoughChips && (
-              <p className={styles.notEnoughChipsText}>Not enough chips (<CurrencyAmount amount={anteAmount} /> required)</p>
-            )}
-          </div>
-          
-          {/* Auto-Ante toggle only shown when player is not ready */}
-          <div className={styles.autoAnteContainer}>
-            <AutoAnteToggle />
-          </div>
-        </div>
-      ) : (
-        // Player is ready - show Back Out button
-        <div className={styles.controlsContainer}>
-          <div className={styles.buttonContainer}>
+      <div className={styles.controlsContainer}>
+        {/* Main action button (Ante or Back Out) */}
+        <div className={styles.buttonContainer}>
+          {!isPlayerReady ? (
+            // Player is not ready - show Ante button
+            <>
+              <button 
+                className={styles.anteButton}
+                onClick={playerReady}
+                disabled={!hasEnoughChips}
+              >
+                <span className={styles.anteIcon}>{ICONS.CHECK}</span>
+                <div className={styles.buttonInfo}>
+                  <h3 className={styles.buttonLabel}>ANTE</h3>
+                  <span className={styles.buttonAmount}><CurrencyAmount amount={anteAmount} /></span>
+                </div>
+              </button>
+              
+              {!hasEnoughChips && (
+                <p className={styles.notEnoughChipsText}>Not enough chips (<CurrencyAmount amount={anteAmount} /> required)</p>
+              )}
+            </>
+          ) : (
+            // Player is ready - show Back Out button
             <button 
               className={styles.backOutButton}
               onClick={() => {
@@ -80,9 +74,14 @@ const AnteControls = () => {
                 <h3 className={styles.buttonLabel}>BACK OUT</h3>
               </div>
             </button>
-          </div>
+          )}
         </div>
-      )}
+        
+        {/* Auto-Ante toggle - always shown */}
+        <div className={styles.autoAnteContainer}>
+          <AutoAnteToggle />
+        </div>
+      </div>
     </div>
   );
 };

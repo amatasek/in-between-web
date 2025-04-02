@@ -5,9 +5,10 @@ const { GamePhases } = require('../../../shared/constants/GamePhases');
 const CardService = require('./CardService');
 const gameTimingService = require('./GameTimingService');
 const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
+const db = require('./db/DatabaseService');
 
 class PlayerManagementService {
-  async addPlayer(game, playerId, name, userId) {
+  async addPlayer(game, playerId, name, userId, broadcastFn) {
     if (!game || game.playerCount >= game.MAX_SEATS) return game;
     
     // Create new player
@@ -52,6 +53,34 @@ class PlayerManagementService {
     
     const displayName = game.seatInfo[seatIndex].name;
     gameLog(game, `Player ${displayName} joined and assigned seat ${seatIndex + 1}`);
+    
+    // Check if game is in waiting phase and player has auto-ante enabled
+    if (game.phase === GamePhases.WAITING && userId) {
+      // We'll check for auto-ante preference and apply it if enabled
+      setTimeout(async () => {
+        try {
+          const preferences = await db.getPreferences(userId);
+          
+          if (preferences.autoAnte) {
+            try {
+              // Use the same playerReady function for consistency
+              game = await this.playerReady(game, playerId);
+              gameLog(game, `Auto-ante applied for ${player.name} who just joined`);
+              
+              // Broadcast game state update
+              if (broadcastFn) {
+                broadcastFn(game);
+              }
+            } catch (error) {
+              gameLog(game, `Auto-ante error for new player ${player.name}: ${error.message}`);
+            }
+          }
+        } catch (error) {
+          gameLog(game, `Error checking auto-ante for new player: ${error.message}`);
+        }
+      }, 100);
+    }
+    
     game.updateTimestamp();
     return game;
   }
@@ -129,6 +158,13 @@ class PlayerManagementService {
     if (!game || !game.players[playerId]) return game;
 
     const player = game.players[playerId];
+    
+    // Prevent double-ante by checking if player is already ready
+    if (player.isReady) {
+      const errorMsg = `Player ${player.name} is already ready (anted)`;
+      gameLog(game, `[ERROR] ${errorMsg}`);
+      throw new Error(errorMsg);
+    }
     
     // Place ante bet
     const success = await player.removeChips(ANTE_AMOUNT, `Game ${game.id}: Ante`);

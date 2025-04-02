@@ -49,23 +49,4 @@ router.post('/:key', authenticateToken, async (req, res) => {
   }
 });
 
-// For backward compatibility - specific endpoint for auto-ante
-router.post('/auto-ante', authenticateToken, async (req, res) => {
-  try {
-    const { enabled } = req.body;
-    if (typeof enabled !== 'boolean') {
-      return res.status(400).json({ message: 'Enabled must be a boolean value' });
-    }
-    
-    const result = await db.updatePreference(req.userId, 'autoAnte', enabled);
-    
-    res.json({ 
-      autoAnteEnabled: result.preferences.autoAnte
-    });
-  } catch (error) {
-    console.error('[Preferences] Error toggling auto-ante:', error);
-    res.status(500).json({ message: 'Failed to update auto-ante setting' });
-  }
-});
-
 module.exports = router;

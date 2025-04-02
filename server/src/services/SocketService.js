@@ -429,8 +429,7 @@ class SocketService {
           game.firstCard.isAceLow = isAceLow;
           game.waitingForAceDecision = false;
           
-          console.log(`[SOCKET_SERVICE] Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
-          gameLog(game, `Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
+          console.log(`[SOCKET_SERVICE] Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);          gameLog(game, `Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
           
           // Save the game with updated Ace choice
           await GameService.saveGame(game);
@@ -491,7 +490,7 @@ class SocketService {
       });
       
       // Event: Leave game and return to lobby (without disconnecting)
-      socket.on('leaveGameLobby', (data) => {
+      socket.on('leaveGameLobby', async (data) => {
         try {
           console.log(`[SOCKET_SERVICE] Player ${socket.id} leaving game lobby: ${data.gameId}`);
           
@@ -505,7 +504,7 @@ class SocketService {
             const game = GameService.games[gameId];
             
             // Remove player from game
-            GameService.removePlayer(game, socket.id);
+            await GameService.safeRemovePlayer(game, socket.id);
             
             // Check if game is now empty and should be cleaned up
             const wasGameRemoved = this.cleanupGameIfEmpty(game);
@@ -528,6 +527,19 @@ class SocketService {
             
             // Send updated game list
             this.sendGameListToClient(socket);
+            
+            // Send updated balance to the client
+            if (socket.user?.userId) {
+              try {
+                const dbUser = await db.getUserById(socket.user.userId);
+                if (dbUser) {
+                  console.log(`[SOCKET_SERVICE] Sending updated balance to user ${socket.user.username}: ${dbUser.balance}`);
+                  socket.emit('balanceUpdate', { balance: dbUser.balance });
+                }
+              } catch (error) {
+                console.error('[SOCKET_SERVICE] Error fetching balance after leaving game:', error);
+              }
+            }
           } else {
             console.log(`[SOCKET_SERVICE] No game found for player ${socket.id} to leave`);
             socket.emit('leftGame', { success: true });

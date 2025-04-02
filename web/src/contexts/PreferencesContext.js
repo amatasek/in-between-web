@@ -10,14 +10,15 @@ export const PreferencesProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   
-  // Load preferences from the server when the user logs in
-  useEffect(() => {
-    const loadPreferences = async () => {
-      if (!user) {
-        setPreferences({ autoAnte: false });
-        setLoading(false);
-        return;
-      }
+  // Define loadPreferences function with useCallback to handle dependencies properly
+  const loadPreferences = React.useCallback(async () => {
+    if (!user) {
+      setPreferences({ autoAnte: false });
+      setLoading(false);
+      return;
+    }
+    
+    console.log('[Preferences] Loading preferences for user:', user.username);
       
       try {
         setLoading(true);
@@ -53,10 +54,19 @@ export const PreferencesProvider = ({ children }) => {
       } finally {
         setLoading(false);
       }
-    };
-    
-    loadPreferences();
   }, [user]);
+  
+  // Load preferences from the server when the user logs in or changes
+  useEffect(() => {
+    loadPreferences();
+  }, [loadPreferences]);
+  
+  // Also reload preferences when the component mounts
+  useEffect(() => {
+    if (user) {
+      loadPreferences();
+    }
+  }, [user, loadPreferences]);
   
   // Update a preference
   const updatePreference = async (key, value) => {
@@ -105,7 +115,7 @@ export const PreferencesProvider = ({ children }) => {
       console.error(`[Preferences] Error updating ${key}:`, error);
       
       // Revert the optimistic update on error
-      loadPreferences();
+      await loadPreferences();
       return false;
     }
   };
