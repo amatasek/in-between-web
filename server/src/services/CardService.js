@@ -138,7 +138,6 @@ class CardService {
     
     // Deal the middle card
     const thirdCard = game.deck.pop();
-    thirdCard.revealed = true; // It's revealed immediately
     
     // Update game state
     game.thirdCard = thirdCard;
