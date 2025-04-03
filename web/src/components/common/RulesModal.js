@@ -68,7 +68,7 @@ const RulesModal = ({ open, onClose }) => {
           <br />
           • Lose: Card is outside or matches either card - bet goes to the house 🏦
           <br />
-          • Aces are considered low (value of 1)
+          • When dealt an Ace, you choose if it's high (value of 13) or low (value of 1)
         </Typography>
 
         <Typography variant="h6" sx={{ mb: 2, mt: 3, color: 'var(--secondary)' }}>
