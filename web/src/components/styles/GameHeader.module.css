@@ -248,22 +248,57 @@
   border-color: rgba(231, 76, 60, 0.9);
 }
 
+.rulesButton {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(52, 152, 219, 0.7);
+  border-radius: 4px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-weight: normal;
+  transition: all 0.2s ease;
+  z-index: 2;
+  letter-spacing: normal;
+  text-transform: none;
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+}
+
+.rulesButton:hover {
+  background-color: rgba(52, 152, 219, 0.15);
+  border-color: rgba(52, 152, 219, 0.9);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
 @media (max-width: 600px) {
-  .leaveButton {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
+  .headerRight {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+  }
+  
+  .rulesButton, .leaveButton {
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
   }
 }
 
 @media (max-width: 400px) {
-  .leaveButton {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
+  .headerRight {
+    flex-direction: row;
+    gap: 0.2rem;
+    margin-top: 0.3rem;
   }
-}
-
-.leaveButton:hover {
-  background-color: #c0392b;
+  
+  .rulesButton, .leaveButton {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
 }
 
 /* Phase-specific styles */
@@ -454,26 +489,8 @@
   transform-origin: right;
 }
 
-.leaveButton {
-  padding: 0.6rem 1.2rem;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  margin-left: 1.5rem;
-  flex: 1;
-  max-width: 120px;
-  white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
 .leaveButton:hover {
   background-color: #c0392b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Animations for game phases */

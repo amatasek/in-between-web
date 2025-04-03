@@ -4,6 +4,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { TIMERS } from '../../../shared/constants/GameConstants';
 import { ICONS } from '../constants/UIConstants';
+import RulesModal from './common/RulesModal';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
@@ -19,6 +20,7 @@ const GameHeader = ({ handleLeaveGame }) => {
   const { socket } = useSocket();
   const currentPhase = gameState?.phase || 'waiting';
   const [timeLeft, setTimeLeft] = useState(null);
+  const [rulesOpen, setRulesOpen] = useState(false);
 
   // Timer effect for phases
   useEffect(() => {
@@ -93,6 +95,14 @@ const GameHeader = ({ handleLeaveGame }) => {
       phaseInfo = { text: 'Betting Round', icon: ICONS.COIN };
     }
   }
+
+  const handleOpenRules = () => {
+    setRulesOpen(true);
+  };
+
+  const handleCloseRules = () => {
+    setRulesOpen(false);
+  };
   
   return (
     <div className={styles.headerContainer}>
@@ -126,12 +136,22 @@ const GameHeader = ({ handleLeaveGame }) => {
         </div>
       </div>
       
-      <button 
-        className={styles.leaveButton}
-        onClick={handleLeaveGame}
-      >
-        Leave Game
-      </button>
+      <div className={styles.headerRight}>
+        <button 
+          className={styles.rulesButton}
+          onClick={handleOpenRules}
+        >
+          Rules
+        </button>
+        <button 
+          className={styles.leaveButton}
+          onClick={handleLeaveGame}
+        >
+          Leave Game
+        </button>
+      </div>
+
+      <RulesModal open={rulesOpen} onClose={handleCloseRules} />
     </div>
   );
 };

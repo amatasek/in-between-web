@@ -1,31 +1,23 @@
 import React from 'react';
 import { Modal, Box, Typography, Button } from '@mui/material';
-// Try importing CloseIcon with error handling
-let CloseIcon;
-try {
-  const IconModule = require('@mui/icons-material');
-  CloseIcon = IconModule.Close;
-} catch (error) {
-  console.warn('Could not import CloseIcon, using fallback');
-  CloseIcon = () => <span>✕</span>;
-}
-
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90%',
-  maxWidth: 600,
-  bgcolor: '#1a1a2e',
-  border: '2px solid #3498db',
-  borderRadius: 2,
-  boxShadow: 24,
-  p: 4,
-  color: '#ecf0f1',
-};
+import { Close as CloseIcon } from '@mui/icons-material';
 
 const RulesModal = ({ open, onClose }) => {
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90%',
+    maxWidth: 600,
+    bgcolor: 'var(--primary-dark)',
+    border: '2px solid var(--info)',
+    borderRadius: 2,
+    boxShadow: 24,
+    p: 4,
+    color: 'var(--text-primary)',
+  };
+
   return (
     <Modal
       open={open}
@@ -40,24 +32,24 @@ const RulesModal = ({ open, onClose }) => {
             position: 'absolute',
             right: 8,
             top: 8,
-            color: '#ecf0f1',
+            color: 'var(--text-primary)',
           }}
         >
           <CloseIcon />
         </Button>
         
-        <Typography id="rules-modal-title" variant="h4" component="h2" sx={{ mb: 3, color: '#3498db' }}>
+        <Typography id="rules-modal-title" variant="h4" component="h2" sx={{ mb: 3, color: 'var(--info)' }}>
           🃏 How to Play In Between
         </Typography>
 
-        <Typography variant="h6" sx={{ mb: 2, color: '#e74c3c' }}>
+        <Typography variant="h6" sx={{ mb: 2, color: 'var(--secondary)' }}>
           The Objective
         </Typography>
         <Typography paragraph>
           Your goal is to bet on whether a third card will fall "in between" two dealt cards. Simple? Yes! Fun? Absolutely!
         </Typography>
 
-        <Typography variant="h6" sx={{ mb: 2, mt: 3, color: '#e74c3c' }}>
+        <Typography variant="h6" sx={{ mb: 2, mt: 3, color: 'var(--secondary)' }}>
           Game Flow
         </Typography>
         <Typography component="div" sx={{ mb: 2 }}>
@@ -68,7 +60,7 @@ const RulesModal = ({ open, onClose }) => {
           3. Third card is revealed - moment of truth! 🎴
         </Typography>
 
-        <Typography variant="h6" sx={{ mb: 2, mt: 3, color: '#e74c3c' }}>
+        <Typography variant="h6" sx={{ mb: 2, mt: 3, color: 'var(--secondary)' }}>
           Winning & Losing
         </Typography>
         <Typography paragraph>
@@ -79,7 +71,7 @@ const RulesModal = ({ open, onClose }) => {
           • Aces are considered low (value of 1)
         </Typography>
 
-        <Typography variant="h6" sx={{ mb: 2, mt: 3, color: '#e74c3c' }}>
+        <Typography variant="h6" sx={{ mb: 2, mt: 3, color: 'var(--secondary)' }}>
           Pro Tips 💡
         </Typography>
         <Typography paragraph>
@@ -95,9 +87,9 @@ const RulesModal = ({ open, onClose }) => {
           variant="contained"
           sx={{
             mt: 2,
-            bgcolor: '#3498db',
+            bgcolor: 'var(--info)',
             '&:hover': {
-              bgcolor: '#2980b9',
+              bgcolor: 'var(--info-dark)',
             },
           }}
         >

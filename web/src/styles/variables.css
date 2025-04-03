@@ -47,6 +47,7 @@
   --gradient-success: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
   --gradient-info: linear-gradient(135deg, var(--info) 0%, var(--info-dark) 100%);
   --gradient-neutral: linear-gradient(135deg, var(--neutral) 0%, var(--neutral-dark) 100%);
+  --gradient-background: linear-gradient(to bottom right, var(--primary-dark), var(--primary-light));
   
   /* Button Styles */
   --button-padding-sm: 0.4rem 0.8rem;
