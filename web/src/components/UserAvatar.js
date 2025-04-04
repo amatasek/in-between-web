@@ -47,7 +47,6 @@ const UserAvatar = ({
         formattedImageUrl = `${API_URL}${profileImg}`;
       }
     }
-  }
   
   console.log('[UserAvatar] Image URL:', { 
     raw: profileImg, 
