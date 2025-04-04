@@ -1,8 +1,11 @@
-const CardService = require('./CardService');
+const BaseService = require('./BaseService');
 const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 
-class CardDealingService {
+class CardDealingService extends BaseService {
+  constructor() {
+    super();
+  }
   dealCards(game) {
     if (!game) return game;
     
@@ -13,7 +16,8 @@ class CardDealingService {
     game.waitingForAceDecision = false;
     
     // Deal first card
-    game.firstCard = CardService.dealFirstCard(game);
+    const cardService = this.getService('card');
+    game.firstCard = cardService.dealFirstCard(game);
     gameLog(game, `First card dealt: ${game.firstCard.value}${game.firstCard.suit}`);
     
     // Check if the first card is an Ace
@@ -33,7 +37,8 @@ class CardDealingService {
     if (!game || !game.firstCard) return game;
     
     // Deal second card
-    game.secondCard = CardService.dealSecondCard(game);
+    const cardService = this.getService('card');
+    game.secondCard = cardService.dealSecondCard(game);
     gameLog(game, `Second card dealt: ${game.secondCard.value}${game.secondCard.suit}`);
     
     game.updateTimestamp();
@@ -44,7 +49,8 @@ class CardDealingService {
     if (!game || !game.firstCard || !game.secondCard) return game;
     
     // Deal middle card
-    game.thirdCard = CardService.dealThirdCard(game);
+    const cardService = this.getService('card');
+    game.thirdCard = cardService.dealThirdCard(game);
     gameLog(game, `Middle card revealed: ${game.thirdCard.value}${game.thirdCard.suit}`);
     
     // Move to results phase
@@ -63,7 +69,8 @@ class CardDealingService {
     game.thirdCard = null;
     
     // Deal first card
-    game.firstCard = CardService.dealFirstCard(game);
+    const cardService = this.getService('card');
+    game.firstCard = cardService.dealFirstCard(game);
     gameLog(game, `First card dealt for ${game.players[game.currentPlayerId].name}: ${game.firstCard.value}${game.firstCard.suit}`);
     
     game.updateTimestamp();
@@ -75,7 +82,8 @@ class CardDealingService {
     
     // Create new deck if needed
     if (!game.deck || game.deck.length < 3) {
-      game.deck = CardService.shuffleDeck(CardService.createDeck());
+      const cardService = this.getService('card');
+      game.deck = cardService.shuffleDeck(cardService.createDeck());
       game.deckCount = 1;
       gameLog(game, `New deck created, ${game.deck.length} cards`);
     }

@@ -1,9 +1,11 @@
+const BaseService = require('./BaseService');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const Game = require('../models/Game');
 const { gameLog } = require('../utils/logger');
 
-class GameStateService {
+class GameStateService extends BaseService {
   constructor() {
+    super();
     this.games = {};
   }
   

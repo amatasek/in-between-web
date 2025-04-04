@@ -1,6 +1,9 @@
-const db = require('./db/DatabaseService');
+const BaseService = require('./BaseService');
 
-class BalanceService {
+class BalanceService extends BaseService {
+  constructor() {
+    super();
+  }
   /**
    * Update a user's balance
    * @param {string} userId - The user's ID
@@ -12,8 +15,9 @@ class BalanceService {
     console.log('[Balance] Updating balance:', { userId, amount, reason });
     
     try {
-      await db.updateBalance(userId, amount, reason);
-      const user = await db.getUserById(userId);
+      const databaseService = this.getService('database');
+      await databaseService.updateBalance(userId, amount, reason);
+      const user = await databaseService.getUserById(userId);
       
       return {
         balance: user.balance,
@@ -31,7 +35,8 @@ class BalanceService {
    * @returns {Promise<number>}
    */
   async getBalance(userId) {
-    const user = await db.getUserById(userId);
+    const databaseService = this.getService('database');
+    const user = await databaseService.getUserById(userId);
     return user?.balance || 0;
   }
 
@@ -46,6 +51,8 @@ class BalanceService {
     const reason = `Game ${gameId}: ${result}`;
     return this.updateBalance(userId, amount, reason);
   }
+
+  // Player-specific methods removed as they were redundant
 }
 
 module.exports = new BalanceService();

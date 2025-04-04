@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useSocket } from './SocketContext';
+import { useAuth } from './AuthContext';
+import { API_URL } from '../config';
 
 // Import shared type definitions
 /** @typedef {import('../../../shared/types').LobbyState} LobbyState */
@@ -17,6 +19,7 @@ export const useLobby = () => useContext(LobbyContext);
  */
 export const LobbyProvider = ({ children, onGameJoined }) => {
   const { socket, isConnected, setError } = useSocket();
+  const { token, refreshUserData } = useAuth();
   
   // Define initial lobby state
   /** @type {LobbyState} */
@@ -46,6 +49,36 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
   const setView = (newView) => {
     setLobbyState(prevState => ({ ...prevState, view: newView }));
   };
+  
+  // Fetch initial game list via HTTP when component mounts or token changes
+  useEffect(() => {
+    const fetchGameList = async () => {
+      if (!token) return;
+      
+      try {
+        console.log('[Lobby] Fetching initial game list via HTTP');
+        const response = await fetch(`${API_URL}/games`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+        
+        const games = await response.json();
+        console.log(`[Lobby] Initial games fetched via HTTP: ${games.length}`);
+        setLobbyState(prevState => ({ ...prevState, gameList: games }));
+      } catch (error) {
+        console.error('[Lobby] Error fetching game list via HTTP:', error);
+        // Don't set error state here - we'll fall back to WebSocket
+      }
+    };
+    
+    fetchGameList();
+  }, [token]);
   
   // Setup socket event listeners for lobby-related events
   useEffect(() => {
@@ -241,7 +274,7 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
       isAuthenticated: prevState.isAuthenticated
     }));
     
-    // Then fetch the updated user balance
+    // Then fetch the updated user data and game list
     if (socket && isConnected) {
       console.log('[Lobby] Emitting events to refresh lobby data');
       
@@ -250,8 +283,8 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
         socket.emit('leaveGameLobby', { gameId: currentGameId });
       }
       
-      // Request updated balance when returning to lobby
-      socket.emit('getBalance');
+      // Fetch updated user data using the /me endpoint
+      refreshUserData();
       
       // Request fresh game list
       socket.emit('getGameList');

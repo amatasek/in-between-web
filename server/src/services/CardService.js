@@ -2,10 +2,12 @@
  * CardService - Handles all card operations including deck management,
  * shuffling, dealing, and card value comparisons
  */
+const BaseService = require('./BaseService');
 const { gameLog } = require('../utils/logger');
 
-class CardService {
+class CardService extends BaseService {
   constructor() {
+    super();
     this.suits = ['♠', '♥', '♦', '♣'];
     this.values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
     this.valueMap = {

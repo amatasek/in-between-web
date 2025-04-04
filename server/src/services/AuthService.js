@@ -1,6 +1,6 @@
+const BaseService = require('./BaseService');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('./db/DatabaseService');
 const config = require('../config');
 const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
 
@@ -8,7 +8,33 @@ const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
 const JWT_SECRET = config.jwtSecret
 const SALT_ROUNDS = 10;
 
-class AuthService {
+class AuthService extends BaseService {
+  constructor() {
+    super();
+    // For direct usage outside the service registry
+    this._dbService = null;
+  }
+  
+  /**
+   * Get the database service, either from the registry or directly
+   * @returns {Object} The database service
+   */
+  getDatabaseService() {
+    if (this._dbService) {
+      return this._dbService;
+    }
+    
+    try {
+      return this.getService('database');
+    } catch (error) {
+      // If we're not in the service registry context, load the database service directly
+      if (!this._dbService) {
+        this._dbService = require('./db/DatabaseService');
+      }
+      return this._dbService;
+    }
+  }
+  
   async register(username, password) {
     // Validate input
     if (!username || !password) {
@@ -27,7 +53,8 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     // Create user in database
-    const user = await db.createUser({
+    const databaseService = this.getService('database');
+    const user = await databaseService.createUser({
       username,
       hashedPassword
     });
@@ -48,7 +75,8 @@ class AuthService {
   async login(username, password) {
     console.log('[AUTH] Login attempt:', { username });
     
-    const user = await db.getUserByUsername(username);
+    const databaseService = this.getDatabaseService();
+    const user = await databaseService.getUserByUsername(username);
     if (!user) {
       console.log('[AUTH] User not found:', { username });
       throw new Error('Invalid username or password');
@@ -77,11 +105,12 @@ class AuthService {
     }
     
     // Reset user balance to STARTING_BALANCE on each login
-    await db.updateUser(user._id, { balance: STARTING_BALANCE });
+    const dbService = this.getDatabaseService();
+    await dbService.updateUser(user._id, { balance: STARTING_BALANCE });
     console.log('[AUTH] Reset user balance to:', STARTING_BALANCE);
     
     // Get the updated user with the reset balance
-    const updatedUser = await db.getUserById(user._id);
+    const updatedUser = await dbService.getUserById(user._id);
     
     const token = await this.generateToken(updatedUser._id);
     console.log('[AUTH] Login successful:', { 
@@ -102,7 +131,8 @@ class AuthService {
 
   async generateToken(userId) {
     // Get full user info to include in token
-    const user = await db.getUserById(userId);
+    const databaseService = this.getDatabaseService();
+    const user = await databaseService.getUserById(userId);
     if (!user) throw new Error('User not found');
     
     return jwt.sign({ 
@@ -123,7 +153,8 @@ class AuthService {
 
   async getUserFromToken(token) {
     const decoded = this.verifyToken(token);
-    return db.getUserById(decoded.userId);
+    const databaseService = this.getDatabaseService();
+    return databaseService.getUserById(decoded.userId);
   }
 }
 

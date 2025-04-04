@@ -1,32 +1,26 @@
-const gameStateService = require('./GameStateService');
-const playerManagementService = require('./PlayerManagementService');
-const bettingService = require('./BettingService');
-const CardService = require('./CardService');
-const gameTimingService = require('./GameTimingService');
+const BaseService = require('./BaseService');
 const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 
 /**
  * GameService - Orchestrates the game flow by coordinating between specialized services
  */
-class GameService {
+class GameService extends BaseService {
   constructor() {
+    super();
+    this.games = {}; // Will be initialized in init()
+  }
+  
+  /**
+   * Initialize the service - called after all services are registered
+   */
+  init() {
+    // Now it's safe to get services because the registry has been set
+    const gameStateService = this.getService('gameState');
     this.games = gameStateService.games;
   }
 
-  createGame(gameId, hostId) {
-    return gameStateService.createGame(gameId, hostId);
-  }
-
-  async addPlayer(game, playerId, name, userId) {
-    // Create a reference to the broadcast function for auto-ante
-    const broadcastFn = (updatedGame) => this.broadcastGameState(updatedGame);
-    return playerManagementService.addPlayer(game, playerId, name, userId, broadcastFn);
-  }
-
-  removePlayer(game, playerId) {
-    return playerManagementService.removePlayer(game, playerId);
-  }
+  // Pass-through methods removed to reduce unnecessary abstraction layers
   
   /**
    * Safely remove a player from the game, returning their ante if appropriate
@@ -42,6 +36,7 @@ class GameService {
       // Withdraw the player's ante before removing them
       gameLog(game, `Player ${game.players[playerId]?.name} is anted up, returning ante before leaving`);
       try {
+        const playerManagementService = this.getService('playerManagement');
         game = await playerManagementService.playerUnready(game, playerId);
       } catch (error) {
         gameLog(game, `Error returning ante: ${error.message}`);
@@ -49,11 +44,18 @@ class GameService {
     }
     
     // Remove player from game
-    return this.removePlayer(game, playerId);
+    const playerManagementService = this.getService('playerManagement');
+    return playerManagementService.removePlayer(game, playerId);
   }
 
   async startRound(game) {
     if (!game) return game;
+    
+    // Get required services
+    const gameTimingService = this.getService('gameTiming');
+    const gameStateService = this.getService('gameState');
+    const cardService = this.getService('card');
+    const playerManagementService = this.getService('playerManagement');
     
     // Clear any existing timeouts
     gameTimingService.clearGameTimeouts(game.id);
@@ -65,7 +67,7 @@ class GameService {
     game = gameStateService.startRound(game);
     
     // Ensure deck is available
-    game = CardService.ensureDeckAvailable(game);
+    game = cardService.ensureDeckAvailable(game);
     
     // Set initial player only at the beginning of a new game (round 1)
     if (game.round === 1) {
@@ -87,24 +89,24 @@ class GameService {
   async startDealingSequence(game) {
     if (!game) return game;
     
-    // Ensure deck is available
-    game = CardService.ensureDeckAvailable(game);
+    // Get required services
+    const cardService = this.getService('card');
+    const gameTimingService = this.getService('gameTiming');
+    const gameStateService = this.getService('gameState');
     
-    // Use the GameTimingService to handle the dealing sequence with proper timing
-    const services = {
-      CardService,
-      broadcastFn: (updatedGame) => this.broadcastGameState(updatedGame),
-      saveGameFn: this.saveGame,
-      getGameFn: this.getGameById
-    };
+    // Ensure deck is available
+    game = cardService.ensureDeckAvailable(game);
     
     // GameTimingService will handle all the timing and state transitions
-    await gameTimingService.handleDealingSequence(game, services);
+    await gameTimingService.handleDealingSequence(game);
     
     return game;
   }
 
   async playerReady(game, playerId) {
+    // Get the player management service
+    const playerManagementService = this.getService('playerManagement');
+    
     // Mark player as ready and handle ante
     game = await playerManagementService.playerReady(game, playerId);
     
@@ -138,23 +140,12 @@ class GameService {
 
     gameLog(game, `Betting phase started for ${game.players[game.currentPlayerId].name}`);
     
-    // Use GameTimingService to handle the betting sequence with auto-pass
-    const services = {
-      getGameFn: (gameId) => {
-        const retrievedGame = gameStateService.getGame(gameId);
-
-        return retrievedGame;
-      },
-      broadcastFn: (updatedGame) => {
-
-        this.broadcastGameState(updatedGame);
-      }
-    };
-    
-
+    // Get required services
+    const gameStateService = this.getService('gameState');
+    const gameTimingService = this.getService('gameTiming');
     
     // GameTimingService will handle the auto-pass timeout
-    await gameTimingService.handleBettingSequence(game, services);
+    await gameTimingService.handleBettingSequence(game);
     
 
     
@@ -169,8 +160,11 @@ class GameService {
   checkForSecondChance(game) {
     if (!game || !game.firstCard || !game.secondCard) return false;
     
+    // Get the card service from the registry
+    const cardService = this.getService('card');
+    
     // Check if the first two cards form a matching pair (but aren't Aces)
-    const isSecondChanceEligible = CardService.isSecondChanceEligible(game.firstCard, game.secondCard);
+    const isSecondChanceEligible = cardService.isSecondChanceEligible(game.firstCard, game.secondCard);
     
     if (isSecondChanceEligible) {
       game.waitingForSecondChance = true;
@@ -205,9 +199,10 @@ class GameService {
       const anteAmount = game.anteAmount || 1; // Default to 1 if not specified
       
       // Remove the ante amount from the player's balance and add it to the pot
-      const success = await player.removeChips(anteAmount, `Game ${game.id}: Ante Up Again`);
-      
-      if (success) {
+      const balanceService = this.getService('balance');
+      try {
+        const result = await balanceService.updateBalance(player.userId, -anteAmount, `Game ${game.id}: Ante Up Again`);
+        player.balance = result.balance;
         game.pot += anteAmount;
         gameLog(game, `${player.name} antes up again with ${anteAmount}`);
         
@@ -218,9 +213,9 @@ class GameService {
         
         // Return to the dealing phase (it's already in the dealing phase)
         return game;
-      } else {
+      } catch (error) {
         // If player doesn't have enough chips, treat it as a pass
-        gameLog(game, `${player.name} doesn't have enough chips to ante up again, treating as pass`);
+        gameLog(game, `${player.name} doesn't have enough chips to ante up again, treating as pass: ${error.message}`);
         return await this.placeBet(game, playerId, 0);
       }
     } else {
@@ -243,6 +238,7 @@ class GameService {
     if (!game) return game;
     
     // Place the bet using betting service
+    const bettingService = this.getService('betting');
     let updatedGame = await bettingService.placeBet(game, playerId, amount);
     
     // If player passed (amount is 0), handle the phase transition
@@ -265,29 +261,18 @@ class GameService {
       // Move to revealing phase
       updatedGame.phase = GamePhases.REVEALING;
       
-      // Use GameTimingService to handle the revealing sequence
-      const services = {
-        CardService,
-        processOutcomeFn: async (game) => await this.processGameOutcome(game),
-        broadcastFn: (game) => this.broadcastGameState(game)
-      };
+      // Get required services
+      const cardService = this.getService('card');
+      const gameTimingService = this.getService('gameTiming');
       
       // GameTimingService will handle all the timing and state transitions
-      await gameTimingService.handleRevealingSequence(updatedGame, services);
+      await gameTimingService.handleRevealingSequence(updatedGame);
     }
     
     return updatedGame;
   }
 
-  /**
-   * Save the game state
-   * @param {Object} game - The game to save
-   * @returns {Object} The saved game
-   */
-  async saveGame(game) {
-    if (!game) return game;
-    return gameStateService.saveGame(game);
-  }
+  // saveGame method removed - services should call gameStateService.saveGame directly
 
   async processGameOutcome(game) {
     if (!game) return game;
@@ -304,10 +289,13 @@ class GameService {
       return game;
     }
     
+    // Get the card service from the registry
+    const cardService = this.getService('card');
+    
     // Determine outcome
-    const isWin = CardService.isCardBetween(firstCard, thirdCard, secondCard);
-    const isTie = CardService.isCardTie(firstCard, thirdCard, secondCard);
-    const isTripleAceTie = CardService.isTripleAceTie(firstCard, secondCard, thirdCard);
+    const isWin = cardService.isCardBetween(firstCard, thirdCard, secondCard);
+    const isTie = cardService.isCardTie(firstCard, thirdCard, secondCard);
+    const isTripleAceTie = cardService.isTripleAceTie(firstCard, secondCard, thirdCard);
     
     try {
       let winnings = 0;
@@ -316,10 +304,14 @@ class GameService {
         // Regular win (1:1)
         winnings = player.currentBet * 2;
         const potPayment = Math.min(game.pot, winnings);
-        const success = await player.addChips(potPayment, `Game ${game.id}: Win`);
-        if (success) {
+        const balanceService = this.getService('balance');
+        try {
+          const result = await balanceService.updateBalance(player.userId, potPayment, `Game ${game.id}: Win`);
+          player.balance = result.balance;
           game.pot -= potPayment;
           gameLog(game, `${player.name} WINS ${potPayment}`);
+        } catch (error) {
+          gameLog(game, `Error giving winnings to ${player.name}: ${error.message}`);
         }
       } else if (isTripleAceTie) {
         // Triple Ace tie - 3x penalty
@@ -327,11 +319,14 @@ class GameService {
         
         // Calculate additional penalty (original bet is already in the pot)
         const additionalPenalty = player.currentBet * 2;
-        const success = await player.removeChips(additionalPenalty, `Game ${game.id}: Triple Ace Tie`);
-        
-        if (success) {
+        const balanceService = this.getService('balance');
+        try {
+          const result = await balanceService.updateBalance(player.userId, -additionalPenalty, `Game ${game.id}: Triple Ace Tie`);
+          player.balance = result.balance;
           game.pot += additionalPenalty;
           gameLog(game, `TRIPLE ACE TIE! ${player.name} pays ${player.currentBet * 3} total (3x penalty)`);
+        } catch (error) {
+          gameLog(game, `Error collecting triple ace penalty from ${player.name}: ${error.message}`);
         }
       } else if (isTie) {
         // Regular tie - 2x penalty
@@ -339,11 +334,14 @@ class GameService {
         
         // Calculate additional penalty (original bet is already in the pot)
         const additionalPenalty = player.currentBet;
-        const success = await player.removeChips(additionalPenalty, `Game ${game.id}: Tie`);
-        
-        if (success) {
+        const balanceService = this.getService('balance');
+        try {
+          const result = await balanceService.updateBalance(player.userId, -additionalPenalty, `Game ${game.id}: Tie`);
+          player.balance = result.balance;
           game.pot += additionalPenalty;
           gameLog(game, `TIE! ${player.name} pays ${player.currentBet * 2} total (2x penalty)`);
+        } catch (error) {
+          gameLog(game, `Error collecting tie penalty from ${player.name}: ${error.message}`);
         }
       } else {
         gameLog(game, `${player.name} LOSES ${player.currentBet}`);
@@ -360,15 +358,11 @@ class GameService {
       // Reset bet
       player.resetBet();
       
-      // Use GameTimingService to handle the results sequence
-      const services = {
-        startNextRoundFn: async (game) => await this.startNextRound(game),
-        broadcastFn: (game) => this.broadcastGameState(game),
-        playerReadyFn: async (game, playerId) => await this.playerReady(game, playerId)
-      };
+      // Get the game timing service from the registry
+      const gameTimingService = this.getService('gameTiming');
       
       // GameTimingService will handle all the timing and state transitions
-      await gameTimingService.handleResultsSequence(game, services);
+      await gameTimingService.handleResultsSequence(game);
       
       return game;
     } catch (error) {
@@ -385,6 +379,7 @@ class GameService {
     gameLog(game, `Moving from player ${currentPlayer} to next player`);
     
     // Move to next player
+    const playerManagementService = this.getService('playerManagement');
     game = playerManagementService.moveToNextPlayer(game);
     
     const nextPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
@@ -406,14 +401,18 @@ class GameService {
   }
 
   getGame(gameId) {
+    const gameStateService = this.getService('gameState');
     return gameStateService.getGame(gameId);
   }
 
   getAvailableGames() {
+    const gameStateService = this.getService('gameState');
     return gameStateService.getAvailableGames();
   }
 
   cleanupGame(gameId) {
+    const gameTimingService = this.getService('gameTiming');
+    const gameStateService = this.getService('gameState');
     gameTimingService.clearGameTimeouts(gameId);
     gameStateService.removeGame(gameId);
   }
@@ -469,8 +468,9 @@ class GameService {
     // Log the game state being broadcast
     gameLog(game, `Game state broadcast - Phase: ${game.phase}, Current player: ${game.players[game.currentPlayerId]?.name}`);
     
-    const socketService = require('./SocketService');
-    socketService.broadcastGameState(game);
+    // Get the broadcast service from the registry
+    const broadcastService = this.getService('broadcast');
+    broadcastService.broadcastGameState(game);
   }
 }
 

@@ -1,8 +1,11 @@
+const BaseService = require('./BaseService');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const { gameLog } = require('../utils/logger');
-const playerManagementService = require('./PlayerManagementService');
 
-class BettingService {
+class BettingService extends BaseService {
+  constructor() {
+    super();
+  }
   async placeBet(game, playerId, amount) {
     if (!game || !game.isPlayersTurn(playerId)) {
       gameLog(game, `Invalid bet: Not ${game.players[playerId]?.name}'s turn`);
@@ -17,6 +20,7 @@ class BettingService {
       gameLog(game, `Player ${player.name} passes`);
       
       // Move to next player's turn
+      const playerManagementService = this.getService('playerManagement');
       game = playerManagementService.moveToNextPlayer(game);
       
       return game;
@@ -35,17 +39,23 @@ class BettingService {
       if (!player.placeBet(betAmount)) return game;
       
       // Remove chips from player
-      const success = await player.removeChips(betAmount, `Game ${game.id}: Bet`);
-      if (!success) {
-        gameLog(game, `Failed to remove bet from ${player.name}'s balance`);
+      const balanceService = this.getService('balance');
+      try {
+        const result = await balanceService.updateBalance(player.userId, -betAmount, `Game ${game.id}: Bet`);
+        player.balance = result.balance;
+        
+        // Add to pot
+        game.pot += betAmount;
+        gameLog(game, `${player.name} bet ${betAmount}. Pot: ${game.pot}`);
+        
+        return game;
+      } catch (error) {
+        gameLog(game, `Failed to remove bet from ${player.name}'s balance: ${error.message}`);
         player.resetBet();
         return game;
       }
       
-      // Add to pot
-      game.pot += betAmount;
-      gameLog(game, `${player.name} bet ${betAmount}. Pot: ${game.pot}`);
-      
+      // Return the game (pot already updated in the try block)
       return game;
     } catch (error) {
       gameLog(game, `Error processing bet: ${error.message}`);

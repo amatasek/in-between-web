@@ -1,5 +1,4 @@
 const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
-const balanceService = require('../services/BalanceService');
 
 /**
  * Player Model - Manages player state and actions
@@ -19,6 +18,12 @@ class Player {
   async loadBalance() {
     if (!this.userId) return false;
     try {
+      const balanceService = serviceRegistry.get('balance');
+      if (!balanceService) {
+        console.error('[Player] Balance service not found in registry');
+        return false;
+      }
+      
       this.balance = await balanceService.getBalance(this.userId);
       return true;
     } catch (error) {
@@ -40,29 +45,9 @@ class Player {
     this.currentBet = 0;
   }
   
-  async addChips(amount, reason) {
-    if (!this.userId) return false;
-    try {
-      const result = await balanceService.updateBalance(this.userId, amount, reason);
-      this.balance = result.balance;
-      return true;
-    } catch (error) {
-      console.error('[Player] Error adding chips:', error);
-      return false;
-    }
-  }
+  // Balance methods moved to BalanceService
   
-  async removeChips(amount, reason) {
-    if (!this.userId) return false;
-    try {
-      const result = await balanceService.updateBalance(this.userId, -amount, reason);
-      this.balance = result.balance;
-      return true;
-    } catch (error) {
-      console.error('[Player] Error removing chips:', error);
-      return false;
-    }
-  }
+  // Balance methods moved to BalanceService
   
   setReady(isReady) {
     this.isReady = isReady;

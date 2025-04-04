@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { io } from 'socket.io-client';
+import { SOCKET_URL } from '../config';
 
 // For Socket.io types, we'll define a simple interface that covers our usage
 /**
@@ -43,7 +44,6 @@ export const SocketProvider = ({ children }) => {
     }
 
     // Initialize socket connection with auth token
-    const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
     const newSocket = io(SOCKET_URL, {
       auth: { token },
       reconnection: true,
@@ -72,6 +72,10 @@ export const SocketProvider = ({ children }) => {
     newSocket.on('authenticated', () => {
       console.log('[Socket] Authentication successful');
       setIsConnected(true); // Now we can set isConnected to true
+      
+      // Request the game list when authenticated
+      console.log('[Socket] Requesting initial game list');
+      newSocket.emit('getGameList');
     });
 
     newSocket.on('connect_error', (error) => {

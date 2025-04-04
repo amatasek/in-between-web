@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../services/db/DatabaseService');
-const { verifyToken } = require('../services/AuthService');
+
+// We'll use the services injected by the middleware via req.services
 
 // Middleware to verify JWT token
 const authenticateToken = async (req, res, next) => {
@@ -11,7 +11,9 @@ const authenticateToken = async (req, res, next) => {
       return res.status(401).json({ message: 'No token provided' });
     }
     
-    const decoded = verifyToken(token);
+    // Get the auth service from the injected services
+    const authService = req.services.auth;
+    const decoded = authService.verifyToken(token);
     req.userId = decoded.userId;
     next();
   } catch (error) {
@@ -22,7 +24,8 @@ const authenticateToken = async (req, res, next) => {
 // Get all user preferences
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const preferences = await db.getPreferences(req.userId);
+    const databaseService = req.services.database;
+    const preferences = await databaseService.getPreferences(req.userId);
     res.json(preferences);
   } catch (error) {
     console.error('[Preferences] Error getting preferences:', error);
@@ -40,7 +43,8 @@ router.post('/:key', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'Value is required' });
     }
     
-    const result = await db.updatePreference(req.userId, key, value);
+    const databaseService = req.services.database;
+    const result = await databaseService.updatePreference(req.userId, key, value);
     
     res.json(result.preferences);
   } catch (error) {

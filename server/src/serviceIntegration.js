@@ -1,0 +1,71 @@
+/**
+ * Service Integration - Initializes and wires up all services
+ * This file serves as the integration point for our service-oriented architecture
+ */
+
+const serviceRegistry = require('./services/ServiceRegistry');
+
+const gameService = require('./services/GameService');
+const gameStateService = require('./services/GameStateService');
+const playerManagementService = require('./services/PlayerManagementService');
+const cardService = require('./services/CardService');
+const gameTimingService = require('./services/GameTimingService');
+const dbService = require('./services/db/DatabaseService');
+const bettingService = require('./services/BettingService');
+const connectionService = require('./services/ConnectionService');
+const lobbyService = require('./services/LobbyService');
+const gameEventService = require('./services/GameEventService');
+const broadcastService = require('./services/BroadcastService');
+const playerService = require('./services/PlayerService');
+const authService = require('./services/AuthService');
+const balanceService = require('./services/BalanceService');
+const cardDealingService = require('./services/CardDealingService');
+
+/**
+ * Initialize all services and wire them together
+ * @returns {Object} The service registry with all services registered
+ */
+function initializeServices() {
+  serviceRegistry
+    .register('connection', connectionService)
+    .register('game', gameService)
+    .register('gameState', gameStateService)
+    .register('player', playerService)
+    .register('playerManagement', playerManagementService)
+    .register('lobby', lobbyService)
+    .register('gameEvent', gameEventService)
+    .register('broadcast', broadcastService)
+    .register('database', dbService)
+    .register('card', cardService)
+    .register('gameTiming', gameTimingService)
+    .register('betting', bettingService)
+    .register('auth', authService)
+    .register('balance', balanceService)
+    .register('cardDealing', cardDealingService);
+
+  // Wire up services (give each service access to others)
+  serviceRegistry.wireServices();
+  
+  console.log('[SERVICE_INTEGRATION] All services bootstrapped');
+  
+  return serviceRegistry;
+}
+
+/**
+ * Initialize Socket.IO with the HTTP server
+ * @param {Object} server - The HTTP server instance
+ * @param {Object} existingSocketIO - Optional existing Socket.IO instance
+ * @returns {Object} The Socket.IO instance
+ */
+function initializeSocketIO(server, existingSocketIO = null) {
+  // Always use the ConnectionService to initialize Socket.IO
+  // This ensures we're only using the new service architecture
+  console.log('[SERVICE_INTEGRATION] Initializing new Socket.IO instance with ConnectionService');
+  return connectionService.initialize(server);
+}
+
+module.exports = {
+  initializeServices,
+  initializeSocketIO,
+  serviceRegistry
+};

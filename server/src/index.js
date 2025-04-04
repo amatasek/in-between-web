@@ -12,11 +12,16 @@ const fs = require('fs');
 // Import config
 const config = require('./config');
 
-// Import services
-const SocketService = require('./services/SocketService');
-const GameService = require('./services/GameService');
+// Import service integration - only using the new service architecture
+const { initializeServices, initializeSocketIO, serviceRegistry } = require('./serviceIntegration');
+
+// Import routes
 const authRoutes = require('./routes/auth');
 const preferencesRoutes = require('./routes/preferences');
+const gamesRoutes = require('./routes/games');
+
+// Import service middleware
+const { injectServices } = require('./middleware/serviceMiddleware');
 
 // Setup Express app
 const app = express();
@@ -73,9 +78,13 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Mount routes
-app.use('/auth', authRoutes);
-app.use('/preferences', preferencesRoutes);
+// Initialize services before mounting routes
+initializeServices();
+
+// Mount routes with service injection
+app.use('/auth', injectServices(['auth', 'database']), authRoutes);
+app.use('/preferences', injectServices(['auth', 'database']), preferencesRoutes);
+app.use('/games', injectServices(['lobby']), gamesRoutes);
 
 // Serve static files from the web build directory in production
 if (process.env.NODE_ENV === 'production') {
@@ -117,22 +126,29 @@ if (process.env.NODE_ENV === 'production') {
 // Create HTTP server
 const server = http.createServer(app);
 
-// Initialize Socket.IO service
-SocketService.initialize(server);
+// Initialize services
+initializeServices();
+
+// Initialize Socket.IO with our new service architecture
+const io = initializeSocketIO(server);
 
 // API route to get available games
 app.get('/api/games', (req, res) => {
-  const availableGames = GameService.getAvailableGames();
+  const lobbyService = serviceRegistry.get('lobby');
+  const availableGames = lobbyService.getAvailableGames();
   res.json({ games: availableGames });
 });
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
+  const gameService = serviceRegistry.get('game');
+  const connectionService = serviceRegistry.get('connection');
+  
   res.json({ 
     status: 'ok', 
     time: new Date().toISOString(),
-    activeGames: Object.keys(GameService.games).length,
-    connectedSockets: SocketService.connectedSockets.size
+    activeGames: Object.keys(gameService.games).length,
+    connectedSockets: connectionService.connectedSockets.size
   });
 });
 
@@ -140,7 +156,16 @@ app.get('/api/health', (req, res) => {
 const CLEANUP_INTERVAL_MS = 1000 * 60 * 10; // Run cleanup every 10 minutes
 setInterval(() => {
   console.log('[SERVER] Running scheduled cleanup tasks');
-  GameService.cleanupGames();
+  const gameService = serviceRegistry.get('game');
+  const lobbyService = serviceRegistry.get('lobby');
+  
+  // Use the lobbyService to clean up empty games
+  if (lobbyService && typeof lobbyService.cleanupEmptyGames === 'function') {
+    lobbyService.cleanupEmptyGames();
+  } else if (gameService && typeof gameService.cleanupGames === 'function') {
+    // Fallback to the original cleanup method
+    gameService.cleanupGames();
+  }
 }, CLEANUP_INTERVAL_MS);
 
 // Start the server
@@ -157,13 +182,16 @@ function shutdown() {
   console.log('[SERVER] Shutting down gracefully...');
   
   // Clean up all game timeouts
-  Object.values(GameService.games).forEach(game => {
-    if (game.timeouts && game.timeouts.length > 0) {
-      console.log(`Clearing ${game.timeouts.length} timeouts for game ${game.id}`);
-      game.timeouts.forEach(timeoutId => clearTimeout(timeoutId));
-      game.timeouts = [];
-    }
-  });
+  const gameService = serviceRegistry.get('game');
+  if (gameService && gameService.games) {
+    Object.values(gameService.games).forEach(game => {
+      if (game.timeouts && game.timeouts.length > 0) {
+        console.log(`Clearing ${game.timeouts.length} timeouts for game ${game.id}`);
+        game.timeouts.forEach(timeoutId => clearTimeout(timeoutId));
+        game.timeouts = [];
+      }
+    });
+  }
   
   // Close the HTTP server
   server.close(() => {

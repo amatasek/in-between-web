@@ -1,21 +1,23 @@
+const BaseService = require('./BaseService');
 const Player = require('../models/Player');
 const { gameLog } = require('../utils/logger');
 const { ANTE_AMOUNT } = require('../../../shared/constants/GameConstants');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
-const CardService = require('./CardService');
-const gameTimingService = require('./GameTimingService');
 const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
-const db = require('./db/DatabaseService');
 
-class PlayerManagementService {
-  async addPlayer(game, playerId, name, userId, broadcastFn) {
+class PlayerManagementService extends BaseService {
+  constructor() {
+    super();
+  }
+  async addPlayer(game, playerId, name, userId) {
     if (!game || game.playerCount >= game.MAX_SEATS) return game;
     
     // Create new player
     const player = new Player(playerId, name, userId);
     
     // Load player balance from database
-    await player.loadBalance();
+    const balanceService = this.getService('balance');
+    player.balance = await balanceService.getBalance(player.userId);
     
     // Add to game's player list
     game.players[playerId] = player;
@@ -59,7 +61,9 @@ class PlayerManagementService {
       // We'll check for auto-ante preference and apply it if enabled
       setTimeout(async () => {
         try {
-          const preferences = await db.getPreferences(userId);
+          // Get the database service from the registry
+          const databaseService = this.getService('database');
+          const preferences = await databaseService.getPreferences(userId);
           
           if (preferences.autoAnte) {
             try {
@@ -67,10 +71,9 @@ class PlayerManagementService {
               game = await this.playerReady(game, playerId);
               gameLog(game, `Auto-ante applied for ${player.name} who just joined`);
               
-              // Broadcast game state update
-              if (broadcastFn) {
-                broadcastFn(game);
-              }
+              // Get the game service from the registry to broadcast the update
+              const gameService = this.getService('game');
+              gameService.broadcastGameState(game);
             } catch (error) {
               gameLog(game, `Auto-ante error for new player ${player.name}: ${error.message}`);
             }
@@ -163,14 +166,29 @@ class PlayerManagementService {
     if (player.isReady) {
       const errorMsg = `Player ${player.name} is already ready (anted)`;
       gameLog(game, `[ERROR] ${errorMsg}`);
-      throw new Error(errorMsg);
+      return game;
     }
     
     // Place ante bet
-    const success = await player.removeChips(ANTE_AMOUNT, `Game ${game.id}: Ante`);
-    
-    if (!success) {
-      console.error(`[PLAYER_MGMT] Failed to remove ante from ${player.name}'s balance`);
+    const balanceService = this.getService('balance');
+    try {
+      const result = await balanceService.updateBalance(player.userId, -ANTE_AMOUNT, `Game ${game.id}: Ante`);
+      player.balance = result.balance;
+      
+      // Add to pot
+      game.pot += ANTE_AMOUNT;
+      player.isReady = true;
+  
+      // Check if all players are ready
+      const allReady = Object.values(game.players).every(p => p.isReady);
+      if (allReady) {
+        gameLog(game, 'All players ready, starting round');
+      }
+  
+      game.updateTimestamp();
+      return game;
+    } catch (error) {
+      console.error(`[PLAYER_MGMT] Failed to remove ante from ${player.name}'s balance:`, error);
       return game;
     }
 
@@ -199,10 +217,19 @@ class PlayerManagementService {
     }
 
     // Return ante to player
-    const success = await player.addChips(ANTE_AMOUNT, `Game ${game.id}: Ante withdraw`);
-    
-    if (!success) {
-      console.error(`[PLAYER_MGMT] Failed to return ante to ${player.name}'s balance`);
+    const balanceService = this.getService('balance');
+    try {
+      const result = await balanceService.updateBalance(player.userId, ANTE_AMOUNT, `Game ${game.id}: Ante withdraw`);
+      player.balance = result.balance;
+      
+      // Reduce pot
+      game.pot -= ANTE_AMOUNT;
+      player.isReady = false;
+      
+      game.updateTimestamp();
+      return game;
+    } catch (error) {
+      console.error(`[PLAYER_MGMT] Failed to return ante to ${player.name}'s balance:`, error);
       return game;
     }
 

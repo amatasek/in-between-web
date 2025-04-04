@@ -2,14 +2,14 @@
  * GameTimingService - Centralizes all game timing logic
  * Handles consistent timing for all game phases and transitions
  */
+const BaseService = require('./BaseService');
 const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
-const gameStateService = require('./GameStateService');
-const db = require('./db/DatabaseService');
 
-class GameTimingService {
+class GameTimingService extends BaseService {
   constructor() {
+    super();
     this.timeouts = {};
   }
 
@@ -41,12 +41,14 @@ class GameTimingService {
   /**
    * Handle the dealing sequence with proper timing
    * @param {Object} game - The game object
-   * @param {Object} services - Services needed for the sequence
    * @returns {Object} The updated game object
    */
-  async handleDealingSequence(game, services) {
-    const { CardService, broadcastFn } = services;
-    const getGameFn = services.getGameFn || ((gameId) => gameStateService.getGame(gameId));
+  async handleDealingSequence(game) {
+    // Get required services from the registry
+    const cardService = this.getService('card');
+    const gameStateService = this.getService('gameState');
+    const broadcastService = this.getService('broadcast');
+    const gameService = this.getService('game');
     
     if (!game) return game;
     
@@ -83,7 +85,7 @@ class GameTimingService {
       }
       
       // Deal first card
-      game = CardService.dealFirstCard(game);
+      game = cardService.dealFirstCard(game);
       
       // Check if the first card is an Ace
       if (game.firstCard && game.firstCard.value === 'A') {
@@ -91,21 +93,18 @@ class GameTimingService {
         gameLog(game, `First card is an Ace. Waiting for player to choose high/low`);
         
         // Broadcast the game state with the Ace and waitingForAceDecision flag
-        broadcastFn(game);
+        gameService.broadcastGameState(game);
         
         // Don't set up the timer for the second card yet - we'll do that after the player makes their choice
         gameLog(game, `Pausing dealing sequence until player makes Ace high/low choice`);
         
-        // Save the game state if a save function was provided
-        const saveGameFn = services.saveGameFn;
-        if (saveGameFn) {
-          await saveGameFn(game);
-        }
+        // Save the game state
+        await gameStateService.saveGame(game);
         
         return game; // Exit the function early - we'll resume after the player's choice
       }
       
-      broadcastFn(game);
+      gameService.broadcastGameState(game);
       
       // Set timer for second card (only if not waiting for Ace decision)
       this.timeouts[game.id].dealSecondCard = setTimeout(async () => {
@@ -116,24 +115,21 @@ class GameTimingService {
         }
         
         // Deal second card
-        game = CardService.dealSecondCard(game);
-        broadcastFn(game);
+        game = cardService.dealSecondCard(game);
+        gameService.broadcastGameState(game);
         
         // Check if the first two cards form a matching pair (but aren't Aces)
-        if (CardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
+        if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
           // Add a delay before showing the second chance popup to allow the card animation to complete
           setTimeout(() => {
             game.waitingForSecondChance = true;
             gameLog(game, `Matching pair detected! Waiting for player to decide whether to take a second chance`);
             
             // Broadcast the game state with the waitingForSecondChance flag
-            broadcastFn(game);
+            gameService.broadcastGameState(game);
             
-            // Save the game state if a save function was provided
-            const saveGameFn = services.saveGameFn;
-            if (saveGameFn) {
-              saveGameFn(game);
-            }
+            // Save the game state
+            gameStateService.saveGame(game);
           }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY); // Use the same delay as the card animation
           
           // Don't set up the timer for the transition to betting phase
@@ -178,7 +174,7 @@ class GameTimingService {
           this.timeouts[game.id].autoBet = setTimeout(async () => {
             try {
               // Get the latest game state
-              const currentGame = getGameFn(game.id);
+              const currentGame = gameStateService.getGame(game.id);
               if (!currentGame) return;
               
               // Check if we're still in betting phase, it's still this player's turn, and we're in the same round
@@ -190,7 +186,8 @@ class GameTimingService {
                 gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
                 
                 // Use the GameService's placeBet method to handle the pass
-                const gameService = require('./GameService');
+                // Get the game service from the registry instead of requiring it directly
+                const gameService = this.getService('game');
                 await gameService.placeBet(currentGame, currentPlayerId, 0);
               }
             } catch (error) {
@@ -201,7 +198,7 @@ class GameTimingService {
           }
           
           // Broadcast the updated game state
-          broadcastFn(game);
+          gameService.broadcastGameState(game);
         }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
       }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     }, GAME_CONSTANTS.TIMERS.DEAL_FIRST_CARD_DELAY);
@@ -212,11 +209,12 @@ class GameTimingService {
   /**
    * Handle the revealing sequence with proper timing
    * @param {Object} game - The game object
-   * @param {Object} services - Services needed for the sequence
    * @returns {Object} The updated game object
    */
-  async handleRevealingSequence(game, services) {
-    const { CardService, processOutcomeFn, broadcastFn } = services;
+  async handleRevealingSequence(game) {
+    // Get required services from the registry
+    const cardService = this.getService('card');
+    const gameService = this.getService('game');
     
     if (!game) return game;
     
@@ -238,15 +236,15 @@ class GameTimingService {
     this.clearPhaseTimeouts(game.id, 'revealing');
     
     // Broadcast the initial revealing state
-    broadcastFn(game);
+    gameService.broadcastGameState(game);
     
     // Deal the third card after the specified delay (2 seconds)
     this.timeouts[game.id].dealThirdCard = setTimeout(() => {
-      game = CardService.dealThirdCard(game);
+      game = cardService.dealThirdCard(game);
       gameLog(game, `Dealt third card after ${GAME_CONSTANTS.TIMERS.DEAL_THIRD_CARD_DELAY}ms delay`);
       
       // Broadcast the updated game state with the third card
-      broadcastFn(game);
+      gameService.broadcastGameState(game);
     }, GAME_CONSTANTS.TIMERS.DEAL_THIRD_CARD_DELAY);
     
     // Ensure current player is still set after dealing third card
@@ -255,7 +253,7 @@ class GameTimingService {
       gameLog(game, `Restored current player to ${game.players[currentPlayerId]?.name} after dealing third card`);
     }
     
-    broadcastFn(game);
+    gameService.broadcastGameState(game);
     
     // Set timer for results phase - allow players to see the third card for the full revealing duration
     this.timeouts[game.id].transitionToResults = setTimeout(async () => {
@@ -268,7 +266,7 @@ class GameTimingService {
       }
       
       // Process the outcome after the full revealing duration
-      game = await processOutcomeFn(game);
+      game = await gameService.processGameOutcome(game);
       
       // Ensure current player is still set after processing outcome
       if (!game.currentPlayerId && currentPlayerId) {
@@ -276,7 +274,7 @@ class GameTimingService {
         gameLog(game, `Restored current player to ${game.players[currentPlayerId]?.name} after processing outcome`);
       }
       
-      broadcastFn(game);
+      gameService.broadcastGameState(game);
     }, GAME_CONSTANTS.TIMERS.REVEALING_DURATION);
     
     return game;
@@ -285,11 +283,13 @@ class GameTimingService {
   /**
    * Handle the results sequence with proper timing
    * @param {Object} game - The game object
-   * @param {Object} services - Services needed for the sequence
    * @returns {Object} The updated game object
    */
-  async handleResultsSequence(game, services) {
-    const { startNextRoundFn, broadcastFn, playerReadyFn } = services;
+  async handleResultsSequence(game) {
+    // Get required services from the registry
+    const gameService = this.getService('game');
+    const gameStateService = this.getService('gameState');
+    const databaseService = this.getService('database');
     
     if (!game) return game;
     
@@ -341,14 +341,14 @@ class GameTimingService {
             
             if (userIds.length > 0) {
               // Load all preferences in a single batch operation
-              const preferencesMap = await db.getPreferencesForUsers(userIds);
+              const preferencesMap = await databaseService.getPreferencesForUsers(userIds);
               
               // Apply auto-ante for eligible players
               for (const [playerId, player] of Object.entries(game.players)) {
                 try {
-                  // The playerReadyFn will throw an error if player is already ready
+                  // The playerReady will throw an error if player is already ready
                   if (player.userId && preferencesMap[player.userId]?.autoAnte) {
-                    game = await playerReadyFn(game, playerId);
+                    game = await gameService.playerReady(game, playerId);
                     gameLog(game, `Auto-ante applied for ${player.name}`);
                   }
                 } catch (error) {
@@ -357,22 +357,22 @@ class GameTimingService {
                 }
               }
               
-              broadcastFn(game);
+              gameService.broadcastGameState(game);
             }
           }, 100);
           
           // Broadcast the waiting state
           gameLog(game, `Pot is empty, waiting for players to ante up for a new game`);
-          broadcastFn(game);
+          gameService.broadcastGameState(game);
         } else if (game.phase === GamePhases.WAITING) {
           gameLog(game, `Game already in waiting phase, waiting for players to ante up for a new game`);
           // Just broadcast the current state without starting a new round
-          broadcastFn(game);
+          gameService.broadcastGameState(game);
         } else if (game.phase !== 'gameOver') {
           gameLog(game, `Results phase timeout complete, starting next round`);
           
           // Start the next round (player rotation is handled in startNextRound)
-          game = await startNextRoundFn(game);
+          game = await gameService.startNextRound(game);
           
           // Ensure the phase is set correctly
           if (!game.phase || game.phase === 'undefined') {
@@ -381,7 +381,7 @@ class GameTimingService {
           }
           
           // Broadcast updated game state
-          broadcastFn(game);
+          gameService.broadcastGameState(game);
         }
       } catch (error) {
         gameLog(game, `Error in results sequence: ${error.message}`);
@@ -395,11 +395,12 @@ class GameTimingService {
   /**
    * Handle the betting sequence with proper timing
    * @param {Object} game - The game object
-   * @param {Object} services - Services needed for the sequence
    * @returns {Object} The updated game object
    */
-  async handleBettingSequence(game, services) {
-    const { getGameFn, broadcastFn } = services;
+  async handleBettingSequence(game) {
+    // Get required services from the registry
+    const gameService = this.getService('game');
+    const gameStateService = this.getService('gameState');
     
     if (!game) return game;
     
@@ -450,13 +451,13 @@ class GameTimingService {
   /**
    * Resume the dealing sequence after a player has made their Ace choice
    * @param {Object} game - The game object
-   * @param {Object} services - Services needed for the sequence
    * @returns {Object} The updated game object
    */
-  async resumeDealingAfterAceChoice(game, services) {
-    const { CardService, broadcastFn } = services;
-    const getGameFn = services.getGameFn || ((gameId) => gameStateService.getGame(gameId));
-    const saveGameFn = services.saveGameFn;
+  async resumeDealingAfterAceChoice(game) {
+    // Get required services from the registry
+    const cardService = this.getService('card');
+    const gameService = this.getService('game');
+    const gameStateService = this.getService('gameState');
     
     if (!game) return game;
     
@@ -468,24 +469,22 @@ class GameTimingService {
     // Set timer for second card
     this.timeouts[game.id].dealSecondCard = setTimeout(async () => {
       // Deal second card
-      game = CardService.dealSecondCard(game);
-      broadcastFn(game);
+      game = cardService.dealSecondCard(game);
+      gameService.broadcastGameState(game);
       
       // Check if the first two cards form a matching pair (but aren't Aces)
-      if (CardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
+      if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
         game.waitingForSecondChance = true;
         gameLog(game, `Matching pair detected! Waiting for player to decide whether to take a second chance`);
         
         // Broadcast the game state with the waitingForSecondChance flag
-        broadcastFn(game);
+        gameService.broadcastGameState(game);
         
         // Don't set up the timer for the transition to betting phase yet
         gameLog(game, `Pausing dealing sequence until player makes decision on the second chance opportunity`);
         
-        // Save the game state if a save function was provided
-        if (saveGameFn) {
-          await saveGameFn(game);
-        }
+        // Save the game state
+        await gameStateService.saveGame(game);
         
         return;
       }
@@ -514,7 +513,7 @@ class GameTimingService {
         this.timeouts[game.id].autoBet = setTimeout(async () => {
           try {
             // Get the latest game state
-            const currentGame = getGameFn(game.id);
+            const currentGame = gameStateService.getGame(game.id);
             if (!currentGame) return;
             
             // Check if we're still in betting phase, it's still this player's turn, and we're in the same round
@@ -526,7 +525,8 @@ class GameTimingService {
               gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
               
               // Use the GameService's placeBet method to handle the pass
-              const gameService = require('./GameService');
+              // Get the game service from the registry instead of requiring it directly
+              const gameService = this.getService('game');
               await gameService.placeBet(currentGame, currentPlayerId, 0);
             }
           } catch (error) {
@@ -535,7 +535,7 @@ class GameTimingService {
         }, betTimeoutDuration);
         
         // Broadcast the updated game state
-        broadcastFn(game);
+        gameService.broadcastGameState(game);
       }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     }, GAME_CONSTANTS.TIMERS.DEAL_FIRST_CARD_DELAY);
     
@@ -544,12 +544,12 @@ class GameTimingService {
   /**
    * Resume the dealing sequence after player makes a decision on a second chance
    * @param {Object} game - The game object
-   * @param {Object} services - Services needed for the sequence
    * @returns {Object} The updated game object
    */
-  async resumeAfterSecondChance(game, services) {
-    const { broadcastFn } = services;
-    const getGameFn = services.getGameFn || ((gameId) => gameStateService.getGame(gameId));
+  async resumeAfterSecondChance(game) {
+    // Get required services from the registry
+    const gameService = this.getService('game');
+    const gameStateService = this.getService('gameState');
     
     if (!game) return game;
 
@@ -581,7 +581,7 @@ class GameTimingService {
       this.timeouts[game.id].autoBet = setTimeout(async () => {
         try {
           // Get the latest game state
-          const currentGame = getGameFn(game.id);
+          const currentGame = gameStateService.getGame(game.id);
           if (!currentGame) return;
           
           // Check if we're still in betting phase, it's still this player's turn, and we're in the same round
@@ -592,7 +592,8 @@ class GameTimingService {
             gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
             
             // Use the GameService's placeBet method to handle the pass
-            const gameService = require('./GameService');
+            // Get the game service from the registry instead of requiring it directly
+            const gameService = this.getService('game');
             await gameService.placeBet(currentGame, currentPlayerId, 0);
           }
         } catch (error) {
@@ -601,7 +602,7 @@ class GameTimingService {
       }, betTimeoutDuration);
       
       // Broadcast the updated game state
-      broadcastFn(game);
+      gameService.broadcastGameState(game);
     }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     
     return game;

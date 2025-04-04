@@ -1,6 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const authService = require('../services/AuthService');
+
+// Middleware to verify JWT token
+const authenticateToken = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+    
+    const authService = req.services.auth;
+    const decoded = authService.verifyToken(token);
+    req.userId = decoded.userId;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
 
 router.post('/register', async (req, res) => {
   console.log('[AUTH] Registration request headers:', req.headers);
@@ -8,6 +24,7 @@ router.post('/register', async (req, res) => {
   
   try {
     const { username, password } = req.body;
+    const authService = req.services.auth;
     
     if (!username || !password) {
       console.error('[AUTH] Missing credentials:', { username: !!username, password: !!password });
@@ -27,6 +44,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
+    const authService = req.services.auth;
     const result = await authService.login(username, password);
     
     console.log('[AUTH] Login successful:', { 
@@ -38,6 +56,32 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('[AUTH] Login error:', error);
     res.status(401).json({ message: error.message });
+  }
+});
+
+router.get('/me', authenticateToken, async (req, res) => {
+  console.log('[AUTH] /me endpoint called with userId:', req.userId);
+  try {
+    const databaseService = req.services.database;
+    console.log('[AUTH] Fetching user data from database');
+    const user = await databaseService.getUserById(req.userId);
+    
+    if (!user) {
+      console.log('[AUTH] User not found in database:', req.userId);
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    console.log('[AUTH] User data found, returning response');
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        balance: user.balance || 0
+      }
+    });
+  } catch (error) {
+    console.error('[AUTH] Error getting user data:', error);
+    res.status(500).json({ message: 'Failed to get user data' });
   }
 });
 

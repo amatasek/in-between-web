@@ -20,48 +20,43 @@ export const PreferencesProvider = ({ children }) => {
     
     console.log('[Preferences] Loading preferences for user:', user.username);
       
-      try {
-        setLoading(true);
-        // Get API URL from environment or use localhost as fallback
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-          console.error('[Preferences] No token available');
-          setLoading(false);
-          return;
-        }
-        
-        const response = await fetch(`${API_URL}/preferences`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to load preferences');
-        }
-        
-        const data = await response.json();
-        console.log('[Preferences] Loaded preferences:', data);
-        setPreferences(data || { autoAnte: false });
-      } catch (error) {
-        console.error('[Preferences] Error loading preferences:', error);
-        // Set default preferences on error
-        setPreferences({ autoAnte: false });
-      } finally {
+    try {
+      setLoading(true);
+      // Get API URL from environment or use localhost as fallback
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        console.error('[Preferences] No token available');
         setLoading(false);
+        return;
       }
+      
+      const response = await fetch(`${API_URL}/preferences`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to load preferences');
+      }
+      
+      const data = await response.json();
+      console.log('[Preferences] Loaded preferences:', data);
+      setPreferences(data || { autoAnte: false });
+    } catch (error) {
+      console.error('[Preferences] Error loading preferences:', error);
+      // Set default preferences on error
+      setPreferences({ autoAnte: false });
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
   
-  // Load preferences from the server when the user logs in or changes
-  useEffect(() => {
-    loadPreferences();
-  }, [loadPreferences]);
-  
-  // Also reload preferences when the component mounts
+  // Load preferences from the server when the user changes or component mounts
   useEffect(() => {
     if (user) {
       loadPreferences();
