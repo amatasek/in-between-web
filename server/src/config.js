@@ -49,6 +49,20 @@ if (!fs.existsSync(dbPath)) {
   fs.mkdirSync(dbPath, { recursive: true });
 }
 
+// Create specific database subdirectories
+const userDbDir = path.join(dbPath, 'users');
+const gameDbDir = path.join(dbPath, 'games');
+
+if (!fs.existsSync(userDbDir)) {
+  console.log(`Creating users database directory: ${userDbDir}`);
+  fs.mkdirSync(userDbDir, { recursive: true });
+}
+
+if (!fs.existsSync(gameDbDir)) {
+  console.log(`Creating games database directory: ${gameDbDir}`);
+  fs.mkdirSync(gameDbDir, { recursive: true });
+}
+
 // Create the files directory if it doesn't exist
 if (!fs.existsSync(filesPath)) {
   console.log(`Creating files directory: ${filesPath}`);

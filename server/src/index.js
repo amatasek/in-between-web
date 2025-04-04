@@ -227,6 +227,22 @@ setInterval(() => {
   }
 }, CLEANUP_INTERVAL_MS);
 
+// Verify database paths in production
+if (process.env.NODE_ENV === 'production') {
+  const { verifyDatabasePaths } = require('./utils/dbVerify');
+  const verificationResults = verifyDatabasePaths();
+  
+  if (verificationResults.issues.length > 0) {
+    console.error('[SERVER] Database verification issues:');
+    verificationResults.issues.forEach(issue => console.error(`- ${issue}`));
+  } else {
+    console.log('[SERVER] Database paths verified successfully');
+    console.log(`- DB Path: ${verificationResults.dbPath}`);
+    console.log(`- Users DB Path: ${verificationResults.userDbPath}`);
+    console.log(`- Games DB Path: ${verificationResults.gameDbPath}`);
+  }
+}
+
 // Start the server
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
