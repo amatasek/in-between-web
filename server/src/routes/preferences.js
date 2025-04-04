@@ -43,11 +43,23 @@ const getFilesDir = (req) => {
 
 console.log(`[Preferences] Will use files directory from app.locals`);
 
+// Handle OPTIONS requests for CORS preflight
+router.options('*', (req, res) => {
+  console.log('[Preferences] Handling OPTIONS preflight request');
+  // Set CORS headers
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
+
 // Configure multer for file storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // Get the files directory from app.locals
     const filesDir = getFilesDir(req);
+    console.log(`[Preferences] Using files directory: ${filesDir}`);
     
     // Create type-specific subdirectories
     let typeDir = '';
@@ -61,8 +73,20 @@ const storage = multer.diskStorage({
     }
     
     const destPath = path.join(filesDir, typeDir);
-    if (!fs.existsSync(destPath)) {
-      fs.mkdirSync(destPath, { recursive: true });
+    try {
+      if (!fs.existsSync(destPath)) {
+        console.log(`[Preferences] Creating directory: ${destPath}`);
+        fs.mkdirSync(destPath, { recursive: true });
+      }
+      
+      // Test write access to the directory
+      const testFile = path.join(destPath, '.test-write-access');
+      fs.writeFileSync(testFile, 'test');
+      fs.unlinkSync(testFile);
+      console.log(`[Preferences] Successfully verified write access to: ${destPath}`);
+    } catch (error) {
+      console.error(`[Preferences] Error with destination directory ${destPath}:`, error.message);
+      return cb(new Error(`Cannot write to destination directory: ${error.message}`));
     }
     
     cb(null, destPath);
@@ -195,8 +219,20 @@ router.post('/:key', authenticateToken, logRequestDetails, (req, res) => {
         const typeDir = req.file.mimetype.startsWith('image/') ? 'images' : 
                        req.file.mimetype.startsWith('audio/') ? 'audio' : 'other';
         const filename = req.file.filename;
+        
+        // Ensure the URL is properly formatted for both development and production
         const fileUrl = `/files/${typeDir}/${filename}`;
         console.log(`[Preferences] Generated file URL: ${fileUrl}`);
+        
+        // Log detailed file information for debugging
+        console.log('[Preferences] File details:', {
+          originalPath: req.file.path,
+          filename: req.file.filename,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
+          destination: req.file.destination,
+          fileUrl: fileUrl
+        });
         
         // Update the user's preference with the file URL
         const result = await databaseService.updatePreference(req.userId, key, fileUrl);
