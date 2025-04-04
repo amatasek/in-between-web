@@ -1,6 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
+// Handle OPTIONS requests for CORS preflight
+router.options('*', (req, res) => {
+  console.log('[AUTH] Handling OPTIONS preflight request');
+  // Set CORS headers
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
+
 // Middleware to verify JWT token
 const authenticateToken = async (req, res, next) => {
   try {

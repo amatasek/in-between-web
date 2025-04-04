@@ -59,6 +59,17 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(cors(corsOptions));
 
+// Global OPTIONS handler for CORS preflight requests
+app.options('*', (req, res) => {
+  console.log(`[SERVER] Handling global OPTIONS preflight request for: ${req.path}`);
+  // Set CORS headers
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
+
 // Add CORS headers to all responses for development
 app.use((req, res, next) => {
   const origin = req.headers.origin;
