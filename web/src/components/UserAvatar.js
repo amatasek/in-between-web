@@ -32,21 +32,21 @@ const UserAvatar = ({
   // Handle different URL formats
   let formattedImageUrl = null;
   if (profileImg) {
-      // If the URL already starts with http, use it as is
-      if (profileImg.startsWith('http')) {
-        formattedImageUrl = profileImg;
-      } 
-      // If the URL contains /uploads/, replace it with /files/
-      else if (profileImg.includes('/uploads/')) {
-        // Extract just the filename from the path
-        const filename = profileImg.split('/').pop();
-        formattedImageUrl = `${API_URL}/files/images/${filename}`;
-      }
-      // Otherwise, just append the URL to the API_URL
-      else {
-        formattedImageUrl = `${API_URL}${profileImg}`;
-      }
+    // If the URL already starts with http, use it as is
+    if (profileImg.startsWith('http')) {
+      formattedImageUrl = profileImg;
+    } 
+    // If the URL contains /uploads/, replace it with /files/
+    else if (profileImg.includes('/uploads/')) {
+      // Extract just the filename from the path
+      const filename = profileImg.split('/').pop();
+      formattedImageUrl = `${API_URL}/files/images/${filename}`;
     }
+    // Otherwise, just append the URL to the API_URL
+    else {
+      formattedImageUrl = `${API_URL}${profileImg}`;
+    }
+  }
   
   console.log('[UserAvatar] Image URL:', { 
     raw: profileImg, 
