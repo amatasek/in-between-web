@@ -47,12 +47,7 @@ const UserAvatar = ({
       formattedImageUrl = `${API_URL}${profileImg}`;
     }
   }
-  
-  console.log('[UserAvatar] Image URL:', { 
-    raw: profileImg, 
-    formatted: formattedImageUrl,
-    apiUrl: API_URL
-  });
+
   
   return (
     <div className={`${styles.userAvatarContainer} ${containerClass} ${className}`}>

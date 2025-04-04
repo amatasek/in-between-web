@@ -41,25 +41,52 @@ const PlayerList = () => {
     return null;
   };
 
+  // Debug log for all players' data
+  console.log('[PlayerList] Game State:', {
+    players,
+    currentPlayerId,
+    dealerId,
+    currentUserId,
+    playerKeys: Object.keys(players),
+    playerValues: Object.values(players).map(p => ({
+      id: p.id,
+      name: p.name,
+      isConnected: p.isConnected,
+      mediaPreferences: p.mediaPreferences,
+      profileImg: p.mediaPreferences?.profileImg
+    }))
+  });
+  
   return (
     <div className={styles.playersContainer}>
       <h3 className={styles.playersTitle}>Players</h3>
       {renderDeckInfo()}
       <div className={styles.playersList}>
-        {Object.values(players).map(player => {
-          const isCurrentPlayer = player.id === currentPlayerId;
-          const isCurrentUser = player.id === currentUserId;
-          const isDealer = player.id === dealerId;
-          
-          return (
-            <div 
-              key={player.id} 
-              className={`
-                ${styles.playerItem}
-                ${isCurrentPlayer ? styles.currentPlayer : ''}
-                ${isCurrentUser ? styles.currentUser : ''}
-              `}
-            >
+        {/* Use gameState.seats to render players in seat order */}
+        {gameState.seats
+          .filter(playerId => playerId !== null && players[playerId])
+          .map(playerId => {
+            const player = players[playerId];
+            const isCurrentPlayer = player.id === currentPlayerId;
+            const isCurrentUser = player.id === currentUserId;
+            const isDealer = player.id === dealerId;
+            
+            // Debug log for individual player
+            console.log(`[PlayerList] Player ${player.name} (seat ${player.seatNumber}):`, {
+              id: player.id,
+              mediaPreferences: player.mediaPreferences,
+              profileImg: player.mediaPreferences?.profileImg
+            });
+            
+            return (
+              <div 
+                key={player.id} 
+                className={`
+                  ${styles.playerItem}
+                  ${isCurrentPlayer ? styles.currentPlayer : ''}
+                  ${isCurrentUser ? styles.currentUser : ''}
+                `}
+              >
               <div className={styles.playerInfo}>
                 <UserAvatar 
                   user={{ 
@@ -67,12 +94,14 @@ const PlayerList = () => {
                     profileImg: player.mediaPreferences?.profileImg 
                   }} 
                   size="small" 
-                  showName={true} 
-                  namePosition="right"
+                  showName={false}
                 />
-                <span className={styles.playerStatus}>
-                  {isCurrentUser && ' (You)'}
-                  {isDealer && ` ${ICONS.DEALER}`}
+                <span className={styles.playerName}>
+                  {player.name}
+                  <span className={styles.playerStatus}>
+                    {isCurrentUser && ' (You)'}
+                    {isDealer && ` ${ICONS.DEALER}`}
+                  </span>
                 </span>
               </div>
               <div className={styles.playerBalanceContainer}>

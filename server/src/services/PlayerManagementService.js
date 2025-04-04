@@ -57,34 +57,47 @@ class PlayerManagementService extends BaseService {
     gameLog(game, `Player ${displayName} joined and assigned seat ${seatIndex + 1}`);
     
     // Load player media preferences and apply auto-ante if enabled
-    if (userId) {
-      setTimeout(async () => {
-        try {
-          // Get the database service from the registry
-          const databaseService = this.getService('database');
-          const preferences = await databaseService.getPreferences(userId);
+    if (userId) {  
+      try {
+        // Get the database service from the registry
+        const databaseService = this.getService('database');
+        const preferences = await databaseService.getPreferences(userId);
+        
+        // Store media preferences in the player object so they can be displayed in the UI
+        if (preferences) {
+          // Create a mediaPreferences object if it doesn't exist
+          game.players[playerId].mediaPreferences = game.players[playerId].mediaPreferences || {};
           
-          // We've removed media preferences handling from the socket/game flow
-          // Media preferences are now handled entirely through HTTP routes
-          
-          // Apply auto-ante if in waiting phase and enabled
-          if (game.phase === GamePhases.WAITING && preferences.autoAnte) {
-            try {
-              // Use the same playerReady function for consistency
-              game = await this.playerReady(game, playerId);
-              gameLog(game, `Auto-ante applied for ${player.name} who just joined`);
-              
-              // Get the game service from the registry to broadcast the update
-              const gameService = this.getService('game');
-              gameService.broadcastGameState(game);
-            } catch (error) {
-              gameLog(game, `Auto-ante error for new player ${player.name}: ${error.message}`);
-            }
+          // Store profile image URL if available
+          if (preferences.profileImg) {
+            game.players[playerId].mediaPreferences.profileImg = preferences.profileImg;
           }
-        } catch (error) {
-          gameLog(game, `Error loading player preferences: ${error.message}`);
+          
+          // Store other media preferences if needed
+          if (preferences.twoSecondPotGif) {
+            game.players[playerId].mediaPreferences.twoSecondPotGif = preferences.twoSecondPotGif;
+          }
+          if (preferences.twoSecondPotMp3) {
+            game.players[playerId].mediaPreferences.twoSecondPotMp3 = preferences.twoSecondPotMp3;
+          }
         }
-      }, 100);
+        
+        // Apply auto-ante if in waiting phase and enabled
+        if (game.phase === GamePhases.WAITING && preferences && preferences.autoAnte) {
+          try {
+            // Use the same playerReady function for consistency
+            game = await this.playerReady(game, playerId);
+            gameLog(game, `Auto-ante applied for ${player.name} who just joined`);
+          } catch (error) {
+            gameLog(game, `Auto-ante error for new player ${player.name}: ${error.message}`);
+          }
+        }
+      } catch (error) {
+        gameLog(game, `Error loading player preferences: ${error.message}`);
+      }
+      
+      const gameService = this.getService('game');
+      gameService.broadcastGameState(game);
     }
     
     game.updateTimestamp();

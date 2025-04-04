@@ -66,7 +66,8 @@ class Player {
       balance: this.balance,
       isReady: this.isReady,
       isConnected: this.isConnected,
-      currentBet: this.currentBet
+      currentBet: this.currentBet,
+      mediaPreferences: this.mediaPreferences || {}
     };
   }
 }

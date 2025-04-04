@@ -62,9 +62,6 @@ const FileUpload = ({
             alt="Preview" 
             className={styles.imagePreview} 
           />
-          {label === 'Image' && (
-            <div className={styles.profilePreviewLabel}>Current Profile Image</div>
-          )}
         </div>
       );
     } else if (previewType === 'audio') {

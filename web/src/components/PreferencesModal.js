@@ -63,7 +63,21 @@ const PreferencesModal = ({ onClose }) => {
             </div>
             
             {/* Two Second Pot GIF Setting */}
-            <div className={styles.settingItem}>
+            <div className={styles.settingItem} style={{ position: 'relative', border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px' }}>
+              <div style={{
+                position: 'absolute',
+                top: '-12px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: '#FFD700',
+                color: '#333',
+                padding: '2px 10px',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                fontSize: '14px'
+              }}>
+                COMING SOON
+              </div>
               <div className={styles.settingDescription}>
                 <h4>Two Second POT GIF</h4>
                 <p>Upload a GIF to play when you slam the POT button</p>
@@ -78,7 +92,21 @@ const PreferencesModal = ({ onClose }) => {
             </div>
             
             {/* Two Second Pot MP3 Setting */}
-            <div className={styles.settingItem}>
+            <div className={styles.settingItem} style={{ position: 'relative', border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px' }}>
+              <div style={{
+                position: 'absolute',
+                top: '-12px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: '#FFD700',
+                color: '#333',
+                padding: '2px 10px',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                fontSize: '14px'
+              }}>
+                COMING SOON
+              </div>
               <div className={styles.settingDescription}>
                 <h4>Two Second POT Sound</h4>
                 <p>Upload a sound to play when you slam the POT button</p>
