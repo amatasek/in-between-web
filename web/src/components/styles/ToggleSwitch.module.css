@@ -1,0 +1,67 @@
+.toggleContainer {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.toggleInput {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleLabel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggleSlider {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+  margin-right: 10px;
+}
+
+.toggleSlider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.toggleInput:checked + .toggleSlider {
+  background-color: var(--success);
+}
+
+.toggleInput:focus + .toggleSlider {
+  box-shadow: 0 0 1px var(--success);
+}
+
+.toggleInput:checked + .toggleSlider:before {
+  transform: translateX(24px);
+}
+
+.toggleText {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .toggleText {
+    font-size: 0.9rem;
+  }
+}

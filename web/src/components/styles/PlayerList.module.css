@@ -91,6 +91,12 @@
   color: #ecf0f1;
 }
 
+.playerStatus {
+  color: #ecf0f1;
+  font-size: 0.85rem;
+  margin-left: 0.25rem;
+}
+
 .playerBalanceContainer {
   display: flex;
   align-items: center;

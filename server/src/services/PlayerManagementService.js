@@ -56,16 +56,19 @@ class PlayerManagementService extends BaseService {
     const displayName = game.seatInfo[seatIndex].name;
     gameLog(game, `Player ${displayName} joined and assigned seat ${seatIndex + 1}`);
     
-    // Check if game is in waiting phase and player has auto-ante enabled
-    if (game.phase === GamePhases.WAITING && userId) {
-      // We'll check for auto-ante preference and apply it if enabled
+    // Load player media preferences and apply auto-ante if enabled
+    if (userId) {
       setTimeout(async () => {
         try {
           // Get the database service from the registry
           const databaseService = this.getService('database');
           const preferences = await databaseService.getPreferences(userId);
           
-          if (preferences.autoAnte) {
+          // We've removed media preferences handling from the socket/game flow
+          // Media preferences are now handled entirely through HTTP routes
+          
+          // Apply auto-ante if in waiting phase and enabled
+          if (game.phase === GamePhases.WAITING && preferences.autoAnte) {
             try {
               // Use the same playerReady function for consistency
               game = await this.playerReady(game, playerId);
@@ -79,7 +82,7 @@ class PlayerManagementService extends BaseService {
             }
           }
         } catch (error) {
-          gameLog(game, `Error checking auto-ante for new player: ${error.message}`);
+          gameLog(game, `Error loading player preferences: ${error.message}`);
         }
       }, 100);
     }
@@ -110,6 +113,10 @@ class PlayerManagementService extends BaseService {
     return game;
   }
 
+  // Media preferences are now handled entirely through HTTP routes
+  
+  // Media preferences are now handled entirely through HTTP routes
+  
   moveToNextPlayer(game) {
     if (!game || !game.currentPlayerId) return game;
     

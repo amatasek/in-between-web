@@ -3,9 +3,13 @@ import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
+import { usePreferences } from '../contexts/PreferencesContext';
 import { CircularProgress, Box, Typography, TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
 import CurrencyAmount from './common/CurrencyAmount';
+import PreferencesModal from './PreferencesModal';
+import PreferencesButton from './PreferencesButton';
+import UserAvatar from './UserAvatar';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
@@ -13,9 +17,11 @@ const Lobby = () => {
   const { error: lobbyError, gameList } = lobbyState;
   const { user, logout } = useAuth();
   const { isConnected } = useSocket();
+  const { preferences } = usePreferences();
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showPreferences, setShowPreferences] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
   const isSmallMobile = useMediaQuery('(max-width:400px)');
 
@@ -177,6 +183,8 @@ const Lobby = () => {
     <div className={styles.lobbyContainer}>
       <AppHeader />
       
+      {showPreferences && <PreferencesModal onClose={() => setShowPreferences(false)} />}
+      
       <div className={styles.formContainer}>
         <div className={styles.formSection}>
           <div className={styles.welcomeMessage}>
@@ -184,17 +192,30 @@ const Lobby = () => {
               {error ? (
                 <div className={styles.error}>{error}</div>
               ) : (
-                <div className={styles.welcomeText}>Welcome, {user?.username || 'Player'}!</div>
+                <div className={styles.welcomeText}>
+                  <UserAvatar 
+                    user={{ 
+                      username: user?.username || 'Player', 
+                      profileImg: preferences?.profileImg 
+                    }} 
+                    size="medium" 
+                    showName={true} 
+                    namePosition="right"
+                  />
+                </div>
               )}
               <div className={styles.balanceDisplay}>
                 Balance: <CurrencyAmount amount={Number(user?.balance) || 0} size="medium" />
               </div>
-              <button 
-                className={`${styles.actionButton} ${styles.logoutButton}`}
-                onClick={logout}
-              >
-                Logout
-              </button>
+              <div className={styles.headerButtons}>
+                <PreferencesButton onClick={() => setShowPreferences(true)} />
+                <button 
+                  className={styles.logoutButton}
+                  onClick={logout}
+                >
+                  <span className={styles.buttonText}>Logout</span>
+                </button>
+              </div>
             </div>
           </div>
           
@@ -241,26 +262,42 @@ const Lobby = () => {
             sx={{
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: 'var(--info-light)',
+                  border: 'none',
                 },
                 '&:hover fieldset': {
-                  borderColor: 'var(--info)',
+                  border: 'none',
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: 'var(--info)',
+                  border: 'none',
                 },
-                backgroundColor: 'white',
+                backgroundColor: '#0a1622',
+                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.5)',
+                borderRadius: '8px',
+                border: 'none',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  backgroundColor: '#0c1825',
+                },
+                '&.Mui-focused': {
+                  backgroundColor: '#0d1927',
+                  boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.5)',
+                },
               },
               '& .MuiInputLabel-root': {
-                color: 'var(--info-light)',
+                color: 'rgba(52, 152, 219, 0.7)',
+                fontWeight: 400,
               },
               '& .MuiOutlinedInput-input': {
-                color: 'var(--text-dark)',
+                color: 'rgba(236, 240, 241, 0.9)',
                 fontWeight: 500,
-                padding: isSmallMobile ? '8px 10px' : '10px 12px',
+                padding: isSmallMobile ? '10px 12px' : '12px 14px',
+                '&::placeholder': {
+                  color: 'rgba(52, 152, 219, 0.5)',
+                  opacity: 1,
+                },
               },
               '& .MuiInputLabel-root.Mui-focused': {
-                color: 'var(--info)',
+                color: '#3498db',
               },
               marginBottom: '0.75rem',
             }}

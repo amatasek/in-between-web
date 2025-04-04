@@ -10,48 +10,6 @@ class PlayerService extends BaseService {
   }
   
   /**
-   * Register socket event handlers for player-related events
-   * @param {Socket} socket - The socket to register handlers for
-   */
-  registerSocketEvents(socket) {
-    socket.on('getBalance', () => this.handleGetBalance(socket));
-  }
-  
-  /**
-   * Handle get balance event
-   * @param {Socket} socket - The socket that triggered the event
-   */
-  async handleGetBalance(socket) {
-    try {
-      // Get user from socket (attached by auth middleware)
-      const user = socket.user;
-      if (!user || !user.userId) {
-        console.error('[PLAYER_SERVICE] No valid user attached to socket');
-        socket.emit('error', { message: 'Authentication required' });
-        return;
-      }
-      
-      const dbService = this.getService('database');
-      
-      // Get the latest balance from the database
-      const dbUser = await dbService.getUserById(user.userId);
-      if (!dbUser) {
-        console.error('[PLAYER_SERVICE] User not found in database:', user.userId);
-        socket.emit('error', { message: 'User not found' });
-        return;
-      }
-      
-      console.log(`[PLAYER_SERVICE] Sending updated balance to user ${user.username}: ${dbUser.balance}`);
-      
-      // Send the updated balance to the client
-      socket.emit('balanceUpdate', { balance: dbUser.balance });
-    } catch (error) {
-      console.error('[PLAYER_SERVICE] Error fetching balance:', error);
-      socket.emit('error', { message: 'Failed to fetch balance' });
-    }
-  }
-  
-  /**
    * Mark player as ready and handle ante
    * @param {Object} game - The game object
    * @param {String} playerId - The player's ID

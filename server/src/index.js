@@ -86,6 +86,65 @@ app.use('/auth', injectServices(['auth', 'database']), authRoutes);
 app.use('/preferences', injectServices(['auth', 'database']), preferencesRoutes);
 app.use('/games', injectServices(['lobby']), gamesRoutes);
 
+// Use the filesPath from the already imported config
+const filesDir = config.filesPath;
+
+console.log(`[SERVER] Serving files from: ${filesDir} at /files endpoint`);
+console.log(`[SERVER] Files directory exists: ${fs.existsSync(filesDir)}`);
+if (fs.existsSync(filesDir)) {
+  console.log(`[SERVER] Files in directory: ${fs.readdirSync(filesDir)}`);
+}
+
+// Export the files directory for use in other modules
+app.locals.filesDir = filesDir;
+
+// Create a dedicated endpoint for serving files
+app.get('/files/*', (req, res) => {
+  try {
+    // Extract the file path from the URL
+    const filePath = req.path.replace(/^\/files\//, '');
+    const fullPath = path.join(filesDir, filePath);
+    
+    console.log(`[SERVER] File request: ${req.path}`);
+    console.log(`[SERVER] Looking for file at: ${fullPath}`);
+    
+    // Check if the file exists
+    if (!fs.existsSync(fullPath)) {
+      console.log(`[SERVER] File not found: ${fullPath}`);
+      
+      // For debugging, list all files in the directory
+      const dir = path.dirname(fullPath);
+      if (fs.existsSync(dir)) {
+        console.log(`[SERVER] Files in directory ${dir}:`, fs.readdirSync(dir));
+      } else {
+        console.log(`[SERVER] Directory does not exist: ${dir}`);
+      }
+      
+      return res.status(404).send(`File not found: ${req.path}`);
+    }
+    
+    // Determine content type based on file extension
+    const ext = path.extname(fullPath).toLowerCase();
+    let contentType = 'application/octet-stream';
+    
+    if (ext === '.png') contentType = 'image/png';
+    else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+    else if (ext === '.gif') contentType = 'image/gif';
+    else if (ext === '.mp3') contentType = 'audio/mpeg';
+    
+    // Set headers
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    
+    // Stream the file
+    const fileStream = fs.createReadStream(fullPath);
+    fileStream.pipe(res);
+  } catch (error) {
+    console.error(`[SERVER] Error serving file: ${error.message}`);
+    res.status(500).send('Internal server error');
+  }
+});
+
 // Serve static files from the web build directory in production
 if (process.env.NODE_ENV === 'production') {
   // Check multiple possible locations for the web build

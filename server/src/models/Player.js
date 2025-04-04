@@ -13,6 +13,7 @@ class Player {
     this.isConnected = true;
     this.currentBet = 0;
     this.joinedAt = Date.now();
+    // Media preferences are now handled entirely through HTTP routes
   }
 
   async loadBalance() {

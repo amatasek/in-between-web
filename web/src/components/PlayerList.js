@@ -3,6 +3,7 @@ import styles from './styles/PlayerList.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import CurrencyAmount from './common/CurrencyAmount';
+import UserAvatar from './UserAvatar';
 import { ICONS } from '../constants/UIConstants';
 
 const PlayerList = () => {
@@ -60,8 +61,16 @@ const PlayerList = () => {
               `}
             >
               <div className={styles.playerInfo}>
-                <span className={styles.playerName}>
-                  {player.name}
+                <UserAvatar 
+                  user={{ 
+                    username: player.name, 
+                    profileImg: player.mediaPreferences?.profileImg 
+                  }} 
+                  size="small" 
+                  showName={true} 
+                  namePosition="right"
+                />
+                <span className={styles.playerStatus}>
                   {isCurrentUser && ' (You)'}
                   {isDealer && ` ${ICONS.DEALER}`}
                 </span>

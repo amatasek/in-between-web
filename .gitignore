@@ -34,8 +34,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Database
+# DB and Files
 db/
-
-# Allow database service file
-!server/src/services/db/DatabaseService.js
+files/

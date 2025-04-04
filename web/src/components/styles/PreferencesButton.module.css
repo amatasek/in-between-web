@@ -1,0 +1,65 @@
+.preferencesButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(to right, #3498db, #2980b9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  min-width: 110px;
+}
+
+.preferencesButton:hover {
+  background: linear-gradient(to right, #2980b9, #2573a7);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gearIcon {
+  width: 16px;
+  height: 16px;
+  animation: spin 10s linear infinite;
+  animation-play-state: paused;
+}
+
+.preferencesButton:hover .gearIcon {
+  animation-play-state: running;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.buttonText {
+  margin-left: 4px;
+}
+
+@media (max-width: 400px) {
+  .preferencesButton {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .gearIcon {
+    width: 14px;
+    height: 14px;
+  }
+}

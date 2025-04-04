@@ -74,15 +74,16 @@
 .formContainer {
   width: 100%;
   max-width: 600px;
-  background-color: white;
+  background-color: #152534;
+  background-image: linear-gradient(to bottom right, #152534, #1c2a3a);
   padding: 2rem;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--button-transition);
 }
 
@@ -125,15 +126,17 @@
   color: #ecf0f1;
   margin-bottom: 0.5rem;
   padding: 1rem;
-  background: linear-gradient(120deg, #2c3e50, #3498db);
+  background: linear-gradient(120deg, #1e2a38, #2980b9);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .welcomeText {
   font-size: 1.2rem;
   color: #ecf0f1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
 }
 
 .balanceDisplay {
@@ -170,6 +173,13 @@
   flex-wrap: wrap;
 }
 
+.headerButtons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 400px) {
   .welcomeHeader {
     flex-direction: column;
@@ -184,10 +194,24 @@
     margin-bottom: 0.2rem;
     display: block;
   }
+  
+  .headerButtons {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .settingsButton,
+  .logoutButton {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+  }
 }
 
-.logoutButton {
-  background: var(--gradient-secondary);
+.settingsButton {
+  background: var(--gradient-primary);
   color: white;
   padding: var(--button-padding-sm);
   font-size: 0.85rem;
@@ -199,8 +223,30 @@
   line-height: 1;
   box-shadow: var(--button-shadow);
   font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: none;
+}
+
+.settingsButton:hover {
+  background: var(--gradient-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--button-shadow-hover);
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(to right, #e74c3c, #c0392b);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  min-width: 110px;
 }
 
 @media (max-width: 400px) {
@@ -212,9 +258,9 @@
 }
 
 .logoutButton:hover {
-  box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
-  filter: brightness(1.05);
+  background: linear-gradient(to right, #c0392b, #a93226);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .logoutButton:active {
@@ -230,10 +276,10 @@
 .textInput {
   width: 100%;
   padding: 0.8rem;
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(255, 255, 255, 0.15);
   border: 1px solid var(--info-light);
   border-radius: var(--radius-md);
-  color: var(--text-dark);
+  color: var(--text-light);
   font-size: 1rem;
   transition: border-color 0.3s, box-shadow 0.3s;
   box-shadow: var(--shadow-sm);
@@ -345,15 +391,16 @@
 .gameListContainer {
   width: 100%;
   max-width: 600px;
-  background-color: white;
+  background-color: #152534;
+  background-image: linear-gradient(to bottom right, #152534, #1c2a3a);
   padding: 1.5rem;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   margin-top: 2rem;
   margin-bottom: 2rem;
   min-height: 200px;
   box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--button-transition);
 }
 
@@ -368,10 +415,10 @@
 
 .gameListTitle {
   font-size: 1.4rem;
-  color: var(--text-dark);
+  color: var(--text-light);
   margin-top: 0;
   margin-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 0.5rem;
   display: flex;
   align-items: center;
@@ -402,18 +449,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(52, 152, 219, 0.1);
+  background-color: rgba(52, 152, 219, 0.2);
   padding: 1rem;
   border-radius: var(--radius-md);
   transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(52, 152, 219, 0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(52, 152, 219, 0.4);
 }
 
 .gameListItem:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  background-color: rgba(52, 152, 219, 0.2);
+  background-color: rgba(52, 152, 219, 0.25);
 }
 
 .gameListInfo {
@@ -424,12 +471,12 @@
 .gameListId {
   font-size: 1.2rem;
   font-weight: bold;
-  color: var(--info-dark);
+  color: var(--info-light);
 }
 
 .gameListPlayers {
   font-size: 0.9rem;
-  color: var(--text-dark);
+  color: var(--text-light);
   margin-top: 0.25rem;
 }
 
@@ -468,9 +515,9 @@
   padding: 2rem;
   min-height: 150px;
   text-align: center;
-  background-color: rgba(52, 152, 219, 0.05);
+  background-color: rgba(52, 152, 219, 0.15);
   border-radius: var(--radius-md);
-  border: 1px dashed rgba(52, 152, 219, 0.2);
+  border: 1px dashed rgba(52, 152, 219, 0.4);
 }
 
 .emptyStateIcon {
@@ -481,13 +528,13 @@
 
 .emptyStateMessage {
   font-size: 1.2rem;
-  color: var(--text-dark);
+  color: var(--text-light);
   margin: 0.5rem 0;
   font-weight: 500;
 }
 
 .emptyStateHint {
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0.5rem 0;
 }

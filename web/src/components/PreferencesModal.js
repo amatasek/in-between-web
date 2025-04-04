@@ -1,0 +1,115 @@
+import React from 'react';
+import { usePreferences } from '../contexts/PreferencesContext';
+import styles from './styles/PreferencesModal.module.css';
+import ToggleSwitch from './ToggleSwitch';
+import FileUpload from './FileUpload';
+
+const PreferencesModal = ({ onClose }) => {
+  const { 
+    preferences, 
+    toggleAutoAnte,
+    uploadTwoSecondPotGif, 
+    uploadTwoSecondPotMp3, 
+    uploadProfileImg,
+    testFileUpload,
+    loading 
+  } = usePreferences();
+
+  if (loading) {
+    return (
+      <div className={styles.modalOverlay}>
+        <div className={styles.modalContent}>
+          <div className={styles.loadingMessage}>Loading preferences...</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
+          <h2>Preferences</h2>
+          <button className={styles.closeButton} onClick={onClose}>×</button>
+        </div>
+        
+        {/* Debug Test Upload Section */}
+        <div className={styles.settingItem} style={{ backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '10px', marginBottom: '10px' }}>
+          <div className={styles.settingDescription}>
+            <h4>TEST UPLOAD (Debug Only)</h4>
+            <p>This is a test upload to debug file upload functionality</p>
+          </div>
+          <FileUpload
+            onUpload={testFileUpload}
+            currentFileUrl={null}
+            acceptedFileTypes="image/*,audio/*"
+            label="Test File"
+            previewType="image"
+          />
+        </div>
+        
+        <div className={styles.settingsContainer}>
+            
+            {/* Profile Image Setting */}
+            <div className={styles.settingItem}>
+              <div className={styles.settingDescription}>
+                <h4>Profile Image</h4>
+                <p>Upload a profile image to personalize your account</p>
+              </div>
+              <FileUpload
+                onUpload={uploadProfileImg}
+                currentFileUrl={preferences.profileImg}
+                acceptedFileTypes="image/jpeg,image/png,image/gif"
+                label="Image"
+                previewType="image"
+              />
+            </div>
+            
+            {/* Auto-Ante Setting */}
+            <div className={styles.settingItem}>
+              <div className={styles.settingDescription}>
+                <h4>Auto-Ante</h4>
+                <p>Automatically ante up when a new round begins</p>
+              </div>
+              <ToggleSwitch 
+                isChecked={preferences.autoAnte}
+                onChange={toggleAutoAnte}
+              />
+            </div>
+            
+            {/* Two Second Pot GIF Setting */}
+            <div className={styles.settingItem}>
+              <div className={styles.settingDescription}>
+                <h4>Two Second POT GIF</h4>
+                <p>Upload a GIF to play when you slam the POT button</p>
+              </div>
+              <FileUpload
+                onUpload={uploadTwoSecondPotGif}
+                currentFileUrl={preferences.twoSecondPotGif}
+                acceptedFileTypes="image/gif"
+                label="GIF"
+                previewType="image"
+              />
+            </div>
+            
+            {/* Two Second Pot MP3 Setting */}
+            <div className={styles.settingItem}>
+              <div className={styles.settingDescription}>
+                <h4>Two Second POT Sound</h4>
+                <p>Upload a sound to play when you slam the POT button</p>
+              </div>
+              <FileUpload
+                onUpload={uploadTwoSecondPotMp3}
+                currentFileUrl={preferences.twoSecondPotMp3}
+                acceptedFileTypes="audio/mpeg,audio/wav"
+                label="Sound"
+                previewType="audio"
+              />
+            </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PreferencesModal;
