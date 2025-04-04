@@ -67,7 +67,7 @@
 .potDisplayWrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0;
 }
 
 .resultsContainer {
@@ -146,3 +146,225 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* --- New Card Table Styles --- */
+
+.gameTable {
+  position: relative; /* Ensure this is relative for absolute children positioning */
+  width: 100%;
+  max-width: 1000px; /* Adjust as needed */
+  height: 600px; /* Adjust height based on content and desired look */
+  background-color: #0d2b0e; /* Dark green felt color */
+  border-radius: 50% / 10%; /* Elliptical top for table shape */
+  border: 10px solid #5d3a1a; /* Wooden border */
+  margin-top: 2rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px; /* Space for dealer */
+  box-sizing: border-box;
+}
+
+.dealerArea {
+  position: absolute;
+  top: -70px; /* Increased negative value */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column; /* Stack image and potential name/status */
+  align-items: center;
+  z-index: 10; /* Ensure dealer is above table elements */
+}
+
+.dealerImagePlaceholder {
+  width: 80px;
+  height: 80px;
+  background-color: #c4a78a; /* Placeholder color */
+  border-radius: 50%;
+  border: 3px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  /* Add styles for actual image if needed */
+  /* .dealerImage { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; } */
+}
+
+.centerArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; 
+  margin-top: 5px; /* Reduced from 30px */
+  z-index: 5; 
+  gap: 0.5rem;
+}
+
+.actionPanelContainer {
+  display: flex;
+  flex-direction: column; /* Stack panels vertically */
+  align-items: center;
+  gap: 0.5rem; /* Space between panels if multiple show */
+  margin-top: 0.5rem;
+  min-height: 50px; /* Ensure space is reserved */
+}
+
+.playerSpotsContainer {
+  /* Remove positioning styles like height, bottom, left, width, pointer-events */
+  /* It can be a simple static container or even removed if preferred */
+  width: 100%; /* Optional: If needed for structure */
+}
+
+.playerSpot {
+  /* Keep base appearance */
+  width: 120px; 
+  height: 120px; 
+  background-color: rgba(0, 0, 0, 0.3); 
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 2px solid transparent; 
+  z-index: 15; 
+  
+  /* Keep absolute positioning, but remove CSS placement (left, bottom, margins) */
+  position: absolute;
+  /* Remove transform-related properties */
+  /* transform-origin: center 250px; */
+  /* transition: transform 0.3s ease, box-shadow 0.3s ease; */ /* Keep transition? Add top/left? */
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease; /* Transition scale */
+
+  /* Keep flex layout for content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto; /* Ensure spots are interactive */
+}
+
+.playerSpotInfo {
+  display: flex;
+  flex-direction: column; /* Stack avatar and name */
+  align-items: center;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.playerName {
+  font-size: 0.85rem;
+  color: #fff;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.youIndicator, .dealerIndicator {
+  font-size: 0.75rem;
+  font-weight: bold;
+  position: absolute; 
+  top: 2px;
+}
+
+.youIndicator {
+  left: 4px;
+  color: var(--success); 
+}
+.dealerIndicator {
+  right: 4px;
+  color: var(--accent);
+}
+
+.chipStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.chipVisual {
+  display: flex;
+  margin-bottom: 3px;
+  position: relative; /* For stacking effect */
+  height: 15px; /* Limit height */
+}
+
+.chip {
+  width: 18px;
+  height: 18px;
+  background-color: #f1c40f; /* Gold chip color */
+  border: 1px solid #b7950b;
+  border-radius: 50%;
+  margin: 0 -4px; /* Overlap chips */
+  box-shadow: inset 0 -1px 1px rgba(0,0,0,0.3);
+  position: relative; /* For stacking */
+}
+/* Stacking effect */
+.chip:nth-child(2) { z-index: 1; top: -2px; background-color: #e74c3c; border-color: #a83326; }
+.chip:nth-child(3) { z-index: 2; top: -4px; background-color: #3498db; border-color: #217dbb; }
+
+
+.readyIndicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ready {
+  background-color: var(--success);
+  box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+}
+
+.notReady {
+  background-color: var(--neutral-dark);
+  opacity: 0.5;
+}
+
+/* Content no longer needs counter-rotation */
+.playerSpotContent {
+  width: 100%; 
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative; 
+  /* transform: rotate(...); REMOVED */
+}
+
+.currentPlayerSpot {
+  border: 2px solid var(--info);
+  box-shadow: 0 0 15px var(--info-glow);
+  /* Apply scale directly, positioning is handled inline */
+  transform: scale(1.05); 
+  z-index: 16; /* Ensure current player is slightly above others if overlapping */
+}
+
+.currentUserSpot {
+  /* Maybe a subtle border or glow */
+  /* border-left: 3px solid var(--success); */
+}
+
+.emptySpot {
+  background-color: rgba(0, 0, 0, 0.15);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  /* Ensure empty spots are not interactive */
+  pointer-events: none;
+}
+
+/* Adjustments from original styles if they conflict */
+.potDisplayWrapper {
+  /* Remove margin if handled by centerArea gap */
+  margin-bottom: 0; 
+}
+
+/* Ensure card display fits well */
+/* Might need adjustments in CardDisplay.module.css as well */
+
+/* Hide original player list styles if necessary, though removing the component is better */
+/* .playersContainer { display: none; } */
