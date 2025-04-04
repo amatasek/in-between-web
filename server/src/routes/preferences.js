@@ -139,46 +139,7 @@ const logRequestDetails = (req, res, next) => {
   next();
 };
 
-// Test endpoint for file uploads
-router.post('/test-upload', authenticateToken, (req, res) => {
-  console.log('[Preferences] Test upload endpoint hit');
-  
-  // Use multer to handle the file upload
-  const uploadHandler = upload.single('file');
-  
-  uploadHandler(req, res, (err) => {
-    if (err) {
-      console.error('[Preferences] Test upload error:', err);
-      return res.status(400).json({ 
-        message: err.message || 'Error uploading file'
-      });
-    }
-    
-    console.log('[Preferences] Test upload request details:', {
-      body: req.body,
-      file: req.file ? {
-        filename: req.file.filename,
-        mimetype: req.file.mimetype,
-        size: req.file.size
-      } : 'No file'
-    });
-    
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
-    
-    // Return success response
-    res.json({ 
-      message: 'Test file upload successful',
-      file: {
-        filename: req.file.filename,
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-        path: req.file.path
-      }
-    });
-  });
-});
+// No test endpoint needed
 
 // Update a specific preference
 router.post('/:key', authenticateToken, logRequestDetails, (req, res) => {

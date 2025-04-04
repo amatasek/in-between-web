@@ -62,6 +62,9 @@ const FileUpload = ({
             alt="Preview" 
             className={styles.imagePreview} 
           />
+          {label === 'Image' && (
+            <div className={styles.profilePreviewLabel}>Current Profile Image</div>
+          )}
         </div>
       );
     } else if (previewType === 'audio') {
@@ -91,16 +94,16 @@ const FileUpload = ({
         className={styles.fileInput}
       />
       
+      {currentFileUrl && renderPreview()}
+      
       <button 
         type="button" 
         onClick={handleButtonClick}
-        className={styles.uploadButton}
+        className={`${styles.uploadButton} ${currentFileUrl ? styles.changeButton : ''}`}
         disabled={isUploading}
       >
-        {isUploading ? 'Uploading...' : `Upload ${label}`}
+        {isUploading ? 'Uploading...' : currentFileUrl ? `Change ${label}` : `Upload ${label}`}
       </button>
-      
-      {currentFileUrl && renderPreview()}
       
       {error && (
         <div className={styles.errorMessage}>

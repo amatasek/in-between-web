@@ -3,6 +3,35 @@ import { useAuth } from './AuthContext';
 
 const PreferencesContext = createContext(null);
 
+// Helper function to format image URLs consistently across the application
+const formatImageUrl = (url) => {
+  if (!url) return null;
+  
+  // Get API URL from environment or use localhost as fallback
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  
+  // If the URL already starts with http, use it as is
+  if (url.startsWith('http')) {
+    return url;
+  } 
+  // If the URL is a relative path starting with /files/, use it as is with API_URL
+  else if (url.startsWith('/files/')) {
+    return `${API_URL}${url}`;
+  }
+  // If the URL contains /uploads/, replace it with /files/
+  else if (url.includes('/uploads/')) {
+    // Extract the type and filename from the path
+    const parts = url.split('/');
+    const filename = parts.pop();
+    const type = parts[parts.length - 1]; // images, audio, etc.
+    return `${API_URL}/files/${type}/${filename}`;
+  }
+  // Otherwise, just append the URL to the API_URL
+  else {
+    return `${API_URL}${url}`;
+  }
+};
+
 export const PreferencesProvider = ({ children }) => {
   const [preferences, setPreferences] = useState({
     profileImg: null,
@@ -49,7 +78,17 @@ export const PreferencesProvider = ({ children }) => {
       
       const data = await response.json();
       console.log('[Preferences] Loaded preferences:', data);
-      setPreferences(data || { autoAnte: false });
+      
+      // Format image URLs to ensure consistency across the application
+      const formattedData = {
+        ...data,
+        profileImg: formatImageUrl(data.profileImg),
+        twoSecondPotGif: formatImageUrl(data.twoSecondPotGif),
+        twoSecondPotMp3: data.twoSecondPotMp3 // Audio files don't need the same formatting
+      };
+      
+      console.log('[Preferences] Formatted preferences:', formattedData);
+      setPreferences(formattedData || { autoAnte: false });
     } catch (error) {
       console.error('[Preferences] Error loading preferences:', error);
       // Set default preferences on error
@@ -175,10 +214,14 @@ export const PreferencesProvider = ({ children }) => {
       const data = responseText ? JSON.parse(responseText) : {};
       console.log('[Preferences] Uploaded GIF:', data);
       
-      // Update preferences with the file URL
+      // Format the file URL for consistency
+      const formattedUrl = formatImageUrl(data.fileUrl);
+      console.log('[Preferences] Formatted GIF URL:', formattedUrl);
+      
+      // Update preferences with the formatted file URL
       setPreferences(prev => ({
         ...prev,
-        twoSecondPotGif: data.fileUrl
+        twoSecondPotGif: formattedUrl
       }));
       
       return true;
@@ -303,10 +346,14 @@ export const PreferencesProvider = ({ children }) => {
       const data = responseText ? JSON.parse(responseText) : {};
       console.log('[Preferences] Uploaded profile image:', data);
       
-      // Update preferences with the file URL
+      // Format the file URL for consistency
+      const formattedUrl = formatImageUrl(data.fileUrl);
+      console.log('[Preferences] Formatted profile image URL:', formattedUrl);
+      
+      // Update preferences with the formatted file URL
       setPreferences(prev => ({
         ...prev,
-        profileImg: data.fileUrl
+        profileImg: formattedUrl
       }));
       
       return true;
@@ -316,63 +363,7 @@ export const PreferencesProvider = ({ children }) => {
     }
   };
   
-  // Test function for file uploads
-  const testFileUpload = async (file) => {
-    if (!file) {
-      console.error('[Preferences] No file provided for test upload');
-      return false;
-    }
-    
-    console.log('[Preferences] Starting test file upload:', {
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
-    });
-    
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      // Get API URL from environment or use localhost as fallback
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        console.error('[Preferences] No token available');
-        return false;
-      }
-      
-      console.log(`[Preferences] Sending test upload request to: ${API_URL}/preferences/test-upload`);
-      
-      const response = await fetch(`${API_URL}/preferences/test-upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-      
-      const responseText = await response.text();
-      console.log('[Preferences] Test upload response:', {
-        status: response.status,
-        statusText: response.statusText,
-        responseText
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Test upload failed: ${responseText}`);
-      }
-      
-      // Parse the response text as JSON
-      const data = responseText ? JSON.parse(responseText) : {};
-      console.log('[Preferences] Test upload successful:', data);
-      
-      return true;
-    } catch (error) {
-      console.error('[Preferences] Error in test upload:', error);
-      return false;
-    }
-  };
+  // No test upload function needed
   
   return (
     <PreferencesContext.Provider 
@@ -383,7 +374,6 @@ export const PreferencesProvider = ({ children }) => {
         uploadTwoSecondPotGif,
         uploadTwoSecondPotMp3,
         uploadProfileImg,
-        testFileUpload,
         loading 
       }}
     >

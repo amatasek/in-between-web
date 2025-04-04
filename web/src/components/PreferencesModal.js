@@ -11,7 +11,6 @@ const PreferencesModal = ({ onClose }) => {
     uploadTwoSecondPotGif, 
     uploadTwoSecondPotMp3, 
     uploadProfileImg,
-    testFileUpload,
     loading 
   } = usePreferences();
 
@@ -33,20 +32,6 @@ const PreferencesModal = ({ onClose }) => {
           <button className={styles.closeButton} onClick={onClose}>×</button>
         </div>
         
-        {/* Debug Test Upload Section */}
-        <div className={styles.settingItem} style={{ backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '10px', marginBottom: '10px' }}>
-          <div className={styles.settingDescription}>
-            <h4>TEST UPLOAD (Debug Only)</h4>
-            <p>This is a test upload to debug file upload functionality</p>
-          </div>
-          <FileUpload
-            onUpload={testFileUpload}
-            currentFileUrl={null}
-            acceptedFileTypes="image/*,audio/*"
-            label="Test File"
-            previewType="image"
-          />
-        </div>
         
         <div className={styles.settingsContainer}>
             
