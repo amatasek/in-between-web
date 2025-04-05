@@ -11,8 +11,8 @@ services:
         sync: false
       - key: CORS_ORIGIN
         value: "https://in-between.live,https://amatasek.github.io"
-      - key: DB_PATH
-        value: /var/data/db
+      - key: DATA_PATH
+        value: /var/data
     disk:
       name: data
       mountPath: /var/data/db
