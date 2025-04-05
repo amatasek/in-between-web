@@ -15,5 +15,5 @@ services:
         value: /var/data
     disk:
       name: data
-      mountPath: /var/data/db
+      mountPath: /var/data
       sizeGB: 4
