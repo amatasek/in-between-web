@@ -6,100 +6,66 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-// Determine the appropriate data directory path based on environment variable or default
-let dataPath;
-if (process.env.NODE_ENV === 'production') {
-  // In production, always use the mounted volume at /var/data
-  dataPath = '/var/data';
-  console.log(`Using production data directory: ${dataPath}`);
-} else {
-  // In development, use the local path
-  dataPath = path.join(__dirname, '../../data');
-  console.log(`Using development data directory: ${dataPath}`);
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Set up paths based on environment
+const dataPath = isProduction ? '/var/data' : path.join(__dirname, '../../data');
+const dbPath = isProduction ? path.join(dataPath, 'db') : path.join(__dirname, '../../db');
+const filesPath = path.join(dataPath, 'files');
+
+console.log(`[CONFIG] Environment: ${isProduction ? 'Production' : 'Development'}`);
+console.log(`[CONFIG] Data path: ${dataPath}`);
+console.log(`[CONFIG] Database path: ${dbPath}`);
+console.log(`[CONFIG] Files path: ${filesPath}`);
+
+/**
+ * Creates a directory if it doesn't exist and logs the action
+ * @param {string} dirPath - Path to create
+ * @param {string} dirType - Type of directory for logging
+ */
+function ensureDirectoryExists(dirPath, dirType) {
+  if (!fs.existsSync(dirPath)) {
+    console.log(`[CONFIG] Creating ${dirType} directory: ${dirPath}`);
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
 }
 
-// Create the data directory if it doesn't exist
+// Ensure all required directories exist
 try {
-  if (!fs.existsSync(dataPath)) {
-    console.log(`Creating data directory: ${dataPath}`);
-    fs.mkdirSync(dataPath, { recursive: true });
-  }
+  // Create main directories
+  ensureDirectoryExists(dataPath, 'data');
+  ensureDirectoryExists(dbPath, 'database');
+  ensureDirectoryExists(filesPath, 'files');
   
-  // Test write access to the directory
+  // Create database subdirectories
+  ensureDirectoryExists(path.join(dbPath, 'users'), 'users database');
+  ensureDirectoryExists(path.join(dbPath, 'games'), 'games database');
+  
+  // Create file subdirectories
+  ensureDirectoryExists(path.join(filesPath, 'images'), 'images');
+  ensureDirectoryExists(path.join(filesPath, 'audio'), 'audio');
+  ensureDirectoryExists(path.join(filesPath, 'other'), 'other files');
+  
+  // Test write access to the data directory
   const testFile = path.join(dataPath, '.test-write-access');
   fs.writeFileSync(testFile, 'test');
   fs.unlinkSync(testFile);
-  console.log(`Successfully verified write access to: ${dataPath}`);
+  console.log(`[CONFIG] Successfully verified write access to: ${dataPath}`);
 } catch (error) {
-  console.error(`Error with data directory ${dataPath}:`, error.message);
+  console.error(`[CONFIG] Error with directory setup: ${error.message}`);
+  throw new Error(`Cannot set up required directories: ${error.message}`);
 }
 
-// Configure database paths based on environment
-let dbPath;
-const originalDbPath = path.join(__dirname, '../../db');
-
-if (process.env.NODE_ENV === 'production') {
-  // In production, use the persistent volume path with /db subdirectory
-  // This ensures PouchDB always uses the same path across deployments
-  dbPath = path.join(dataPath, 'db');
-  console.log(`Using production database path: ${dbPath}`);
-} else {
-  // In development, always use the original db path
-  dbPath = originalDbPath;
-  console.log(`Using original database path for development: ${dbPath}`);
-}
-
-// Set up files path
-const filesPath = path.join(dataPath, 'files');
-
-// Create the DB directory if it doesn't exist
-if (!fs.existsSync(dbPath)) {
-  console.log(`Creating database directory: ${dbPath}`);
-  fs.mkdirSync(dbPath, { recursive: true });
-}
-
-// Create specific database subdirectories
-const userDbDir = path.join(dbPath, 'users');
-const gameDbDir = path.join(dbPath, 'games');
-
-if (!fs.existsSync(userDbDir)) {
-  console.log(`Creating users database directory: ${userDbDir}`);
-  fs.mkdirSync(userDbDir, { recursive: true });
-}
-
-if (!fs.existsSync(gameDbDir)) {
-  console.log(`Creating games database directory: ${gameDbDir}`);
-  fs.mkdirSync(gameDbDir, { recursive: true });
-}
-
-// Create the files directory if it doesn't exist
-if (!fs.existsSync(filesPath)) {
-  console.log(`Creating files directory: ${filesPath}`);
-  fs.mkdirSync(filesPath, { recursive: true });
-}
-
-// Create subdirectories for different file types
-const imageDir = path.join(filesPath, 'images');
-const audioDir = path.join(filesPath, 'audio');
-const otherDir = path.join(filesPath, 'other');
-
-if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true });
-if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
-if (!fs.existsSync(otherDir)) fs.mkdirSync(otherDir, { recursive: true });
-
+// Export configuration
 const config = {
   port: process.env.PORT || 10000,
   jwtSecret: process.env.JWT_SECRET || 'development-jwt-secret',
-  dataPath: dataPath,
-  dbPath: dbPath,
-  filesPath: filesPath,
+  dataPath,
+  dbPath,
+  filesPath,
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  logLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  isProduction: process.env.NODE_ENV === 'production'
+  logLevel: isProduction ? 'info' : 'debug',
+  isProduction
 };
-
-console.log(`Using data path: ${config.dataPath}`);
-console.log(`Using database path: ${config.dbPath}`);
-console.log(`Using files path: ${config.filesPath}`);
 
 module.exports = config;
