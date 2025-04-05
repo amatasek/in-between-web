@@ -32,10 +32,23 @@ const formatImageUrl = (url) => {
   }
 };
 
+// Helper function to format preferences data with proper image URLs
+const formatPreferencesData = (data) => {
+  if (!data) return {};
+  
+  return {
+    ...data,
+    profileImg: formatImageUrl(data.profileImg),
+    twoSecondPotGif: formatImageUrl(data.twoSecondPotGif),
+    twoSecondPotMp3: data.twoSecondPotMp3 // Audio files don't need the same formatting
+  };
+};
+
 export const PreferencesProvider = ({ children }) => {
   const [preferences, setPreferences] = useState({
     profileImg: null,
     autoAnte: false,
+    muted: false,
     twoSecondPotGif: null,
     twoSecondPotMp3: null
   });
@@ -79,13 +92,8 @@ export const PreferencesProvider = ({ children }) => {
       const data = await response.json();
       console.log('[Preferences] Loaded preferences:', data);
       
-      // Format image URLs to ensure consistency across the application
-      const formattedData = {
-        ...data,
-        profileImg: formatImageUrl(data.profileImg),
-        twoSecondPotGif: formatImageUrl(data.twoSecondPotGif),
-        twoSecondPotMp3: data.twoSecondPotMp3 // Audio files don't need the same formatting
-      };
+      // Format preferences data with proper image URLs
+      const formattedData = formatPreferencesData(data);
       
       console.log('[Preferences] Formatted preferences:', formattedData);
       setPreferences(formattedData || { autoAnte: false });
@@ -145,8 +153,13 @@ export const PreferencesProvider = ({ children }) => {
       const data = await response.json();
       console.log(`[Preferences] Updated ${key}:`, data);
       
-      // Update with the server response (in case there were any changes)
-      setPreferences(data);
+      // Format preferences data with proper image URLs
+      const formattedData = formatPreferencesData(data);
+      
+      console.log(`[Preferences] Formatted ${key} response:`, formattedData);
+      
+      // Update with the formatted server response (in case there were any changes)
+      setPreferences(formattedData);
       return true;
     } catch (error) {
       console.error(`[Preferences] Error updating ${key}:`, error);
@@ -161,6 +174,12 @@ export const PreferencesProvider = ({ children }) => {
   const toggleAutoAnte = async () => {
     const newValue = !preferences.autoAnte;
     return await updatePreference('autoAnte', newValue);
+  };
+
+  // Toggle mute preference
+  const toggleMute = async () => {
+    const newValue = !preferences.muted;
+    return await updatePreference('muted', newValue);
   };
 
   // Upload file for two-second-pot-gif preference
@@ -371,6 +390,7 @@ export const PreferencesProvider = ({ children }) => {
         preferences, 
         updatePreference, 
         toggleAutoAnte,
+        toggleMute,
         uploadTwoSecondPotGif,
         uploadTwoSecondPotMp3,
         uploadProfileImg,

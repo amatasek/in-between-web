@@ -3,6 +3,7 @@ PouchDB.plugin(require('pouchdb-find'));
 const path = require('path');
 const fs = require('fs');
 const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
+const { DEFAULT_PREFERENCES, ensureCompletePreferences, isValidPreferenceKey } = require('../models/PreferencesSchema');
 
 // Import config
 const config = require('../config');
@@ -72,9 +73,7 @@ class DatabaseService {
         password: hashedPassword,
         balance: STARTING_BALANCE, // Starting balance from constants
         transactions: [], // Track balance changes
-        preferences: {
-          autoAnte: false // Auto-ante feature default setting
-        },
+        preferences: DEFAULT_PREFERENCES, // Use default preferences from schema
         createdAt: new Date().toISOString()
       };
 
@@ -136,14 +135,23 @@ class DatabaseService {
       throw new Error('User not found');
     }
     
+    // Validate the preference key
+    if (!isValidPreferenceKey(key)) {
+      console.warn(`[DB] Invalid preference key attempted: ${key}`);
+      throw new Error(`Invalid preference key: ${key}`);
+    }
+    
     // Initialize preferences object if it doesn't exist
     if (!user.preferences) {
-      user.preferences = {};
+      user.preferences = DEFAULT_PREFERENCES;
     }
+    
+    // Ensure we have a complete preferences object with all required fields
+    const currentPreferences = ensureCompletePreferences(user.preferences);
     
     // Update the specific preference
     const preferences = {
-      ...user.preferences,
+      ...currentPreferences,
       [key]: value
     };
     
@@ -164,8 +172,8 @@ class DatabaseService {
       throw new Error('User not found');
     }
     
-    // Return preferences or empty object if none exist
-    return user.preferences || {};
+    // Return complete preferences with any missing values set to defaults
+    return ensureCompletePreferences(user.preferences);
   }
 
   /**
@@ -193,7 +201,8 @@ class DatabaseService {
       // Process results and extract preferences
       result.rows.forEach(row => {
         if (row.doc && !row.error) {
-          preferencesMap[row.id] = row.doc.preferences || {};
+          // Ensure each user's preferences are complete with defaults
+          preferencesMap[row.id] = ensureCompletePreferences(row.doc.preferences);
         }
       });
       

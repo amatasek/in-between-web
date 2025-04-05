@@ -8,6 +8,7 @@ const PreferencesModal = ({ onClose }) => {
   const { 
     preferences, 
     toggleAutoAnte,
+    toggleMute,
     uploadTwoSecondPotGif, 
     uploadTwoSecondPotMp3, 
     uploadProfileImg,
@@ -47,6 +48,18 @@ const PreferencesModal = ({ onClose }) => {
                 acceptedFileTypes="image/jpeg,image/png,image/gif"
                 label="Image"
                 previewType="image"
+              />
+            </div>
+            
+            {/* Mute Setting */}
+            <div className={styles.settingItem}>
+              <div className={styles.settingDescription}>
+                <h4>Mute Sound</h4>
+                <p>Mute all game sound effects</p>
+              </div>
+              <ToggleSwitch 
+                isChecked={preferences.muted}
+                onChange={toggleMute}
               />
             </div>
             
