@@ -13,18 +13,6 @@ class SoundService {
     
     // Get API URL from environment or use localhost as fallback
     this.API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    
-    // Try to load muted preference from localStorage as a fallback
-    try {
-      const savedPreferences = localStorage.getItem('preferences');
-      if (savedPreferences) {
-        const { muted } = JSON.parse(savedPreferences);
-        this.muted = muted || false;
-        console.log(`[SoundService] Loaded muted preference from localStorage: ${this.muted}`);
-      }
-    } catch (error) {
-      console.error('[SoundService] Error loading preferences from localStorage:', error);
-    }
   }
 
   /**
