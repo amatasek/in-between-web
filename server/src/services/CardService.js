@@ -157,12 +157,10 @@ class CardService extends BaseService {
     
     // Increment the deck count
     game.deckCount = (game.deckCount || 0) + 1;
-    gameLog(game, `This is deck #${game.deckCount}`);
     
-    // Only rotate dealer if there are multiple players
+    // Rotate dealer if there are multiple players
     const connectedPlayers = game.getConnectedPlayers();
     if (connectedPlayers.length > 1) {
-      // Set a flag to indicate dealer has changed for UI notification
       const dealerChangeInfo = this.rotateDealerOnNewDeck(game);
       if (dealerChangeInfo) {
         game.dealerChanged = true;
@@ -181,16 +179,26 @@ class CardService extends BaseService {
     const connectedPlayers = game.getConnectedPlayers();
     if (connectedPlayers.length <= 1) return;
     
-    const currentDealerIndex = connectedPlayers.indexOf(game.dealerId);
-    const nextDealerIndex = (currentDealerIndex + 1) % connectedPlayers.length;
+    // Get current and next dealer indices
+    const currentIndex = Math.max(0, connectedPlayers.indexOf(game.dealerId));
+    const nextIndex = (currentIndex + 1) % connectedPlayers.length;
     
-    const oldDealer = game.players[game.dealerId].name;
-    game.dealerId = connectedPlayers[nextDealerIndex];
+    // Record old dealer name for logging
+    const oldDealer = game.players[game.dealerId]?.name || 'Unknown';
+    
+    // Set new dealer
+    game.dealerId = connectedPlayers[nextIndex];
     const newDealer = game.players[game.dealerId].name;
+    
+    // Update seat info
+    game.seats.forEach((playerId, i) => {
+      if (playerId && game.seatInfo[i]) {
+        game.seatInfo[i].isDealer = (playerId === game.dealerId);
+      }
+    });
     
     gameLog(game, `Dealer rotated from ${oldDealer} to ${newDealer} on new deck`);
     
-    // Return notification info to send to clients
     return {
       message: `Dealer rotated to ${newDealer}`,
       type: 'dealer',

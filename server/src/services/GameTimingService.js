@@ -52,32 +52,23 @@ class GameTimingService extends BaseService {
     
     if (!game) return game;
     
-    // Ensure we have enough cards for the entire dealing sequence
-    // This check happens at the beginning of the dealing phase to cover all scenarios
-    // including when a player accepts a second chance
+    // Ensure we have enough cards for the dealing sequence
     if (game.deck && game.deck.length < 3) {
-      gameLog(game, `Not enough cards for the dealing sequence (${game.deck.length} cards). Renewing deck...`);
       cardService.handleDeckRenewal(game);
+    }
+    
+    // Ensure we have a valid current player for the dealing sequence
+    if (!game.currentPlayerId) {
+      const playerManagementService = this.getService('playerManagement');
+      const nextPlayerId = playerManagementService.getNextActivePlayer(game);
+      
+      if (!nextPlayerId) return game; // No eligible players
+      
+      game.currentPlayerId = nextPlayerId;
     }
     
     // Store the current player ID to ensure it's preserved throughout the sequence
     const currentPlayerId = game.currentPlayerId;
-    if (!currentPlayerId) {
-      gameLog(game, `WARNING: Current player is undefined at start of dealing sequence`);
-      // Set the player to the one after the dealer
-      const nextPlayerId = game.getNextPlayerAfterDealer();
-      if (nextPlayerId) {
-        game.currentPlayerId = nextPlayerId;
-        gameLog(game, `Set current player to ${game.players[nextPlayerId]?.name} (next after dealer) for dealing sequence`);
-      } else {
-        // Fallback to connected players if next after dealer can't be determined
-        const connectedPlayers = game.getConnectedPlayersInOrder();
-        if (connectedPlayers.length > 0) {
-          game.currentPlayerId = connectedPlayers[0];
-          gameLog(game, `Fallback: Set current player to ${game.players[game.currentPlayerId]?.name} for dealing sequence`);
-        }
-      }
-    }
     
     this.ensureGameTimeouts(game.id);
     this.clearPhaseTimeouts(game.id, 'dealing');
@@ -125,14 +116,7 @@ class GameTimingService extends BaseService {
         if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
           // Add a delay before showing the second chance popup to allow the card animation to complete
           setTimeout(() => {
-            game.waitingForSecondChance = true;
-            gameLog(game, `Matching pair. Waiting for player to decide whether to take a second chance`);
-            
-            // Broadcast the game state with the waitingForSecondChance flag
-            gameService.broadcastGameState(game);
-            
-            // Save the game state
-            gameStateService.saveGame(game);
+            this.handleMatchingPair(game);
           }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY); // Use the same delay as the card animation
           
           return game; // Exit the function early - we'll resume after the player's choice
@@ -296,17 +280,14 @@ class GameTimingService extends BaseService {
         // Check if the pot is empty at the end of the results phase
         if (game.pot <= 0) {
           game.phase = GamePhases.WAITING;
-          game.round = 0; // Reset round counter for new game
+          // Don't reset round to 0 - it should only increment when starting a new round
           
           // Rotate to the next player for the next game
-          if (game.currentPlayerId) {
-            const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);
-            if (nextPlayerId) {
-              const currentPlayerName = game.players[game.currentPlayerId]?.name;
-              const nextPlayerName = game.players[nextPlayerId]?.name;
-              game.currentPlayerId = nextPlayerId;
-              gameLog(game, `Rotating to next player for new game: ${currentPlayerName} -> ${nextPlayerName}`);
-            }
+          const playerManagementService = this.getService('playerManagement');
+          const nextPlayerId = playerManagementService.getNextActivePlayer(game);
+          
+          if (nextPlayerId && nextPlayerId !== game.currentPlayerId) {
+            game.currentPlayerId = nextPlayerId;
           }
           
           // Reset cards
@@ -457,15 +438,7 @@ class GameTimingService extends BaseService {
       
       // Check if the first two cards form a matching pair (but aren't Aces)
       if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
-        game.waitingForSecondChance = true;
-        gameLog(game, `Matching pair. Waiting for player to decide whether to take a second chance`);
-        
-        // Broadcast the game state with the waitingForSecondChance flag
-        gameService.broadcastGameState(game);
-        
-        // Save the game state
-        await gameStateService.saveGame(game);
-        
+        await this.handleMatchingPair(game);
         return;
       }
       
@@ -584,6 +557,26 @@ class GameTimingService extends BaseService {
     }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     
     return game;
+  }
+
+  /**
+   * Helper method to handle matching pairs consistently
+   * @param {Object} game - The game object
+   * @returns {Promise<void>}
+   */
+  async handleMatchingPair(game) {
+    const gameService = this.getService('game');
+    const gameStateService = this.getService('gameState');
+    
+    game.waitingForSecondChance = true;
+    const playerName = game.players[game.currentPlayerId]?.name || 'Player';
+    gameLog(game, `${playerName} has matching cards - second chance?`);
+    
+    // Broadcast the game state with the waitingForSecondChance flag
+    gameService.broadcastGameState(game);
+    
+    // Save the game state
+    await gameStateService.saveGame(game);
   }
 }
 

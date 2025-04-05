@@ -9,6 +9,42 @@ class PlayerManagementService extends BaseService {
   constructor() {
     super();
   }
+
+  /**
+   * Get the next active player based on game phase and current player
+   * During active gameplay (not waiting phase), only players who have anted up can take turns
+   * @param {Object} game - The game object
+   * @param {string} [currentPlayerId=null] - The current player's ID (optional)
+   * @returns {string} The next player's ID or null if no eligible players
+   */
+  getNextActivePlayer(game, currentPlayerId = null) {
+    if (!game) return null;
+    
+    // Use the game's current player if none specified
+    currentPlayerId = currentPlayerId || game.currentPlayerId;
+    
+    // During active gameplay (not waiting phase), only consider players who have anted up
+    const playerList = (game.phase !== GamePhases.WAITING)
+      ? game.getAntedPlayersInOrder()
+      : game.getConnectedPlayersInOrder();
+    
+    if (playerList.length === 0) return null;
+    if (playerList.length === 1) return playerList[0];
+    
+    // If current player isn't in the eligible list or isn't specified
+    if (!currentPlayerId || !playerList.includes(currentPlayerId)) {
+      // For active gameplay, try to start with player after dealer
+      if (game.phase !== GamePhases.WAITING && game.dealerId && playerList.includes(game.dealerId)) {
+        const dealerIndex = playerList.indexOf(game.dealerId);
+        return playerList[(dealerIndex + 1) % playerList.length];
+      }
+      return playerList[0]; // Default to first player
+    }
+    
+    // Get next player in rotation
+    const currentIndex = playerList.indexOf(currentPlayerId);
+    return playerList[(currentIndex + 1) % playerList.length];
+  }
   async addPlayer(game, playerId, name, userId) {
     // Check if all seats are filled by counting non-null seats
     const occupiedSeats = game.seats.filter(seat => seat !== null).length;
@@ -137,7 +173,7 @@ class PlayerManagementService extends BaseService {
       
       // Log the player transition with detailed information
       const nextPlayer = game.players[nextPlayerId];
-      gameLog(game, `Turn passes from ${currentPlayer?.name} to ${nextPlayer?.name}`);
+      gameLog(game, `${nextPlayer?.name}'s turn`);
     } else {
       gameLog(game, `WARNING: Could not find next player after ${currentPlayer?.name}`);
     }

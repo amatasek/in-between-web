@@ -167,7 +167,7 @@ class GameService extends BaseService {
     
     if (isSecondChanceEligible) {
       game.waitingForSecondChance = true;
-      gameLog(game, `Matching pair. Waiting for player to decide whether to take a second chance`);
+      // Log message moved to GameTimingService to avoid duplication
     }
     
     return isSecondChanceEligible;
@@ -242,29 +242,30 @@ class GameService extends BaseService {
     
     // If player passed (amount is 0), handle the phase transition
     if (amount === 0) {
-
+      // Get the next active player (only considering players who have anted up)
+      const playerManagementService = this.getService('playerManagement');
+      const nextPlayerId = playerManagementService.getNextActivePlayer(updatedGame, playerId);
       
-      // Reset cards for the next player
-      updatedGame.firstCard = null;
-      updatedGame.secondCard = null;
-      updatedGame.thirdCard = null;
+      if (!nextPlayerId) {
+        // If no eligible players, end the round
+        updatedGame.phase = GamePhases.RESULTS;
+        const gameTimingService = this.getService('gameTiming');
+        await gameTimingService.handleResultsSequence(updatedGame);
+        return updatedGame;
+      }
       
-      // Move to dealing phase for the next player
+      // Set the next player and reset cards
+      updatedGame.currentPlayerId = nextPlayerId;
+      updatedGame.firstCard = updatedGame.secondCard = updatedGame.thirdCard = null;
       updatedGame.phase = GamePhases.DEALING;
       
       // Start dealing sequence for the next player
       updatedGame = await this.startDealingSequence(updatedGame);
     }
-    // If player placed a bet, handle the revealing phase
+    // If player placed a bet, move to revealing phase
     else if (amount > 0) {
-      // Move to revealing phase
       updatedGame.phase = GamePhases.REVEALING;
-      
-      // Get required services
-      const cardService = this.getService('card');
       const gameTimingService = this.getService('gameTiming');
-      
-      // GameTimingService will handle all the timing and state transitions
       await gameTimingService.handleRevealingSequence(updatedGame);
     }
     

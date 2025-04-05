@@ -21,7 +21,7 @@ class GameStateService extends BaseService {
     // Initialize the deck during game creation
     const cardService = this.getService('card');
     game.deck = cardService.shuffleDeck(cardService.createDeck());  
-    gameLog(game, `Deck created with ${game.deck.length} cards`);
+    gameLog(game, `Deck with ${game.deck.length} cards shuffled`);
     
     return game;
   }
@@ -40,9 +40,11 @@ class GameStateService extends BaseService {
   startRound(game) {
     if (!game) return game;
     
-    // Only increment round counter if not the first round
-    // The first round should be 1, not 2
-    if (game.phase !== GamePhases.WAITING) {
+    // If transitioning from waiting phase, set round to 1
+    // Otherwise increment the existing round
+    if (game.phase === GamePhases.WAITING) {
+      game.round = 1;
+    } else {
       game.round += 1;
     }
     

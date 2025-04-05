@@ -194,6 +194,20 @@ class Game {
       .filter(playerId => playerId !== null && this.players[playerId]?.isConnected);
   }
 
+  /**
+   * Get players who have anted up for the current round in seat order
+   * @returns {Array} Array of anted player IDs in seat order
+   */
+  getAntedPlayersInOrder() {
+    return this.seats
+      .filter(playerId => {
+        const player = this.players[playerId];
+        return playerId !== null && 
+               player?.isConnected && 
+               player?.isReady;
+      });
+  }
+
   toJSON() {
     // Prepare playerInfo with seat information
     const playerInfo = {};
