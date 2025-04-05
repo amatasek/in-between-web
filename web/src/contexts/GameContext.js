@@ -1,5 +1,6 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { useSocket } from './SocketContext';
+import soundService from '../services/SoundService';
 
 // Import shared type definitions
 /** @typedef {import('../../../shared/types').GameState} GameState */
@@ -26,9 +27,14 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   /** @type {[GameState|null, React.Dispatch<React.SetStateAction<GameState|null>>]} */
   const [gameState, setGameState] = useState(initialGameState);
   
+  // Keep track of previous players to detect joins/leaves
+  const prevPlayersRef = useRef({});
+  
   // Initialize with the provided game state if available
   useEffect(() => {
     // No need to log the initial state
+    // Initialize sound service
+    soundService.initialize();
   }, []);
   /** @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]} */
   const [error, setError] = useState(null);
@@ -52,6 +58,35 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     socket.on('gameState', (state) => {
       if (state && state.id) {
         // Process game state update
+        
+        // Check for player joins/leaves
+        if (state.players && prevPlayersRef.current) {
+          const currentPlayers = Object.keys(state.players);
+          const previousPlayers = Object.keys(prevPlayersRef.current);
+          
+          // Check for new players
+          const newPlayers = currentPlayers.filter(id => !previousPlayers.includes(id));
+          
+          // Check for players who left
+          const leftPlayers = previousPlayers.filter(id => !currentPlayers.includes(id));
+          
+          // Play join sound for new players
+          if (newPlayers.length > 0) {
+            console.log('[GameContext] New players detected:', newPlayers);
+            console.log('[GameContext] Playing join sound');
+            soundService.play('ui.join');
+          }
+          
+          // Play leave sound for players who left
+          if (leftPlayers.length > 0) {
+            console.log('[GameContext] Players left:', leftPlayers);
+            console.log('[GameContext] Playing leave sound');
+            soundService.play('ui.leave');
+          }
+          
+          // Update previous players reference
+          prevPlayersRef.current = {...state.players};
+        }
         
         // Check for dealer change notification
         if (state.dealerChanged) {

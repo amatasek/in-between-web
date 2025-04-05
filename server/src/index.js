@@ -99,6 +99,7 @@ app.use('/games', injectServices(['lobby']), gamesRoutes);
 
 // Use the filesPath from the already imported config
 const filesDir = config.filesPath;
+const assetsDir = path.join(__dirname, '../assets');
 
 console.log(`[SERVER] Serving files from: ${filesDir} at /files endpoint`);
 console.log(`[SERVER] Files directory exists: ${fs.existsSync(filesDir)}`);
@@ -106,10 +107,17 @@ if (fs.existsSync(filesDir)) {
   console.log(`[SERVER] Files in directory: ${fs.readdirSync(filesDir)}`);
 }
 
-// Export the files directory for use in other modules
-app.locals.filesDir = filesDir;
+console.log(`[SERVER] Serving assets from: ${assetsDir} at /assets endpoint`);
+console.log(`[SERVER] Assets directory exists: ${fs.existsSync(assetsDir)}`);
+if (fs.existsSync(assetsDir)) {
+  console.log(`[SERVER] Assets in directory: ${fs.readdirSync(assetsDir)}`);
+}
 
-// Create a dedicated endpoint for serving files
+// Export the directories for use in other modules
+app.locals.filesDir = filesDir;
+app.locals.assetsDir = assetsDir;
+
+// Create a dedicated endpoint for serving files (user uploads)
 app.get('/files/*', (req, res) => {
   try {
     // Extract the file path from the URL
@@ -152,6 +160,54 @@ app.get('/files/*', (req, res) => {
     fileStream.pipe(res);
   } catch (error) {
     console.error(`[SERVER] Error serving file: ${error.message}`);
+    res.status(500).send('Internal server error');
+  }
+});
+
+// Create a dedicated endpoint for serving assets (game resources)
+app.get('/assets/*', (req, res) => {
+  try {
+    // Extract the asset path from the URL
+    const assetPath = req.path.replace(/^\/assets\//, '');
+    const fullPath = path.join(assetsDir, assetPath);
+    
+    console.log(`[SERVER] Asset request: ${req.path}`);
+    console.log(`[SERVER] Looking for asset at: ${fullPath}`);
+    
+    // Check if the asset exists
+    if (!fs.existsSync(fullPath)) {
+      console.log(`[SERVER] Asset not found: ${fullPath}`);
+      
+      // For debugging, list all files in the directory
+      const dir = path.dirname(fullPath);
+      if (fs.existsSync(dir)) {
+        console.log(`[SERVER] Assets in directory ${dir}:`, fs.readdirSync(dir));
+      } else {
+        console.log(`[SERVER] Directory does not exist: ${dir}`);
+      }
+      
+      return res.status(404).send(`Asset not found: ${req.path}`);
+    }
+    
+    // Determine content type based on file extension
+    const ext = path.extname(fullPath).toLowerCase();
+    let contentType = 'application/octet-stream';
+    
+    if (ext === '.png') contentType = 'image/png';
+    else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+    else if (ext === '.gif') contentType = 'image/gif';
+    else if (ext === '.mp3') contentType = 'audio/mpeg';
+    else if (ext === '.webm') contentType = 'audio/webm';
+    
+    // Set headers
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    
+    // Stream the asset
+    const fileStream = fs.createReadStream(fullPath);
+    fileStream.pipe(res);
+  } catch (error) {
+    console.error(`[SERVER] Error serving asset: ${error.message}`);
     res.status(500).send('Internal server error');
   }
 });

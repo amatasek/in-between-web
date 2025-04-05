@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 import { API_URL } from '../config';
+import soundService from '../services/SoundService';
 
 // Import shared type definitions
 /** @typedef {import('../../../shared/types').LobbyState} LobbyState */
@@ -20,6 +21,11 @@ export const useLobby = () => useContext(LobbyContext);
 export const LobbyProvider = ({ children, onGameJoined }) => {
   const { socket, isConnected, setError } = useSocket();
   const { token, refreshUserData } = useAuth();
+  
+  // Initialize sound service
+  useEffect(() => {
+    soundService.initialize();
+  }, []);
   
   // Define initial lobby state
   /** @type {LobbyState} */
@@ -191,6 +197,10 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
       console.log('[Lobby] Resetting state before creating game:', freshState);
       setLobbyState(freshState);
       
+      // Play join sound when creating a game
+      console.log('[LobbyContext] Creating game, playing join sound');
+      soundService.play('ui.join');
+      
       // Create the game after a short delay to ensure state is reset
       setTimeout(() => {
         console.log('[Lobby] Emitting createGame event');
@@ -243,6 +253,10 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
       console.log('[Lobby] Resetting state before joining game:', freshState);
       setLobbyState(freshState);
       
+      // Play join sound when joining a game
+      console.log('[LobbyContext] Joining game, playing join sound');
+      soundService.play('ui.join');
+      
       // Join the game after a short delay to ensure state is reset
       setTimeout(() => {
         console.log(`[Lobby] Emitting joinGame event for game: ${gameIdToJoin}`);
@@ -262,6 +276,10 @@ export const LobbyProvider = ({ children, onGameJoined }) => {
     
     // Get the current gameId before resetting state
     const currentGameId = lobbyState.gameId;
+    
+    // Play leave sound when returning to lobby
+    console.log('[LobbyContext] Returning to lobby, playing leave sound');
+    soundService.play('ui.leave');
     
     // Reset the lobby state completely
     setLobbyState(prevState => ({

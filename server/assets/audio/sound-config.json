@@ -1,0 +1,18 @@
+{
+  "categories": {
+    "ui": {
+      "sounds": {
+        "join": {
+          "start": 0,
+          "duration": 1000,
+          "description": "Sound played when a player joins a game"
+        },
+        "leave": {
+          "start": 1500,
+          "duration": 1000,
+          "description": "Sound played when a player leaves a game"
+        }
+      }
+    }
+  }
+}

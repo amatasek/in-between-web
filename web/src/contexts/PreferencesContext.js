@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import soundService from '../services/SoundService';
 
 const PreferencesContext = createContext(null);
 
@@ -96,7 +97,14 @@ export const PreferencesProvider = ({ children }) => {
       const formattedData = formatPreferencesData(data);
       
       console.log('[Preferences] Formatted preferences:', formattedData);
-      setPreferences(formattedData || { autoAnte: false });
+      const finalPreferences = formattedData || { autoAnte: false, muted: false };
+      setPreferences(finalPreferences);
+      
+      // Sync sound service with loaded preferences
+      if (typeof finalPreferences.muted !== 'undefined') {
+        console.log(`[Preferences] Setting sound muted state to: ${finalPreferences.muted}`);
+        soundService.setMuted(finalPreferences.muted);
+      }
     } catch (error) {
       console.error('[Preferences] Error loading preferences:', error);
       // Set default preferences on error
@@ -135,6 +143,12 @@ export const PreferencesProvider = ({ children }) => {
         ...prev,
         [key]: value
       }));
+      
+      // If updating the muted preference, sync with sound service
+      if (key === 'muted') {
+        console.log(`[Preferences] Updating sound muted state to: ${value}`);
+        soundService.setMuted(value);
+      }
       
       // Send the update to the server
       const response = await fetch(`${API_URL}/preferences/${key}`, {
