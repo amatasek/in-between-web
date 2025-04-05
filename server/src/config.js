@@ -7,8 +7,16 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Determine the appropriate data directory path based on environment variable or default
-let dataPath = process.env.DATA_PATH || path.join(__dirname, '../../data');
-console.log(`Using data directory from config: ${dataPath}`);
+let dataPath;
+if (process.env.NODE_ENV === 'production') {
+  // In production, always use the mounted volume at /var/data
+  dataPath = '/var/data';
+  console.log(`Using production data directory: ${dataPath}`);
+} else {
+  // In development, use the local path
+  dataPath = path.join(__dirname, '../../data');
+  console.log(`Using development data directory: ${dataPath}`);
+}
 
 // Create the data directory if it doesn't exist
 try {
