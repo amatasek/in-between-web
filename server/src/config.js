@@ -26,12 +26,13 @@ try {
   console.error(`Error with data directory ${dataPath}:`, error.message);
 }
 
-// Always use the original db path in development, and only use data/db in production
+// Configure database paths based on environment
 let dbPath;
 const originalDbPath = path.join(__dirname, '../../db');
 
 if (process.env.NODE_ENV === 'production') {
-  // In production, use the data/db path
+  // In production, use the persistent volume path with /db subdirectory
+  // This ensures PouchDB always uses the same path across deployments
   dbPath = path.join(dataPath, 'db');
   console.log(`Using production database path: ${dbPath}`);
 } else {

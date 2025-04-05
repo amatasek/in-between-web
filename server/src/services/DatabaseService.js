@@ -33,6 +33,17 @@ const gameDbPath = path.resolve(config.dbPath, 'games');
 console.log(`[DB] User database path: ${userDbPath}`);
 console.log(`[DB] Game database path: ${gameDbPath}`);
 
+// Ensure the specific database directories exist
+if (!fs.existsSync(userDbPath)) {
+  console.log(`[DB] Creating users database directory: ${userDbPath}`);
+  fs.mkdirSync(userDbPath, { recursive: true });
+}
+
+if (!fs.existsSync(gameDbPath)) {
+  console.log(`[DB] Creating games database directory: ${gameDbPath}`);
+  fs.mkdirSync(gameDbPath, { recursive: true });
+}
+
 // Database instances with configured path
 const userDb = new PouchDB(userDbPath);
 const gameDb = new PouchDB(gameDbPath);
