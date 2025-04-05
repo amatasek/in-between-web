@@ -63,18 +63,10 @@ class SoundService {
       ],
       sprite: sprites,
       preload: true,
+      html5: true, // Use HTML5 Audio to avoid AudioContext restrictions
       onload: () => {
         console.log(`[SoundService] ${category} sounds loaded successfully`);
         console.log(`[SoundService] Available sprites:`, this.sounds[category]._sprite);
-        
-        // Test the sound immediately after loading
-        if (category === 'ui') {
-          setTimeout(() => {
-            console.log(`[SoundService] Testing ${category} sounds...`);
-            const joinId = this.sounds[category].play('join');
-            console.log(`[SoundService] Join sound ID: ${joinId}`);
-          }, 1000);
-        }
       },
       onloaderror: (id, error) => {
         console.error(`[SoundService] Error loading ${category} sounds:`, error);
