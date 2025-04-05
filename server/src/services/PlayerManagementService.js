@@ -10,7 +10,9 @@ class PlayerManagementService extends BaseService {
     super();
   }
   async addPlayer(game, playerId, name, userId) {
-    if (!game || game.playerCount >= game.MAX_SEATS) return game;
+    // Check if all seats are filled by counting non-null seats
+    const occupiedSeats = game.seats.filter(seat => seat !== null).length;
+    if (!game || occupiedSeats >= game.MAX_SEATS) return game;
     
     // Create new player
     const player = new Player(playerId, name, userId);
@@ -22,39 +24,28 @@ class PlayerManagementService extends BaseService {
     // Add to game's player list
     game.players[playerId] = player;
     
-    let seatIndex;
+    // Find next available seat
+    const seatIndex = game.nextSeatIndex;
+    game.seats[seatIndex] = playerId;
     
-    // Always put host in seat 0
-    if (playerId === game.hostId) {
-      seatIndex = 0;
-      game.seats[0] = playerId;
-      game.seatInfo[0] = {
-        playerId,
-        name: name || 'Host',
-        isHost: true,
-        isDealer: true,
-        joinedAt: Date.now()
-      };
-      game.nextSeatIndex = 1;
-    } else {
-      // Find next available seat for non-host players
-      seatIndex = game.nextSeatIndex;
-      game.seats[seatIndex] = playerId;
-      game.seatInfo[seatIndex] = {
-        playerId,
-        name: name || `Player ${seatIndex + 1}`,
-        isHost: false,
-        isDealer: playerId === game.dealerId,
-        joinedAt: Date.now()
-      };
-      game.nextSeatIndex = (seatIndex + 1) % game.MAX_SEATS;
+    // Check if this is the first player (who becomes the dealer)
+    const isFirstPlayer = game.dealerId === null;
+    if (isFirstPlayer) {
+      game.dealerId = playerId;
     }
     
-    // Update player count
-    game.recalculatePlayerCount();
+    game.seatInfo[seatIndex] = {
+      playerId,
+      name: name || `Player ${seatIndex + 1}`,
+      isDealer: playerId === game.dealerId,
+      joinedAt: Date.now()
+    };
+    
+    // Update next seat index
+    game.nextSeatIndex = (seatIndex + 1) % game.MAX_SEATS;
     
     const displayName = game.seatInfo[seatIndex].name;
-    gameLog(game, `Player ${displayName} joined and assigned seat ${seatIndex + 1}`);
+    gameLog(game, `${displayName} joined the game`);
     
     // Load player media preferences and apply auto-ante if enabled
     if (userId) {  
@@ -118,10 +109,7 @@ class PlayerManagementService extends BaseService {
     // Remove from players
     delete game.players[playerId];
     
-    // Update player count
-    game.recalculatePlayerCount();
-    
-    gameLog(game, `Player ${player.name} removed from game`);
+    gameLog(game, `${player.name} left the game`);
     game.updateTimestamp();
     return game;
   }
@@ -135,7 +123,7 @@ class PlayerManagementService extends BaseService {
     
     // Log the current player before moving
     const currentPlayer = game.players[game.currentPlayerId];
-    gameLog(game, `Current player before rotation: ${currentPlayer?.name} (ID: ${game.currentPlayerId})`);
+    // Detailed logging removed for cleaner game log
     
     // Get the next player ID based on seat order
     const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);
@@ -149,8 +137,7 @@ class PlayerManagementService extends BaseService {
       
       // Log the player transition with detailed information
       const nextPlayer = game.players[nextPlayerId];
-      gameLog(game, `Player rotation: ${currentPlayer?.name} -> ${nextPlayer?.name}`);
-      gameLog(game, `Player ID rotation: ${prevPlayerId} -> ${nextPlayerId}`);
+      gameLog(game, `Turn passes from ${currentPlayer?.name} to ${nextPlayer?.name}`);
     } else {
       gameLog(game, `WARNING: Could not find next player after ${currentPlayer?.name}`);
     }
@@ -167,7 +154,6 @@ class PlayerManagementService extends BaseService {
     
     if (nextPlayerId && nextPlayerId !== game.dealerId) {
       game.currentPlayerId = nextPlayerId;
-      gameLog(game, `First player set to: ${game.players[nextPlayerId].name} (next after dealer)`);
     } else if (game.dealerId && game.players[game.dealerId]) {
       game.currentPlayerId = game.dealerId;
       gameLog(game, `Only dealer present: ${game.players[game.dealerId].name}`);
@@ -199,31 +185,14 @@ class PlayerManagementService extends BaseService {
       game.pot += ANTE_AMOUNT;
       player.isReady = true;
   
-      // Check if all players are ready
-      const allReady = Object.values(game.players).every(p => p.isReady);
-      if (allReady) {
-        gameLog(game, 'All players ready, starting round');
-      }
-  
+      gameLog(game, `${player.name} antes`);
+
       game.updateTimestamp();
       return game;
     } catch (error) {
       console.error(`[PLAYER_MGMT] Failed to remove ante from ${player.name}'s balance:`, error);
       return game;
     }
-
-    // Add to pot
-    game.pot += ANTE_AMOUNT;
-    player.isReady = true;
-
-    // Check if all players are ready
-    const allReady = Object.values(game.players).every(p => p.isReady);
-    if (allReady) {
-      gameLog(game, 'All players ready, starting round');
-    }
-
-    game.updateTimestamp();
-    return game;
   }
 
   async playerUnready(game, playerId) {
@@ -257,7 +226,7 @@ class PlayerManagementService extends BaseService {
     game.pot -= ANTE_AMOUNT;
     player.isReady = false;
 
-    gameLog(game, `${player.name} withdrew ante and is no longer ready`);
+    gameLog(game, `${player.name} withdraws ante`);
     game.updateTimestamp();
     return game;
   }

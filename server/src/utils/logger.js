@@ -8,18 +8,44 @@
  * @param {string} message - Message to log
  */
 function gameLog(gameOrId, message) {
-  // Extract game ID
+  // Extract game ID and game object
   let gameId;
+  let gameObj = null;
+  
   if (typeof gameOrId === 'string') {
     gameId = gameOrId;
   } else if (gameOrId && gameOrId.id) {
     gameId = gameOrId.id;
+    gameObj = gameOrId;
   } else {
     gameId = 'UNKNOWN_GAME';
   }
   
   // Log with game ID prefix
   console.log(`[GAME:${gameId}] ${message}`);
+  
+  // Add to game log array if we have a game object
+  if (gameObj && typeof message === 'string') {
+    // Create log entry with timestamp
+    const logEntry = {
+      timestamp: Date.now(),
+      message: message
+    };
+    
+    // Initialize gameLog array if it doesn't exist
+    if (!gameObj.gameLog) {
+      gameObj.gameLog = [];
+    }
+    
+    // Add to beginning of array so newest entries are first
+    gameObj.gameLog.unshift(logEntry);
+    
+    // Limit the number of log entries to prevent excessive memory usage
+    const maxEntries = gameObj.maxLogEntries || 50;
+    if (gameObj.gameLog.length > maxEntries) {
+      gameObj.gameLog = gameObj.gameLog.slice(0, maxEntries);
+    }
+  }
 }
 
 /**

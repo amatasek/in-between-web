@@ -5,10 +5,12 @@ import CardDisplay from './CardDisplay';
 import BettingPanel from './BettingPanel';
 import PlayerList from './PlayerList';
 import PotDisplay from './PotDisplay';
+import DeckDisplay from './DeckDisplay';
 import AnteControls from './AnteControls';
 import ResultsPanel from './ResultsPanel';
 import AceChoicePanel from './AceChoicePanel';
 import SecondChancePanel from './SecondChancePanel';
+import GameLog from './GameLog';
 
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
@@ -56,7 +58,8 @@ const GameScreen = ({ onReturnToLobby }) => {
           </div>
         )}
         
-        <div className={styles.potDisplayWrapper}>
+        <div className={styles.gameInfoWrapper}>
+          <DeckDisplay />
           <PotDisplay />
         </div>
         
@@ -80,7 +83,14 @@ const GameScreen = ({ onReturnToLobby }) => {
         {/* Show the Second Chance panel when needed */}
         <SecondChancePanel />
         
-        <PlayerList />
+        <div className={styles.gameBottomSection}>
+          <div className={styles.playerListContainer}>
+            <PlayerList />
+          </div>
+          <div className={styles.gameLogContainer}>
+            <GameLog />
+          </div>
+        </div>
       </div>
     </div>
   );

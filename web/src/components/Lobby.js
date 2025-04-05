@@ -122,8 +122,7 @@ const Lobby = () => {
     
     const query = searchQuery.trim().toLowerCase();
     return gameList.filter(game => 
-      game.id.toLowerCase().includes(query) ||
-      (game.hostName && game.hostName.toLowerCase().includes(query))
+      game.id.toLowerCase().includes(query)
     );
   }, [gameList, searchQuery]);
   

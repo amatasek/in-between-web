@@ -1,0 +1,137 @@
+.gameLogContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.75rem;
+  box-sizing: border-box;
+}
+
+.gameLogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.25rem;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #34495e;
+  margin-bottom: 0.5rem;
+}
+
+.gameLogHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #ecf0f1;
+  font-weight: 600;
+}
+
+.expandIcon {
+  color: #ecf0f1;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .gameLogHeader h3 {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .gameLogHeader h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .gameLogHeader {
+    padding-bottom: 0.2rem;
+  }
+}
+
+.gameLogEntries {
+  max-height: 150px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gameLogEntries.expanded {
+  max-height: 400px;
+}
+
+.logEntry {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.2rem var(--spacing-sm);
+  margin-bottom: 0.1rem;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+  .logEntry {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .logEntry {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+  }
+}
+
+.logTime {
+  color: #7f8c8d;
+  margin-right: 0.5rem;
+  font-size: 0.75rem;
+  min-width: 70px;
+}
+
+.logMessage {
+  color: #ecf0f1;
+  flex: 1;
+}
+
+.emptyLog {
+  padding: 1rem;
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* Show more button styling to match the cleaner look */
+.showMoreButton {
+  text-align: center;
+  padding: 0.5rem;
+  color: #3498db;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: color 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.showMoreButton:hover {
+  color: #2980b9;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .gameLogContainer {
+    max-width: 100%;
+  }
+  
+  .gameLogEntries {
+    max-height: 120px;
+  }
+  
+  .gameLogEntries.expanded {
+    max-height: 200px;
+  }
+}

@@ -67,7 +67,7 @@ class LobbyService extends BaseService {
       const broadcastService = this.getService('broadcast');
       
       // Create game
-      const game = gameStateService.createGame(gameId, socket.id);
+      const game = gameStateService.createGame(gameId);
       
       // Add player to game
       await playerManagementService.addPlayer(game, socket.id, user.username || `Player ${socket.id.slice(0,4)}`, user.userId);
@@ -83,8 +83,6 @@ class LobbyService extends BaseService {
       
       // Broadcast updated game list to all clients in the lobby
       broadcastService.broadcastGameList();
-      
-      gameLog(game, `Game created by ${user.username} (${socket.id})`);
     } catch (error) {
       console.error(`[LOBBY_SERVICE] Error creating game:`, error);
       socket.emit('error', { message: error.message || 'Failed to create game' });
@@ -157,8 +155,6 @@ class LobbyService extends BaseService {
       
       // Update the game list for all clients in the lobby
       broadcastService.broadcastGameList();
-      
-      gameLog(currentGame, `Player ${user.username} (${socket.id}) joined the game`);
     } catch (error) {
       console.error(`[LOBBY_SERVICE] Error joining game:`, error);
       console.error(`[Lobby] Error processing game join:`, { 
@@ -199,7 +195,6 @@ class LobbyService extends BaseService {
       if (game.phase === 'waiting' || game.players.length < game.maxPlayers) {
         availableGames.push({
           id: game.id,
-          hostName: game.hostName,
           playerCount: game.players.length,
           maxPlayers: game.maxPlayers,
           phase: game.phase,

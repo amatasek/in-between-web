@@ -6,9 +6,8 @@ const { gameLog } = require('../utils/logger');
  * Game Model - Core game state and operations
  */
 class Game {
-  constructor(id, hostId) {
+  constructor(id) {
     this.id = id;
-    this.hostId = hostId;
     this.players = {};
     this.playerOrder = [];
     
@@ -22,7 +21,7 @@ class Game {
     this.pot = 0;
     this.anteAmount = ANTE_AMOUNT; // Fixed ante amount from constants
     this.round = 1;
-    this.dealerId = hostId;
+    this.dealerId = null; // Will be set when first player joins
     this.currentPlayerId = null;
     // Individual card properties for sequential dealing
     this.firstCard = null;  // Left card (dealt first)
@@ -34,40 +33,28 @@ class Game {
     this.lastUpdated = Date.now();
     this.pendingTransition = null;
     this.waitingForAceDecision = false;
+    
+    // Game log for tracking game events
+    this.gameLog = [];
+    this.maxLogEntries = 50; // Maximum number of log entries to keep
   }
 
   /**
    * Assign a player to the next available seat
-   * Host is always at position 0, and players fill in the next available seats in order
+   * Players fill in the next available seats in order
    * @param {string} playerId - The player's ID
-   * @param {boolean} isHost - Whether this player is the host
    * @returns {number} The assigned seat index or -1 if no seats available
    */
-  assignSeat(playerId, isHost) {
-    // Host always gets seat 0
-    if (isHost) {
-      this.seats[0] = playerId;
-      this.seatInfo[0] = {
-        playerId,
-        name: this.players[playerId]?.name || 'Host',
-        isHost: true,
-        isDealer: true,
-        joinedAt: Date.now()
-      };
-      this.nextSeatIndex = 1; // Next player will be at seat 1
-      return 0;
-    }
-    
-    // Find the next available seat starting from seat 1 (after host)
+  assignSeat(playerId) {
+    // Find the next available seat
     // Always fill sequentially without gaps
-    for (let seatIndex = 1; seatIndex < this.MAX_SEATS; seatIndex++) {
+    for (let seatIndex = 0; seatIndex < this.MAX_SEATS; seatIndex++) {
       if (this.seats[seatIndex] === null) {
         // Seat is available
         this.seats[seatIndex] = playerId;
         this.seatInfo[seatIndex] = {
           playerId,
           name: this.players[playerId]?.name || `Player ${seatIndex + 1}`,
-          isHost: false,
           isDealer: false,
           joinedAt: Date.now()
         };
@@ -100,8 +87,6 @@ class Game {
       return null;
     }
     
-    gameLog(this, `Finding next player after ${this.players[playerId]?.name} (seat ${currentSeat})`);
-    
     // Get all connected players in seat order
     const connectedPlayers = this.getConnectedPlayersInOrder();
     if (connectedPlayers.length <= 1) {
@@ -120,23 +105,7 @@ class Game {
     const nextIndex = (currentIndex + 1) % connectedPlayers.length;
     const nextPlayerId = connectedPlayers[nextIndex];
     
-    gameLog(this, `Next player: ${this.players[nextPlayerId]?.name} (ID: ${nextPlayerId})`);
     return nextPlayerId;
-  }
-  
-  /**
-   * Get the first non-dealer player (player in position 1)
-   * @returns {string} The player ID in seat 1 or null if none
-   */
-  /**
-   * Recalculate the number of players in the game
-   * This should be called whenever players are added or removed
-   */
-  recalculatePlayerCount() {
-    // Count non-null seats
-    const count = this.seats.filter(playerId => playerId !== null).length;
-    gameLog(this, `Recalculated player count: ${count} players`);
-    return count;
   }
 
   /**
@@ -240,7 +209,6 @@ class Game {
         ...player.toJSON(),
         seatNumber: index + 1,
         name: seat.name,
-        isHost: seat.isHost,
         isDealer: seat.isDealer,
         joinedAt: seat.joinedAt
       };
@@ -248,7 +216,6 @@ class Game {
     
     return {
       id: this.id,
-      hostId: this.hostId,
       players: playerInfo,
       playerOrder: this.playerOrder,
       seats: this.seats,
@@ -265,7 +232,8 @@ class Game {
       deckCount: this.deckCount,
       deckSize: this.deck.length,
       result: this.result,
-      waitingForAceDecision: this.waitingForAceDecision
+      waitingForAceDecision: this.waitingForAceDecision,
+      gameLog: this.gameLog || []
     };
   }
 

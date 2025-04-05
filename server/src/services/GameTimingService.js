@@ -52,6 +52,14 @@ class GameTimingService extends BaseService {
     
     if (!game) return game;
     
+    // Ensure we have enough cards for the entire dealing sequence
+    // This check happens at the beginning of the dealing phase to cover all scenarios
+    // including when a player accepts a second chance
+    if (game.deck && game.deck.length < 3) {
+      gameLog(game, `Not enough cards for the dealing sequence (${game.deck.length} cards). Renewing deck...`);
+      cardService.handleDeckRenewal(game);
+    }
+    
     // Store the current player ID to ensure it's preserved throughout the sequence
     const currentPlayerId = game.currentPlayerId;
     if (!currentPlayerId) {
@@ -69,8 +77,6 @@ class GameTimingService extends BaseService {
           gameLog(game, `Fallback: Set current player to ${game.players[game.currentPlayerId]?.name} for dealing sequence`);
         }
       }
-    } else {
-      gameLog(game, `Dealing sequence for player: ${game.players[currentPlayerId]?.name}`);
     }
     
     this.ensureGameTimeouts(game.id);
@@ -94,9 +100,6 @@ class GameTimingService extends BaseService {
         
         // Broadcast the game state with the Ace and waitingForAceDecision flag
         gameService.broadcastGameState(game);
-        
-        // Don't set up the timer for the second card yet - we'll do that after the player makes their choice
-        gameLog(game, `Pausing dealing sequence until player makes Ace high/low choice`);
         
         // Save the game state
         await gameStateService.saveGame(game);
@@ -123,7 +126,7 @@ class GameTimingService extends BaseService {
           // Add a delay before showing the second chance popup to allow the card animation to complete
           setTimeout(() => {
             game.waitingForSecondChance = true;
-            gameLog(game, `Matching pair detected! Waiting for player to decide whether to take a second chance`);
+            gameLog(game, `Matching pair. Waiting for player to decide whether to take a second chance`);
             
             // Broadcast the game state with the waitingForSecondChance flag
             gameService.broadcastGameState(game);
@@ -131,9 +134,6 @@ class GameTimingService extends BaseService {
             // Save the game state
             gameStateService.saveGame(game);
           }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY); // Use the same delay as the card animation
-          
-          // Don't set up the timer for the transition to betting phase
-          gameLog(game, `Pausing dealing sequence until player makes decision on the second chance opportunity`);
           
           return game; // Exit the function early - we'll resume after the player's choice
         }
@@ -148,7 +148,7 @@ class GameTimingService extends BaseService {
           
           // Move to betting phase
           game.phase = GamePhases.BETTING;
-          gameLog(game, `Starting betting phase for player: ${game.players[game.currentPlayerId]?.name}`);
+          gameLog(game, `${game.players[game.currentPlayerId]?.name} is betting`);
           
           // Set up auto-pass timer for the betting phase
           const currentPlayerId = game.currentPlayerId;
@@ -228,8 +228,6 @@ class GameTimingService extends BaseService {
         game.currentPlayerId = connectedPlayers[0];
         gameLog(game, `Set current player to ${game.players[game.currentPlayerId]?.name} for revealing sequence`);
       }
-    } else {
-      gameLog(game, `Revealing sequence for player: ${game.players[currentPlayerId]?.name}`);
     }
     
     this.ensureGameTimeouts(game.id);
@@ -241,9 +239,6 @@ class GameTimingService extends BaseService {
     // Deal the third card after the specified delay (2 seconds)
     this.timeouts[game.id].dealThirdCard = setTimeout(() => {
       game = cardService.dealThirdCard(game);
-      gameLog(game, `Dealt third card after ${GAME_CONSTANTS.TIMERS.DEAL_THIRD_CARD_DELAY}ms delay`);
-      
-      // Broadcast the updated game state with the third card
       gameService.broadcastGameState(game);
     }, GAME_CONSTANTS.TIMERS.DEAL_THIRD_CARD_DELAY);
     
@@ -257,8 +252,7 @@ class GameTimingService extends BaseService {
     
     // Set timer for results phase - allow players to see the third card for the full revealing duration
     this.timeouts[game.id].transitionToResults = setTimeout(async () => {
-      gameLog(game, `Revealing phase complete after ${GAME_CONSTANTS.TIMERS.REVEALING_DURATION}ms, transitioning to results`);
-      
+   
       // Ensure current player is still set before processing outcome
       if (!game.currentPlayerId && currentPlayerId) {
         game.currentPlayerId = currentPlayerId;
@@ -296,16 +290,11 @@ class GameTimingService extends BaseService {
     this.ensureGameTimeouts(game.id);
     this.clearPhaseTimeouts(game.id, 'results');
     
-    // Log the current player before setting the timeout
-    const currentPlayerId = game.currentPlayerId;
-    gameLog(game, `Results phase for player: ${game.players[currentPlayerId]?.name}`);
-    
     // Set timer for next round
     this.timeouts[game.id].nextRound = setTimeout(async () => {
       try {
         // Check if the pot is empty at the end of the results phase
         if (game.pot <= 0) {
-          gameLog(game, `Pot is empty! Transitioning to waiting phase for a new game`);
           game.phase = GamePhases.WAITING;
           game.round = 0; // Reset round counter for new game
           
@@ -329,7 +318,6 @@ class GameTimingService extends BaseService {
           // Reset all players' ready state
           Object.values(game.players).forEach(player => {
             player.isReady = false;
-            gameLog(game, `Reset ready state for player: ${player.name}`);
           });
           
           // Apply auto-ante for players who have it enabled - using batch preference loading
@@ -369,8 +357,6 @@ class GameTimingService extends BaseService {
           // Just broadcast the current state without starting a new round
           gameService.broadcastGameState(game);
         } else if (game.phase !== 'gameOver') {
-          gameLog(game, `Results phase timeout complete, starting next round`);
-          
           // Start the next round (player rotation is handled in startNextRound)
           game = await gameService.startNextRound(game);
           
@@ -460,10 +446,7 @@ class GameTimingService extends BaseService {
     const gameStateService = this.getService('gameState');
     
     if (!game) return game;
-    
 
-    gameLog(game, `Resuming dealing sequence after Ace choice`);
-    
     this.ensureGameTimeouts(game.id);
     
     // Set timer for second card
@@ -475,13 +458,10 @@ class GameTimingService extends BaseService {
       // Check if the first two cards form a matching pair (but aren't Aces)
       if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
         game.waitingForSecondChance = true;
-        gameLog(game, `Matching pair detected! Waiting for player to decide whether to take a second chance`);
+        gameLog(game, `Matching pair. Waiting for player to decide whether to take a second chance`);
         
         // Broadcast the game state with the waitingForSecondChance flag
         gameService.broadcastGameState(game);
-        
-        // Don't set up the timer for the transition to betting phase yet
-        gameLog(game, `Pausing dealing sequence until player makes decision on the second chance opportunity`);
         
         // Save the game state
         await gameStateService.saveGame(game);
@@ -493,7 +473,7 @@ class GameTimingService extends BaseService {
       this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
         // Move to betting phase
         game.phase = GamePhases.BETTING;
-        gameLog(game, `Starting betting phase for player: ${game.players[game.currentPlayerId]?.name}`);
+        gameLog(game, `${game.players[game.currentPlayerId]?.name} is betting`);
         
         // Set up auto-pass timer for the betting phase
         const currentPlayerId = game.currentPlayerId;
@@ -553,8 +533,6 @@ class GameTimingService extends BaseService {
     
     if (!game) return game;
 
-    gameLog(game, `Resuming dealing sequence after second chance decision`);
-    
     this.ensureGameTimeouts(game.id);
     this.clearPhaseTimeouts(game.id, 'dealing');
     
@@ -562,7 +540,7 @@ class GameTimingService extends BaseService {
     this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
       // Move to betting phase
       game.phase = GamePhases.BETTING;
-      gameLog(game, `Starting betting phase for player: ${game.players[game.currentPlayerId]?.name}`);
+      gameLog(game, `${game.players[game.currentPlayerId]?.name} is betting`);
       
       // Set up auto-pass timer for the betting phase
       const currentPlayerId = game.currentPlayerId;

@@ -173,14 +173,14 @@ class GameEventService extends BaseService {
         const updatedGame = await gameService.handleSecondChance(game, socket.id, true);
         
         if (updatedGame.firstCard === null) {
-          gameLog(updatedGame, `${user.username} chose to ante up again for a new hand`);
+          gameLog(updatedGame, `${user.username} antes up for a second chance`);
           
           // Use GameTimingService to continue the dealing sequence
           await gameTimingService.handleDealingSequence(updatedGame);
         }
       } else {
         // Player chose to pass - this will reset the game state for the next player
-        gameLog(game, `${user.username} chose to pass after matching pair`);
+        gameLog(game, `${user.username} passes after matching pair`);
         
         // Handle the player's decision to pass
         await gameService.handleSecondChance(game, socket.id, false);
@@ -249,8 +249,7 @@ class GameEventService extends BaseService {
       game.firstCard.isAceLow = isAceLow;
       game.waitingForAceDecision = false;
       
-      console.log(`[GAME_EVENT_SERVICE] Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
-      gameLog(game, `Player ${user.username} chose Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
+      gameLog(game, `${user.username} chooses Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
       
       // Save the game with updated Ace choice
       await gameStateService.saveGame(game);
@@ -260,7 +259,7 @@ class GameEventService extends BaseService {
       
       // If we're in the dealing phase and waiting for Ace decision, resume the dealing sequence
       if (game.phase === 'dealing') {
-        gameLog(game, `Resuming dealing sequence after Ace choice`);
+        // Removed redundant log message
         
         // Continue with the dealing sequence using the specialized method
         gameTimingService.resumeDealingAfterAceChoice(game);            

@@ -24,12 +24,6 @@ const GameHeader = ({ handleLeaveGame }) => {
   useEffect(() => {
     let timer;
     
-    // Check if we're waiting for an Ace decision - pause timer if true
-    if (gameState?.waitingForAceDecision) {
-      // Don't set up a timer, but keep the current timeLeft value
-      console.log('[DEBUG] Pausing phase timer due to Ace decision');      return;
-    }
-    
     if (currentPhase === 'dealing') {
       setTimeLeft(TIMERS.DEALING_DURATION);
       timer = setInterval(() => {

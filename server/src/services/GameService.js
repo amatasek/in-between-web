@@ -66,8 +66,7 @@ class GameService extends BaseService {
     // Start new round
     game = gameStateService.startRound(game);
     
-    // Ensure deck is available
-    game = cardService.ensureDeckAvailable(game);
+    // Deck should already be available from game creation
     
     // Set initial player only at the beginning of a new game (round 1)
     if (game.round === 1) {
@@ -78,7 +77,7 @@ class GameService extends BaseService {
     }
     
     // Log the current player for the round
-    gameLog(game, `Starting round ${game.round} with current player: ${game.players[game.currentPlayerId]?.name}`);
+    gameLog(game, `Round ${game.round}: ${game.players[game.currentPlayerId]?.name} goes first`);
     
     // Start dealing sequence
     game = await this.startDealingSequence(game);
@@ -115,10 +114,10 @@ class GameService extends BaseService {
     const readyPlayerCount = Object.values(game.players).filter(p => p.isReady).length;
     
     if (allReady && readyPlayerCount >= 2) {
-      gameLog(game, `Starting round with ${readyPlayerCount} ready players`);
+      // Start the round when all players are ready and we have enough players
       game = await this.startRound(game);
     } else if (allReady) {
-      gameLog(game, `Waiting for more players. Current ready count: ${readyPlayerCount}`);
+      gameLog(game, `Waiting for more players to join`);
     }
     
     return game;
@@ -168,7 +167,7 @@ class GameService extends BaseService {
     
     if (isSecondChanceEligible) {
       game.waitingForSecondChance = true;
-      gameLog(game, `Matching pair detected! Waiting for player to decide whether to take a second chance`);
+      gameLog(game, `Matching pair. Waiting for player to decide whether to take a second chance`);
     }
     
     return isSecondChanceEligible;
@@ -214,8 +213,8 @@ class GameService extends BaseService {
         // Return to the dealing phase (it's already in the dealing phase)
         return game;
       } catch (error) {
-        // If player doesn't have enough chips, treat it as a pass
-        gameLog(game, `${player.name} doesn't have enough chips to ante up again, treating as pass: ${error.message}`);
+        // If player doesn't have enough coins, treat it as a pass
+        gameLog(game, `${player.name} doesn't have enough coins to ante up again, treating as pass: ${error.message}`);
         return await this.placeBet(game, playerId, 0);
       }
     } else {
@@ -309,7 +308,7 @@ class GameService extends BaseService {
           const result = await balanceService.updateBalance(player.userId, potPayment, `Game ${game.id}: Win`);
           player.balance = result.balance;
           game.pot -= potPayment;
-          gameLog(game, `${player.name} WINS ${potPayment}`);
+          gameLog(game, `${player.name} wins ${potPayment} coins!`);
         } catch (error) {
           gameLog(game, `Error giving winnings to ${player.name}: ${error.message}`);
         }
@@ -324,7 +323,7 @@ class GameService extends BaseService {
           const result = await balanceService.updateBalance(player.userId, -additionalPenalty, `Game ${game.id}: Triple Ace Tie`);
           player.balance = result.balance;
           game.pot += additionalPenalty;
-          gameLog(game, `TRIPLE ACE TIE! ${player.name} pays ${player.currentBet * 3} total (3x penalty)`);
+          gameLog(game, `Triple Ace! ${player.name} pays 3x penalty (${player.currentBet * 3} coins)`);
         } catch (error) {
           gameLog(game, `Error collecting triple ace penalty from ${player.name}: ${error.message}`);
         }
@@ -339,12 +338,12 @@ class GameService extends BaseService {
           const result = await balanceService.updateBalance(player.userId, -additionalPenalty, `Game ${game.id}: Tie`);
           player.balance = result.balance;
           game.pot += additionalPenalty;
-          gameLog(game, `TIE! ${player.name} pays ${player.currentBet * 2} total (2x penalty)`);
+          gameLog(game, `Tie! ${player.name} pays 2x penalty (${player.currentBet * 2} coins)`);
         } catch (error) {
           gameLog(game, `Error collecting tie penalty from ${player.name}: ${error.message}`);
         }
       } else {
-        gameLog(game, `${player.name} LOSES ${player.currentBet}`);
+        gameLog(game, `${player.name} loses ${player.currentBet} coins`);
       }
       
       // Store result
@@ -464,9 +463,6 @@ class GameService extends BaseService {
         gameLog(game, `Set current player to ${game.players[game.currentPlayerId]?.name} for broadcast`);
       }
     }
-    
-    // Log the game state being broadcast
-    gameLog(game, `Game state broadcast - Phase: ${game.phase}, Current player: ${game.players[game.currentPlayerId]?.name}`);
     
     // Get the broadcast service from the registry
     const broadcastService = this.getService('broadcast');

@@ -10,6 +10,7 @@ export const ICONS = {
   DEALER: '🃏',
   CHECK: '✓',
   CARDS: '🎴',
+  DECK: '🃏', // Card deck icon
   ARROW_UP: '⬆️', // Arrow up for Ace high
   ARROW_DOWN: '⬇️', // Arrow down for Ace low
 };

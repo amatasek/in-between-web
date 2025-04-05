@@ -1,7 +1,6 @@
 /**
  * @typedef {Object} GameListItem
  * @property {string} id - The unique game ID
- * @property {string} hostName - Name of the game host
  * @property {number} playerCount - Number of players in the game
  * @property {number} startTime - When the game was created
  * @property {string} status - The game's current status

@@ -54,7 +54,7 @@ const AnteControls = () => {
               </button>
               
               {!hasEnoughChips && (
-                <p className={styles.notEnoughChipsText}>Not enough chips (<CurrencyAmount amount={anteAmount} /> required)</p>
+                <p className={styles.notEnoughChipsText}>Not enough coins (<CurrencyAmount amount={anteAmount} /> required)</p>
               )}
             </>
           ) : (

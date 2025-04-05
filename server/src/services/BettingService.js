@@ -17,7 +17,7 @@ class BettingService extends BaseService {
     
     // Handle pass
     if (amount === 0) {
-      gameLog(game, `Player ${player.name} passes`);
+      gameLog(game, `${player.name} passes`);
       
       // Move to next player's turn
       const playerManagementService = this.getService('playerManagement');
@@ -38,7 +38,7 @@ class BettingService extends BaseService {
       // Place bet
       if (!player.placeBet(betAmount)) return game;
       
-      // Remove chips from player
+      // Remove coins from player
       const balanceService = this.getService('balance');
       try {
         const result = await balanceService.updateBalance(player.userId, -betAmount, `Game ${game.id}: Bet`);
@@ -46,7 +46,7 @@ class BettingService extends BaseService {
         
         // Add to pot
         game.pot += betAmount;
-        gameLog(game, `${player.name} bet ${betAmount}. Pot: ${game.pot}`);
+        gameLog(game, `${player.name} bets ${betAmount} coins`);
         
         return game;
       } catch (error) {

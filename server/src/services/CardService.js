@@ -60,11 +60,14 @@ class CardService extends BaseService {
    * @returns {Game} The game with a deck
    */
   ensureDeckAvailable(game) {
-    if (!game || game.deck?.length > 0) return game;
+    // Deck should already be created during game creation
+    // This is just a safety check in case the deck is missing or empty
+    if (!game) return game;
     
-    gameLog(game, 'Creating new deck for game');
-    game.deck = this.shuffleDeck(this.createDeck());
-    gameLog(game, `Deck created with ${game.deck.length} cards`);
+    if (!game.deck || game.deck.length === 0) {
+      console.warn(`[CARD_SERVICE] Deck not found for game ${game.id}, creating new deck`);
+      game.deck = this.shuffleDeck(this.createDeck());
+    }
     
     return game;
   }
@@ -78,16 +81,12 @@ class CardService extends BaseService {
     game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
-    // Check if we need to reshuffle
-    if (game.deck.length < 3) {
-      this.handleDeckRenewal(game);
-    }
+    // Deck renewal is now handled at the beginning of the dealing phase in GameTimingService
     
     // Deal the first card (left position)
     const firstCard = game.deck.pop();
     
-    gameLog(game, `Dealt first card: ${firstCard.value}${firstCard.suit} (left position)`);
-    gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
+    gameLog(game, `Left card: ${firstCard.value}${firstCard.suit}`);
     
     // Update game state
     game.firstCard = firstCard;
@@ -104,18 +103,14 @@ class CardService extends BaseService {
     game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
-    // Check if we need to reshuffle
-    if (game.deck.length < 2) {
-      this.handleDeckRenewal(game);
-    }
+    // Deck renewal is now handled at the beginning of the dealing phase in GameTimingService
     
     // Deal second card (right position)
     const secondCard = game.deck.pop();
     
     // Second card is now dealt
     
-    gameLog(game, `Dealt second card: ${secondCard.value}${secondCard.suit} (right position)`);
-    gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
+    gameLog(game, `Right card: ${secondCard.value}${secondCard.suit}`);
     
     // Update game state
     game.secondCard = secondCard;
@@ -132,10 +127,12 @@ class CardService extends BaseService {
     game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
-    // Check if we need to reshuffle
+    // Emergency fallback - this should never happen with the comprehensive check at the beginning of the dealing phase
+    // but we keep it as a safety measure
     if (game.deck.length < 1) {
-      gameLog(game, 'Emergency reshuffle needed before dealing middle card');
+      gameLog(game, 'EMERGENCY: Unexpected deck depletion before dealing middle card');
       game.deck = this.shuffleDeck(this.createDeck());
+      gameLog(game, 'Emergency reshuffle performed without dealer rotation');
     }
     
     // Deal the middle card
@@ -144,8 +141,7 @@ class CardService extends BaseService {
     // Update game state
     game.thirdCard = thirdCard;
     
-    gameLog(game, `Dealt third card: ${thirdCard.value}${thirdCard.suit} (middle position)`);
-    gameLog(game, `Cards remaining in deck: ${game.deck.length}`);
+    gameLog(game, `Middle card: ${thirdCard.value}${thirdCard.suit}`);
     
     return game;
   }
@@ -164,8 +160,13 @@ class CardService extends BaseService {
     gameLog(game, `This is deck #${game.deckCount}`);
     
     // Only rotate dealer if there are multiple players
-    if (game.playerOrder.length > 1) {
-      this.rotateDealerOnNewDeck(game);
+    const connectedPlayers = game.getConnectedPlayers();
+    if (connectedPlayers.length > 1) {
+      // Set a flag to indicate dealer has changed for UI notification
+      const dealerChangeInfo = this.rotateDealerOnNewDeck(game);
+      if (dealerChangeInfo) {
+        game.dealerChanged = true;
+      }
     }
     
     // Create and shuffle a new deck

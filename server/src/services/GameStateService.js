@@ -13,10 +13,16 @@ class GameStateService extends BaseService {
     return this.games[gameId];
   }
 
-  createGame(gameId, hostId) {
-    const game = new Game(gameId, hostId);
+  createGame(gameId) {
+    const game = new Game(gameId);
     this.games[gameId] = game;
-    gameLog(game, `New game created by host ID: ${hostId}`);
+    gameLog(game, `New game created with id: ${gameId}`);
+
+    // Initialize the deck during game creation
+    const cardService = this.getService('card');
+    game.deck = cardService.shuffleDeck(cardService.createDeck());  
+    gameLog(game, `Deck created with ${game.deck.length} cards`);
+    
     return game;
   }
 
@@ -34,8 +40,11 @@ class GameStateService extends BaseService {
   startRound(game) {
     if (!game) return game;
     
-    // Increment round counter
-    game.round += 1;
+    // Only increment round counter if not the first round
+    // The first round should be 1, not 2
+    if (game.phase !== GamePhases.WAITING) {
+      game.round += 1;
+    }
     
     // Reset game state
     game.result = null;
@@ -45,7 +54,7 @@ class GameStateService extends BaseService {
     
     // Transition to dealing phase
     game.phase = GamePhases.DEALING;
-    gameLog(game, `Starting round ${game.round} in ${game.phase} phase`);
+    gameLog(game, `All players ready, starting round ${game.round}`);
     
     game.updateTimestamp();
     return game;
@@ -81,12 +90,17 @@ class GameStateService extends BaseService {
   }
 
   getAvailableGames() {
-    return Object.values(this.games).map(game => ({
-      id: game.id,
-      playerCount: game.playerCount,
-      phase: game.phase,
-      pot: game.pot
-    }));
+    return Object.values(this.games).map(game => {
+      // Calculate player count directly from seats
+      const playerCount = game.seats.filter(seat => seat !== null).length;
+      
+      return {
+        id: game.id,
+        playerCount,
+        phase: game.phase,
+        pot: game.pot
+      };
+    });
   }
 }
 

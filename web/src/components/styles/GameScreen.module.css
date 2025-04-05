@@ -64,10 +64,52 @@
   margin: 0;
 }
 
-.potDisplayWrapper {
+.gameInfoWrapper {
   display: flex;
   justify-content: center;
+  gap: 1rem;
   margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .gameInfoWrapper {
+    gap: 0.5rem;
+  }
+}
+
+/* Game bottom section layout */
+.gameBottomSection {
+  display: flex;
+  width: 100%;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.playerListContainer {
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
+.gameLogContainer {
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
+/* Responsive layout for mobile */
+@media (max-width: 768px) {
+  .gameBottomSection {
+    flex-direction: column;
+  }
+  
+  .playerListContainer {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .gameLogContainer {
+    width: 100%;
+  }
 }
 
 .resultsContainer {
