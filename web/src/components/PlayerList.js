@@ -41,21 +41,7 @@ const PlayerList = () => {
     return null;
   };
 
-  // Debug log for all players' data
-  console.log('[PlayerList] Game State:', {
-    players,
-    currentPlayerId,
-    dealerId,
-    currentUserId,
-    playerKeys: Object.keys(players),
-    playerValues: Object.values(players).map(p => ({
-      id: p.id,
-      name: p.name,
-      isConnected: p.isConnected,
-      mediaPreferences: p.mediaPreferences,
-      profileImg: p.mediaPreferences?.profileImg
-    }))
-  });
+
   
   return (
     <div className={styles.playersContainer}>
@@ -71,12 +57,7 @@ const PlayerList = () => {
             const isCurrentUser = player.id === currentUserId;
             const isDealer = player.id === dealerId;
             
-            // Debug log for individual player
-            console.log(`[PlayerList] Player ${player.name} (seat ${player.seatNumber}):`, {
-              id: player.id,
-              mediaPreferences: player.mediaPreferences,
-              profileImg: player.mediaPreferences?.profileImg
-            });
+
             
             return (
               <div 

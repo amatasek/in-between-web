@@ -10,9 +10,17 @@ class SoundService {
     this.muted = false; // Default state, will be updated from preferences
     this.initialized = false;
     this.categories = ['ui']; // Only load UI sounds for now
+    this.lastPlayedTime = {}; // Track when each sound was last played for debouncing
+    this.debounceTime = 500; // Debounce time in milliseconds (half a second)
     
     // Get API URL from environment or use localhost as fallback
     this.API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    
+    // Only initialize in browser environment
+    if (typeof window !== 'undefined') {
+      // Initialize on next tick to avoid SSR issues
+      setTimeout(() => this.initialize(), 0);
+    }
   }
 
   /**
@@ -20,8 +28,6 @@ class SoundService {
    */
   initialize() {
     if (this.initialized) return;
-    
-    console.log('[SoundService] Initializing sound service...');
     
     // Load only the UI category for now
     this.loadCategory('ui');
@@ -35,13 +41,8 @@ class SoundService {
    * @param {string} category - Sound category to load
    */
   loadCategory(category) {
-    console.log(`[SoundService] Loading category: ${category}`);
-    
     // Skip if already loaded
-    if (this.sounds[category]) {
-      console.log(`[SoundService] Category ${category} already loaded`);
-      return;
-    }
+    if (this.sounds[category]) return;
     
     // Define sprites for each category
     const sprites = {};
@@ -53,8 +54,6 @@ class SoundService {
       sprites.leave = [1500, 1000]; // 1.5 to 2.5 seconds
     }
     
-    console.log(`[SoundService] Defined sprites for ${category}:`, sprites);
-    
     // Create the Howl instance with the sprites
     this.sounds[category] = new Howl({
       src: [
@@ -63,26 +62,24 @@ class SoundService {
       ],
       sprite: sprites,
       preload: true,
-      html5: true, // Use HTML5 Audio to avoid AudioContext restrictions
-      onload: () => {
-        console.log(`[SoundService] ${category} sounds loaded successfully`);
-        console.log(`[SoundService] Available sprites:`, this.sounds[category]._sprite);
-      },
-      onloaderror: (id, error) => {
-        console.error(`[SoundService] Error loading ${category} sounds:`, error);
-      }
+      html5: false, // Force Web Audio API instead of HTML5 Audio to avoid pool exhaustion
+      format: ['mp3', 'webm'],
+      pool: 10 // Increase the pool size to avoid exhaustion
     });
   }
 
   /**
    * Play a sound effect
-   * @param {string} sound - Sound name (can include category with dot notation, e.g. 'ui.join')
+   * @param {string} sound - Sound name (format: category.name or just name for UI category)
    * @param {number} [volume=1] - Volume level (0-1)
    * @returns {number|undefined} Sound ID if played, undefined if not
    */
   play(sound, volume = 1) {
     // Skip if muted
     if (this.muted) return;
+    
+    // Initialize if not already done
+    if (!this.initialized) this.initialize();
     
     let category, soundName;
     if (sound.includes('.')) {
@@ -93,17 +90,27 @@ class SoundService {
     }
     
     if (!this.sounds[category]) {
-      console.warn(`[SoundService] Category ${category} not loaded`);
+      // Try to load the category if it's not loaded yet
+      this.loadCategory(category);
       return;
     }
     
-    console.log(`[SoundService] Playing sound: ${category}.${soundName}`);
+    // Create a unique key for this sound
+    const soundKey = `${category}.${soundName}`;
+    
+    // Check if this sound was played recently (debounce)
+    const now = Date.now();
+    const lastPlayed = this.lastPlayedTime[soundKey] || 0;
+    if (now - lastPlayed < this.debounceTime) {
+      return;
+    }
+    
+    // Update the last played time
+    this.lastPlayedTime[soundKey] = now;
     
     // Set volume and play the sound
     this.sounds[category].volume(volume);
-    const soundId = this.sounds[category].play(soundName);
-    console.log(`[SoundService] Sound ID: ${soundId}`);
-    return soundId;
+    return this.sounds[category].play(soundName);
   }
 
   /**
@@ -112,7 +119,6 @@ class SoundService {
    */
   setMuted(muted) {
     this.muted = muted;
-    console.log(`[SoundService] Sound ${muted ? 'muted' : 'unmuted'}`);
     
     // Update all sound instances
     Object.values(this.sounds).forEach(sound => {
@@ -129,39 +135,9 @@ class SoundService {
   syncWithPreferences(preferences) {
     if (preferences && typeof preferences.muted !== 'undefined') {
       this.setMuted(preferences.muted);
-      console.log(`[SoundService] Synced with preferences, muted: ${preferences.muted}`);
     }
   }
-  
-  /**
-   * Test if sounds are working properly
-   */
-  testSounds() {
-    // Check if UI sounds are loaded
-    if (!this.sounds.ui) {
-      console.log('[SoundService] UI sounds not loaded yet');
-      return;
-    }
-    
-    // Check if sprites are defined
-    if (!this.sounds.ui._sprite) {
-      console.log('[SoundService] UI sound sprites not defined');
-      console.log('[SoundService] Sound object:', this.sounds.ui);
-      return;
-    }
-    
-    // Log available sprites
-    console.log('[SoundService] Available sprites:', Object.keys(this.sounds.ui._sprite));
-    
-    // Test join sound
-    if (this.sounds.ui._sprite.join) {
-      console.log('[SoundService] Testing join sound...');
-      const id = this.sounds.ui.play('join');
-      console.log('[SoundService] Join sound ID:', id);
-    } else {
-      console.log('[SoundService] Join sound not found in sprite');
-    }
-  }
+
 }
 
 // Create a singleton instance

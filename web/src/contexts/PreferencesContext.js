@@ -91,18 +91,15 @@ export const PreferencesProvider = ({ children }) => {
       }
       
       const data = await response.json();
-      console.log('[Preferences] Loaded preferences:', data);
       
       // Format preferences data with proper image URLs
       const formattedData = formatPreferencesData(data);
       
-      console.log('[Preferences] Formatted preferences:', formattedData);
       const finalPreferences = formattedData || { autoAnte: false, muted: false };
       setPreferences(finalPreferences);
       
       // Sync sound service with loaded preferences
       if (typeof finalPreferences.muted !== 'undefined') {
-        console.log(`[Preferences] Setting sound muted state to: ${finalPreferences.muted}`);
         soundService.setMuted(finalPreferences.muted);
       }
     } catch (error) {

@@ -19,14 +19,9 @@ const LobbyContent = () => {
   const { lobbyState, returnToLobby, joinGame } = useLobby();
   const { gameId, gameState, view } = lobbyState;
   
-  // Add detailed logging for debugging
+  // React to state changes if needed in the future
   React.useEffect(() => {
-    console.log('[App] LobbyContent state changed:', { 
-      gameId, 
-      view,
-      hasGameState: !!gameState,
-      user: user?.username
-    });
+    // State change handling can be added here if needed
   }, [gameId, view, gameState, user]);
   
   // We've removed all page reload approaches since we fixed the core issue
