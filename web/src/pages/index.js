@@ -15,7 +15,7 @@ import { PreferencesProvider } from '../contexts/PreferencesContext';
 
 // A component that uses the lobby context to determine what to show
 const LobbyContent = () => {
-  const { user } = useAuth();
+  const { user, loading, token } = useAuth();
   const { lobbyState, returnToLobby, joinGame } = useLobby();
   const { gameId, gameState, view } = lobbyState;
   
@@ -27,8 +27,9 @@ const LobbyContent = () => {
   // We've removed all page reload approaches since we fixed the core issue
   // with the duplicate event handlers in GameContext and LobbyContext
   
-  // If not logged in, show auth page
-  if (!user) {
+  // Only show auth page if user is not logged in AND there's no token being processed
+  // This prevents the auth screen flash when a token exists in localStorage
+  if (!user && !token) {
     return <AuthPage />;
   }
 
