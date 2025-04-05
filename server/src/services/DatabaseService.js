@@ -5,7 +5,7 @@ const fs = require('fs');
 const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
 
 // Import config
-const config = require('../../config');
+const config = require('../config');
 
 // Ensure the database directory exists
 try {
