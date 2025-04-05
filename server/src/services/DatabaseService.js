@@ -2,7 +2,7 @@ const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
 const path = require('path');
 const fs = require('fs');
-const { STARTING_BALANCE } = require('../../../../shared/constants/GameConstants');
+const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
 
 // Import config
 const config = require('../../config');

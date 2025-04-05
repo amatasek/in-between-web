@@ -29,7 +29,7 @@ class AuthService extends BaseService {
     } catch (error) {
       // If we're not in the service registry context, load the database service directly
       if (!this._dbService) {
-        this._dbService = require('./db/DatabaseService');
+        this._dbService = require('./DatabaseService');
       }
       return this._dbService;
     }
