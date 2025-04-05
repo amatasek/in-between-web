@@ -72,15 +72,11 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
           
           // Play join sound for new players
           if (newPlayers.length > 0) {
-            console.log('[GameContext] New players detected:', newPlayers);
-            console.log('[GameContext] Playing join sound');
             soundService.play('ui.join');
           }
           
           // Play leave sound for players who left
           if (leftPlayers.length > 0) {
-            console.log('[GameContext] Players left:', leftPlayers);
-            console.log('[GameContext] Playing leave sound');
             soundService.play('ui.leave');
           }
           

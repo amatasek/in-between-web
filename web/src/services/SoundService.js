@@ -12,6 +12,7 @@ class SoundService {
     this.categories = ['ui']; // Only load UI sounds for now
     this.lastPlayedTime = {}; // Track when each sound was last played for debouncing
     this.debounceTime = 500; // Debounce time in milliseconds (half a second)
+    this.audioUnlocked = false; // Track if audio has been unlocked for mobile
     
     // Get API URL from environment or use localhost as fallback
     this.API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -19,7 +20,10 @@ class SoundService {
     // Only initialize in browser environment
     if (typeof window !== 'undefined') {
       // Initialize on next tick to avoid SSR issues
-      setTimeout(() => this.initialize(), 0);
+      setTimeout(() => {
+        this.initialize();
+        this._setupMobileAudioUnlock();
+      }, 0);
     }
   }
 
@@ -62,7 +66,8 @@ class SoundService {
       ],
       sprite: sprites,
       preload: true,
-      html5: false, // Force Web Audio API instead of HTML5 Audio to avoid pool exhaustion
+      // Use HTML5 Audio on mobile for better compatibility
+      html5: this._isMobileDevice(),
       format: ['mp3', 'webm'],
       pool: 10 // Increase the pool size to avoid exhaustion
     });
@@ -136,6 +141,48 @@ class SoundService {
     if (preferences && typeof preferences.muted !== 'undefined') {
       this.setMuted(preferences.muted);
     }
+  }
+  
+  /**
+   * Setup audio unlock for mobile devices
+   * @private
+   */
+  _setupMobileAudioUnlock() {
+    if (typeof window === 'undefined' || !this._isMobileDevice()) return;
+    
+    const unlockAudio = () => {
+      if (this.audioUnlocked) return;
+      
+      // Play a silent sound to unlock audio on mobile
+      const silence = new Audio();
+      silence.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABIgD///////////////////////////////////////////8AAAA8TEFNRTMuMTAwAQAAAAAAAAAAABSAJAJAQgAAgAAAAiIkfC3/////////////////////';  
+      silence.load();
+      silence.play().then(() => {
+        this.audioUnlocked = true;
+        document.body.removeEventListener('touchstart', unlockAudio);
+        document.body.removeEventListener('touchend', unlockAudio);
+        document.body.removeEventListener('click', unlockAudio);
+      }).catch(e => {
+        // Silent failure - we'll try again on next user interaction
+      });
+    };
+    
+    // Add event listeners to unlock audio on user interaction
+    document.body.addEventListener('touchstart', unlockAudio, false);
+    document.body.addEventListener('touchend', unlockAudio, false);
+    document.body.addEventListener('click', unlockAudio, false);
+  }
+  
+  /**
+   * Check if current device is mobile
+   * @private
+   * @returns {boolean} True if mobile device
+   */
+  _isMobileDevice() {
+    if (typeof navigator === 'undefined') return false;
+    
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad detection
   }
 
 }
