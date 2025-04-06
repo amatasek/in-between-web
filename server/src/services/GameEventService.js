@@ -84,7 +84,7 @@ class GameEventService extends BaseService {
    */
   async handlePlaceBet(socket, data) {
     try {
-      const { amount } = data;
+      const amount = data?.bet ?? 0;
       const connectionService = this.getService('connection');
       const gameService = this.getService('game');
       const gameStateService = this.getService('gameState');
@@ -167,6 +167,12 @@ class GameEventService extends BaseService {
       // Get the anteAgain value from the data
       const anteAgain = !!data.anteAgain;
       
+      // Clear any existing auto-second-chance timeout to prevent it from running after the decision
+      if (gameTimingService.timeouts[gameId]?.autoSecondChance) {
+        clearTimeout(gameTimingService.timeouts[gameId].autoSecondChance);
+        gameTimingService.timeouts[gameId].autoSecondChance = null;
+      }
+      
       // If player chose to ante up again
       if (anteAgain) {
         // Handle the player's decision to ante up again
@@ -179,9 +185,6 @@ class GameEventService extends BaseService {
           await gameTimingService.handleDealingSequence(updatedGame);
         }
       } else {
-        // Player chose to pass - this will reset the game state for the next player
-        gameLog(game, `${user.username} passes after matching pair`);
-        
         // Handle the player's decision to pass
         await gameService.handleSecondChance(game, socket.id, false);
       }
@@ -244,6 +247,12 @@ class GameEventService extends BaseService {
       
       // Get the isAceLow value from the data
       const isAceLow = !!data.isAceLow;
+      
+      // Clear any existing auto-ace-decision timeout to prevent it from running after the decision
+      if (gameTimingService.timeouts[gameId]?.autoAceDecision) {
+        clearTimeout(gameTimingService.timeouts[gameId].autoAceDecision);
+        gameTimingService.timeouts[gameId].autoAceDecision = null;
+      }
       
       // Update the card
       game.firstCard.isAceLow = isAceLow;

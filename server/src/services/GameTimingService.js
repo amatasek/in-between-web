@@ -87,13 +87,65 @@ class GameTimingService extends BaseService {
       // Check if the first card is an Ace
       if (game.firstCard && game.firstCard.value === 'A') {
         game.waitingForAceDecision = true;
-        gameLog(game, `First card is an Ace. Waiting for player to choose high/low`);
+        const playerName = game.players[game.currentPlayerId]?.name || 'Unknown player';
+        gameLog(game, `Waiting for ${playerName} to choose ace high/low`);
         
         // Broadcast the game state with the Ace and waitingForAceDecision flag
         gameService.broadcastGameState(game);
         
         // Save the game state
         await gameStateService.saveGame(game);
+        
+        const currentPlayerId = game.currentPlayerId;
+        const currentRound = game.round;
+        
+        // Clear any existing auto-ace-decision timeout
+        if (this.timeouts[game.id]?.autoAceDecision) {
+          clearTimeout(this.timeouts[game.id].autoAceDecision);
+        }
+        
+        // Set timer for auto-ace-decision if player doesn't respond within the decision duration
+        this.timeouts[game.id].autoAceDecision = setTimeout(async () => {
+          try {
+            // Get the latest game state
+            const currentGame = gameStateService.getGame(game.id);
+            if (!currentGame) return;
+            
+            // Check if we're still waiting for ace decision, it's still this player's turn, and we're in the same round
+            if (currentGame.waitingForAceDecision && 
+                currentGame.currentPlayerId === currentPlayerId && 
+                currentGame.round === currentRound) {
+              
+              gameLog(currentGame, `Auto-choosing Ace HIGH for player ${playerName} due to timeout`);
+              
+              const gameEventService = this.getService('gameEvent');
+              const databaseService = this.getService('database');
+              
+              const player = currentGame.players[currentPlayerId];
+              if (!player?.userId) {
+                console.error(`[GAME_TIMING_SERVICE] Cannot auto-choose ace value: player ${currentPlayerId} has no userId`);
+                return;
+              }
+              
+              const user = await databaseService.getUserById(player.userId);
+              if (!user) {
+                console.error(`[GAME_TIMING_SERVICE] Cannot auto-choose ace value: user ${player.userId} not found`);
+                return;
+              }
+              
+              const mockSocket = {
+                id: currentPlayerId,
+                user: { userId: user._id, username: user.username },
+                emit: () => {},
+                authInfo: { authenticated: true, username: user.username, userId: user._id }
+              };
+              
+              await gameEventService.handleChooseAceValue(mockSocket, { isAceLow: false });
+            }
+          } catch (error) {
+            console.error(`Error in auto-ace-decision timeout for game ${game.id}:`, error);
+          }
+        }, GAME_CONSTANTS.TIMERS.DECISION_DURATION);
         
         return game; // Exit the function early - we'll resume after the player's choice
       }
@@ -169,10 +221,29 @@ class GameTimingService extends BaseService {
 
                 gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
                 
-                // Use the GameService's placeBet method to handle the pass
-                // Get the game service from the registry instead of requiring it directly
-                const gameService = this.getService('game');
-                await gameService.placeBet(currentGame, currentPlayerId, 0);
+                const databaseService = this.getService('database');
+                const gameEventService = this.getService('gameEvent');
+                
+                const player = currentGame.players[currentPlayerId];
+                if (!player?.userId) {
+                  console.error(`[GAME_TIMING_SERVICE] Cannot auto-pass: player ${currentPlayerId} has no userId`);
+                  return;
+                }
+                
+                const user = await databaseService.getUserById(player.userId);
+                if (!user) {
+                  console.error(`[GAME_TIMING_SERVICE] Cannot auto-pass: user ${player.userId} not found`);
+                  return;
+                }
+                
+                const mockSocket = {
+                  id: currentPlayerId,
+                  user: { userId: user._id, username: user.username },
+                  emit: () => {},
+                  authInfo: { authenticated: true, username: user.username, userId: user._id }
+                };
+                
+                await gameEventService.handlePlaceBet(mockSocket, { bet: 0 });
               }
             } catch (error) {
               console.error(`Error in auto-pass timeout for game ${game.id}:`, error);
@@ -400,7 +471,7 @@ class GameTimingService extends BaseService {
     if (!this.timeouts[gameId]) return;
     
     const phaseTimeouts = {
-      dealing: ['dealFirstCard', 'dealSecondCard', 'transitionToBetting'],
+      dealing: ['dealFirstCard', 'dealSecondCard', 'transitionToBetting', 'autoAceDecision', 'autoSecondChance'],
       betting: ['autoBet'],
       revealing: ['transitionToResults'],
       results: ['nextRound']
@@ -577,6 +648,61 @@ class GameTimingService extends BaseService {
     
     // Save the game state
     await gameStateService.saveGame(game);
+    
+    // Set up auto-timeout for second chance decision
+    const currentPlayerId = game.currentPlayerId;
+    const currentRound = game.round;
+    
+    this.ensureGameTimeouts(game.id);
+    
+    // Clear any existing auto-second-chance timeout
+    if (this.timeouts[game.id]?.autoSecondChance) {
+      clearTimeout(this.timeouts[game.id].autoSecondChance);
+    }
+    
+    // Set timer for auto-second-chance if player doesn't respond within the decision duration
+    this.timeouts[game.id].autoSecondChance = setTimeout(async () => {
+      try {
+        // Get the latest game state
+        const currentGame = gameStateService.getGame(game.id);
+        if (!currentGame) return;
+        
+        // Check if we're still waiting for second chance decision, it's still this player's turn, and we're in the same round
+        if (currentGame.waitingForSecondChance && 
+            currentGame.currentPlayerId === currentPlayerId && 
+            currentGame.round === currentRound) {
+          
+          const timeoutPlayerName = currentGame.players[currentPlayerId]?.name || 'Unknown player';
+          gameLog(currentGame, `Auto-passing second chance for player ${timeoutPlayerName} due to timeout`);
+          
+          const databaseService = this.getService('database');
+          const gameEventService = this.getService('gameEvent');
+          
+          const player = currentGame.players[currentPlayerId];
+          if (!player?.userId) {
+            console.error(`[GAME_TIMING_SERVICE] Cannot auto-pass second chance: player ${currentPlayerId} has no userId`);
+            return;
+          }
+          
+          const user = await databaseService.getUserById(player.userId);
+          if (!user) {
+            console.error(`[GAME_TIMING_SERVICE] Cannot auto-pass second chance: user ${player.userId} not found`);
+            return;
+          }
+          
+          const mockSocket = {
+            id: currentPlayerId,
+            user: { userId: user._id, username: user.username },
+            emit: () => {},
+            authInfo: { authenticated: true, username: user.username, userId: user._id }
+          };
+          
+          await gameEventService.handleSecondChance(mockSocket, { anteAgain: false });
+        }
+      } catch (error) {
+        console.error(`Error in auto-second-chance timeout for game ${game.id}:`, error);
+      }
+    }, GAME_CONSTANTS.TIMERS.DECISION_DURATION);
   }
 }
 

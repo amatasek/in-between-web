@@ -64,7 +64,7 @@ const BettingPanel = () => {
 
   
   const renderBettingControls = () => {
-    if (phase !== 'betting' || !isCurrentPlayer) return null;
+    if (!isCurrentPlayer) return null;
     
     return (
       <div className={styles.betContainer}>
@@ -127,6 +127,9 @@ const BettingPanel = () => {
   };
   
 
+  // Only render the panel for the current player
+  if (!isCurrentPlayer) return null;
+  
   return (
     <div className={styles.bettingPanel}>
       {renderBettingControls()}

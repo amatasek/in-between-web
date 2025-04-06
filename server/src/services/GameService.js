@@ -203,8 +203,7 @@ class GameService extends BaseService {
         const result = await balanceService.updateBalance(player.userId, -anteAmount, `Game ${game.id}: Ante Up Again`);
         player.balance = result.balance;
         game.pot += anteAmount;
-        gameLog(game, `${player.name} antes up again with ${anteAmount}`);
-        
+
         // Reset cards and start a new dealing sequence
         game.firstCard = null;
         game.secondCard = null;
@@ -220,8 +219,7 @@ class GameService extends BaseService {
     } else {
       // Player chose to pass
       const player = game.players[playerId];
-      gameLog(game, `${player.name} chose to pass after matching pair`);
-      
+
       // Reset the waiting flag
       game.waitingForSecondChance = false;
       
@@ -303,20 +301,6 @@ class GameService extends BaseService {
       if (isWin) {
         // Regular win (1:1)
         winnings = player.currentBet * 2;
-        const potPayment = Math.min(game.pot, winnings);
-        const balanceService = this.getService('balance');
-        try {
-          const result = await balanceService.updateBalance(player.userId, potPayment, `Game ${game.id}: Win`);
-          player.balance = result.balance;
-          game.pot -= potPayment;
-          gameLog(game, `${player.name} wins ${potPayment} coins!`);
-        } catch (error) {
-          gameLog(game, `Error giving winnings to ${player.name}: ${error.message}`);
-        }
-      } else if (isTripleAceTie) {
-        // Triple Ace tie - 3x penalty
-        winnings = -player.currentBet * 3;
-        
         // Calculate additional penalty (original bet is already in the pot)
         const additionalPenalty = player.currentBet * 2;
         const balanceService = this.getService('balance');

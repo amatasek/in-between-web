@@ -137,7 +137,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     if (!socket || !gameId) return;
     
     try {
-      socket.emit('placeBet', { amount, gameId });
+      socket.emit('placeBet', { bet: amount, gameId });
     } catch (err) {
       console.error('Error placing bet:', err);
       setError('Failed to place bet. Please try again.');

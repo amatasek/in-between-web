@@ -16,6 +16,7 @@ const GAME_CONSTANTS = {
     DEAL_THIRD_CARD_DELAY: 2000,    // Delay before revealing the third card (2 seconds)
     DEALING_DURATION: 3000,         // Total duration of dealing phase (3 seconds)
     BETTING_DURATION: 30000,        // Duration for betting phase (30 seconds)
+    DECISION_DURATION: 15000,       // Duration for ace and second chance decisions (15 seconds)
     REVEALING_DURATION: 3000,       // Duration for revealing phase
     RESULTS_DURATION: 5000          // Duration to show results before moving to next round (5 seconds)
   }

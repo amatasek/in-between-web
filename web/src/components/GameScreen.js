@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './styles/GameScreen.module.css';
 import GameHeader from './GameHeader';
 import CardDisplay from './CardDisplay';
@@ -22,6 +22,17 @@ const GameScreen = ({ onReturnToLobby }) => {
     error,
     clearError
   } = useGameContext();
+  
+  // Auto-clear errors after 10 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearError();
+      }, 10000); // 10 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [error, clearError]);
   
   // Handle returning to lobby
   const handleLeaveGame = () => {
@@ -72,16 +83,16 @@ const GameScreen = ({ onReturnToLobby }) => {
         ) : phase === 'results' ? (
           /* Show the results panel during results phase */
           <ResultsPanel />
-        ) : (
-          /* Show the betting panel during other phases */
+        ) : gameState.waitingForAceDecision ? (
+          /* Show the Ace choice panel when first card is an Ace */
+          <AceChoicePanel />
+        ) : gameState.waitingForSecondChance ? (
+          /* Show the Second Chance panel when matching cards are dealt */
+          <SecondChancePanel />
+        ) : phase === 'betting' ? (
+          /* Show the betting panel only during betting phase */
           <BettingPanel />
-        )}
-        
-        {/* Show the Ace choice panel when needed */}
-        <AceChoicePanel />
-        
-        {/* Show the Second Chance panel when needed */}
-        <SecondChancePanel />
+        ) : null}
         
         <div className={styles.gameBottomSection}>
           <div className={styles.playerListContainer}>

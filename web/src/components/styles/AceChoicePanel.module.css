@@ -1,51 +1,81 @@
-.aceChoiceContainer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.aceChoicePanel {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
 }
 
-.aceChoiceContent {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  animation: slideUp 0.4s ease-out;
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+  .aceChoicePanel {
+    padding: 0 0.5rem;
+  }
 }
 
-.aceChoiceTitle {
-  font-size: 24px;
-  margin-bottom: 12px;
-  color: #2c3e50;
+.aceChoiceControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  background-color: rgba(44, 62, 80, 0.8);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 60px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.aceChoiceDescription {
+.aceChoiceText {
   font-size: 16px;
-  margin-bottom: 24px;
-  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+  color: #ecf0f1;
+  text-align: center;
+  font-weight: 500;
+}
+
+.waitingMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  background-color: rgba(44, 62, 80, 0.8);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 60px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.waitingText {
+  font-size: 16px;
+  color: #ecf0f1;
+  text-align: center;
+  font-weight: 500;
+}
+
+.countdown {
+  font-weight: bold;
+  color: #e74c3c;
+  animation: pulse 1s infinite;
 }
 
 .aceChoiceButtons {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   gap: 16px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .aceChoiceButton {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -54,6 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
 }
 
 .aceChoiceButton:hover {
@@ -67,12 +98,14 @@
 }
 
 .aceHighButton {
-  background-color: #e74c3c;
+  background-color: #3498db;
   color: white;
 }
 
 .aceHighButton:hover {
   background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(52, 152, 219, 0.4);
 }
 
 .aceLowButton {
@@ -82,6 +115,8 @@
 
 .aceLowButton:hover {
   background-color: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(46, 204, 113, 0.4);
 }
 
 .buttonContent {
@@ -97,6 +132,18 @@
     opacity: 0;
   }
   to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
     opacity: 1;
   }
 }
