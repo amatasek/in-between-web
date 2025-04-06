@@ -151,6 +151,40 @@
   white-space: nowrap;
 }
 
+.gameIdLink {
+  cursor: pointer;
+  color: #3498db;
+  font-weight: 500;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  display: inline;
+}
+
+.gameIdLink:hover {
+  color: #2ecc71;
+}
+
+.gameIdLink:active {
+  color: #1abc9c;
+}
+
+/* Ensure the game ID text container has proper spacing and alignment */
+.gameIdText {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .gameIdText {
+    margin: 4px 0;
+  }
+  
+  .gameIdLink {
+    font-size: 0.9rem;
+  }
+}
+
 /* Game ID text sizing is handled in the main media queries */
 
 .headerCenter {

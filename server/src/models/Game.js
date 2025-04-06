@@ -37,6 +37,9 @@ class Game {
     // Game log for tracking game events
     this.gameLog = [];
     this.maxLogEntries = 50; // Maximum number of log entries to keep
+    
+    // Track game transactions for running score
+    this.gameTransactions = {};
   }
 
   /**
@@ -246,6 +249,7 @@ class Game {
       deckCount: this.deckCount,
       deckSize: this.deck.length,
       result: this.result,
+      gameTransactions: this.gameTransactions,
       waitingForAceDecision: this.waitingForAceDecision,
       gameLog: this.gameLog || []
     };

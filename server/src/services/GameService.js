@@ -197,11 +197,16 @@ class GameService extends BaseService {
       const player = game.players[playerId];
       const anteAmount = game.anteAmount || 1; // Default to 1 if not specified
       
-      // Remove the ante amount from the player's balance and add it to the pot
-      const balanceService = this.getService('balance');
+      // Process the ante-up-again transaction through the central transaction service
+      const gameTransactionService = this.getService('gameTransaction');
       try {
-        const result = await balanceService.updateBalance(player.userId, -anteAmount, `Game ${game.id}: Ante Up Again`);
-        player.balance = result.balance;
+        // Update player balance and record transaction
+        game = await gameTransactionService.processTransaction(
+          game, 
+          playerId, 
+          -anteAmount, 
+          `Ante up again in round ${game.round}`
+        );
         game.pot += anteAmount;
 
         // Reset cards and start a new dealing sequence
@@ -297,17 +302,43 @@ class GameService extends BaseService {
     
     try {
       let winnings = 0;
+      const gameTransactionService = this.getService('gameTransaction');
       
       if (isWin) {
         // Regular win (1:1)
         winnings = player.currentBet * 2;
-        // Calculate additional penalty (original bet is already in the pot)
-        const additionalPenalty = player.currentBet * 2;
-        const balanceService = this.getService('balance');
+        
         try {
-          const result = await balanceService.updateBalance(player.userId, -additionalPenalty, `Game ${game.id}: Triple Ace Tie`);
-          player.balance = result.balance;
-          game.pot += additionalPenalty;
+          // Process winning transaction through the central transaction service
+          // The pot is automatically updated by the transaction service
+          game = await gameTransactionService.processTransaction(
+            game, 
+            player.id, 
+            winnings, 
+            `Won bet in round ${game.round}`
+          );
+          
+          gameLog(game, `${player.name} wins ${winnings} coins`);
+        } catch (error) {
+          gameLog(game, `Error processing win for ${player.name}: ${error.message}`);
+        }
+      } else if (isTripleAceTie) {
+        // Triple Ace Tie - 3x penalty
+        winnings = -player.currentBet * 3;
+        
+        // Calculate additional penalty (original bet is already processed)
+        const additionalPenalty = player.currentBet * 2;
+        
+        try {
+          // Process penalty transaction through the central transaction service
+          // The pot is automatically updated by the transaction service
+          game = await gameTransactionService.processTransaction(
+            game, 
+            player.id, 
+            -additionalPenalty, 
+            `Triple Ace penalty in round ${game.round}`
+          );
+          
           gameLog(game, `Triple Ace! ${player.name} pays 3x penalty (${player.currentBet * 3} coins)`);
         } catch (error) {
           gameLog(game, `Error collecting triple ace penalty from ${player.name}: ${error.message}`);
@@ -316,19 +347,28 @@ class GameService extends BaseService {
         // Regular tie - 2x penalty
         winnings = -player.currentBet * 2;
         
-        // Calculate additional penalty (original bet is already in the pot)
+        // Calculate additional penalty (original bet is already processed)
         const additionalPenalty = player.currentBet;
-        const balanceService = this.getService('balance');
+        
         try {
-          const result = await balanceService.updateBalance(player.userId, -additionalPenalty, `Game ${game.id}: Tie`);
-          player.balance = result.balance;
-          game.pot += additionalPenalty;
+          // Process penalty transaction through the central transaction service
+          // The pot is automatically updated by the transaction service
+          game = await gameTransactionService.processTransaction(
+            game, 
+            player.id, 
+            -additionalPenalty, 
+            `Tie penalty in round ${game.round}`
+          );
+          
           gameLog(game, `Tie! ${player.name} pays 2x penalty (${player.currentBet * 2} coins)`);
         } catch (error) {
           gameLog(game, `Error collecting tie penalty from ${player.name}: ${error.message}`);
         }
-      } else {
+      } else if (!isTie && !isTripleAceTie) {
+        // Regular loss - bet is already deducted when placing the bet
         gameLog(game, `${player.name} loses ${player.currentBet} coins`);
+        
+        // We already recorded the transaction when the bet was placed, no need to record again
       }
       
       // Store result
@@ -435,23 +475,23 @@ class GameService extends BaseService {
   }
 
   broadcastGameState(game) {
-    if (!game) return;
-    
-    // Ensure the current player is set before broadcasting
-    if (!game.currentPlayerId && game.phase !== 'waiting' && game.phase !== 'gameOver') {
-      gameLog(game, `WARNING: Current player is undefined before broadcast, attempting to fix`);
+      if (!game) return;
       
-      // Try to set a valid player if possible
-      const connectedPlayers = game.getConnectedPlayersInOrder();
-      if (connectedPlayers.length > 0) {
-        game.currentPlayerId = connectedPlayers[0];
-        gameLog(game, `Set current player to ${game.players[game.currentPlayerId]?.name} for broadcast`);
+      // Ensure the current player is set before broadcasting
+      if (!game.currentPlayerId && game.phase !== 'waiting' && game.phase !== 'gameOver') {
+        gameLog(game, `WARNING: Current player is undefined before broadcast, attempting to fix`);
+        
+        // Try to set a valid player if possible
+        const connectedPlayers = game.getConnectedPlayersInOrder();
+        if (connectedPlayers.length > 0) {
+          game.currentPlayerId = connectedPlayers[0];
+          gameLog(game, `Set current player to ${game.players[game.currentPlayerId]?.name} for broadcast`);
+        }
       }
-    }
-    
-    // Get the broadcast service from the registry
-    const broadcastService = this.getService('broadcast');
-    broadcastService.broadcastGameState(game);
+      
+      // Get the broadcast service from the registry
+      const broadcastService = this.getService('broadcast');
+      broadcastService.broadcastGameState(game);
   }
 }
 

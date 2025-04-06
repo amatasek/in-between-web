@@ -38,19 +38,23 @@ class BettingService extends BaseService {
       // Place bet
       if (!player.placeBet(betAmount)) return game;
       
-      // Remove coins from player
-      const balanceService = this.getService('balance');
+      // Process the bet transaction through the central transaction service
+      const gameTransactionService = this.getService('gameTransaction');
       try {
-        const result = await balanceService.updateBalance(player.userId, -betAmount, `Game ${game.id}: Bet`);
-        player.balance = result.balance;
+        // Update player balance, record transaction, and update pot
+        // The pot is automatically updated by the transaction service
+        game = await gameTransactionService.processTransaction(
+          game, 
+          playerId, 
+          -betAmount, 
+          `Bet in round ${game.round}`
+        );
         
-        // Add to pot
-        game.pot += betAmount;
         gameLog(game, `${player.name} bets ${betAmount} coins`);
         
         return game;
       } catch (error) {
-        gameLog(game, `Failed to remove bet from ${player.name}'s balance: ${error.message}`);
+        gameLog(game, `Failed to process bet for ${player.name}: ${error.message}`);
         player.resetBet();
         return game;
       }

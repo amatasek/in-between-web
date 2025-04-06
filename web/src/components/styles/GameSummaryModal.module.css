@@ -1,0 +1,175 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modalContent {
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: #1a2a3a;
+  background-image: linear-gradient(to bottom right, #1a2a3a, #2c3e50);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(to right, var(--primary-dark), var(--primary));
+  border-radius: 8px 8px 0 0;
+}
+
+.modalHeader h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.settingsContainer {
+  padding: 20px;
+}
+
+.settingSection {
+  margin-bottom: 20px;
+}
+
+.settingSection h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 8px;
+}
+
+.totalsTable, .settleUpTable {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.totalRow, .paymentRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.playerName {
+  font-weight: 600;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(52, 152, 219, 0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin: 0 2px;
+}
+
+.totalAmount, .paymentAmount {
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+}
+
+.positive {
+  color: #28a745;
+}
+
+.negative {
+  color: #dc3545;
+}
+
+.paymentText {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+
+.noDataMessage {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: 15px 0;
+}
+
+.loadingMessage {
+  padding: 30px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 600px) {
+  .modalContent {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .totalRow, .paymentRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+  }
+  
+  .paymentText {
+    display: flex;
+    align-items: center;
+  }
+  
+  .playerName {
+    margin-right: 4px;
+  }
+}

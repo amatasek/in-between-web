@@ -211,14 +211,18 @@ class PlayerManagementService extends BaseService {
       return game;
     }
     
-    // Place ante bet
-    const balanceService = this.getService('balance');
+    // Process ante through the central transaction service
+    const gameTransactionService = this.getService('gameTransaction');
     try {
-      const result = await balanceService.updateBalance(player.userId, -ANTE_AMOUNT, `Game ${game.id}: Ante`);
-      player.balance = result.balance;
+      // Update player balance, record transaction, and update pot
+      // The pot is automatically updated by the transaction service
+      game = await gameTransactionService.processTransaction(
+        game, 
+        playerId, 
+        -ANTE_AMOUNT, 
+        `Ante in round ${game.round}`
+      );
       
-      // Add to pot
-      game.pot += ANTE_AMOUNT;
       player.isReady = true;
   
       gameLog(game, `${player.name} antes`);
@@ -241,14 +245,18 @@ class PlayerManagementService extends BaseService {
       return game;
     }
 
-    // Return ante to player
-    const balanceService = this.getService('balance');
+    // Process ante withdrawal through the central transaction service
+    const gameTransactionService = this.getService('gameTransaction');
     try {
-      const result = await balanceService.updateBalance(player.userId, ANTE_AMOUNT, `Game ${game.id}: Ante withdraw`);
-      player.balance = result.balance;
+      // Update player balance, record transaction, and update pot
+      // The pot is automatically updated by the transaction service
+      game = await gameTransactionService.processTransaction(
+        game, 
+        playerId, 
+        ANTE_AMOUNT, 
+        `Ante withdraw in round ${game.round}`
+      );
       
-      // Reduce pot
-      game.pot -= ANTE_AMOUNT;
       player.isReady = false;
       
       game.updateTimestamp();
@@ -258,10 +266,7 @@ class PlayerManagementService extends BaseService {
       return game;
     }
 
-    // Remove from pot
-    game.pot -= ANTE_AMOUNT;
-    player.isReady = false;
-
+    // Player is already marked as not ready in the try block
     gameLog(game, `${player.name} withdraws ante`);
     game.updateTimestamp();
     return game;

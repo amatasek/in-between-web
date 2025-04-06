@@ -19,6 +19,7 @@ const broadcastService = require('./services/BroadcastService');
 const authService = require('./services/AuthService');
 const balanceService = require('./services/BalanceService');
 const cardDealingService = require('./services/CardDealingService');
+const gameTransactionService = require('./services/GameTransactionService');
 
 /**
  * Initialize all services and wire them together
@@ -39,7 +40,8 @@ function initializeServices() {
     .register('betting', bettingService)
     .register('auth', authService)
     .register('balance', balanceService)
-    .register('cardDealing', cardDealingService);
+    .register('cardDealing', cardDealingService)
+    .register('gameTransaction', gameTransactionService);
 
   // Wire up services (give each service access to others)
   serviceRegistry.wireServices();

@@ -5,6 +5,7 @@ import { useSocket } from '../contexts/SocketContext';
 import { TIMERS } from '../../../shared/constants/GameConstants';
 import { ICONS } from '../constants/UIConstants';
 import MuteToggle from './MuteToggle';
+import GameSummaryModal from './GameSummaryModal';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
@@ -20,6 +21,7 @@ const GameHeader = ({ handleLeaveGame }) => {
   const { socket } = useSocket();
   const currentPhase = gameState?.phase || 'waiting';
   const [timeLeft, setTimeLeft] = useState(null);
+  const [showGameSummary, setShowGameSummary] = useState(false);
 
   // Timer effect for phases
   useEffect(() => {
@@ -95,7 +97,15 @@ const GameHeader = ({ handleLeaveGame }) => {
         {/* Left: Logo and game ID */}
         <div className={styles.headerLeft}>
           <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
-          <p className={styles.gameIdText}>Game #{gameId}</p>
+          <p className={styles.gameIdText}>
+            <span 
+              className={styles.gameIdLink} 
+              onClick={() => setShowGameSummary(true)}
+              title="Click to view game summary"
+            >
+              Game #{gameId}
+            </span>
+          </p>
         </div>
         
         {/* Middle: Phase indicator */}
@@ -146,7 +156,15 @@ const GameHeader = ({ handleLeaveGame }) => {
         <div className={styles.mobileTopRow}>
           <div className={styles.headerLeft}>
             <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
-            <p className={styles.gameIdText}>Game #{gameId}</p>
+            <p className={styles.gameIdText}>
+              <span 
+                className={styles.gameIdLink} 
+                onClick={() => setShowGameSummary(true)}
+                title="Click to view game summary"
+              >
+                Game #{gameId}
+              </span>
+            </p>
           </div>
           
           <div className={styles.muteToggleContainer}>
@@ -187,6 +205,8 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
         </div>
       </div>
+      {/* Game Summary Modal */}
+      {showGameSummary && <GameSummaryModal onClose={() => setShowGameSummary(false)} />}
     </div>
   );
 };
