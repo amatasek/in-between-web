@@ -37,19 +37,23 @@
 }
 
 .anteButton, .backOutButton {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gradient-primary);
+  background: transparent;
   padding: var(--spacing-md) var(--spacing-md);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
   width: 160px;
-  border: 2px solid;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   height: 52px; /* Fixed height to prevent bouncing */
   box-sizing: border-box;
+  overflow: hidden;
+  /* Add 3D effect */
+  transform: translateY(0);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 600px) {
@@ -69,35 +73,160 @@
   }
 }
 
+/* Common button effects */
+.anteButton::before, .backOutButton::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 10px;
+  z-index: -2;
+}
+
+/* Button background */
+.anteButton::after, .backOutButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-lg);
+  z-index: -1;
+}
+
+/* Ante button specific styling */
+.anteButton::before {
+  background: radial-gradient(ellipse at center, rgba(46, 204, 113, 0.8) 0%, rgba(46, 204, 113, 0.4) 50%, rgba(46, 204, 113, 0) 70%);
+  filter: blur(4px);
+  opacity: 0.8;
+  animation: pulseGlowGreen 1.5s infinite alternate;
+}
+
 .anteButton {
-  border-color: var(--success);
+  border: 2px solid var(--success);
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.anteButton .shimmerBorder {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #27ae60 0%, #2ecc71 20%, #58d68d 40%, #27ae60 60%, #2ecc71 80%, #27ae60 100%);
+  background-size: 300% 300%;
+  border-radius: 10px;
+  z-index: -1;
+  animation: shimmerGreenBorder 3s infinite linear;
+  box-shadow: 
+    inset 0 0 6px rgba(255, 255, 255, 0.6),
+    inset 0 0 10px rgba(46, 204, 113, 0.4),
+    0 0 8px rgba(39, 174, 96, 0.5);
+}
+
+/* Add background glow effect for ante button */
+.anteButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(46, 204, 113, 0.4) 0%, 
+    rgba(46, 204, 113, 0.2) 30%, 
+    rgba(46, 204, 113, 0.1) 60%,
+    rgba(46, 204, 113, 0) 70%);
+  border-radius: 8px;
+  z-index: -1;
+  animation: pulseGlowGreen 2s infinite alternate;
 }
 
 .anteButton:hover:not(:disabled) {
-  box-shadow: var(--shadow-lg), 0 0 10px rgba(46, 204, 113, 0.3);
-  border-color: var(--success-light);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+}
+
+.anteButton:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .anteButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  border: 2px solid var(--neutral);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
+  transform: none;
+}
+
+.anteButton:disabled .shimmerBorder {
+  animation: none;
+}
+
+.anteButton:disabled::before {
+  animation: none;
+}
+
+/* Back out button specific styling */
+.backOutButton::before {
+  background: radial-gradient(ellipse at center, rgba(231, 76, 60, 0.8) 0%, rgba(231, 76, 60, 0.4) 50%, rgba(231, 76, 60, 0) 70%);
+  filter: blur(4px);
+  opacity: 0.8;
+  animation: pulseGlowRed 1.5s infinite alternate;
 }
 
 .backOutButton {
-  border-color: var(--secondary);
+  border: 2px solid var(--secondary);
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
 }
 
+.backOutButton .shimmerBorder {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #c0392b 0%, #e74c3c 20%, #f06060 40%, #c0392b 60%, #e74c3c 80%, #c0392b 100%);
+  background-size: 300% 300%;
+  border-radius: 10px;
+  z-index: -1;
+  animation: shimmerRedBorder 3s infinite linear;
+  box-shadow: 
+    inset 0 0 6px rgba(255, 255, 255, 0.6),
+    inset 0 0 10px rgba(231, 76, 60, 0.4),
+    0 0 8px rgba(192, 57, 43, 0.5);
+}
 
-
-
+/* Add background glow effect for back out button */
+.backOutButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(231, 76, 60, 0.4) 0%, 
+    rgba(231, 76, 60, 0.2) 30%, 
+    rgba(231, 76, 60, 0.1) 60%,
+    rgba(231, 76, 60, 0) 70%);
+  border-radius: 8px;
+  z-index: -1;
+  animation: pulseGlowRed 2s infinite alternate;
+}
 
 .backOutButton:hover {
-  box-shadow: var(--shadow-lg), 0 0 10px rgba(231, 76, 60, 0.3);
-  border-color: var(--secondary-light);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+}
+
+.backOutButton:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .anteIcon, .backOutIcon {
@@ -109,12 +238,12 @@
 }
 
 .anteIcon {
-  color: #2ecc71;
+  color: #ffffff;
   filter: drop-shadow(0 0 3px rgba(46, 204, 113, 0.5));
 }
 
 .backOutIcon {
-  color: #e74c3c;
+  color: #ffffff;
   filter: drop-shadow(0 0 3px rgba(231, 76, 60, 0.5));
   margin-right: 0.5rem;
 }
@@ -135,11 +264,11 @@
 }
 
 .anteButton .buttonLabel {
-  color: #2ecc71;
+  color: #ffffff;
 }
 
 .backOutButton .buttonLabel {
-  color: #e74c3c;
+  color: #ffffff;
 }
 
 .buttonAmount {
@@ -148,12 +277,12 @@
 }
 
 .anteButton .buttonAmount {
-  color: #2ecc71;
+  color: #ffffff;
   text-shadow: 0 0 5px rgba(46, 204, 113, 0.3);
 }
 
 .backOutButton .buttonAmount {
-  color: #e74c3c;
+  color: #ffffff;
   text-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
 }
 
@@ -166,4 +295,45 @@
   border-radius: var(--radius-sm);
   text-align: center;
   box-shadow: var(--shadow-sm);
+}
+
+/* Animation keyframes */
+@keyframes shimmerGreenBorder {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+@keyframes shimmerRedBorder {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+@keyframes pulseGlowGreen {
+  0% { opacity: 0.5; filter: blur(8px); }
+  100% { opacity: 0.9; filter: blur(12px); }
+}
+
+@keyframes pulseGlowRed {
+  0% { opacity: 0.5; filter: blur(8px); }
+  100% { opacity: 0.9; filter: blur(12px); }
+}
+
+@keyframes sweepReflectionGreen {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes sweepReflectionRed {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes pulseWholeButtonGreen {
+  0% { transform: scale(1); box-shadow: 0 0 15px rgba(46, 204, 113, 0.6); }
+  100% { transform: scale(1.03); box-shadow: 0 0 20px rgba(46, 204, 113, 0.8); }
+}
+
+@keyframes pulseBackgroundGreen {
+  0% { opacity: 0.5; transform: scale(0.98); }
+  100% { opacity: 0.8; transform: scale(1.02); }
 }

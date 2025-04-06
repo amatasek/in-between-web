@@ -80,7 +80,6 @@ const PlayerList = () => {
                 <span className={styles.playerName}>
                   {player.name}
                   <span className={styles.playerStatus}>
-                    {isCurrentUser && ' (You)'}
                     {isDealer && ` ${ICONS.DEALER}`}
                   </span>
                 </span>

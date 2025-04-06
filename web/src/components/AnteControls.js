@@ -45,7 +45,10 @@ const AnteControls = () => {
                 className={styles.anteButton}
                 onClick={playerReady}
                 disabled={!hasEnoughChips}
+                aria-label="Ante up"
               >
+                {/* Add shimmer border for glimmering effect */}
+                <div className={styles.shimmerBorder}></div>
                 <span className={styles.anteIcon}>{ICONS.CHECK}</span>
                 <div className={styles.buttonInfo}>
                   <h3 className={styles.buttonLabel}>ANTE</h3>
@@ -68,7 +71,10 @@ const AnteControls = () => {
                   console.error('playerUnready is not a function');
                 }
               }}
+              aria-label="Back out"
             >
+              {/* Add shimmer border for glimmering effect */}
+              <div className={styles.shimmerBorder}></div>
               <span className={styles.backOutIcon}>✕</span>
               <div className={styles.buttonInfo}>
                 <h3 className={styles.buttonLabel}>BACK OUT</h3>
