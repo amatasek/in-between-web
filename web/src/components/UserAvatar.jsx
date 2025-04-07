@@ -27,7 +27,7 @@ const UserAvatar = ({
   const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
   
   // Format the image URL to point to the server
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
   
   // Handle different URL formats
   let formattedImageUrl = null;

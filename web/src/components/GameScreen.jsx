@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import styles from './styles/GameScreen.module.css';
-import GameHeader from './GameHeader';
-import CardDisplay from './CardDisplay';
-import BettingPanel from './BettingPanel';
-import PlayerList from './PlayerList';
-import PotDisplay from './PotDisplay';
-import DeckDisplay from './DeckDisplay';
-import AnteControls from './AnteControls';
-import ResultsPanel from './ResultsPanel';
-import AceChoicePanel from './AceChoicePanel';
-import SecondChancePanel from './SecondChancePanel';
-import GameLog from './GameLog';
+import GameHeader from './GameHeader.jsx';
+import CardDisplay from './CardDisplay.jsx';
+import BettingPanel from './BettingPanel.jsx';
+import PlayerList from './PlayerList.jsx';
+import PotDisplay from './PotDisplay.jsx';
+import DeckDisplay from './DeckDisplay.jsx';
+import AnteControls from './AnteControls.jsx';
+import ResultsPanel from './ResultsPanel.jsx';
+import AceChoicePanel from './AceChoicePanel.jsx';
+import SecondChancePanel from './SecondChancePanel.jsx';
+import GameLog from './GameLog.jsx';
 
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';

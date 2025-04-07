@@ -1,4 +1,8 @@
 {
-  "presets": ["next/babel"],
-  "plugins": [["react-native-web", { "commonjs": true }]]
+  "presets": [
+    ["@babel/preset-react", {
+      "runtime": "automatic"
+    }]
+  ],
+  "plugins": ["babel-plugin-react-native-web"]
 }

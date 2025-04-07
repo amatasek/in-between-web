@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import AuthForm from './AuthForm';
+import { useNavigate } from 'react-router-dom';
+import AuthForm from './AuthForm.jsx';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './AuthPage.module.css';
 import AppHeader from '../common/AppHeader';
@@ -8,6 +9,7 @@ import AppHeader from '../common/AppHeader';
 const AuthPage = () => {
   const [mode, setMode] = useState('login');
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [error, setError] = useState(null);
 
@@ -19,7 +21,7 @@ const AuthPage = () => {
 
     setError(null);
     // Get API URL from environment or use localhost as fallback
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     const endpoint = `${API_URL}/auth/${mode}`;
     
     console.log(`[Auth] ${mode.toUpperCase()} attempt: ${username}`);
@@ -60,6 +62,8 @@ const AuthPage = () => {
       console.log(`[Auth] ${mode.toUpperCase()} successful: ${data.user.username}`);
       try {
         login(data.user, data.token);
+        // Navigate to the lobby after successful login
+        navigate('/');
       } catch (error) {
         console.error('[Client] Error in login callback:', error);
         throw new Error('Failed to initialize user session');

@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './CurrencyAmount.module.css';
-import CoinIcon from './CoinIcon';
+import CoinIcon from './CoinIcon.jsx';
 
 /**
  * A reusable component that displays currency amounts with consistent styling

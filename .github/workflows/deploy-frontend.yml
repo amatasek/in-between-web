@@ -42,31 +42,27 @@ jobs:
         run: |
           cd web
           # Create .env.production file with environment variables
-          echo 'NEXT_PUBLIC_API_URL=https://in-between-api.onrender.com' > .env.production
-          echo 'NEXT_PUBLIC_SOCKET_URL=https://in-between-api.onrender.com' >> .env.production
-          # Add a .env.local file as well to ensure environment variables are available during build
-          cp .env.production .env.local
+          echo 'VITE_API_URL=https://in-between-api.onrender.com' > .env.production
+          echo 'VITE_SOCKET_URL=https://in-between-api.onrender.com' >> .env.production
           # Build the app
           npm run build
-          # Ensure the out directory exists
-          mkdir -p out
       
       # Create a CNAME file for the custom domain
       - name: Create CNAME file
-        run: echo "in-between.live" > web/out/CNAME
+        run: echo "in-between.live" > web/dist/CNAME
       
       # Copy index.html to 404.html for SPA routing
       - name: Create 404 page
-        run: cp web/out/index.html web/out/404.html
+        run: cp web/dist/index.html web/dist/404.html
       
       # Create .nojekyll file to prevent Jekyll processing
       - name: Create .nojekyll file
-        run: touch web/out/.nojekyll
+        run: touch web/dist/.nojekyll
       
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: web/out
+          folder: web/dist
           branch: gh-pages
           clean: true
           token: ${{ github.token }}

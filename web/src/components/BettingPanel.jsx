@@ -3,7 +3,7 @@ import styles from './styles/BettingPanel.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import CurrencyAmount from './common/CurrencyAmount';
-import PotButton from './PotButton';
+import PotButton from './PotButton.jsx';
 
 const BettingPanel = () => {
   // Get game state and actions from context

@@ -7,9 +7,9 @@ import { usePreferences } from '../contexts/PreferencesContext';
 import { CircularProgress, Box, Typography, TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
 import CurrencyAmount from './common/CurrencyAmount';
-import PreferencesModal from './PreferencesModal';
-import PreferencesButton from './PreferencesButton';
-import UserAvatar from './UserAvatar';
+import PreferencesModal from './PreferencesModal.jsx';
+import PreferencesButton from './PreferencesButton.jsx';
+import UserAvatar from './UserAvatar.jsx';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts

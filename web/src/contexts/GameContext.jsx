@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
-import { useSocket } from './SocketContext';
+import { useSocket } from './SocketContext.jsx';
 import soundService from '../services/SoundService';
 
 // Import shared type definitions

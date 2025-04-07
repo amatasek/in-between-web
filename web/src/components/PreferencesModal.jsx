@@ -1,8 +1,8 @@
 import React from 'react';
 import { usePreferences } from '../contexts/PreferencesContext';
 import styles from './styles/PreferencesModal.module.css';
-import ToggleSwitch from './ToggleSwitch';
-import FileUpload from './FileUpload';
+import ToggleSwitch from './ToggleSwitch.jsx';
+import FileUpload from './FileUpload.jsx';
 
 const PreferencesModal = ({ onClose }) => {
   const { 

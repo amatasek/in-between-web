@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styles from './styles/GameHeader.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
-import { TIMERS } from '../../../shared/constants/GameConstants';
+import GAME_CONSTANTS from '../../../shared/constants/GameConstants';
+const { TIMERS } = GAME_CONSTANTS;
 import { ICONS } from '../constants/UIConstants';
-import MuteToggle from './MuteToggle';
-import GameSummaryModal from './GameSummaryModal';
+import MuteToggle from './MuteToggle.jsx';
+import GameSummaryModal from './GameSummaryModal.jsx';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {

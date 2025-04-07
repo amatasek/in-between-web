@@ -3,7 +3,7 @@ import styles from './styles/PlayerList.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import CurrencyAmount from './common/CurrencyAmount';
-import UserAvatar from './UserAvatar';
+import UserAvatar from './UserAvatar.jsx';
 import { ICONS } from '../constants/UIConstants';
 
 const PlayerList = () => {

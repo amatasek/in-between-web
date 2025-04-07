@@ -1,6 +1,7 @@
 /**
  * Game Constants - Defines fixed values used throughout the game
  * This is a shared constants file used by both server and client
+ * Supports both ES modules (for Vite/client) and CommonJS (for Node.js/server)
  */
 
 const GAME_CONSTANTS = {
@@ -22,12 +23,12 @@ const GAME_CONSTANTS = {
   }
 };
 
-// Support both CommonJS and ES modules
+// Dual module support - cleaner implementation
+// For ES modules (Vite/client)
+export default GAME_CONSTANTS;
+export const { TIMERS, ANTE_AMOUNT, STARTING_BALANCE, FULL_DECK_SIZE } = GAME_CONSTANTS;
+
+// For CommonJS (Node.js/server)
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = GAME_CONSTANTS;
-} else if (typeof exports !== 'undefined') {
-  exports.TIMERS = GAME_CONSTANTS.TIMERS;
-  exports.default = GAME_CONSTANTS;
-} else {
-  globalThis.GAME_CONSTANTS = GAME_CONSTANTS;
 }

@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePreferences } from '../contexts/PreferencesContext';
 import CurrencyAmount from './common/CurrencyAmount';
 import { ICONS } from '../constants/UIConstants';
-import AutoAnteToggle from './AutoAnteToggle';
+import AutoAnteToggle from './AutoAnteToggle.jsx';
 
 const AnteControls = () => {
   // Get game state and actions from context

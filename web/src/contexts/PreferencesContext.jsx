@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+import { useAuth } from './AuthContext.jsx';
 import soundService from '../services/SoundService';
 
 const PreferencesContext = createContext(null);
@@ -9,7 +9,7 @@ const formatImageUrl = (url) => {
   if (!url) return null;
   
   // Get API URL from environment or use localhost as fallback
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
   
   // If the URL already starts with http, use it as is
   if (url.startsWith('http')) {
@@ -69,7 +69,7 @@ export const PreferencesProvider = ({ children }) => {
     try {
       setLoading(true);
       // Get API URL from environment or use localhost as fallback
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const token = localStorage.getItem('token');
       
       if (!token) {
@@ -127,7 +127,7 @@ export const PreferencesProvider = ({ children }) => {
     
     try {
       // Get API URL from environment or use localhost as fallback
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const token = localStorage.getItem('token');
       
       if (!token) {
@@ -211,7 +211,7 @@ export const PreferencesProvider = ({ children }) => {
       formData.append('file', file);
       
       // Get API URL from environment or use localhost as fallback
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const token = localStorage.getItem('token');
       
       if (!token) {
@@ -279,7 +279,7 @@ export const PreferencesProvider = ({ children }) => {
       formData.append('file', file);
       
       // Get API URL from environment or use localhost as fallback
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const token = localStorage.getItem('token');
       
       if (!token) {
@@ -343,7 +343,7 @@ export const PreferencesProvider = ({ children }) => {
       formData.append('file', file);
       
       // Get API URL from environment or use localhost as fallback
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const token = localStorage.getItem('token');
       
       if (!token) {

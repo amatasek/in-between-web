@@ -15,7 +15,7 @@ class SoundService {
     this.audioUnlocked = false; // Track if audio has been unlocked for mobile
     
     // Get API URL from environment or use localhost as fallback
-    this.API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    this.API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     
     // Only initialize in browser environment
     if (typeof window !== 'undefined') {

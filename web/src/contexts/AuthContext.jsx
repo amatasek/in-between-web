@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useSocket } from './SocketContext';
+import { useSocket } from './SocketContext.jsx';
 import WelcomePopup from '../components/common/WelcomePopup';
 import { API_URL } from '../config';
 
