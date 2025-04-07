@@ -7,7 +7,7 @@ import GameScreen from './components/GameScreen';
 import AuthPage from './components/auth/AuthPage';
 
 // Import our context providers
-import { LobbyProvider, useLobby } from './contexts/LobbyContext';
+import { LobbyProvider, useLobby } from './contexts/LobbyContext.jsx';
 import { GameProvider } from './contexts/GameContext';
 import { useAuth } from './contexts/AuthContext';
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styles from './styles/Lobby.module.css';
-import { useLobby } from '../contexts/LobbyContext';
+import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { usePreferences } from '../contexts/PreferencesContext';

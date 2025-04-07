@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSocket } from './SocketContext.jsx';
-import { useAuth } from './AuthContext.jsx';
+import { useSocket } from './SocketContext';
+import { useAuth } from './AuthContext';
 import { API_URL } from '../config';
 import soundService from '../services/SoundService';
 
@@ -17,12 +16,12 @@ export const useLobby = () => useContext(LobbyContext);
 /**
  * @param {Object} props
  * @param {React.ReactNode} props.children
+ * @param {(gameId: string) => void} [props.onGameJoined]
  */
-export const LobbyProvider = ({ children }) => {
+export const LobbyProvider = ({ children, onGameJoined }) => {
   const { socket, isConnected, setError } = useSocket();
   const { token, refreshUserData } = useAuth();
-  const navigate = useNavigate();
-
+  
   // Initialize sound service
   useEffect(() => {
     soundService.initialize();
@@ -135,8 +134,11 @@ export const LobbyProvider = ({ children }) => {
         // Game state updated successfully
         console.log(`[Lobby] Successfully joined game: ${data.game.id}`);
         
-        // Navigate to the game route using React Router
-        navigate(`/game/${data.game.id}`);
+        // Notify parent component
+        if (onGameJoined) {
+          console.log(`[Lobby] Notifying parent component of game join: ${data.game.id}`);
+          onGameJoined(data.game.id);
+        }
       } catch (error) {
         console.error('[Lobby] Error processing game join:', error);
         setError(`Failed to join game: ${error.message}`);
@@ -158,7 +160,7 @@ export const LobbyProvider = ({ children }) => {
       socket.off('gameJoined');
       socket.off('error');
     };
-  }, [socket, navigate]);
+  }, [socket, onGameJoined]);
   
   /**
    * Create a new game with the current player as host
