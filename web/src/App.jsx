@@ -59,7 +59,7 @@ function AppWithProviders() {
           } 
         />
         <Route 
-          path="/game/:gameId" 
+          path="/:gameId" 
           element={
             <ProtectedRoute>
               <GameScreenWithContext />

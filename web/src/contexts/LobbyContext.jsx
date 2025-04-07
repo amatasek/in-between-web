@@ -137,7 +137,7 @@ export const LobbyProvider = ({ children }) => {
         
         // Navigate to the game page
         console.log(`[Lobby] Navigating to game page: ${data.game.id}`);
-        navigate(`/game/${data.game.id}`);
+        navigate(`/${data.game.id}`);
       } catch (error) {
         console.error('[Lobby] Error processing game join:', error);
         setError(`Failed to join game: ${error.message}`);
