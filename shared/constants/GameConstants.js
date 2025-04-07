@@ -7,7 +7,7 @@
 const GAME_CONSTANTS = {
   // Game configuration
   ANTE_AMOUNT: 1,  // Fixed ante amount - always $1
-  STARTING_BALANCE: 20,  // Starting player balance - $20
+  STARTING_BALANCE: 1000,  // Starting player balance - $1000
   FULL_DECK_SIZE: 52,  // Number of cards in a full deck
   
   // Timer durations (in milliseconds)
