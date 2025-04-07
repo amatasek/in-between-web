@@ -107,6 +107,11 @@ export const AuthProvider = ({ children }) => {
       const userData = await fetchUserData();
       if (userData && isMounted) {
         console.log('[Auth] User data received:', userData);
+        console.log('[Auth] User data structure:', {
+          id: userData?.id,
+          userId: userData?.userId,
+          username: userData?.username
+        });
         setUser(userData);
         console.log('[Auth] User data loaded from /me endpoint');
       } else {

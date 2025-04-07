@@ -26,9 +26,35 @@ const AnteControls = () => {
   // Only show in waiting phase
   if (phase !== 'waiting') return null;
   
-  const myPlayer = socket && players ? players[socket.id] : null;
+  // Find the player by user ID
+  let myPlayer = null;
+  if (socket && socket.auth?.userId && players) {
+    // Find player by userId
+    const playerIds = Object.keys(players);
+    for (const id of playerIds) {
+      if (players[id].userId === socket.auth.userId) {
+        myPlayer = players[id];
+        break;
+      }
+    }
+  } else if (user && players) {
+    // If we can't find by socket ID, try to find by user ID
+    const playerIds = Object.keys(players);
+    for (const id of playerIds) {
+      if (players[id].userId === user.id) {
+        myPlayer = players[id];
+        console.log(`[AnteControls] Found player by user ID instead of socket ID`);
+        break;
+      }
+    }
+  }
+  
+  // Get player balance and ready status
   const playerBalance = Number(myPlayer?.balance || 0);
   const isPlayerReady = myPlayer?.isReady;
+  
+  
+  // Check if player has enough chips
   const hasEnoughChips = playerBalance >= anteAmount;
   
   // Player state and readiness is managed by the game context

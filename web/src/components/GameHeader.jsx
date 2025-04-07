@@ -65,8 +65,8 @@ const GameHeader = ({ handleLeaveGame }) => {
     phaseInfo = { text: 'Choosing Ace Value', icon: ICONS.DEALER };
   }
   
-  // Check if current user is the current player
-  const isCurrentPlayersTurn = socket && gameState?.currentPlayerId === socket.id;
+  // Check if current user is the current player (using userId instead of socket.id)
+  const isCurrentPlayersTurn = socket && socket.auth?.userId && gameState?.currentPlayerId === socket.auth.userId;
   
   // Special handling for betting phase
   if (currentPhase === 'betting' && gameState?.currentPlayerId && gameState?.players) {

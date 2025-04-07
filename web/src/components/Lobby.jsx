@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styles from './styles/Lobby.module.css';
-import { useLobby } from '../contexts/LobbyContext.jsx';
+import { useLobby, LobbyProvider } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { usePreferences } from '../contexts/PreferencesContext';
@@ -10,13 +10,13 @@ import CurrencyAmount from './common/CurrencyAmount';
 import PreferencesModal from './PreferencesModal.jsx';
 import PreferencesButton from './PreferencesButton.jsx';
 import UserAvatar from './UserAvatar.jsx';
+import soundService from '../services/SoundService';
 
 const Lobby = () => {
   // Get state and actions from lobby and auth contexts
-  const { lobbyState, createGame, joinGame } = useLobby();
-  const { error: lobbyError, gameList } = lobbyState;
+  const { gameList, loading: lobbyLoading, error: lobbyError, refreshGameList } = useLobby();
   const { user, logout } = useAuth();
-  const { isConnected } = useSocket();
+  const { socket, isConnected } = useSocket();
   const { preferences } = usePreferences();
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
@@ -24,6 +24,9 @@ const Lobby = () => {
   const [showPreferences, setShowPreferences] = useState(false);
   const isMobile = useMediaQuery('(max-width:600px)');
   const isSmallMobile = useMediaQuery('(max-width:400px)');
+  
+  // Get the correct user ID format for server comparison (server uses format like 'user_username')
+  const userId = user?.username ? `user_${user.username}` : null;
 
   // We'll handle loading state manually instead of using an effect
 
@@ -79,25 +82,61 @@ const Lobby = () => {
     }
   }, [user, logout, isConnected]);
   
+  // Handle creating a new game
   const handleCreateGame = () => {
     if (!user?.id) {
       setError('Please log in to create a game');
       return;
     }
     
+    if (!isConnected) {
+      setError('Not connected to server');
+      return;
+    }
+    
     // First clear any errors
     setError(null);
     
-    // Show loading state
     setIsLoading(true);
     
-    // Simply call the createGame function directly
-    // Since we fixed the duplicate event handler issue, this works correctly now
-    createGame();
+    // Play sound for game creation
+    soundService.play('ui.join');
+    
+    // With our new approach, we just need to set up a one-time event listener
+    // and then navigate to the game URL when we receive the gameJoined event
+    const timeoutId = setTimeout(() => {
+      socket.off('gameJoined', handleGameCreated);
+      setError('Game creation timed out');
+      setIsLoading(false);
+    }, 5000);
+    
+    const handleGameCreated = (data) => {
+      if (data && data.game && data.game.id) {
+        console.log(`[Lobby] Game created with ID: ${data.game.id}`);
+        // Clear the timeout since we've received a response
+        clearTimeout(timeoutId);
+        // Remove the event listener to avoid duplicates
+        socket.off('gameJoined', handleGameCreated);
+        // Navigate to the new game
+        window.location.href = `/${data.game.id}`;
+      }
+    };
+    
+    // Register the event listener
+    socket.on('gameJoined', handleGameCreated);
+    
+    // Emit the createGame event
+    console.log('[Lobby] Emitting createGame event');
+    socket.emit('createGame');
   };
   
   const handleJoinGame = (gameId) => {
-    if (!user?.id) {
+    if (!isConnected) {
+      setError('Not connected to server');
+      return;
+    }
+    
+    if (!user) {
       setError('Please log in to join a game');
       return;
     }
@@ -105,26 +144,69 @@ const Lobby = () => {
     // First clear any errors
     setError(null);
     
-    // Show loading state
+    // Show loading overlay
     setIsLoading(true);
     
-    // Call the joinGame function with the selected game ID
-    joinGame(gameId);
+    // First join the game via socket to ensure server-side state is updated
+    console.log(`[Lobby] Joining game ${gameId}`);
+    socket.emit('joinGame', { gameId });
+    
+    // Then navigate to the game route without page reload
+    // Use React Router's navigate function instead of window.location.href
+    // This prevents the socket connection from being disconnected and reconnected
+    setTimeout(() => {
+      window.location.href = `/${gameId}`;
+    }, 500);
   };
   
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
   
-  // Filter games based on search query
+  // Filter and sort games based on search query and user's status
   const filteredGameList = useMemo(() => {
-    if (!searchQuery.trim() || !gameList) return gameList;
+    if (!gameList) return [];
     
-    const query = searchQuery.trim().toLowerCase();
-    return gameList.filter(game => 
-      game.id.toLowerCase().includes(query)
-    );
-  }, [gameList, searchQuery]);
+    // Debug log to see what game list data is being received
+    console.log('[Lobby] Game list data:', gameList);
+    // Debug log to understand the user object structure
+    console.log('[Lobby] Complete user object:', user);
+    
+    // Log the user ID we're using for server comparison
+    console.log('[Lobby] User ID for server comparison:', userId);
+    
+    // First filter by search query if one exists
+    let filtered = gameList;
+    if (searchQuery.trim()) {
+      const query = searchQuery.trim().toLowerCase();
+      filtered = gameList.filter(game => 
+        game.id.toLowerCase().includes(query)
+      );
+    }
+    
+    // Then sort games with the following priority:
+    // 1. Games where user is disconnected (highest priority)
+    // 2. Games where user is a player but connected
+    // 3. All other games (alphabetical by ID)
+    return filtered.sort((a, b) => {
+      // userId is now defined at a higher scope
+      
+      // Check if current user is in either game
+      const userInGameA = a.allPlayers?.some(player => player.userId === userId);
+      const userInGameB = b.allPlayers?.some(player => player.userId === userId);
+      
+      // Check if current user is disconnected in either game
+      const userDisconnectedInA = a.disconnectedPlayers?.some(player => player.userId === userId);
+      const userDisconnectedInB = b.disconnectedPlayers?.some(player => player.userId === userId);
+      
+      // Sort logic with priority
+      if (userDisconnectedInA && !userDisconnectedInB) return -1;
+      if (!userDisconnectedInA && userDisconnectedInB) return 1;
+      if (userInGameA && !userInGameB) return -1;
+      if (!userInGameA && userInGameB) return 1;
+      return a.id.localeCompare(b.id); // Alphabetical by ID if tie
+    });
+  }, [gameList, searchQuery, user?.id]);
   
   // Loading overlay component that shows during game transitions
   const LoadingOverlay = () => (
@@ -306,19 +388,38 @@ const Lobby = () => {
         {filteredGameList && filteredGameList.length > 0 ? (
           <div className={styles.gameListWrapper}>
             {filteredGameList.map(game => (
-              <div key={game.id} className={styles.gameListItem}>
+              <div 
+                key={game.id} 
+                className={`${styles.gameListItem} 
+                  ${game.disconnectedPlayers?.some(player => player.userId === userId) ? styles.userDisconnectedGame : ''}
+                  ${game.allPlayers?.some(player => player.userId === userId && !player.disconnected) ? styles.userInGame : ''}`}
+              >
                 <div className={styles.gameListInfo}>
-                  <div className={styles.gameListId}>{game.id}</div>
+                  <div className={styles.gameListId}>
+                    {game.id}
+                    {game.disconnectedPlayers?.some(player => player.userId === userId) && (
+                      <span className={styles.disconnectedBadge} title="You're disconnected from this game">⚠️ Reconnect</span>
+                    )}
+                    {game.allPlayers?.some(player => player.userId === userId && !player.disconnected) && (
+                      <span className={styles.inGameBadge} title="You're in this game">You're In</span>
+                    )}
+                  </div>
                   <div className={styles.gameListPlayers}>
                     {game.playerCount} {game.playerCount === 1 ? 'player' : 'players'}
                   </div>
                 </div>
                 <button 
-                  className={styles.joinGameButton}
+                  className={`${styles.joinGameButton} 
+                    ${game.disconnectedPlayers?.some(player => player.userId === userId) ? styles.reconnectButton : ''}
+                    ${game.allPlayers?.some(player => player.userId === userId && !player.disconnected) ? styles.continueButton : ''}`}
                   onClick={() => handleJoinGame(game.id)}
                   disabled={!user}
                 >
-                  Join
+                  {game.disconnectedPlayers?.some(player => player.userId === userId) 
+                    ? 'Reconnect' 
+                    : game.allPlayers?.some(player => player.userId === userId && !player.disconnected) 
+                      ? 'Continue' 
+                      : 'Join'}
                 </button>
               </div>
             ))}
@@ -341,4 +442,11 @@ const Lobby = () => {
   );
 };
 
-export default Lobby;
+// Create a wrapped version of the Lobby component with the LobbyProvider
+const LobbyWithProvider = () => (
+  <LobbyProvider>
+    <Lobby />
+  </LobbyProvider>
+);
+
+export default LobbyWithProvider;

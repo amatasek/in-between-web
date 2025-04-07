@@ -27,19 +27,63 @@ class GameEventService extends BaseService {
    */
   async handleReady(socket) {
     try {
+      // Get user from socket (attached by auth middleware)
+      const user = socket.user;
+      if (!user || !user.userId) {
+        console.error('[GAME_EVENT_SERVICE] No valid user attached to socket');
+        socket.emit('error', { message: 'Authentication required' });
+        return;
+      }
+      
+      const userId = user.userId;
+      
       const connectionService = this.getService('connection');
       const gameService = this.getService('game');
       const gameStateService = this.getService('gameState');
       const broadcastService = this.getService('broadcast');
       
       const gameId = connectionService.getGameIdForSocket(socket.id);
-      if (!gameId) return;
+      if (!gameId) {
+        console.log(`[GAME_EVENT_SERVICE] Cannot find gameId for socket ${socket.id} (user: ${socket.user?.userId || 'unknown'})`);
+        socket.emit('error', { message: 'You are not currently in a game. Please join or create a game first.' });
+        return;
+      }
 
       let game = gameStateService.getGame(gameId);
-      if (!game) return;
+      if (!game) {
+        console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found`);
+        return;
+      }
+      
+      // Check if player exists in the game by userId
+      let player = game.players[userId];
+      
+      // If player not found by userId, they might not be in the game
+      if (!player) {
+        console.log(`[GAME_EVENT_SERVICE] Player with userId ${userId} not found in game ${gameId}`);
+        return;
+      }
+      
+      // Ensure the socket-to-user mapping is up to date
+      if (player.socketId !== socket.id) {
+        console.log(`[GAME_EVENT_SERVICE] Updating socket ID for player ${player.name} from ${player.socketId} to ${socket.id}`);
+        game.updatePlayerSocket(userId, socket.id);
+      }
+
+      // Log player state before marking as ready
+      console.log(`[GAME_EVENT_SERVICE] Player ${player.name} (${userId}) ready state before: ${player.isReady}`);
+      
+      // If player is already ready, don't process the ready event again
+      if (player.isReady) {
+        console.log(`[GAME_EVENT_SERVICE] Player ${player.name} is already ready, ignoring duplicate ready event`);
+        return;
+      }
 
       // Mark player as ready
-      game = await gameService.playerReady(game, socket.id);
+      game = await gameService.playerReady(game, userId);
+      
+      // Log player state after marking as ready
+      console.log(`[GAME_EVENT_SERVICE] Player ${player.name} (${userId}) ready state after: ${player.isReady}`);
       
       // Broadcast updated game state
       broadcastService.broadcastGameState(game);
@@ -54,19 +98,49 @@ class GameEventService extends BaseService {
    */
   async handleUnready(socket) {
     try {
+      // Get user from socket (attached by auth middleware)
+      const user = socket.user;
+      if (!user || !user.userId) {
+        console.error('[GAME_EVENT_SERVICE] No valid user attached to socket');
+        socket.emit('error', { message: 'Authentication required' });
+        return;
+      }
+      
+      const userId = user.userId;
+      
       const connectionService = this.getService('connection');
-      const gameStateService = this.getService('gameState');
       const broadcastService = this.getService('broadcast');
       const playerManagementService = this.getService('playerManagement');
+      const gameStateService = this.getService('gameState');
       
       const gameId = connectionService.getGameIdForSocket(socket.id);
-      if (!gameId) return;
+      if (!gameId) {
+        console.log(`[GAME_EVENT_SERVICE] Cannot find gameId for socket ${socket.id} (user: ${socket.user?.userId || 'unknown'})`);
+        socket.emit('error', { message: 'You are not currently in a game. Please join or create a game first.' });
+        return;
+      }
 
       let game = gameStateService.getGame(gameId);
-      if (!game) return;
+      if (!game) {
+        console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found`);
+        return;
+      }
+      
+      // Check if player exists in the game by userId
+      const player = game.players[userId];
+      if (!player) {
+        console.log(`[GAME_EVENT_SERVICE] Player with userId ${userId} not found in game ${gameId}`);
+        return;
+      }
+      
+      // Ensure the socket-to-user mapping is up to date
+      if (player.socketId !== socket.id) {
+        console.log(`[GAME_EVENT_SERVICE] Updating socket ID for player ${player.name} from ${player.socketId} to ${socket.id}`);
+        game.updatePlayerSocket(userId, socket.id);
+      }
 
       // Mark player as unready and return their ante
-      game = await playerManagementService.playerUnready(game, socket.id);
+      game = await playerManagementService.playerUnready(game, userId);
       
       // Broadcast updated game state
       broadcastService.broadcastGameState(game);
@@ -84,26 +158,56 @@ class GameEventService extends BaseService {
    */
   async handlePlaceBet(socket, data) {
     try {
+      // Get user from socket (attached by auth middleware)
+      const user = socket.user;
+      if (!user || !user.userId) {
+        console.error('[GAME_EVENT_SERVICE] No valid user attached to socket');
+        socket.emit('error', { message: 'Authentication required' });
+        return;
+      }
+      
+      const userId = user.userId;
       const amount = data?.bet ?? 0;
+      
       const connectionService = this.getService('connection');
       const gameService = this.getService('game');
       const gameStateService = this.getService('gameState');
       const broadcastService = this.getService('broadcast');
       
       const gameId = connectionService.getGameIdForSocket(socket.id);
-      if (!gameId) return;
+      if (!gameId) {
+        console.log(`[GAME_EVENT_SERVICE] Cannot find gameId for socket ${socket.id} (user: ${socket.user?.userId || 'unknown'})`);
+        socket.emit('error', { message: 'You are not currently in a game. Please join or create a game first.' });
+        return;
+      }
 
-      const game = gameStateService.getGame(gameId);
-      if (!game) return;
+      let game = gameStateService.getGame(gameId);
+      if (!game) {
+        console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found`);
+        return;
+      }
+      
+      // Check if player exists in the game by userId
+      const player = game.players[userId];
+      if (!player) {
+        console.log(`[GAME_EVENT_SERVICE] Player with userId ${userId} not found in game ${gameId}`);
+        return;
+      }
+      
+      // Ensure the socket-to-user mapping is up to date
+      if (player.socketId !== socket.id) {
+        console.log(`[GAME_EVENT_SERVICE] Updating socket ID for player ${player.name} from ${player.socketId} to ${socket.id}`);
+        game.updatePlayerSocket(userId, socket.id);
+      }
 
       // Validate it's the player's turn
-      if (!game.isPlayersTurn(socket.id)) {
+      if (game.currentPlayerId !== userId) {
         socket.emit('error', { message: 'Not your turn to bet' });
         return;
       }
 
       // Place the bet - GameService will handle all phase transitions and timers
-      const updatedGame = await gameService.placeBet(game, socket.id, amount);
+      const updatedGame = await gameService.placeBet(game, userId, amount);
       
       // Broadcast updated game state
       broadcastService.broadcastGameState(updatedGame);
@@ -127,6 +231,8 @@ class GameEventService extends BaseService {
         return;
       }
       
+      const userId = user.userId;
+      
       const connectionService = this.getService('connection');
       const gameService = this.getService('game');
       const gameStateService = this.getService('gameState');
@@ -137,21 +243,35 @@ class GameEventService extends BaseService {
       // Get the game the player is in
       const gameId = connectionService.getGameIdForSocket(socket.id);
       if (!gameId) {
-        console.error('[GAME_EVENT_SERVICE] Player not in a game');
-        socket.emit('error', { message: 'You are not in a game' });
+        console.error(`[GAME_EVENT_SERVICE] Cannot find gameId for socket ${socket.id} (user: ${socket.user?.userId || 'unknown'})`);
+        socket.emit('error', { message: 'You are not currently in a game. Please join or create a game first.' });
         return;
       }
       
       // Get the game
-      const game = gameStateService.getGame(gameId);
+      let game = gameStateService.getGame(gameId);
       if (!game) {
         console.error('[GAME_EVENT_SERVICE] Game not found:', gameId);
         socket.emit('error', { message: 'Game not found' });
         return;
       }
       
+      // Check if player exists in the game by userId
+      const player = game.players[userId];
+      if (!player) {
+        console.log(`[GAME_EVENT_SERVICE] Player with userId ${userId} not found in game ${gameId}`);
+        socket.emit('error', { message: 'You are not in this game' });
+        return;
+      }
+      
+      // Ensure the socket-to-user mapping is up to date
+      if (player.socketId !== socket.id) {
+        console.log(`[GAME_EVENT_SERVICE] Updating socket ID for player ${player.name} from ${player.socketId} to ${socket.id}`);
+        game.updatePlayerSocket(userId, socket.id);
+      }
+      
       // Validate that it's the player's turn
-      if (game.currentPlayerId !== socket.id) {
+      if (game.currentPlayerId !== userId) {
         console.error('[GAME_EVENT_SERVICE] Not player\'s turn');
         socket.emit('error', { message: 'Not your turn' });
         return;
@@ -176,17 +296,17 @@ class GameEventService extends BaseService {
       // If player chose to ante up again
       if (anteAgain) {
         // Handle the player's decision to ante up again
-        const updatedGame = await gameService.handleSecondChance(game, socket.id, true);
+        const updatedGame = await gameService.handleSecondChance(game, userId, true);
         
         if (updatedGame.firstCard === null) {
-          gameLog(updatedGame, `${user.username} antes up for a second chance`);
+          gameLog(updatedGame, `${player.name} antes up for a second chance`);
           
           // Use GameTimingService to continue the dealing sequence
           await gameTimingService.handleDealingSequence(updatedGame);
         }
       } else {
         // Handle the player's decision to pass
-        await gameService.handleSecondChance(game, socket.id, false);
+        await gameService.handleSecondChance(game, userId, false);
       }
     } catch (error) {
       console.error(`[GAME_EVENT_SERVICE] Error handling second chance:`, error);
@@ -209,6 +329,8 @@ class GameEventService extends BaseService {
         return;
       }
       
+      const userId = user.userId;
+      
       const connectionService = this.getService('connection');
       const gameService = this.getService('game');
       const gameStateService = this.getService('gameState');
@@ -218,21 +340,35 @@ class GameEventService extends BaseService {
       // Get the game the player is in
       const gameId = connectionService.getGameIdForSocket(socket.id);
       if (!gameId) {
-        console.error('[GAME_EVENT_SERVICE] Player not in a game');
-        socket.emit('error', { message: 'You are not in a game' });
+        console.error(`[GAME_EVENT_SERVICE] Cannot find gameId for socket ${socket.id} (user: ${socket.user?.userId || 'unknown'})`);
+        socket.emit('error', { message: 'You are not currently in a game. Please join or create a game first.' });
         return;
       }
       
       // Get the game
-      const game = gameStateService.getGame(gameId);
+      let game = gameStateService.getGame(gameId);
       if (!game) {
         console.error('[GAME_EVENT_SERVICE] Game not found:', gameId);
         socket.emit('error', { message: 'Game not found' });
         return;
       }
       
+      // Check if player exists in the game by userId
+      const player = game.players[userId];
+      if (!player) {
+        console.log(`[GAME_EVENT_SERVICE] Player with userId ${userId} not found in game ${gameId}`);
+        socket.emit('error', { message: 'You are not in this game' });
+        return;
+      }
+      
+      // Ensure the socket-to-user mapping is up to date
+      if (player.socketId !== socket.id) {
+        console.log(`[GAME_EVENT_SERVICE] Updating socket ID for player ${player.name} from ${player.socketId} to ${socket.id}`);
+        game.updatePlayerSocket(userId, socket.id);
+      }
+      
       // Validate that it's the player's turn
-      if (game.currentPlayerId !== socket.id) {
+      if (game.currentPlayerId !== userId) {
         console.error('[GAME_EVENT_SERVICE] Not player\'s turn');
         socket.emit('error', { message: 'Not your turn' });
         return;
@@ -258,7 +394,7 @@ class GameEventService extends BaseService {
       game.firstCard.isAceLow = isAceLow;
       game.waitingForAceDecision = false;
       
-      gameLog(game, `${user.username} chooses Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
+      gameLog(game, `${player.name} chooses Ace as ${isAceLow ? 'LOW' : 'HIGH'}`);
       
       // Save the game with updated Ace choice
       await gameStateService.saveGame(game);
@@ -293,17 +429,18 @@ class GameEventService extends BaseService {
         return;
       }
       
+      const userId = user.userId;
       const dbService = this.getService('database');
       
       // Get the latest balance from the database
-      const dbUser = await dbService.getUserById(user.userId);
+      const dbUser = await dbService.getUserById(userId);
       if (!dbUser) {
-        console.error('[GAME_EVENT_SERVICE] User not found in database:', user.userId);
+        console.error('[GAME_EVENT_SERVICE] User not found in database:', userId);
         socket.emit('error', { message: 'User not found' });
         return;
       }
       
-      console.log(`[GAME_EVENT_SERVICE] Sending updated balance to user ${user.username}: ${dbUser.balance}`);
+      console.log(`[GAME_EVENT_SERVICE] Sending updated balance to user ${user.username || dbUser.username}: ${dbUser.balance}`);
       
       // Send the updated balance to the client
       socket.emit('balanceUpdate', { balance: dbUser.balance });

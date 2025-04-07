@@ -13,7 +13,6 @@ const gameTimingService = require('./services/GameTimingService');
 const dbService = require('./services/DatabaseService');
 const bettingService = require('./services/BettingService');
 const connectionService = require('./services/ConnectionService');
-const lobbyService = require('./services/LobbyService');
 const gameEventService = require('./services/GameEventService');
 const broadcastService = require('./services/BroadcastService');
 const authService = require('./services/AuthService');
@@ -31,7 +30,6 @@ function initializeServices() {
     .register('game', gameService)
     .register('gameState', gameStateService)
     .register('playerManagement', playerManagementService)
-    .register('lobby', lobbyService)
     .register('gameEvent', gameEventService)
     .register('broadcast', broadcastService)
     .register('database', dbService)

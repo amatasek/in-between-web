@@ -19,7 +19,7 @@ const PlayerList = () => {
   }
   
   const { players, currentPlayerId, dealerId, deckNumber, remainingCards } = gameState;
-  const currentUserId = socket?.id;
+  const currentUserId = socket?.auth?.userId;
   if (!players || Object.keys(players).length === 0) {
     return (
       <div className={styles.emptyPlayerList}>
@@ -53,15 +53,15 @@ const PlayerList = () => {
           .filter(playerId => playerId !== null && players[playerId])
           .map(playerId => {
             const player = players[playerId];
-            const isCurrentPlayer = player.id === currentPlayerId;
-            const isCurrentUser = player.id === currentUserId;
-            const isDealer = player.id === dealerId;
-            
-
+            const isCurrentPlayer = playerId === currentPlayerId;
+            // Compare player.userId with currentUserId instead of comparing playerId with currentUserId
+            const isCurrentUser = player.userId === currentUserId;
+            const isDealer = playerId === dealerId; // Use playerId instead of player.id
+            const isDisconnected = player.disconnected === true;
             
             return (
               <div 
-                key={player.id} 
+                key={playerId} 
                 className={`
                   ${styles.playerItem}
                   ${isCurrentPlayer ? styles.currentPlayer : ''}
@@ -81,6 +81,7 @@ const PlayerList = () => {
                   {player.name}
                   <span className={styles.playerStatus}>
                     {isDealer && ` ${ICONS.DEALER}`}
+                    {player.disconnected && <span className={styles.disconnectedIndicator} title="Player disconnected">⚠️ Disconnected</span>}
                   </span>
                 </span>
               </div>

@@ -15,8 +15,18 @@ const AutoAnteToggle = () => {
     
     // Only auto-ante if the player is not already anted
     if (newValue && success && playerReady) {
-      // Check if player is already anted
-      const myPlayer = socket && gameState?.players ? gameState.players[socket.id] : null;
+      // Check if player is already anted (using userId instead of socket.id)
+      let myPlayer = null;
+      if (socket && socket.auth?.userId && gameState?.players) {
+        // Find player by userId
+        const playerIds = Object.keys(gameState.players);
+        for (const id of playerIds) {
+          if (gameState.players[id].userId === socket.auth.userId) {
+            myPlayer = gameState.players[id];
+            break;
+          }
+        }
+      }
       const isPlayerReady = myPlayer?.isReady;
       
       // Only call playerReady if the player is not already ready

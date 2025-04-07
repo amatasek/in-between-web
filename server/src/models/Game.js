@@ -8,12 +8,13 @@ const { gameLog } = require('../utils/logger');
 class Game {
   constructor(id) {
     this.id = id;
-    this.players = {};
+    this.players = {}; // Now keyed by userId instead of socketId
+    this.socketIdToUserId = {}; // Maps socketId to userId for quick lookups
     this.playerOrder = [];
     
     // Seat-based player management
     this.MAX_SEATS = 32;
-    this.seats = Array(this.MAX_SEATS).fill(null); // Array of player IDs or null for empty seats
+    this.seats = Array(this.MAX_SEATS).fill(null); // Array of user IDs or null for empty seats
     this.seatInfo = Array(this.MAX_SEATS).fill(null); // Array of player info objects
     
     this.nextSeatIndex = 0; // Next available seat index
@@ -69,12 +70,60 @@ class Game {
   }
   
   /**
+   * Map a socket ID to a user ID
+   * @param {string} socketId - The socket ID
+   * @param {string} userId - The user ID
+   */
+  mapSocketToUser(socketId, userId) {
+    this.socketIdToUserId[socketId] = userId;
+  }
+
+  /**
+   * Get user ID from socket ID
+   * @param {string} socketId - The socket ID
+   * @returns {string|null} The user ID or null if not found
+   */
+  getUserIdFromSocket(socketId) {
+    return this.socketIdToUserId[socketId] || null;
+  }
+
+  /**
+   * Get player by socket ID
+   * @param {string} socketId - The socket ID
+   * @returns {Object|null} The player object or null if not found
+   */
+  getPlayerBySocketId(socketId) {
+    const userId = this.getUserIdFromSocket(socketId);
+    return userId ? this.players[userId] : null;
+  }
+
+  /**
+   * Update a player's socket ID
+   * @param {string} userId - The user ID
+   * @param {string} newSocketId - The new socket ID
+   * @returns {boolean} True if successful, false otherwise
+   */
+  updatePlayerSocket(userId, newSocketId) {
+    if (!this.players[userId]) return false;
+    
+    // Update the player's socket ID
+    const oldSocketId = this.players[userId].socketId;
+    this.players[userId].socketId = newSocketId;
+    
+    // Update the mapping
+    delete this.socketIdToUserId[oldSocketId];
+    this.socketIdToUserId[newSocketId] = userId;
+    
+    return true;
+  }
+
+  /**
    * Get a player's seat index
-   * @param {string} playerId - The player's ID
+   * @param {string} userId - The user ID
    * @returns {number} The player's seat index or -1 if not found
    */
-  getPlayerSeat(playerId) {
-    return this.seats.indexOf(playerId);
+  getPlayerSeat(userId) {
+    return this.seats.indexOf(userId);
   }
   
   /**
@@ -194,7 +243,9 @@ class Game {
    */
   getConnectedPlayersInOrder() {
     return this.seats
-      .filter(playerId => playerId !== null && this.players[playerId]?.isConnected);
+      .filter(playerId => playerId !== null && 
+              this.players[playerId]?.isConnected && 
+              !this.players[playerId]?.disconnected);
   }
 
   /**
@@ -207,6 +258,7 @@ class Game {
         const player = this.players[playerId];
         return playerId !== null && 
                player?.isConnected && 
+               !player?.disconnected &&
                player?.isReady;
       });
   }

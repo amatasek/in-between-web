@@ -13,7 +13,7 @@ const AceChoicePanel = () => {
   
   // Set up countdown timer when the component mounts
   useEffect(() => {
-    if (gameState?.waitingForAceDecision && socket?.id === gameState.currentPlayerId) {
+    if (gameState?.waitingForAceDecision && socket?.auth?.userId === gameState.currentPlayerId) {
       setCountdown(15); // Reset to 15 seconds
       
       const timer = setInterval(() => {
@@ -28,14 +28,14 @@ const AceChoicePanel = () => {
       
       return () => clearInterval(timer);
     }
-  }, [gameState?.waitingForAceDecision, gameState?.currentPlayerId, socket?.id]);
+  }, [gameState?.waitingForAceDecision, gameState?.currentPlayerId, socket?.auth?.userId]);
   
   const handleAceChoice = (isAceLow) => {
     socket.emit('chooseAceValue', { isAceLow });
   };
   
   // Check if it's the current player's turn
-  const isCurrentPlayersTurn = socket?.id === gameState.currentPlayerId;
+  const isCurrentPlayersTurn = socket?.auth?.userId === gameState.currentPlayerId;
   const currentPlayerName = gameState.players[gameState.currentPlayerId]?.name || 'Current player';
   
   const renderAceChoiceControls = () => {

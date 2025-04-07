@@ -5,6 +5,7 @@ const socketIo = require('socket.io');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const BaseService = require('./BaseService');
+const { RECONNECTION_TIMEOUT } = require('../../../shared/constants/GameConstants');
 const { gameLog } = require('../utils/logger');
 
 class ConnectionService extends BaseService {
@@ -12,6 +13,9 @@ class ConnectionService extends BaseService {
     super();
     this.io = null;
     this.connectedSockets = new Map(); // Maps socket.id to gameId
+    this.disconnectedPlayers = new Map(); // Maps userId to {gameId, timestamp, playerId}
+    this.disconnectionTimeouts = new Map(); // Maps userId to timeout ID for cleanup
+    this.reconnectionTimeout = RECONNECTION_TIMEOUT; // Use shared constant
   }
   
   /**
@@ -130,17 +134,22 @@ class ConnectionService extends BaseService {
     this.io.on('connection', (socket) => {
       console.log(`[CONNECTION_SERVICE] New connection: ${socket.id}`);
       
-      // If the socket was authenticated in middleware, emit the authenticated event
+      // If the socket was authenticated in middleware, emit the authenticated event with user data
       if (socket.authInfo && socket.authInfo.authenticated) {
         console.log(`[CONNECTION_SERVICE] Emitting authenticated event to socket: ${socket.id}`);
-        socket.emit('authenticated');
+        socket.emit('authenticated', {
+          userId: socket.authInfo.userId,
+          username: socket.authInfo.username
+        });
       }
       
       // Register event handlers from other services
       this.registerServiceEventHandlers(socket);
       
-      // Log all event listeners for debugging
-      console.log(`[CONNECTION_SERVICE] Event handlers registered for socket: ${socket.id}`);
+      // Check if this is a reconnection for a player who was in a game
+      socket.on('authenticated', () => {
+        this.handlePotentialReconnection(socket);
+      });
       
       // Handle disconnection
       socket.on('disconnect', () => {
@@ -158,15 +167,15 @@ class ConnectionService extends BaseService {
       console.log(`[CONNECTION_SERVICE] Registering service event handlers for socket: ${socket.id}`);
       
       // Let each service register its event handlers
-      const lobbyService = this.getService('lobby');
+      const gameService = this.getService('game');
       const gameEventService = this.getService('gameEvent');
       const playerService = this.getService('player');
       
-      if (lobbyService && typeof lobbyService.registerSocketEvents === 'function') {
-        console.log(`[CONNECTION_SERVICE] Registering LobbyService events for socket: ${socket.id}`);
-        lobbyService.registerSocketEvents(socket);
+      if (gameService && typeof gameService.registerSocketEvents === 'function') {
+        console.log(`[CONNECTION_SERVICE] Registering GameService events for socket: ${socket.id}`);
+        gameService.registerSocketEvents(socket);
       } else {
-        console.warn(`[CONNECTION_SERVICE] LobbyService not available or missing registerSocketEvents method`);
+        console.warn(`[CONNECTION_SERVICE] GameService not available or missing registerSocketEvents method`);
       }
       
       if (gameEventService && typeof gameEventService.registerSocketEvents === 'function') {
@@ -198,26 +207,70 @@ class ConnectionService extends BaseService {
       console.log(`[CONNECTION_SERVICE] Disconnection: ${socket.id}`);
       
       const gameId = this.connectedSockets.get(socket.id);
-      if (gameId) {
+      if (gameId && socket.user) {
         const gameStateService = this.getService('gameState');
         if (gameStateService && gameStateService.games && gameStateService.games[gameId]) {
           const game = gameStateService.games[gameId];
           
-          // Remove player from game
-          const playerManagementService = this.getService('playerManagement');
-          playerManagementService.removePlayer(game, socket.id);
+          // Find the player in the game - players is an object, not an array
+          const playerIds = Object.keys(game.players);
           
-          // Check if game is now empty and should be cleaned up
-          const lobbyService = this.getService('lobby');
-          if (lobbyService) {
-            const wasGameRemoved = lobbyService.cleanupGameIfEmpty(game);
+          // Get the userId from the socket
+          const userId = socket.user.userId;
+          
+          // Find the player with matching userId
+          const playerId = playerIds.find(id => game.players[id].userId === userId);
+          
+          if (playerId) {
+            const player = game.players[playerId];
+            const userId = socket.user.userId; // Use userId, not id
             
-            if (!wasGameRemoved) {
-              // Only broadcast game state if the game wasn't removed
-              const broadcastService = this.getService('broadcast');
-              if (broadcastService) {
-                broadcastService.broadcastGameState(game);
-              }
+            // Make sure the player has a userId (critical for reconnection)
+            if (!player.userId && userId) {
+              player.userId = userId;
+              console.log(`[CONNECTION_SERVICE] Added missing userId ${userId} to player ${player.name}`);
+            }
+            
+            // Find the player's index in the seats array
+            const playerIndex = game.seats.findIndex(seatId => seatId === playerId);
+            
+            // Store the disconnected player info for potential reconnection
+            this.disconnectedPlayers.set(userId, {
+              gameId,
+              timestamp: Date.now(),
+              playerId: playerId, // Store the player's ID for reconnection
+              playerIndex,
+              userId: userId // Store the userId explicitly
+            });
+            
+            console.log(`[CONNECTION_SERVICE] Player ${player.name} (${userId}) disconnected from game ${gameId}. Reconnection window: ${this.reconnectionTimeout / 1000} seconds`);
+            
+            // Don't log disconnections to prevent noise in the game log
+            // const { gameLog } = require('../utils/logger');
+            // gameLog(game, `${player.name} disconnected.`);
+            
+            // Mark player as disconnected but don't remove them yet
+            player.disconnected = true;
+            player.isConnected = false;
+            player.disconnectedAt = Date.now();
+            
+            // Schedule cleanup after reconnection timeout
+            // Store the timeout ID so we can clear it if the player reconnects
+            const timeoutId = setTimeout(() => {
+              this.cleanupDisconnectedPlayer(userId, gameId);
+            }, this.reconnectionTimeout);
+            
+            // Store the timeout ID for later cancellation if needed
+            this.disconnectionTimeouts.set(userId, timeoutId);
+            console.log(`[CONNECTION_SERVICE] Set disconnection timeout for player ${userId} in game ${gameId}`);
+            
+            // Broadcast updated game state with disconnected player
+            const broadcastService = this.getService('broadcast');
+            if (broadcastService) {
+              console.log(`[CONNECTION_SERVICE] Broadcasting game state with disconnected player ${player.name}`);
+              broadcastService.broadcastGameState(game);
+            } else {
+              console.error(`[CONNECTION_SERVICE] Could not find broadcast service to update game state for disconnected player`);
             }
           }
         }
@@ -231,7 +284,250 @@ class ConnectionService extends BaseService {
   }
 
   /**
-   * Associate a socket with a game
+   * Handle potential reconnection of a player who was in a game
+   * @param {Object} socket - The socket that might be reconnecting
+   */
+  handlePotentialReconnection(socket) {
+    try {
+      if (!socket.user || !socket.user.userId) {
+        console.log(`[CONNECTION_SERVICE] Reconnection failed: No authenticated user`);
+        return; // No authenticated user
+      }
+      
+      const userId = socket.user.userId;
+      const username = socket.user.username || 'Unknown';
+      console.log(`[CONNECTION_SERVICE] Processing reconnection for user ${username} (${userId})`);
+      
+      const disconnectedInfo = this.disconnectedPlayers.get(userId);
+      
+      // Even if there's no disconnected info, check if the player is in any active games
+      // This handles the case where a player refreshes but wasn't properly marked as disconnected
+      const gameStateService = this.getService('gameState');
+      if (!gameStateService || !gameStateService.games) {
+        console.log(`[CONNECTION_SERVICE] Reconnection failed: Game state service not available`);
+        if (disconnectedInfo) {
+          this.disconnectedPlayers.delete(userId);
+        }
+        return;
+      }
+      
+      // If we have disconnected info, try to reconnect to that specific game
+      let gameId = disconnectedInfo ? disconnectedInfo.gameId : null;
+      let oldSocketId = disconnectedInfo ? disconnectedInfo.playerId : null;
+      
+      console.log(`[CONNECTION_SERVICE] Reconnection info - Game ID: ${gameId || 'None'}, Old Socket ID: ${oldSocketId || 'None'}`);
+      
+      // If we don't have disconnected info, check all games for this user
+      if (!gameId) {
+        console.log(`[CONNECTION_SERVICE] No disconnection record found, searching all games for user ${userId}`);
+        const allGames = Object.values(gameStateService.games);
+        for (const game of allGames) {
+          const playerIds = Object.keys(game.players || {});
+          
+          // Find player by userId
+          for (const id of playerIds) {
+            const player = game.players[id];
+            if (player && player.userId === userId) {
+              gameId = game.id;
+              oldSocketId = id;
+              console.log(`[CONNECTION_SERVICE] Found player ${username} (${userId}) in game ${gameId} with socket ID ${oldSocketId}`);
+              break;
+            }
+          }
+          
+          if (gameId) break; // Stop searching if we found a game
+        }
+      }
+      
+      // If we still don't have a game ID, the player isn't in any games
+      if (!gameId) {
+        console.log(`[CONNECTION_SERVICE] User ${username} (${userId}) not found in any games`);
+        if (disconnectedInfo) {
+          this.disconnectedPlayers.delete(userId);
+        }
+        return;
+      }
+      
+      // Get the game
+      const game = gameStateService.games[gameId];
+      if (!game) {
+        // Game no longer exists
+        console.log(`[CONNECTION_SERVICE] Game ${gameId} no longer exists`);
+        if (disconnectedInfo) {
+          this.disconnectedPlayers.delete(userId);
+        }
+        return;
+      }
+      
+      console.log(`[CONNECTION_SERVICE] Reconnecting user ${username} (${userId}) to game ${gameId}`);
+      
+      // Find the player in the game by userId
+      let existingPlayer = null;
+      const playerIds = Object.keys(game.players || {});
+      
+      for (const id of playerIds) {
+        const player = game.players[id];
+        if (player && player.userId === userId) {
+          existingPlayer = id;
+          break;
+        }
+      }
+      
+      if (!existingPlayer && oldSocketId && game.players[oldSocketId]) {
+        existingPlayer = oldSocketId;
+      }
+      
+      if (existingPlayer) {
+        // Get the player object
+        const player = game.players[existingPlayer];
+        
+        console.log(`[CONNECTION_SERVICE] Updating player ${player.name} socket from ${existingPlayer} to ${socket.id}`);
+        
+        // Update the player's socket ID and connection status
+        const oldSocketId = player.socketId;
+        player.socketId = socket.id;
+        
+        // Update the socket-to-userId mapping
+        if (oldSocketId !== socket.id) {
+          // Update the socket mapping in the game
+          game.mapSocketToUser(socket.id, player.userId);
+          
+          // If there was an old mapping, remove it
+          if (game.socketIdToUserId[oldSocketId]) {
+            delete game.socketIdToUserId[oldSocketId];
+          }
+        }
+        
+        // No need to update seat reference as seats now use userId instead of socketId
+        // The seat reference should already be using player.userId which doesn't change
+        
+        // Find the player's seat index
+        const seatIndex = game.seats.findIndex(id => id === existingPlayer);
+        
+        // Update seat info if needed
+        if (seatIndex !== -1 && game.seatInfo && game.seatInfo[seatIndex]) {
+          // We don't need to update the playerId in seatInfo since we use userId now
+          console.log(`[CONNECTION_SERVICE] Player ${player.name} is in seat ${seatIndex}`);
+        }
+        
+        // Mark player as connected
+        player.disconnected = false;
+        player.disconnectedAt = null;
+        player.isConnected = true;
+        
+        // Log the reconnection for debugging
+        console.log(`[CONNECTION_SERVICE] Player ${player.name} (${player.userId}) is now marked as connected (disconnected=${player.disconnected}, isConnected=${player.isConnected})`);
+        
+        // Associate socket with game
+        this.associateSocketWithGame(socket.id, gameId);
+        
+        // Remove from disconnected players map
+        if (this.disconnectedPlayers.has(userId)) {
+          this.disconnectedPlayers.delete(userId);
+          console.log(`[CONNECTION_SERVICE] Removed ${userId} from disconnected players map`);
+        }
+        
+        // Clear any pending disconnection timeout
+        if (this.disconnectionTimeouts.has(userId)) {
+          clearTimeout(this.disconnectionTimeouts.get(userId));
+          this.disconnectionTimeouts.delete(userId);
+          console.log(`[CONNECTION_SERVICE] Cleared disconnection timeout for player ${userId}`);
+        }
+        
+        // Try to reconnect the player to their game
+        const gameService = this.getService('game');
+        if (gameService) {
+          console.log(`[CONNECTION_SERVICE] Reconnecting player to game ${gameId}`);
+          gameService.handleJoinGame(socket, { gameId, isReconnection: true });
+        } else {
+          console.log(`[CONNECTION_SERVICE] Warning: Game service not available for reconnection`);
+          
+          // If game service isn't available, at least broadcast the game state
+          const broadcastService = this.getService('broadcast');
+          if (broadcastService) {
+            console.log(`[CONNECTION_SERVICE] Broadcasting game state after reconnection`);
+            broadcastService.broadcastGameState(game);
+          }
+        }
+        
+        console.log(`[CONNECTION_SERVICE] Player ${player.name} (${userId}) successfully reconnected to game ${gameId}`);
+      } else {
+        console.log(`[CONNECTION_SERVICE] Failed to find player with userId ${userId} in game ${gameId}`);
+      }
+    } catch (error) {
+      console.error(`[CONNECTION_SERVICE] Error in handlePotentialReconnection:`, error);
+    }
+  }
+  
+  /**
+   * Clean up a disconnected player if they haven't reconnected within the timeout
+   * @param {string} userId - The user ID
+   * @param {string} gameId - The game ID
+   */
+  cleanupDisconnectedPlayer(userId, gameId) {
+    try {
+      // Make sure userId is valid
+      if (!userId) {
+        // Don't log this as an error - it's a normal case when anonymous users disconnect
+        // Just clean up any null entries and return
+        this.disconnectedPlayers.delete(null);
+        this.disconnectedPlayers.delete(undefined);
+        return;
+      }
+      
+      // Check if the player is still in the disconnected players map
+      const disconnectedInfo = this.disconnectedPlayers.get(userId);
+      if (!disconnectedInfo || disconnectedInfo.gameId !== gameId) {
+        // Player has already reconnected or was removed
+        return;
+      }
+      
+      console.log(`[CONNECTION_SERVICE] Reconnection timeout for player ${userId} in game ${gameId}`);
+      
+      // Get the game
+      const gameStateService = this.getService('gameState');
+      if (!gameStateService || !gameStateService.games || !gameStateService.games[gameId]) {
+        // Game no longer exists
+        this.disconnectedPlayers.delete(userId);
+        return;
+      }
+      
+      const game = gameStateService.games[gameId];
+      
+      // Now actually remove the player from the game
+      const playerManagementService = this.getService('playerManagement');
+      if (playerManagementService) {
+        // Players are now keyed by userId directly, so we can just use the userId
+        if (game.players[userId]) {
+          console.log(`[CONNECTION_SERVICE] Removing disconnected player ${userId} from game ${gameId}`);
+          playerManagementService.removePlayer(game, userId);
+        } else {
+          console.log(`[CONNECTION_SERVICE] Could not find player ${userId} in game ${gameId} to remove`);
+        }
+      }
+      
+      // Broadcast the updated game state to all players
+      const broadcastService = this.getService('broadcast');
+      if (broadcastService && game) {
+        console.log(`[CONNECTION_SERVICE] Broadcasting game state after player ${userId} was removed from game ${gameId}`);
+        broadcastService.broadcastGameState(game);
+      }
+      
+      // Check if the game is now empty and should be removed
+      const gameService = this.getService('game');
+      if (gameService) {
+        gameService.cleanupGameIfEmpty(gameId);
+      }
+      
+      // Remove from disconnected players map
+      this.disconnectedPlayers.delete(userId);
+    } catch (error) {
+      console.error(`[CONNECTION_SERVICE] Error in cleanupDisconnectedPlayer:`, error);
+    }
+  }
+  
+  /**
+   * Associate a socket with a game and clear any pending disconnection timeout
    * @param {string} socketId - The socket ID
    * @param {string} gameId - The game ID
    */
@@ -240,8 +536,26 @@ class ConnectionService extends BaseService {
     
     // Get the socket instance
     const socket = this.io.sockets.sockets.get(socketId);
-    if (socket) {
+    if (socket && socket.user && socket.user.userId) {
+      const userId = socket.user.userId;
+      
+      // Clear any pending disconnection timeout for this user
+      if (this.disconnectionTimeouts.has(userId)) {
+        clearTimeout(this.disconnectionTimeouts.get(userId));
+        this.disconnectionTimeouts.delete(userId);
+        console.log(`[CONNECTION_SERVICE] Cleared disconnection timeout for player ${userId} when associating with game ${gameId}`);
+      }
+      
+      // Also remove from disconnected players map if present
+      if (this.disconnectedPlayers.has(userId)) {
+        this.disconnectedPlayers.delete(userId);
+        console.log(`[CONNECTION_SERVICE] Removed ${userId} from disconnected players map when associating with game ${gameId}`);
+      }
+      
       // Join the socket to the game room
+      socket.join(gameId);
+    } else if (socket) {
+      // Join the socket to the game room even if we don't have user info
       socket.join(gameId);
     }
   }

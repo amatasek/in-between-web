@@ -69,8 +69,15 @@ export const SocketProvider = ({ children }) => {
     });
     
     // Listen for authentication confirmation
-    newSocket.on('authenticated', () => {
-      console.log('[Socket] Authentication successful');
+    newSocket.on('authenticated', (userData) => {
+      console.log('[Socket] Authentication successful', userData);
+      
+      // Store user data in the socket object for easy access
+      newSocket.auth = {
+        userId: userData.userId,
+        username: userData.username
+      };
+      
       setIsConnected(true); // Now we can set isConnected to true
       
       // Request the game list when authenticated

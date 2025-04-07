@@ -457,6 +457,31 @@
   border: 1px solid rgba(52, 152, 219, 0.4);
 }
 
+/* Highlight games where the user is disconnected */
+.userDisconnectedGame {
+  background-color: rgba(231, 76, 60, 0.2);
+  border: 1px solid rgba(231, 76, 60, 0.6);
+  animation: pulse 2s infinite;
+}
+
+/* Highlight games where the user is a player */
+.userInGame {
+  background-color: rgba(46, 204, 113, 0.2);
+  border: 1px solid rgba(46, 204, 113, 0.6);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+  }
+}
+
 .gameListItem:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
@@ -472,6 +497,33 @@
   font-size: 1.2rem;
   font-weight: bold;
   color: var(--info-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.disconnectedBadge {
+  font-size: 0.8rem;
+  background-color: #e74c3c;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.inGameBadge {
+  font-size: 0.8rem;
+  background-color: #2ecc71;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .gameListPlayers {
@@ -481,15 +533,36 @@
 }
 
 .joinGameButton {
-  background: var(--info);
+  background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: var(--radius-md);
-  padding: var(--button-padding-sm);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
+}
+
+.reconnectButton {
+  background-color: #e74c3c;
+  box-shadow: 0 2px 4px rgba(231, 76, 60, 0.4);
+}
+
+.reconnectButton:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.6);
+}
+
+.continueButton {
+  background-color: #2ecc71;
+  box-shadow: 0 2px 4px rgba(46, 204, 113, 0.4);
+}
+
+.continueButton:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(46, 204, 113, 0.6);
 }
 
 .joinGameButton:hover:not(:disabled) {

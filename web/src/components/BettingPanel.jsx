@@ -26,8 +26,8 @@ const BettingPanel = () => {
   // Only show in betting phase
   if (phase !== 'betting') return null;
   
-  const isCurrentPlayer = socket && currentPlayerId === socket.id;
-  const myPlayer = socket && players ? players[socket.id] : null;
+  const isCurrentPlayer = socket && currentPlayerId === socket.auth?.userId;
+  const myPlayer = socket && players && socket.auth?.userId ? players[socket.auth.userId] : null;
   const playerBalance = Number(myPlayer?.balance || 0);
   
   const handleCustomBetChange = (e) => {

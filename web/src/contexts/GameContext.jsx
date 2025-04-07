@@ -49,6 +49,46 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   useEffect(() => {
     if (!socket) return;
     
+    // Handle game reconnection
+    socket.on('gameReconnected', (data) => {
+      console.log(`[Game] Reconnected to game: ${data.gameId}`, data.game);
+      
+      // Update game state with the full state from the server
+      setGameState(data.game);
+      
+      // Set the player ID to the current user ID (not socket ID)
+      if (socket.auth?.userId) {
+        setPlayerId(socket.auth.userId);
+        console.log(`[Game] Successfully reconnected as user ID: ${socket.auth.userId}`);
+      } else {
+        // Fallback to socket ID if user ID is not available
+        setPlayerId(socket.id);
+        console.log(`[Game] Successfully reconnected as socket ID: ${socket.id} (user ID not available)`);
+      }
+      
+      // Clear any errors
+      setError(null);
+      
+      // Play a sound to indicate successful reconnection
+      soundService.play('ui.connect');
+      
+      // CRITICAL: Force a refresh of the player's game state to ensure betting works
+      if (data.game && data.game.id) {
+        // Small delay to ensure the state is fully updated
+        setTimeout(() => {
+          console.log(`[Game] Requesting fresh game state after reconnection`);
+          socket.emit('getGameState', { gameId: data.game.id });
+        }, 500);
+      }
+    });
+    
+    // Handle receiving updated game state
+    socket.on('gameState', (data) => {
+      if (data && data.game) {
+        setGameState(data.game);
+      }
+    });
+    
     // The gameJoined event is now handled exclusively in LobbyContext
     // This prevents duplicate event handling issues that were causing
     // game joining problems. By centralizing this event handling, we ensure
@@ -126,6 +166,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     return () => {
       // We don't clean up the gameJoined event here anymore since it's now
       // exclusively handled by LobbyContext
+      socket.off('gameReconnected');
       socket.off('gameState');
       socket.off('gameUpdate');
       socket.off('gameError');

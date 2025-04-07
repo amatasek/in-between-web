@@ -13,7 +13,7 @@ const SecondChancePanel = () => {
   
   // Set up countdown timer when the component mounts
   useEffect(() => {
-    if (gameState?.waitingForSecondChance && socket?.id === gameState.currentPlayerId) {
+    if (gameState?.waitingForSecondChance && socket?.auth?.userId === gameState.currentPlayerId) {
       setCountdown(15); // Reset to 15 seconds
       
       const timer = setInterval(() => {
@@ -28,7 +28,7 @@ const SecondChancePanel = () => {
       
       return () => clearInterval(timer);
     }
-  }, [gameState?.waitingForSecondChance, gameState?.currentPlayerId, socket?.id]);
+  }, [gameState?.waitingForSecondChance, gameState?.currentPlayerId, socket?.auth?.userId]);
   
   const { 
     players, 
@@ -36,7 +36,7 @@ const SecondChancePanel = () => {
     anteAmount = 1
   } = gameState;
   
-  const isCurrentPlayer = socket && currentPlayerId === socket.id;
+  const isCurrentPlayer = socket && currentPlayerId === socket.auth?.userId;
   const currentPlayer = players[currentPlayerId];
   
   const handleSecondChance = (anteAgain) => {

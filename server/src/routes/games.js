@@ -5,13 +5,13 @@ const { authenticateToken } = require('../middleware/auth');
 // GET /games - Get list of available games
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const lobbyService = req.services.lobby;
+    const gameService = req.services.game;
     
-    if (!lobbyService) {
-      return res.status(500).json({ error: 'Lobby service not available' });
+    if (!gameService) {
+      return res.status(500).json({ error: 'Game service not available' });
     }
     
-    const games = lobbyService.getGameList();
+    const games = gameService.getGameList();
     console.log(`[GAMES_ROUTE] Returning ${games.length} games via HTTP`);
     return res.json(games);
   } catch (error) {

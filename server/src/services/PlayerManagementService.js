@@ -45,113 +45,245 @@ class PlayerManagementService extends BaseService {
     const currentIndex = playerList.indexOf(currentPlayerId);
     return playerList[(currentIndex + 1) % playerList.length];
   }
-  async addPlayer(game, playerId, name, userId) {
-    // Check if all seats are filled by counting non-null seats
-    const occupiedSeats = game.seats.filter(seat => seat !== null).length;
-    if (!game || occupiedSeats >= game.MAX_SEATS) return game;
+
+  /**
+   * Add a player to the game
+   * @param {Object} game - The game to add the player to
+   * @param {string} socketId - The socket ID of the player
+   * @param {string} name - The name of the player
+   * @param {string} userId - The user ID of the player
+   * @returns {Object} The updated game object
+   */
+  async addPlayer(game, socketId, name, userId) {
+    if (!game) {
+      console.error(`[PLAYER_MANAGEMENT] Cannot add player to null game`);
+      return game;
+    }
+
+    // Validate userId - it's now our primary key
+    if (!userId) {
+      console.error(`[PLAYER_MANAGEMENT] Cannot add player without userId`);
+      return game;
+    }
+
+    // Check if this user is already in the game
+    if (game.players[userId]) {
+      console.log(`[PLAYER_MANAGEMENT] User ${userId} already in game. Updating socket ID to ${socketId}`);
+      
+      // Get the existing player
+      const player = game.players[userId];
+      
+      // Store the old socket ID for reference updates
+      const oldSocketId = player.socketId;
+      
+      // Update player connection status
+      player.socketId = socketId;
+      player.disconnected = false;
+      player.disconnectedAt = null;
+      player.isConnected = true;
+      
+      // Don't log reconnections to prevent noise in the game log
+      // gameLog(game, `${player.name} reconnected.`);
+      
+      // Maintain player's ready state during reconnection
+      // This ensures players don't have to ante up again after refreshing
+      console.log(`[PLAYER_MANAGEMENT] Maintaining ready state for player ${player.name} who reconnected: isReady=${player.isReady}`);
+      
+      // For reconnections, we preserve the player's original state
+      // No need to modify isReady or hasAnteUp - just log the current state
+      console.log(`[PLAYER_MANAGEMENT] Game is in phase ${game.phase}, reconnected player ${player.name} state: isReady=${player.isReady}, hasAnteUp=${player.hasAnteUp}`);
+      
+      // If the player was already in the current round (had anted up), make sure they're still included
+      if (game.antedPlayers && Array.isArray(game.antedPlayers) && !game.antedPlayers.includes(userId) && player.hasAnteUp) {
+        console.log(`[PLAYER_MANAGEMENT] Adding reconnected player ${player.name} back to antedPlayers list`);
+        game.antedPlayers.push(userId);
+      }
+      // Only reset bet if we're in the waiting phase and they haven't placed a bet yet
+      else if (game.phase === GamePhases.WAITING && !player.isReady) {
+        player.currentBet = 0;
+      }
+      
+      // Refresh player balance from database
+      const balanceService = this.getService('balance');
+      if (balanceService) {
+        try {
+          // Get fresh balance from database
+          const freshBalance = await balanceService.getBalance(userId);
+          console.log(`[PLAYER_MANAGEMENT] Refreshing balance for player ${player.name} (${userId}): ${player.balance} -> ${freshBalance}`);
+          player.balance = freshBalance;
+        } catch (error) {
+          console.error(`[PLAYER_MANAGEMENT] Error refreshing balance for player ${player.name} (${userId}):`, error);
+        }
+      }
+      
+      // Update socket-to-user mapping
+      if (oldSocketId !== socketId) {
+        // Remove old mapping
+        delete game.socketIdToUserId[oldSocketId];
+        
+        // Add new mapping
+        game.socketIdToUserId[socketId] = userId;
+        
+        console.log(`[PLAYER_MANAGEMENT] Updated socket mapping from ${oldSocketId} to ${socketId} for user ${userId}`);
+      }
+        
+      // Update the seat reference - now seats contain userIds, not socketIds
+      const seatIndex = game.seats.findIndex(seat => seat === userId);
+      if (seatIndex === -1) {
+        console.log(`[PLAYER_MANAGEMENT] Player had no seat, finding an empty one`);
+        // Player had no seat, try to find an empty one
+        const emptySeatIndex = game.seats.findIndex(seat => seat === null);
+        if (emptySeatIndex !== -1) {
+          game.seats[emptySeatIndex] = userId;
+          console.log(`[PLAYER_MANAGEMENT] Assigned player to empty seat ${emptySeatIndex}`);
+          
+          // Update seat info if it exists
+          if (game.seatInfo && game.seatInfo[emptySeatIndex]) {
+            game.seatInfo[emptySeatIndex].playerId = userId;
+          }
+        }
+      }
+      
+      return game;
+    }
     
-    // Create new player
-    const player = new Player(playerId, name, userId);
+    // For new players, check if the game is full
+    let occupiedSeats = game.seats.filter(seat => seat !== null).length;
+    if (occupiedSeats >= game.MAX_SEATS) {
+      console.log(`[PLAYER_MANAGEMENT] Cannot add new player ${name} (${userId}): Game is full with ${occupiedSeats}/${game.MAX_SEATS} seats`);
+      return game;
+    }
+    
+    console.log(`[PLAYER_MANAGEMENT] Adding new player ${name} (${userId}) to game ${game.id}`);
+    
+    // Create new player with userId as primary key
+    const player = new Player(userId, name, socketId);
+    player.isConnected = true;
+    
+    // Add game log for new player joining (visible to all players in the game)
+    gameLog(game, `${name} joined`);
     
     // Load player balance from database
     const balanceService = this.getService('balance');
-    player.balance = await balanceService.getBalance(player.userId);
+    if (balanceService) {
+      try {
+        // Get fresh balance from database
+        const freshBalance = await balanceService.getBalance(userId);
+        console.log(`[PLAYER_MANAGEMENT] Set initial balance for new player ${name}: ${freshBalance}`);
+        player.balance = freshBalance;
+      } catch (error) {
+        console.error(`[PLAYER_MANAGEMENT] Error getting balance for new player ${name}:`, error);
+        player.balance = 0; // Default to 0 if we can't get the balance
+      }
+    }
     
-    // Add to game's player list
-    game.players[playerId] = player;
+    // Add to game's player list - now keyed by userId
+    game.players[userId] = player;
     
-    // Find next available seat
-    const seatIndex = game.nextSeatIndex;
-    game.seats[seatIndex] = playerId;
+    // Add to socket-to-user mapping
+    game.socketIdToUserId[socketId] = userId;
+    
+    // Find an empty seat for the new player
+    let seatIndex = -1;
+    
+    // First, try to find the next available seat using the game's nextSeatIndex
+    if (game.nextSeatIndex !== undefined && game.seats[game.nextSeatIndex] === null) {
+      seatIndex = game.nextSeatIndex;
+      console.log(`[PLAYER_MANAGEMENT] Assigning player ${name} to next available seat ${seatIndex}`);
+    } 
+    // If that fails, search for any empty seat
+    else {
+      seatIndex = game.seats.findIndex(seat => seat === null);
+      console.log(`[PLAYER_MANAGEMENT] Assigning player ${name} to first empty seat ${seatIndex}`);
+    }
+    
+    // If we still couldn't find a seat, log an error but continue
+    if (seatIndex === -1) {
+      console.error(`[PLAYER_MANAGEMENT] Could not find an empty seat for player ${name}. This should never happen!`);
+      // Try to create a new seat if possible
+      if (game.seats.length < game.MAX_SEATS) {
+        seatIndex = game.seats.length;
+        game.seats.push(null); // Add a new seat
+        console.log(`[PLAYER_MANAGEMENT] Created new seat ${seatIndex} for player ${name}`);
+      } else {
+        // Last resort: try to use the first seat
+        seatIndex = 0;
+        console.log(`[PLAYER_MANAGEMENT] Using first seat as last resort for player ${name}`);
+      }
+    }
+    
+    // Assign the player to the seat - using userId instead of socketId
+    game.seats[seatIndex] = userId;
+    console.log(`[PLAYER_MANAGEMENT] Player ${name} assigned to seat ${seatIndex}`);
     
     // Check if this is the first player (who becomes the dealer)
     const isFirstPlayer = game.dealerId === null;
     if (isFirstPlayer) {
-      game.dealerId = playerId;
+      game.dealerId = userId; // Use userId as the dealer ID
+      console.log(`[PLAYER_MANAGEMENT] Player ${name} is the first player and becomes dealer`);
+    }
+    
+    // Initialize or update seat info
+    if (!game.seatInfo) {
+      game.seatInfo = Array(game.MAX_SEATS).fill(null);
     }
     
     game.seatInfo[seatIndex] = {
-      playerId,
-      name: name || `Player ${seatIndex + 1}`,
-      isDealer: playerId === game.dealerId,
+      playerId: userId,
+      name: name,
+      isDealer: isFirstPlayer,
       joinedAt: Date.now()
     };
     
-    // Update next seat index
+    // Update the next seat index for future players
     game.nextSeatIndex = (seatIndex + 1) % game.MAX_SEATS;
     
-    const displayName = game.seatInfo[seatIndex].name;
-    gameLog(game, `${displayName} joined the game`);
-    
-    // Load player media preferences and apply auto-ante if enabled
-    if (userId) {  
-      try {
-        // Get the database service from the registry
-        const databaseService = this.getService('database');
-        const preferences = await databaseService.getPreferences(userId);
-        
-        // Store media preferences in the player object so they can be displayed in the UI
-        if (preferences) {
-          // Create a mediaPreferences object if it doesn't exist
-          game.players[playerId].mediaPreferences = game.players[playerId].mediaPreferences || {};
-          
-          // Store profile image URL if available
-          if (preferences.profileImg) {
-            game.players[playerId].mediaPreferences.profileImg = preferences.profileImg;
-          }
-          
-          // Store other media preferences if needed
-          if (preferences.twoSecondPotGif) {
-            game.players[playerId].mediaPreferences.twoSecondPotGif = preferences.twoSecondPotGif;
-          }
-          if (preferences.twoSecondPotMp3) {
-            game.players[playerId].mediaPreferences.twoSecondPotMp3 = preferences.twoSecondPotMp3;
-          }
-        }
-        
-        // Apply auto-ante if in waiting phase and enabled
-        if (game.phase === GamePhases.WAITING && preferences && preferences.autoAnte) {
-          try {
-            // Use the same playerReady function for consistency
-            game = await this.playerReady(game, playerId);
-            gameLog(game, `Auto-ante applied for ${player.name} who just joined`);
-          } catch (error) {
-            gameLog(game, `Auto-ante error for new player ${player.name}: ${error.message}`);
-          }
-        }
-      } catch (error) {
-        gameLog(game, `Error loading player preferences: ${error.message}`);
-      }
-      
-      const gameService = this.getService('game');
-      gameService.broadcastGameState(game);
-    }
-    
+    // Update the game timestamp
     game.updateTimestamp();
+    
     return game;
   }
 
-  removePlayer(game, playerId) {
-    if (!game || !game.players[playerId]) return game;
+  /**
+   * Remove a player from the game
+   * @param {Object} game - The game to remove the player from
+   * @param {string} userId - The user ID of the player to remove
+   * @returns {Object} The updated game object
+   */
+  removePlayer(game, userId) {
+    if (!game) return game;
     
-    const player = game.players[playerId];
-    const seatIndex = game.seats.indexOf(playerId);
+    if (!userId || !game.players[userId]) {
+      console.log(`[PLAYER_MANAGEMENT] Cannot remove player with userId ${userId}: user not found`);
+      return game;
+    }
+    
+    const player = game.players[userId];
+    const seatIndex = game.seats.indexOf(userId);
     
     // Remove from seat
     if (seatIndex >= 0) {
       game.seats[seatIndex] = null;
     }
     
-    // Remove from players
-    delete game.players[playerId];
+    // Remove socket-to-user mapping for all sockets associated with this user
+    Object.keys(game.socketIdToUserId).forEach(socketId => {
+      if (game.socketIdToUserId[socketId] === userId) {
+        delete game.socketIdToUserId[socketId];
+      }
+    });
     
-    gameLog(game, `${player.name} left the game`);
+    // Remove from players
+    delete game.players[userId];
+    
+    // Add a prominent log message when a player leaves
+    gameLog(game, `${player.name} left`);
+    console.log(`[PLAYER_MANAGEMENT] Player ${player.name} left game ${game.id}`);
+    
     game.updateTimestamp();
     return game;
   }
 
-  // Media preferences are now handled entirely through HTTP routes
-  
   // Media preferences are now handled entirely through HTTP routes
   
   moveToNextPlayer(game) {
@@ -161,7 +293,7 @@ class PlayerManagementService extends BaseService {
     const currentPlayer = game.players[game.currentPlayerId];
     // Detailed logging removed for cleaner game log
     
-    // Get the next player ID based on seat order
+    // Get the next player ID based on seat order - already using userId
     const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);
     
     if (nextPlayerId) {
@@ -171,26 +303,62 @@ class PlayerManagementService extends BaseService {
       // Update the current player
       game.currentPlayerId = nextPlayerId;
       
-      // Log the player transition with detailed information
-      const nextPlayer = game.players[nextPlayerId];
-      gameLog(game, `${nextPlayer?.name}'s turn`);
+      // Log the player change
+      if (prevPlayerId !== nextPlayerId) {
+        const nextPlayer = game.players[nextPlayerId];
+        if (nextPlayer) {
+          gameLog(game, `Turn: ${nextPlayer.name}`);
+        }
+      }
     } else {
-      gameLog(game, `WARNING: Could not find next player after ${currentPlayer?.name}`);
+      console.log(`[PLAYER_MANAGEMENT] No next player found after ${game.currentPlayerId}`);
     }
+    
+    // Pot empty check is now handled in GameService.startNextRound
     
     game.updateTimestamp();
     return game;
   }
-
-  setInitialCurrentPlayer(game) {
-    if (!game || !game.dealerId) return game;
+  
+  startNewRound(game) {
+    if (!game) return game;
     
-    // Get the player in the next seat after the dealer
+    // Reset all player bets
+    Object.values(game.players).forEach(player => {
+      player.currentBet = 0;
+      player.isReady = false; // Reset ready state for new round
+    });
+    
+    // Increment round counter
+    game.round++;
+    
+    // Reset game state
+    game.pot = 0;
+    game.firstCard = null;
+    game.secondCard = null;
+    game.thirdCard = null;
+    game.result = null;
+    game.waitingForAceDecision = false;
+    game.waitingForSecondChance = false;
+    
+    // Set the phase back to waiting
+    game.phase = GamePhases.WAITING;
+    
+    // Move dealer position to the next player
+    const nextDealerId = game.getNextPlayerInOrder(game.dealerId);
+    
+    if (nextDealerId && nextDealerId !== game.dealerId) {
+      game.dealerId = nextDealerId;
+      gameLog(game, `New dealer: ${game.players[nextDealerId].name}`);
+    }
+    
+    // Set the current player to the player after the dealer
     const nextPlayerId = game.getNextPlayerAfterDealer();
     
     if (nextPlayerId && nextPlayerId !== game.dealerId) {
       game.currentPlayerId = nextPlayerId;
-    } else if (game.dealerId && game.players[game.dealerId]) {
+    } else if (game.dealerId) {
+      // Only dealer present: dealer is current player
       game.currentPlayerId = game.dealerId;
       gameLog(game, `Only dealer present: ${game.players[game.dealerId].name}`);
     }
@@ -199,10 +367,21 @@ class PlayerManagementService extends BaseService {
     return game;
   }
 
-  async playerReady(game, playerId) {
-    if (!game || !game.players[playerId]) return game;
+  /**
+   * Mark a player as ready (anted up)
+   * @param {Object} game - The game object
+   * @param {string} userId - The user ID of the player
+   * @returns {Object} The updated game object
+   */
+  async playerReady(game, userId) {
+    if (!game) return game;
+    
+    if (!userId || !game.players[userId]) {
+      console.error(`[PLAYER_MGMT] Cannot mark player ready: userId ${userId} not found in game`);
+      return game;
+    }
 
-    const player = game.players[playerId];
+    const player = game.players[userId];
     
     // Prevent double-ante by checking if player is already ready
     if (player.isReady) {
@@ -218,7 +397,7 @@ class PlayerManagementService extends BaseService {
       // The pot is automatically updated by the transaction service
       game = await gameTransactionService.processTransaction(
         game, 
-        playerId, 
+        userId, // Use userId instead of socketId
         -ANTE_AMOUNT, 
         `Ante in round ${game.round}`
       );
@@ -230,15 +409,26 @@ class PlayerManagementService extends BaseService {
       game.updateTimestamp();
       return game;
     } catch (error) {
-      console.error(`[PLAYER_MGMT] Failed to remove ante from ${player.name}'s balance:`, error);
+      console.error(`[PLAYER_MGMT] Failed to deduct ante from ${player.name}'s balance:`, error);
       return game;
     }
   }
 
-  async playerUnready(game, playerId) {
-    if (!game || !game.players[playerId]) return game;
+  /**
+   * Mark a player as unready (withdraw ante)
+   * @param {Object} game - The game object
+   * @param {string} userId - The user ID of the player
+   * @returns {Object} The updated game object
+   */
+  async playerUnready(game, userId) {
+    if (!game) return game;
+    
+    if (!userId || !game.players[userId]) {
+      console.error(`[PLAYER_MGMT] Cannot mark player unready: userId ${userId} not found in game`);
+      return game;
+    }
 
-    const player = game.players[playerId];
+    const player = game.players[userId];
     
     // Only allow withdraw if player is ready but game hasn't started
     if (!player.isReady || game.phase !== GamePhases.WAITING) {
@@ -252,24 +442,21 @@ class PlayerManagementService extends BaseService {
       // The pot is automatically updated by the transaction service
       game = await gameTransactionService.processTransaction(
         game, 
-        playerId, 
+        userId, // Use userId instead of socketId
         ANTE_AMOUNT, 
         `Ante withdraw in round ${game.round}`
       );
       
       player.isReady = false;
+      player.currentBet = 0;
       
+      gameLog(game, `${player.name} withdraws ante`);
       game.updateTimestamp();
       return game;
     } catch (error) {
       console.error(`[PLAYER_MGMT] Failed to return ante to ${player.name}'s balance:`, error);
       return game;
     }
-
-    // Player is already marked as not ready in the try block
-    gameLog(game, `${player.name} withdraws ante`);
-    game.updateTimestamp();
-    return game;
   }
 }
 

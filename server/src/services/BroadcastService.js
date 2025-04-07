@@ -44,15 +44,15 @@ class BroadcastService extends BaseService {
    */
   broadcastGameList() {
     const connectionService = this.getService('connection');
-    const lobbyService = this.getService('lobby');
+    const gameService = this.getService('game');
     
     if (!connectionService || !connectionService.io) return;
-    if (!lobbyService) {
-      console.error('[BROADCAST_SERVICE] Lobby service not available');
+    if (!gameService) {
+      console.error('[BROADCAST_SERVICE] Game service not available');
       return;
     }
     
-    const gameList = lobbyService.getGameList();
+    const gameList = gameService.getGameList();
     
     // Send game list to all connected clients
     connectionService.io.emit('gameList', gameList);

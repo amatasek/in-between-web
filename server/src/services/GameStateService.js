@@ -92,17 +92,106 @@ class GameStateService extends BaseService {
   }
 
   getAvailableGames() {
-    return Object.values(this.games).map(game => {
-      // Calculate player count directly from seats
-      const playerCount = game.seats.filter(seat => seat !== null).length;
+    const games = Object.values(this.games).map(game => {
+      // First, clean up any duplicate players by userId
+      this.cleanupDuplicatePlayers(game);
+      
+      // Calculate player count based on connected players only
+      // A player is considered connected if isConnected is true AND disconnected is not true
+      const connectedPlayerCount = Object.values(game.players)
+        .filter(player => player.isConnected && !player.disconnected)
+        .length;
+      
+      // Get list of disconnected players (userId and name) for the game list UI
+      const disconnectedPlayers = Object.values(game.players)
+        .filter(player => player.disconnected)
+        .map(player => ({
+          userId: player.userId,
+          name: player.name
+        }));
+      
+      // Get list of all players (connected and disconnected) for the game list UI
+      // This allows the UI to identify games the current user is in
+      const allPlayers = Object.values(game.players)
+        .map(player => ({
+          userId: player.userId,
+          name: player.name,
+          disconnected: player.disconnected === true
+        }));
       
       return {
         id: game.id,
-        playerCount,
+        playerCount: connectedPlayerCount,
         phase: game.phase,
-        pot: game.pot
+        pot: game.pot,
+        disconnectedPlayers: disconnectedPlayers,
+        allPlayers: allPlayers
       };
     });
+    
+    // Removed verbose game state log
+    
+    return games;
+  }
+  
+  /**
+   * Clean up duplicate players in a game by userId
+   * This ensures that when a player refreshes, we don't count them twice
+   * @param {Object} game - The game to clean up
+   */
+  cleanupDuplicatePlayers(game) {
+    if (!game || !game.players) return;
+    
+    // Group players by userId
+    const playersByUserId = {};
+    const playersToRemove = [];
+    
+    // First pass: group players by userId and find duplicates
+    for (const playerId in game.players) {
+      const player = game.players[playerId];
+      if (!player.userId) continue; // Skip players without userId
+      
+      if (!playersByUserId[player.userId]) {
+        playersByUserId[player.userId] = [];
+      }
+      
+      playersByUserId[player.userId].push({
+        playerId,
+        player,
+        joinedAt: player.joinedAt || 0
+      });
+    }
+    
+    // Second pass: identify duplicates to remove (keep most recent)
+    for (const userId in playersByUserId) {
+      const players = playersByUserId[userId];
+      
+      if (players.length > 1) {
+        console.log(`[GAME_STATE_SERVICE] Found ${players.length} instances of userId ${userId} in game ${game.id}`);
+        
+        // Sort by joinedAt (descending) to keep the most recent player
+        players.sort((a, b) => b.joinedAt - a.joinedAt);
+        
+        // Mark all but the most recent for removal
+        for (let i = 1; i < players.length; i++) {
+          playersToRemove.push(players[i].playerId);
+        }
+      }
+    }
+    
+    // Third pass: remove duplicates
+    for (const playerId of playersToRemove) {
+      console.log(`[GAME_STATE_SERVICE] Removing duplicate player ${playerId} from game ${game.id}`);
+      
+      // Remove from players object
+      delete game.players[playerId];
+      
+      // Remove from seats array
+      const seatIndex = game.seats.indexOf(playerId);
+      if (seatIndex !== -1) {
+        game.seats[seatIndex] = null;
+      }
+    }
   }
 }
 
