@@ -51,6 +51,7 @@ class GameTimingService extends BaseService {
     const gameService = this.getService('game');
     const cardService = this.getService('card');
     const gameStateService = this.getService('gameState');
+    const broadcastService = this.getService('broadcast');
     
     if (!game) return game;
 
@@ -60,7 +61,7 @@ class GameTimingService extends BaseService {
     this.timeouts[game.id].dealFirstCard = setTimeout(async () => {
       // Deal first card
       game = cardService.dealFirstCard(game);
-      gameService.broadcastGameState(game);
+      broadcastService.broadcastGameState(game);
       
       // Check if the first card is an Ace
       if (game.firstCard && game.firstCard.value === 'A') {
@@ -68,7 +69,7 @@ class GameTimingService extends BaseService {
         gameLog(game, `${game.players[game.currentPlayerId]?.name} needs to choose Ace value`);
         
         // Broadcast the game state with the waitingForAceDecision flag
-        gameService.broadcastGameState(game);
+        broadcastService.broadcastGameState(game);
         
         // Save the game state
         await gameStateService.saveGame(game);
@@ -138,7 +139,7 @@ class GameTimingService extends BaseService {
       this.timeouts[game.id].dealSecondCard = setTimeout(async () => {
         // Deal second card
         game = cardService.dealSecondCard(game);
-        gameService.broadcastGameState(game);
+        broadcastService.broadcastGameState(game);
         
         // Check if the first two cards form a matching pair (but aren't Aces)
         if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
@@ -194,7 +195,7 @@ class GameTimingService extends BaseService {
           }, betTimeoutDuration);
           
           // Broadcast the updated game state
-          gameService.broadcastGameState(game);
+          broadcastService.broadcastGameState(game);
         }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
       }, GAME_CONSTANTS.TIMERS.DEAL_FIRST_CARD_DELAY);
     
@@ -213,6 +214,7 @@ class GameTimingService extends BaseService {
     const cardService = this.getService('card');
     const gameService = this.getService('game');
     const gameStateService = this.getService('gameState');
+    const broadcastService = this.getService('broadcast');
     
     if (!game) return game;
     
@@ -232,7 +234,7 @@ class GameTimingService extends BaseService {
     this.clearPhaseTimeouts(game.id, 'revealing');
     
     // Broadcast the initial revealing state
-    gameService.broadcastGameState(game);
+    broadcastService.broadcastGameState(game);
     
     // Deal the third card after the specified delay (2 seconds)
     this.timeouts[game.id].dealThirdCard = setTimeout(() => {
@@ -244,7 +246,7 @@ class GameTimingService extends BaseService {
         gameLog(game, `Restored current player to ${game.players[currentPlayerId]?.name} after dealing third card`);
       }
       
-      gameService.broadcastGameState(game);
+      broadcastService.broadcastGameState(game);
       
       // Set timer for results phase - adjust the duration to maintain the original total timing
       // Subtract the DEAL_THIRD_CARD_DELAY from REVEALING_DURATION to keep the total consistent
@@ -270,7 +272,7 @@ class GameTimingService extends BaseService {
         game.phase = GamePhases.RESULTS;
 
         // Broadcast the updated game state
-        gameService.broadcastGameState(game);
+        broadcastService.broadcastGameState(game);
         
         // Save the game state
         await gameStateService.saveGame(game);
@@ -371,7 +373,7 @@ class GameTimingService extends BaseService {
     this.timeouts[game.id].dealSecondCard = setTimeout(async () => {
       // Deal second card
       game = cardService.dealSecondCard(game);
-      gameService.broadcastGameState(game);
+      broadcastService.broadcastGameState(game);
       
       // Check if the first two cards form a matching pair (but aren't Aces)
       if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
@@ -427,7 +429,7 @@ class GameTimingService extends BaseService {
         }, betTimeoutDuration);
         
         // Broadcast the updated game state
-        gameService.broadcastGameState(game);
+        broadcastService.broadcastGameState(game);
       }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     
@@ -497,7 +499,7 @@ class GameTimingService extends BaseService {
       }, betTimeoutDuration);
       
       // Broadcast the updated game state
-      gameService.broadcastGameState(game);
+      broadcastService.broadcastGameState(game);
     }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     
     return game;
@@ -517,7 +519,8 @@ class GameTimingService extends BaseService {
     gameLog(game, `${playerName} has matching cards - second chance?`);
     
     // Broadcast the game state with the waitingForSecondChance flag
-    gameService.broadcastGameState(game);
+    const broadcastService = this.getService('broadcast');
+    broadcastService.broadcastGameState(game);
     
     // Save the game state
     await gameStateService.saveGame(game);

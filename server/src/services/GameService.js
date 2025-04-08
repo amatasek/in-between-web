@@ -817,7 +817,8 @@ class GameService extends BaseService {
       gameLog(game, `Waiting for players to ante up for a new game`);
       
       // Broadcast the current game state
-      this.broadcastGameState(game);
+      const broadcastService = this.getService('broadcast');
+      broadcastService.broadcastGameState(game);
       
       // Return early to prevent starting a new round
       return game;
@@ -843,7 +844,8 @@ class GameService extends BaseService {
     }
     
     // Broadcast the updated game state
-    this.broadcastGameState(game);
+    const broadcastService = this.getService('broadcast');
+    broadcastService.broadcastGameState(game);
     
     return game;
   }
@@ -898,25 +900,7 @@ class GameService extends BaseService {
     }
   }
 
-  broadcastGameState(game) {
-      if (!game) return;
-      
-      // Ensure the current player is set before broadcasting
-      if (!game.currentPlayerId && game.phase !== 'waiting' && game.phase !== 'gameOver') {
-        gameLog(game, `WARNING: Current player is undefined before broadcast, attempting to fix`);
-        
-        // Try to set a valid player if possible
-        const connectedPlayers = game.getConnectedPlayersInOrder();
-        if (connectedPlayers.length > 0) {
-          game.currentPlayerId = connectedPlayers[0];
-          gameLog(game, `Set current player to ${game.players[game.currentPlayerId]?.name} for broadcast`);
-        }
-      }
-      
-      // Get the broadcast service from the registry
-      const broadcastService = this.getService('broadcast');
-      broadcastService.broadcastGameState(game);
-  }
+  // broadcastGameState method moved to BroadcastService
 }
 
 module.exports = new GameService();

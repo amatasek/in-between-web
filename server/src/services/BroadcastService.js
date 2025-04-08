@@ -46,7 +46,10 @@ class BroadcastService extends BaseService {
     const connectionService = this.getService('connection');
     const gameService = this.getService('game');
     
-    if (!connectionService || !connectionService.io) return;
+    if (!connectionService || !connectionService.io) {
+      console.error('[BROADCAST_SERVICE] Connection service or io not available');
+      return;
+    }
     if (!gameService) {
       console.error('[BROADCAST_SERVICE] Game service not available');
       return;
@@ -54,9 +57,19 @@ class BroadcastService extends BaseService {
     
     const gameList = gameService.getGameList();
     
+    // Get count of connected clients
+    let connectedClients = 0;
+    try {
+      connectedClients = connectionService.io.engine.clientsCount;
+    } catch (err) {
+      console.error('[BROADCAST_SERVICE] Error getting client count:', err);
+    }
+    
     // Send game list to all connected clients
     connectionService.io.emit('gameList', gameList);
-    console.log(`[BROADCAST_SERVICE] Broadcasting list of ${gameList.length} available games`);
+    
+    console.log(`[BROADCAST_SERVICE] Broadcasting list of ${gameList.length} available games to ${connectedClients} connected clients`);
+    console.log(`[BROADCAST_SERVICE] Game list data:`, JSON.stringify(gameList.map(g => ({ id: g.id, players: Object.keys(g.players || {}).length }))));
   }
 }
 

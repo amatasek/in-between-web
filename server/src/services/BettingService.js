@@ -1,11 +1,20 @@
 const BaseService = require('./BaseService');
-const { GamePhases } = require('../../../shared/constants/GamePhases');
 const { gameLog } = require('../utils/logger');
 
+/**
+ * Service for handling betting operations in the game
+ */
 class BettingService extends BaseService {
   constructor() {
     super();
   }
+  /**
+   * Place a bet for a player
+   * @param {Object} game - The game object
+   * @param {string} playerId - The player's ID
+   * @param {number} amount - The bet amount (0 for pass)
+   * @returns {Promise<Object>} The updated game object
+   */
   async placeBet(game, playerId, amount) {
     if (!game || !game.isPlayersTurn(playerId)) {
       gameLog(game, `Invalid bet: Not ${game.players[playerId]?.name}'s turn`);
@@ -26,17 +35,15 @@ class BettingService extends BaseService {
       return game;
     }
     
-    // Calculate bet amount
-    let betAmount = amount;
-    
-    if (betAmount <= 0 || betAmount > Math.min(game.pot, player.balance)) {
-      gameLog(game, `Invalid bet amount: ${betAmount}`);
+    // Validate bet amount
+    if (amount <= 0 || amount > Math.min(game.pot, player.balance)) {
+      gameLog(game, `Invalid bet amount: ${amount}`);
       return game;
     }
     
     try {
       // Place bet
-      if (!player.placeBet(betAmount)) return game;
+      if (!player.placeBet(amount)) return game;
       
       // Process the bet transaction through the central transaction service
       const gameTransactionService = this.getService('gameTransaction');
@@ -46,11 +53,11 @@ class BettingService extends BaseService {
         game = await gameTransactionService.processTransaction(
           game, 
           playerId, 
-          -betAmount, 
+          -amount, 
           `Bet in round ${game.round}`
         );
         
-        gameLog(game, `${player.name} bets ${betAmount} coins`);
+        gameLog(game, `${player.name} bets ${amount} coins`);
         
         return game;
       } catch (error) {
@@ -58,9 +65,6 @@ class BettingService extends BaseService {
         player.resetBet();
         return game;
       }
-      
-      // Return the game (pot already updated in the try block)
-      return game;
     } catch (error) {
       gameLog(game, `Error processing bet: ${error.message}`);
       player.resetBet();

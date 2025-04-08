@@ -10,7 +10,6 @@ class Game {
     this.id = id;
     this.players = {}; // Now keyed by userId instead of socketId
     this.socketIdToUserId = {}; // Maps socketId to userId for quick lookups
-    this.playerOrder = [];
     
     // Seat-based player management
     this.MAX_SEATS = 32;
@@ -163,6 +162,7 @@ class Game {
   /**
    * Get the first non-dealer player (player in position 1)
    * @returns {string} The player ID in seat 1 or null if none
+   * @deprecated Use getNextPlayerAfterDealer() instead for consistent player rotation
    */
   getFirstNonDealerPlayer() {
     // First non-dealer player is in seat 1
@@ -286,7 +286,6 @@ class Game {
     return {
       id: this.id,
       players: playerInfo,
-      playerOrder: this.playerOrder,
       seats: this.seats,
       phase: this.phase,
       pot: this.pot,
@@ -318,6 +317,8 @@ class Game {
   /**
    * Get all connected players in seat order
    * @returns {Array} Array of connected player IDs
+   * @note This is a wrapper around getConnectedPlayersInOrder() for backward compatibility
+   * with existing code in CardService.js
    */
   getConnectedPlayers() {
     // Return connected players in seat order instead of join order

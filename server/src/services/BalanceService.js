@@ -1,5 +1,8 @@
 const BaseService = require('./BaseService');
 
+/**
+ * Service for managing user balances and transactions
+ */
 class BalanceService extends BaseService {
   constructor() {
     super();
@@ -12,8 +15,6 @@ class BalanceService extends BaseService {
    * @returns {Promise<{balance: number, transaction: Object}>}
    */
   async updateBalance(userId, amount, reason) {
-    console.log('[Balance] Updating balance:', { userId, amount, reason });
-    
     try {
       const databaseService = this.getService('database');
       await databaseService.updateBalance(userId, amount, reason);
@@ -46,13 +47,12 @@ class BalanceService extends BaseService {
    * @param {number} amount - Amount won/lost
    * @param {string} gameId - The game ID
    * @param {string} result - The game result (win/loss/tie)
+   * @returns {Promise<{balance: number, transaction: Object}>}
    */
   async processGameResult(userId, amount, gameId, result) {
     const reason = `Game ${gameId}: ${result}`;
     return this.updateBalance(userId, amount, reason);
   }
-
-  // Player-specific methods removed as they were redundant
 }
 
 module.exports = new BalanceService();
