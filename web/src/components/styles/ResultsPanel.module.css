@@ -4,12 +4,14 @@
   align-items: center;
   background-color: rgba(52, 73, 94, 0.9);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.7rem;
   margin: 1rem auto;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
 }
 
 /* These card display styles were removed as they are not used (cardResult has display: none) */
@@ -23,9 +25,9 @@
 }
 
 .resultText {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.5rem 0;
   letter-spacing: 0.5px;
 }
 
@@ -35,8 +37,14 @@
 }
 
 .tieText {
-  color: #f39c12;
-  text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.4);
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  transform: scale(1.1);
+  animation: warningPulse 1.5s infinite;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .loseText {
@@ -46,20 +54,20 @@
 
 .winningsText {
   color: #f1c40f;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  margin: 0.5rem 0 1.5rem 0;
+  margin: 0.4rem 0 1rem 0;
 }
 
 .countdownContainer {
   width: 80%;
-  margin-top: 1rem;
+  margin-top: 0.7rem;
 }
 
 .countdownText {
   color: #ecf0f1;
-  font-size: 1rem;
-  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  margin: 0 0 0.4rem 0;
   opacity: 0.8;
 }
 
@@ -82,4 +90,51 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.penaltyWarning {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+/* Apply caution tape border to the entire results panel when it's a tie */
+.resultsPanel:has(.tieText) {
+  border: 7px solid transparent;
+  border-image: repeating-linear-gradient(
+    45deg,
+    #ffd700,
+    #ffd700 10px,
+    #c0c0c0 10px,
+    #c0c0c0 20px
+  ) 10;
+  animation: cautionSlide 15s linear infinite;
+  background-clip: padding-box;
+}
+
+.penaltyText {
+  color: #ffd700;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 0.2rem 0;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  letter-spacing: 1px;
+  animation: warningPulse 1.5s infinite;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+@keyframes warningPulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+@keyframes cautionSlide {
+  0% { border-image-source: repeating-linear-gradient(45deg, #ffd700, #ffd700 10px, #c0c0c0 10px, #c0c0c0 20px); }
+  100% { border-image-source: repeating-linear-gradient(45deg, #c0c0c0, #c0c0c0 10px, #ffd700 10px, #ffd700 20px); }
 }

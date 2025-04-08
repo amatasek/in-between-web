@@ -18,21 +18,32 @@ const ResultsPanel = () => {
   const isCurrentPlayer = result.playerId === socket?.id;
   const playerName = isCurrentPlayer ? 'You' : players[result.playerId]?.name;
   const outcomeText = isCurrentPlayer 
-    ? (result.outcome === 'win' ? 'Won' : result.outcome === 'tie' ? 'Tied' : 'Lost')
-    : (result.outcome === 'win' ? 'Won' : result.outcome === 'tie' ? 'Tied' : 'Lost');
+    ? (result.outcome === 'win' ? 'Won' : result.outcome === 'tie' ? 'PENALTY!' : 'Lost')
+    : (result.outcome === 'win' ? 'Won' : result.outcome === 'tie' ? 'PENALTY!' : 'Lost');
 
   return (
     <div className={styles.resultsPanel}>
       {/* Card display section removed - cards are now visible in the game board */}
 
       <div className={styles.resultContent}>
+        {result.outcome === 'tie' && (
+          <div className={styles.penaltyWarning}>
+            <div className={styles.cautionTape}></div>
+          </div>
+        )}
         <h2 className={`${styles.resultText} ${styles[result.outcome + 'Text']}`}>
-          {playerName} {outcomeText}!
+          {playerName} {outcomeText}{result.outcome !== 'tie' && '!'}
         </h2>
         
         {result.winnings > 0 && (
           <p className={styles.winningsText}>
             Winnings: <CurrencyAmount amount={result.winnings} size="medium" />
+          </p>
+        )}
+        
+        {result.outcome === 'tie' && (
+          <p className={styles.penaltyText}>
+            {result.isTripleAceTie ? '3X PENALTY' : '2X PENALTY'}
           </p>
         )}
         
