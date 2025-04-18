@@ -794,23 +794,12 @@ class GameService extends BaseService {
   async startNextRound(game) {
     if (!game) return game;
     
-    // Get the player management service
-    const playerManagementService = this.getService('playerManagement');
-    
-    // Always explicitly move to the next player before checking pot
-    const currentPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
-    gameLog(game, `Moving from player ${currentPlayer} to next player`);
-    
-    // Move to the next player - this ensures the next player is selected even when pot is emptied
-    game = await playerManagementService.moveToNextPlayer(game);
-    
-    const selectedPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
-    gameLog(game, `Next player will be: ${selectedPlayer}`);
-    
     // Check if the pot is empty before proceeding
     if (game.pot === 0) {
       // If pot is empty, transition to waiting phase
       game.phase = GamePhases.WAITING;
+
+      game = await playerManagementService.moveToNextPlayer(game);
       
       // Reset all player ready states
       Object.values(game.players).forEach(player => {
