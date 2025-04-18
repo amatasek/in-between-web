@@ -797,6 +797,16 @@ class GameService extends BaseService {
     // Get the player management service
     const playerManagementService = this.getService('playerManagement');
     
+    // Always explicitly move to the next player before checking pot
+    const currentPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
+    gameLog(game, `Moving from player ${currentPlayer} to next player`);
+    
+    // Move to the next player - this ensures the next player is selected even when pot is emptied
+    game = await playerManagementService.moveToNextPlayer(game);
+    
+    const selectedPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
+    gameLog(game, `Next player will be: ${selectedPlayer}`);
+    
     // Check if the pot is empty before proceeding
     if (game.pot === 0) {
       // If pot is empty, transition to waiting phase
@@ -814,7 +824,7 @@ class GameService extends BaseService {
       game.thirdCard = null;
       game.result = null;
       
-      gameLog(game, `Waiting for players to ante up for a new game`);
+      gameLog(game, `Pot is empty. Waiting for players to ante up for a new game`);
       
       // Broadcast the current game state
       const broadcastService = this.getService('broadcast');
@@ -824,15 +834,9 @@ class GameService extends BaseService {
       return game;
     }
     
-    // Always explicitly move to the next player before starting a new round
-    const currentPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
-    gameLog(game, `Moving from player ${currentPlayer} to next player`);
-    
-    // Move to the next player
-    game = await playerManagementService.moveToNextPlayer(game);
-    
-    const nextPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
-    gameLog(game, `Next round will start with player: ${nextPlayer}`);
+    // We've already moved to the next player above, so we can proceed directly to starting the new round
+    const startingPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
+    gameLog(game, `Next round will start with player: ${startingPlayer}`);
     
     // Start new round with the updated player
     game = await this.startRound(game);
