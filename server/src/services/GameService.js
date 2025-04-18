@@ -846,13 +846,19 @@ class GameService extends BaseService {
       game.result = null;
       
       gameLog(game, `Pot is empty. Waiting for players to ante up for the next round`);
-      
+
       // Broadcast the current game state
       broadcastService.broadcastGameState(game);
       
       // Return early to prevent starting a new round
       return game;
     }
+    
+    // For continuing the game with the next round
+    gameLog(game, `Starting next round`);
+    
+    // Start a new round (not the first round)
+    game = await this.startNewRound(game, false);
     
     // Broadcast the updated game state
     broadcastService.broadcastGameState(game);
