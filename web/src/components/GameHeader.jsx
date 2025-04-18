@@ -7,6 +7,7 @@ const { TIMERS } = GAME_CONSTANTS;
 import { ICONS } from '../constants/UIConstants';
 import MuteToggle from './MuteToggle.jsx';
 import GameSummaryModal from './GameSummaryModal.jsx';
+import GameRulesButton from './GameRulesButton.jsx';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
@@ -135,15 +136,18 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
         </div>
         
-        {/* Right: Leave and Mute stacked */}
+        {/* Right: Rules, Leave and Mute buttons stacked */}
         <div className={styles.headerRight}>
           <div className={styles.controlsStack}>
-            <button 
-              className={styles.leaveButton}
-              onClick={handleLeaveGame}
-            >
-              Leave Game
-            </button>
+            <div className={styles.buttonGroup}>
+              <GameRulesButton />
+              <button 
+                className={styles.leaveButton}
+                onClick={handleLeaveGame}
+              >
+                Leave Game
+              </button>
+            </div>
             <div className={styles.muteToggleContainer}>
               <MuteToggle compact={true} />
             </div>
@@ -153,7 +157,7 @@ const GameHeader = ({ handleLeaveGame }) => {
       
       {/* Mobile layout - two rows */}
       <div className={styles.mobileLayout}>
-        {/* Top row: Logo/ID, Mute, Leave */}
+        {/* Top row: Logo/ID, Mute, Rules, Leave */}
         <div className={styles.mobileTopRow}>
           <div className={styles.headerLeft}>
             <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
@@ -168,16 +172,20 @@ const GameHeader = ({ handleLeaveGame }) => {
             </p>
           </div>
           
-          <div className={styles.muteToggleContainer}>
-            <MuteToggle compact={true} />
+          <div className={styles.mobileActions}>
+            <div className={styles.muteToggleContainer}>
+              <MuteToggle compact={true} />
+            </div>
+            
+            <GameRulesButton />
+            
+            <button 
+              className={styles.leaveButton}
+              onClick={handleLeaveGame}
+            >
+              Leave Game
+            </button>
           </div>
-          
-          <button 
-            className={styles.leaveButton}
-            onClick={handleLeaveGame}
-          >
-            Leave Game
-          </button>
         </div>
         
         {/* Bottom row: Phase indicator (full width) */}
