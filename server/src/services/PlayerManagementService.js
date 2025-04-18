@@ -324,53 +324,6 @@ class PlayerManagementService extends BaseService {
     game.updateTimestamp();
     return game;
   }
-  
-  startNewRound(game) {
-    if (!game) return game;
-    
-    // Reset all player bets
-    Object.values(game.players).forEach(player => {
-      player.currentBet = 0;
-      player.isReady = false; // Reset ready state for new round
-    });
-    
-    // Increment round counter
-    game.round++;
-    
-    // Reset game state
-    game.pot = 0;
-    game.firstCard = null;
-    game.secondCard = null;
-    game.thirdCard = null;
-    game.result = null;
-    game.waitingForAceDecision = false;
-    game.waitingForSecondChance = false;
-    
-    // Set the phase back to waiting
-    game.phase = GamePhases.WAITING;
-    
-    // Move dealer position to the next player
-    const nextDealerId = game.getNextPlayerInOrder(game.dealerId);
-    
-    if (nextDealerId && nextDealerId !== game.dealerId) {
-      game.dealerId = nextDealerId;
-      gameLog(game, `New dealer: ${game.players[nextDealerId].name}`);
-    }
-    
-    // Set the current player to the player after the dealer
-    const nextPlayerId = game.getNextPlayerAfterDealer();
-    
-    if (nextPlayerId && nextPlayerId !== game.dealerId) {
-      game.currentPlayerId = nextPlayerId;
-    } else if (game.dealerId) {
-      // Only dealer present: dealer is current player
-      game.currentPlayerId = game.dealerId;
-      gameLog(game, `Only dealer present: ${game.players[game.dealerId].name}`);
-    }
-    
-    game.updateTimestamp();
-    return game;
-  }
 
   /**
    * Mark a player as ready (anted up)

@@ -82,6 +82,9 @@ class GameService extends BaseService {
       // Create game
       const game = gameStateService.createGame(gameId);
       
+      // Initialize the new game
+      await this.initializeGame(game);
+      
       // Add player to game
       await playerManagementService.addPlayer(game, socket.id, user.username || `Player ${socket.id.slice(0,4)}`, user.userId);
       
@@ -392,53 +395,74 @@ class GameService extends BaseService {
     return playerManagementService.removePlayer(game, playerId);
   }
 
-  async startRound(game) {
+  /**
+   * Initialize a new game instance
+   * This is called when creating a brand new game
+   * @param {Object} game - The game object to initialize
+   * @returns {Object} The initialized game
+   */
+  async initializeGame(game) {
+    if (!game) return game;
+    
+    // Get required services
+    const cardService = this.getService('card');
+    
+    // Ensure deck is available
+    game = cardService.ensureDeckAvailable(game);
+    
+    // Set initial game state
+    game.round = 0; // Will be incremented to 1 in startNewRound
+    game.phase = GamePhases.WAITING;
+    game.pot = 0;
+    
+    // Set dealer if not already set
+    if (!game.dealerId && game.seats.some(seat => seat !== null)) {
+      // Set the first player as dealer
+      game.dealerId = game.seats.find(seat => seat !== null);
+      gameLog(game, `Setting initial dealer: ${game.players[game.dealerId]?.name}`);
+    }
+    
+    gameLog(game, `Game initialized, waiting for players to ante up`);
+    return game;
+  }
+  
+  /**
+   * Start a new round within the game
+   * @param {Object} game - The game object
+   * @param {boolean} isFirstRound - Whether this is the first round after waiting phase
+   * @returns {Object} The updated game object
+   */
+  async startNewRound(game, isFirstRound = false) {
     if (!game) return game;
     
     // Get required services
     const gameTimingService = this.getService('gameTiming');
     const gameStateService = this.getService('gameState');
-    const cardService = this.getService('card');
     const playerManagementService = this.getService('playerManagement');
     
     // Clear any existing timeouts
     gameTimingService.clearGameTimeouts(game.id);
     
-    // Store the current player before starting a new round
-    const currentPlayerId = game.currentPlayerId;
+    // Handle player selection
+    if (isFirstRound) {
+      // For the first round, select the player to the right of the dealer
+      const connectedPlayers = game.getConnectedPlayersInOrder();
+      if (connectedPlayers.length > 0 && game.dealerId && connectedPlayers.includes(game.dealerId)) {
+        // Start with the player after the dealer
+        const dealerIndex = connectedPlayers.indexOf(game.dealerId);
+        game.currentPlayerId = connectedPlayers[(dealerIndex + 1) % connectedPlayers.length];
+        gameLog(game, `First round: Starting with player after dealer (${game.players[game.currentPlayerId]?.name})`);
+      }
+    } else {
+      // For subsequent rounds, move to the next player
+      const currentPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
+      gameLog(game, `Moving from player ${currentPlayer} to next player`);
+      game = await playerManagementService.moveToNextPlayer(game);
+    }
     
-    // Start new round
+    // Start new round - this increments the round counter
     game = gameStateService.startRound(game);
     
-    // Deck should already be available from game creation
-    
-    // Set initial player only at the beginning of a new game (round 1)
-    if (game.round === 1) {
-      // Get the first player after the dealer
-      const connectedPlayers = game.getConnectedPlayersInOrder();
-      if (connectedPlayers.length > 0) {
-        if (game.dealerId && connectedPlayers.includes(game.dealerId)) {
-          // Start with the player after the dealer
-          const dealerIndex = connectedPlayers.indexOf(game.dealerId);
-          game.currentPlayerId = connectedPlayers[(dealerIndex + 1) % connectedPlayers.length];
-        } else {
-          // If no dealer or dealer not in the list, start with the first player
-          game.currentPlayerId = connectedPlayers[0];
-        }
-      }
-    } else if (currentPlayerId) {
-      // Keep the same player for subsequent rounds during a game
-      game.currentPlayerId = currentPlayerId;
-    }
-    
-    // Log the current player for the round
-    const currentPlayer = game.players[game.currentPlayerId];
-    if (currentPlayer) {
-      gameLog(game, `Round ${game.round}: ${currentPlayer.name} goes first`);
-    } else {
-      console.error(`[GAME_SERVICE] Current player not found for game ${game.id}, currentPlayerId: ${game.currentPlayerId}`);
-      gameLog(game, `Round ${game.round} starting`);
-    }
     
     // Start dealing sequence
     game = await this.startDealingSequence(game);
@@ -509,7 +533,8 @@ class GameService extends BaseService {
     
     // Only start the game if all players are ready AND we have at least 2 unique users
     if (allReady && readyPlayerCount >= 2 && uniqueUserCount >= 2) {
-      game = await this.startRound(game);
+      // Start the first round - this will select the player to the right of the dealer
+      game = await this.startNewRound(game, true);
     }
     
     return game;
@@ -791,15 +816,22 @@ class GameService extends BaseService {
     }
   }
 
-  async startNextRound(game) {
+  /**
+   * Handle the transition after a round completes
+   * Either starts a new round or transitions to waiting phase if pot is empty
+   * @param {Object} game - The game object
+   * @returns {Object} The updated game object
+   */
+  async handleRoundCompletion(game) {
     if (!game) return game;
+    
+    // Get required services
+    const broadcastService = this.getService('broadcast');
     
     // Check if the pot is empty before proceeding
     if (game.pot === 0) {
       // If pot is empty, transition to waiting phase
       game.phase = GamePhases.WAITING;
-
-      game = await playerManagementService.moveToNextPlayer(game);
       
       // Reset all player ready states
       Object.values(game.players).forEach(player => {
@@ -813,31 +845,16 @@ class GameService extends BaseService {
       game.thirdCard = null;
       game.result = null;
       
-      gameLog(game, `Pot is empty. Waiting for players to ante up for a new game`);
+      gameLog(game, `Pot is empty. Waiting for players to ante up for the next round`);
       
       // Broadcast the current game state
-      const broadcastService = this.getService('broadcast');
       broadcastService.broadcastGameState(game);
       
       // Return early to prevent starting a new round
       return game;
     }
     
-    // We've already moved to the next player above, so we can proceed directly to starting the new round
-    const startingPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
-    gameLog(game, `Next round will start with player: ${startingPlayer}`);
-    
-    // Start new round with the updated player
-    game = await this.startRound(game);
-    
-    // Make sure the phase is set correctly
-    if (game.phase === undefined || game.phase === null) {
-      gameLog(game, `Phase was undefined, setting to dealing`);
-      game.phase = 'dealing';
-    }
-    
     // Broadcast the updated game state
-    const broadcastService = this.getService('broadcast');
     broadcastService.broadcastGameState(game);
     
     return game;

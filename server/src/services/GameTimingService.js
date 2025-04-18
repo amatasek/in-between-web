@@ -303,7 +303,7 @@ class GameTimingService extends BaseService {
     // Set timer for transition to next round
     this.timeouts[game.id].transitionToNextRound = setTimeout(async () => {
       // Start the next round
-      await gameService.startNextRound(game);
+      await gameService.handleRoundCompletion(game);
     }, GAME_CONSTANTS.TIMERS.RESULTS_DURATION);
     
     return game;
