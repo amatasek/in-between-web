@@ -33,8 +33,10 @@ export const LobbyProvider = ({ children }) => {
   useEffect(() => {
     if (!socket || !isConnected) return;
     
+    console.log('[Lobby] Setting up game list listeners with socket ID:', socket.id);
+    
     const handleGameList = (games) => {
-      console.log(`[Lobby] Games available: ${games.length}`);
+      console.log(`[Lobby] 🔄 RECEIVED gameList event! Games available: ${games.length}`);
       setGameList(games);
       setLoading(false);
     };
@@ -49,14 +51,21 @@ export const LobbyProvider = ({ children }) => {
     socket.on('gameList', handleGameList);
     socket.on('error', handleError);
     
+    // Add a test event listener to verify socket communication
+    socket.on('connect', () => {
+      console.log('[Lobby] Socket reconnected in LobbyContext');
+    });
+    
     // Request game list
-    console.log('[Lobby] Requesting game list');
+    console.log('[Lobby] 📤 Requesting game list');
     socket.emit('getGameList');
     
     // Clean up listeners when component unmounts
     return () => {
+      console.log('[Lobby] 🧹 Cleaning up game list listeners');
       socket.off('gameList', handleGameList);
       socket.off('error', handleError);
+      socket.off('connect');
     };
   }, [socket, isConnected]);
   

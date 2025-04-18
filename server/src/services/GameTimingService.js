@@ -360,9 +360,9 @@ class GameTimingService extends BaseService {
    */
   async resumeDealingAfterAceChoice(game) {
     // Get required services from the registry
-    const gameService = this.getService('game');
     const cardService = this.getService('card');
     const gameStateService = this.getService('gameState');
+    const broadcastService = this.getService('broadcast');
     
     if (!game) return game;
 
