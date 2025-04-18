@@ -33,11 +33,16 @@ class PlayerManagementService extends BaseService {
     
     // If current player isn't in the eligible list or isn't specified
     if (!currentPlayerId || !playerList.includes(currentPlayerId)) {
-      // For active gameplay, try to start with player after dealer
-      if (game.phase !== GamePhases.WAITING && game.dealerId && playerList.includes(game.dealerId)) {
+      // ONLY select the player after dealer for a brand new game (round 1)
+      // This fixes the issue where player rotation was being reset during ongoing games
+      if (game.round === 1 && game.dealerId && playerList.includes(game.dealerId)) {
+        console.log(`[PLAYER_MANAGEMENT] Brand new game (round ${game.round}), selecting player after dealer`);
         const dealerIndex = playerList.indexOf(game.dealerId);
         return playerList[(dealerIndex + 1) % playerList.length];
       }
+      
+      // For all other cases, just take the first player in the list
+      console.log(`[PLAYER_MANAGEMENT] Current player not in eligible list, defaulting to first player`);
       return playerList[0]; // Default to first player
     }
     
