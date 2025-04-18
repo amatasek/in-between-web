@@ -40,9 +40,9 @@ class GameStateService extends BaseService {
   startRound(game) {
     if (!game) return game;
     
-    // If transitioning from waiting phase, set round to 1
-    // Otherwise increment the existing round
-    if (game.phase === GamePhases.WAITING) {
+    // Always increment the round counter, never reset it
+    // Initialize to 1 if it doesn't exist yet
+    if (!game.round) {
       game.round = 1;
     } else {
       game.round += 1;
