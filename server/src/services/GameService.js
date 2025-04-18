@@ -429,10 +429,9 @@ class GameService extends BaseService {
   /**
    * Start a new round within the game
    * @param {Object} game - The game object
-   * @param {boolean} isFirstRound - Whether this is the first round after waiting phase
    * @returns {Object} The updated game object
    */
-  async startNewRound(game, isFirstRound = false) {
+  async startNewRound(game) {
     if (!game) return game;
     
     // Get required services
@@ -443,26 +442,26 @@ class GameService extends BaseService {
     // Clear any existing timeouts
     gameTimingService.clearGameTimeouts(game.id);
     
+    // Get connected players
+    const connectedPlayers = game.getConnectedPlayersInOrder();
+    if (connectedPlayers.length === 0) return game;
+    
     // Handle player selection
-    if (isFirstRound) {
-      // For the first round, select the player to the right of the dealer
-      const connectedPlayers = game.getConnectedPlayersInOrder();
-      if (connectedPlayers.length > 0 && game.dealerId && connectedPlayers.includes(game.dealerId)) {
-        // Start with the player after the dealer
+    if (game.round === 0) {
+      // First round: select player after dealer
+      if (game.dealerId && connectedPlayers.includes(game.dealerId)) {
         const dealerIndex = connectedPlayers.indexOf(game.dealerId);
         game.currentPlayerId = connectedPlayers[(dealerIndex + 1) % connectedPlayers.length];
-        gameLog(game, `First round: Starting with player after dealer (${game.players[game.currentPlayerId]?.name})`);
+      } else {
+        game.currentPlayerId = connectedPlayers[0];
       }
     } else {
-      // For subsequent rounds, move to the next player
-      const currentPlayer = game.players[game.currentPlayerId]?.name || 'Unknown';
-      gameLog(game, `Moving from player ${currentPlayer} to next player`);
+      // Subsequent rounds: move to next player
       game = await playerManagementService.moveToNextPlayer(game);
     }
     
     // Start new round - this increments the round counter
     game = gameStateService.startRound(game);
-    
     
     // Start dealing sequence
     game = await this.startDealingSequence(game);
@@ -857,8 +856,8 @@ class GameService extends BaseService {
     // For continuing the game with the next round
     gameLog(game, `Starting next round`);
     
-    // Start a new round (not the first round)
-    game = await this.startNewRound(game, false);
+    // Start a new round
+    game = await this.startNewRound(game);
     
     // Broadcast the updated game state
     broadcastService.broadcastGameState(game);
