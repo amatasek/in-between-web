@@ -109,11 +109,12 @@ class PlayerManagementService extends BaseService {
       }
       
       // Refresh player balance from database
-      const balanceService = this.getService('balance');
-      if (balanceService) {
+      const databaseService = this.getService('database');
+      if (databaseService) {
         try {
           // Get fresh balance from database
-          const freshBalance = await balanceService.getBalance(userId);
+          const user = await databaseService.getUserById(userId);
+          const freshBalance = user?.balance || 0;
           console.log(`[PLAYER_MANAGEMENT] Refreshing balance for player ${player.name} (${userId}): ${player.balance} -> ${freshBalance}`);
           player.balance = freshBalance;
         } catch (error) {
@@ -169,11 +170,12 @@ class PlayerManagementService extends BaseService {
     gameLog(game, `${name} joined`);
     
     // Load player balance from database
-    const balanceService = this.getService('balance');
-    if (balanceService) {
+    const databaseService = this.getService('database');
+    if (databaseService) {
       try {
         // Get fresh balance from database
-        const freshBalance = await balanceService.getBalance(userId);
+        const user = await databaseService.getUserById(userId);
+        const freshBalance = user?.balance || 0;
         console.log(`[PLAYER_MANAGEMENT] Set initial balance for new player ${name}: ${freshBalance}`);
         player.balance = freshBalance;
       } catch (error) {

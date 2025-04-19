@@ -21,22 +21,6 @@ class Player {
     // Media preferences are now handled entirely through HTTP routes
   }
 
-  async loadBalance() {
-    if (!this.userId) return false;
-    try {
-      const balanceService = serviceRegistry.get('balance');
-      if (!balanceService) {
-        console.error('[Player] Balance service not found in registry');
-        return false;
-      }
-      
-      this.balance = await balanceService.getBalance(this.userId);
-      return true;
-    } catch (error) {
-      console.error('[Player] Error loading balance:', error);
-      return false;
-    }
-  }
   
   placeBet(amount) {
     if (amount <= 0 || amount > this.balance) {
@@ -51,9 +35,7 @@ class Player {
     this.currentBet = 0;
   }
   
-  // Balance methods moved to BalanceService
-  
-  // Balance methods moved to BalanceService
+  // Balance methods handled by DatabaseService
   
   setReady(isReady) {
     this.isReady = isReady;

@@ -195,10 +195,11 @@ class GameService extends BaseService {
       
       // Send updated balance to the user
       if (user.userId) {
-        const balanceService = this.getService('balance');
-        if (balanceService) {
+        const databaseService = this.getService('database');
+        if (databaseService) {
           try {
-            const balance = await balanceService.getBalance(user.userId);
+            const userRecord = await databaseService.getUserById(user.userId);
+            const balance = userRecord?.balance || 0;
             console.log(`[GAME_SERVICE] Sending updated balance to user ${user.username}: ${balance}`);
             socket.emit('balanceUpdated', { balance });
           } catch (error) {
@@ -304,10 +305,11 @@ class GameService extends BaseService {
       
       // Send updated balance to the user
       if (socket.user && socket.user.userId) {
-        const balanceService = this.getService('balance');
-        if (balanceService) {
+        const databaseService = this.getService('database');
+        if (databaseService) {
           try {
-            const balance = await balanceService.getBalance(socket.user.userId);
+            const userRecord = await databaseService.getUserById(socket.user.userId);
+            const balance = userRecord?.balance || 0;
             console.log(`[GAME_SERVICE] Sending updated balance to user ${socket.user.username}: ${balance}`);
             socket.emit('balanceUpdated', { balance });
           } catch (error) {
