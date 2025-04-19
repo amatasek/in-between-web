@@ -390,12 +390,6 @@ class GameService extends BaseService {
   async initializeGame(game) {
     if (!game) return game;
     
-    // Get required services
-    const cardService = this.getService('card');
-    
-    // Ensure deck is available
-    game = cardService.ensureDeckAvailable(game);
-    
     // Set initial game state
     game.round = 0; // Will be incremented to 1 in startNewRound
     game.phase = GamePhases.WAITING;
@@ -459,12 +453,13 @@ class GameService extends BaseService {
     if (!game) return game;
     
     // Get required services
-    const cardService = this.getService('card');
     const gameTimingService = this.getService('gameTiming');
-    const gameStateService = this.getService('gameState');
+    const cardService = this.getService('card');
     
-    // Ensure deck is available
-    game = cardService.ensureDeckAvailable(game);
+    // Ensure we have enough cards to deal
+    if (!game.deck || game.deck.length < 3) {
+      game = cardService.handleDeckRenewal(game);
+    }
     
     // GameTimingService will handle all the timing and state transitions
     await gameTimingService.handleDealingSequence(game);

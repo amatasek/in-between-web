@@ -14,11 +14,8 @@ const CardDisplay = () => {
     firstCard,
     secondCard,
     thirdCard,
-    phase, 
-    remainingCards, 
-    dealerChanged, 
-    dealer,
-    deckNumber 
+    phase,
+    dealer
   } = gameState;
   
   // Card state is managed by the game context
@@ -115,18 +112,6 @@ const CardDisplay = () => {
 
   return (
     <div className={styles.cardDisplayContainer}>
-      {dealerChanged && (
-        <div className={styles.dealerRotationAlert}>
-          <p>
-            <span className={styles.dealerIcon}>🃏</span>
-            <span className={styles.dealerRotationText}>
-              {dealerName} is now the dealer (Deck #{deckNumber})!
-            </span>
-          </p>
-        </div>
-      )}
-      
-      
       <div className={`${styles.cardsRow} ${phase === 'dealing' ? styles.dealingPhase : ''} ${phase === 'revealing' ? styles.revealingPhase : ''}`}>
         {renderCardLayout()}
       </div>

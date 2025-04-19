@@ -29,7 +29,6 @@
  * @property {Players} players - Object mapping player IDs to Player objects
  * @property {string} currentPlayerId - ID of the player whose turn it is
  * @property {Dealer} dealer - The current dealer
- * @property {boolean} dealerChanged - Flag indicating if the dealer just changed
  * @property {number} deckNumber - The current deck number (increments when a new deck is used)
  * @property {number} remainingCards - Number of cards remaining in the current deck
  * @property {Array<Card>} currentCards - The current cards in play [left, right, middle]

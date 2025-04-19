@@ -124,27 +124,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
           prevPlayersRef.current = {...state.players};
         }
         
-        // Check for dealer change notification
-        if (state.dealerChanged) {
-          // Create a modified state that will keep dealerChanged true for 5 seconds
-          const enhancedState = {...state};
-          
-          // Update the game state immediately
-          setGameState(enhancedState);
-          
-          // After 5 seconds, update the state again with dealerChanged set to false
-          setTimeout(() => {
-            setGameState(prevState => {
-              if (prevState) {
-                return {...prevState, dealerChanged: false};
-              }
-              return prevState;
-            });
-          }, 5000);
-        } else {
-          // Just update the game state normally
-          setGameState({...state});
-        }
+        setGameState({...state});
       }
     });
 
@@ -297,8 +277,8 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
 
 // Named exports for specific pieces of state/actions
 export const useGameState = () => {
-  const { gameState, players, currentPlayer, cards, gamePhase, dealerName, deckNumber, remainingCards, dealerChanged, error } = useGameContext();
-  return { gameState, players, currentPlayer, cards, gamePhase, dealerName, deckNumber, remainingCards, dealerChanged, error };
+  const { gameState, players, currentPlayer, cards, gamePhase, dealerName, deckNumber, remainingCards, error } = useGameContext();
+  return { gameState, players, currentPlayer, cards, gamePhase, dealerName, deckNumber, remainingCards, error };
 };
 
 export const useGameActions = () => {
