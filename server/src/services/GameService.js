@@ -28,17 +28,9 @@ class GameService extends BaseService {
   registerSocketEvents(socket) {
     socket.on('createGame', () => this.handleCreateGame(socket));
     socket.on('joinGame', (data) => this.handleJoinGame(socket, data));
-    socket.on('getAvailableGames', () => this.handleGetAvailableGames(socket));
-    socket.on('getGameList', () => this.handleGetAvailableGames(socket)); // Support client's expected event name
+    socket.on('getAvailableGames', () => this.sendGameListToClient(socket));
+    socket.on('getGameList', () => this.sendGameListToClient(socket)); // Support client's expected event name
     socket.on('leaveGameLobby', (data) => this.handleLeaveGame(socket, data));
-  }
-  
-  /**
-   * Handle a new connection by sending the game list
-   * @param {Socket} socket - The newly connected socket
-   */
-  handleNewConnection(socket) {
-    this.sendGameListToClient(socket);
   }
   
   /**
@@ -216,14 +208,6 @@ class GameService extends BaseService {
       });
       socket.emit('error', { message: 'Failed to join game' });
     }
-  }
-  
-  /**
-   * Handle get available games event
-   * @param {Socket} socket - The socket that triggered the event
-   */
-  handleGetAvailableGames(socket) {
-    this.sendGameListToClient(socket);
   }
   
   /**
@@ -540,62 +524,6 @@ class GameService extends BaseService {
     
     return game;
   }
-
-  async startBettingPhase(game) {
-    if (!game) return game;
-    
-    // Check for second chance eligibility before moving to betting phase
-    if (game.firstCard && game.secondCard) {
-      const isSecondChanceEligible = this.checkForSecondChance(game);
-      if (isSecondChanceEligible) {
-        // Don't move to betting phase yet, wait for player's decision
-        return game;
-      }
-    }
-    
-    game.phase = GamePhases.BETTING;
-
-    const currentPlayer = game.players[game.currentPlayerId];
-    if (currentPlayer) {
-      gameLog(game, `Betting phase started for ${currentPlayer.name}`);
-    } else {
-      console.error(`[GAME_SERVICE] Current player not found for game ${game.id}, currentPlayerId: ${game.currentPlayerId}`);
-      gameLog(game, `Betting phase started`);
-    }
-    
-    // Get required services
-    const gameStateService = this.getService('gameState');
-    const gameTimingService = this.getService('gameTiming');
-    
-    // GameTimingService will handle the auto-pass timeout
-    await gameTimingService.handleBettingSequence(game);
-    
-
-    
-    return game;
-  }
-  
-  /**
-   * Check for matching pair after dealing the second card
-   * @param {Object} game - The game object
-   * @returns {Boolean} - True if a matching pair is detected
-   */
-  checkForSecondChance(game) {
-    if (!game || !game.firstCard || !game.secondCard) return false;
-    
-    // Get the card service from the registry
-    const cardService = this.getService('card');
-    
-    // Check if the first two cards form a matching pair (but aren't Aces)
-    const isSecondChanceEligible = cardService.isSecondChanceEligible(game.firstCard, game.secondCard);
-    
-    if (isSecondChanceEligible) {
-      game.waitingForSecondChance = true;
-      // Log message moved to GameTimingService to avoid duplication
-    }
-    
-    return isSecondChanceEligible;
-  }
   
   /**
    * Handle player's decision on a second chance opportunity
@@ -696,8 +624,6 @@ class GameService extends BaseService {
     
     return updatedGame;
   }
-
-  // saveGame method removed - services should call gameStateService.saveGame directly
 
   async processGameOutcome(game) {
     if (!game) return game;
