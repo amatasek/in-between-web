@@ -7,6 +7,7 @@
   box-sizing: border-box;
   width: 100%;
   position: relative;
+  overflow: hidden; /* Prevent content from overflowing */
 }
 
 /* Desktop Layout */
@@ -29,27 +30,45 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 10px;
+  padding: 10px 10px; /* Reduced horizontal padding */
+  box-sizing: border-box;
 }
 
-/* Give each element in the mobile top row equal space */
-.mobileTopRow > * {
-  flex: 1;
+/* Centered mute button container for mobile */
+.mobileMuteContainer {
   display: flex;
-}
-
-.mobileTopRow .headerLeft {
-  justify-content: flex-start;
-}
-
-.mobileTopRow .muteToggleContainer {
   justify-content: center;
-  padding-left: 15px; /* Move slightly to the right on mobile */
+  align-items: center;
+  margin: 0 4px;
 }
 
-.mobileTopRow .leaveButton {
-  justify-content: flex-end;
-  margin-left: auto;
+/* Mobile actions container */
+.mobileActions {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Reduced spacing between buttons */
+}
+
+/* Icon button style for mobile view */
+.iconButton {
+  padding: 6px;
+  min-width: 34px;
+  min-height: 34px;
+  font-size: 18px;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, rgba(189, 195, 199, 0.9), rgba(127, 140, 141, 0.9));
+  border: 2px solid rgba(127, 140, 141, 0.7);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Exit button specific styling */
+.exitButton {
+  background: linear-gradient(to bottom, rgba(231, 76, 60, 0.9), rgba(192, 57, 43, 0.9));
+  border: 2px solid rgba(192, 57, 43, 0.7);
 }
 
 .mobileBottomRow {
@@ -69,14 +88,14 @@
 
 .headerRight {
   display: flex;
-  align-items: center;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .controlsStack {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
 }
 
@@ -194,7 +213,11 @@
   align-items: center;
 }
 
-
+.buttonGroup {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
 
 @media (max-width: 768px) {
   /* Switch layouts on mobile */
@@ -207,7 +230,8 @@
   }
   
   .headerContainer {
-    padding: 0.6rem 0.8rem;
+    padding: var(--spacing-sm) var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
   }
   
   .mobileTopRow {
@@ -225,6 +249,12 @@
   .mobileBottomRow .gamePhase {
     width: 100%;
     max-width: none;
+  }
+  
+  .iconButton {
+    padding: 6px;
+    min-width: 36px;
+    min-height: 36px;
   }
 }
 
@@ -255,6 +285,17 @@
   .leaveButton {
     padding: 0.3rem 0.5rem;
     font-size: 0.75rem;
+  }
+  
+  .mobileActions {
+    gap: 3px;
+  }
+  
+  .iconButton {
+    padding: 4px;
+    min-width: 30px;
+    min-height: 30px;
+    font-size: 16px;
   }
 }
 
@@ -331,13 +372,6 @@
   gap: 10px;
 }
 
-.muteToggleContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 10px; /* Move slightly to the right */
-}
-
 @media (max-width: 768px) {
   .headerRight {
     gap: 5px;
@@ -381,41 +415,25 @@
 }
 
 .leaveButton {
-  padding: 0.4rem 0.8rem;
-  border: 1px solid rgba(231, 76, 60, 0.7);
-  border-radius: 4px;
-  background: transparent;
+  padding: 0.6rem 1.2rem;
+  background-color: #e74c3c;
   color: white;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: normal;
-  transition: all 0.2s ease;
-  z-index: 2;
-  letter-spacing: normal;
-  text-transform: none;
-  font-size: 0.85rem;
-}
-
-.leaveButton:hover {
-  background-color: rgba(231, 76, 60, 0.15);
-  border-color: rgba(231, 76, 60, 0.9);
-}
-
-@media (max-width: 600px) {
-  .leaveButton {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .leaveButton {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
-  }
+  font-weight: bold;
+  transition: all 0.3s ease;
+  margin-left: 1.5rem;
+  flex: 1;
+  max-width: 120px;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .leaveButton:hover {
   background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Phase-specific styles */

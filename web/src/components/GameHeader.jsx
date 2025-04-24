@@ -7,6 +7,8 @@ const { TIMERS } = GAME_CONSTANTS;
 import { ICONS } from '../constants/UIConstants';
 import MuteToggle from './MuteToggle.jsx';
 import GameSummaryModal from './GameSummaryModal.jsx';
+import GameRulesButton from './GameRulesButton.jsx';
+import ExitIcon from './icons/ExitIcon';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
@@ -135,15 +137,18 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
         </div>
         
-        {/* Right: Leave and Mute stacked */}
+        {/* Right: Rules, Leave and Mute buttons stacked */}
         <div className={styles.headerRight}>
           <div className={styles.controlsStack}>
-            <button 
-              className={styles.leaveButton}
-              onClick={handleLeaveGame}
-            >
-              Leave Game
-            </button>
+            <div className={styles.buttonGroup}>
+              <GameRulesButton />
+              <button 
+                className={styles.leaveButton}
+                onClick={handleLeaveGame}
+              >
+                Leave Game
+              </button>
+            </div>
             <div className={styles.muteToggleContainer}>
               <MuteToggle compact={true} />
             </div>
@@ -153,7 +158,7 @@ const GameHeader = ({ handleLeaveGame }) => {
       
       {/* Mobile layout - two rows */}
       <div className={styles.mobileLayout}>
-        {/* Top row: Logo/ID, Mute, Leave */}
+        {/* Top row: Logo/ID, Mute, Rules, Leave */}
         <div className={styles.mobileTopRow}>
           <div className={styles.headerLeft}>
             <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
@@ -168,16 +173,21 @@ const GameHeader = ({ handleLeaveGame }) => {
             </p>
           </div>
           
-          <div className={styles.muteToggleContainer}>
+          <div className={styles.mobileMuteContainer}>
             <MuteToggle compact={true} />
           </div>
           
-          <button 
-            className={styles.leaveButton}
-            onClick={handleLeaveGame}
-          >
-            Leave Game
-          </button>
+          <div className={styles.mobileActions}>
+            <GameRulesButton compact={true} />
+            
+            <button 
+              className={`${styles.iconButton} ${styles.exitButton}`}
+              onClick={handleLeaveGame}
+              title="Leave Game"
+            >
+              <ExitIcon color="white" size={20} />
+            </button>
+          </div>
         </div>
         
         {/* Bottom row: Phase indicator (full width) */}
@@ -206,8 +216,15 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
         </div>
       </div>
+      
       {/* Game Summary Modal */}
-      {showGameSummary && <GameSummaryModal onClose={() => setShowGameSummary(false)} />}
+      {showGameSummary && (
+        <GameSummaryModal 
+          onClose={() => setShowGameSummary(false)} 
+          gameId={gameId}
+          gameState={gameState}
+        />
+      )}
     </div>
   );
 };
