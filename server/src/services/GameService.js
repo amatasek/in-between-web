@@ -391,7 +391,7 @@ class GameService extends BaseService {
     if (!game) return game;
     
     // Set initial game state
-    game.round = 0; // Will be incremented to 1 in startNewRound
+    game.round = 1; // Start with round 1 directly
     game.phase = GamePhases.WAITING;
     game.pot = 0;
     
@@ -427,7 +427,7 @@ class GameService extends BaseService {
     if (connectedPlayers.length === 0) return game;
     
     // Handle player selection
-    if (game.round === 0) {
+    if (game.round === 1) {
       // First round: select player after dealer
       if (game.dealerId && connectedPlayers.includes(game.dealerId)) {
         const dealerIndex = connectedPlayers.indexOf(game.dealerId);
@@ -767,7 +767,11 @@ class GameService extends BaseService {
       game.thirdCard = null;
       game.result = null;
       
-      gameLog(game, `Pot is empty. Waiting for players to ante up for the next round`);
+      // Increment the round counter when the pot is empty
+      // This is the true definition of a new "round" in the game
+      game.round += 1;
+      
+      gameLog(game, `Pot is empty. Waiting for players to ante up for round ${game.round}`);
 
       // Broadcast the current game state
       broadcastService.broadcastGameState(game);

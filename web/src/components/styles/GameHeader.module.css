@@ -63,12 +63,31 @@
   background: linear-gradient(to bottom, rgba(189, 195, 199, 0.9), rgba(127, 140, 141, 0.9));
   border: 2px solid rgba(127, 140, 141, 0.7);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(to bottom, rgba(189, 195, 199, 1), rgba(127, 140, 141, 1));
+  border-color: rgba(149, 165, 166, 0.9);
+}
+
+.iconButton:active {
+  transform: scale(0.97);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* Exit button specific styling */
 .exitButton {
   background: linear-gradient(to bottom, rgba(231, 76, 60, 0.9), rgba(192, 57, 43, 0.9));
   border: 2px solid rgba(192, 57, 43, 0.7);
+}
+
+.exitButton:hover {
+  background: linear-gradient(to bottom, rgba(231, 76, 60, 1), rgba(192, 57, 43, 1));
+  border-color: rgba(192, 57, 43, 0.9);
 }
 
 .mobileBottomRow {
@@ -90,6 +109,13 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.controlsGroup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .controlsStack {

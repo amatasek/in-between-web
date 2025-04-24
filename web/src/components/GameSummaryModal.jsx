@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useGameContext } from '../contexts/GameContext';
 import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
+import TransactionDownloadButton from './common/TransactionDownloadButton';
 
 /**
  * Game Summary Modal component that displays running scores and settle-up calculations
@@ -126,6 +127,8 @@ const GameSummaryModal = ({ onClose }) => {
           amount: paymentAmount
         });
         
+
+        
         // Update balances
         winner.amount -= paymentAmount;
         loser.amount -= paymentAmount;
@@ -152,7 +155,10 @@ const GameSummaryModal = ({ onClose }) => {
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
           <h2>Game Summary ({gameId})</h2>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <div className={styles.headerButtons}>
+            <TransactionDownloadButton gameState={gameState} />
+            <button className={styles.closeButton} onClick={onClose}>×</button>
+          </div>
         </div>
         
         <div className={styles.settingsContainer}>

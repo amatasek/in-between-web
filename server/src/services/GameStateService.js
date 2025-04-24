@@ -40,14 +40,6 @@ class GameStateService extends BaseService {
   startRound(game) {
     if (!game) return game;
     
-    // Always increment the round counter, never reset it
-    // Initialize to 1 if it doesn't exist yet
-    if (!game.round) {
-      game.round = 1;
-    } else {
-      game.round += 1;
-    }
-    
     // Reset game state
     game.result = null;
     game.thirdCard = null;

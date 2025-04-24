@@ -7,8 +7,8 @@ const { TIMERS } = GAME_CONSTANTS;
 import { ICONS } from '../constants/UIConstants';
 import MuteToggle from './MuteToggle.jsx';
 import GameSummaryModal from './GameSummaryModal.jsx';
-import GameRulesButton from './GameRulesButton.jsx';
-import ExitIcon from './icons/ExitIcon';
+import RulesButton from './common/RulesButton';
+import LeaveButton from './common/LeaveButton';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
@@ -137,21 +137,12 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
         </div>
         
-        {/* Right: Rules, Leave and Mute buttons stacked */}
+        {/* Right: Rules, Leave and Mute buttons */}
         <div className={styles.headerRight}>
-          <div className={styles.controlsStack}>
-            <div className={styles.buttonGroup}>
-              <GameRulesButton />
-              <button 
-                className={styles.leaveButton}
-                onClick={handleLeaveGame}
-              >
-                Leave Game
-              </button>
-            </div>
-            <div className={styles.muteToggleContainer}>
-              <MuteToggle compact={true} />
-            </div>
+          <div className={styles.controlsGroup}>
+            <MuteToggle compact={true} />
+            <RulesButton />
+            <LeaveButton onClick={handleLeaveGame} />
           </div>
         </div>
       </div>
@@ -178,15 +169,8 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
           
           <div className={styles.mobileActions}>
-            <GameRulesButton compact={true} />
-            
-            <button 
-              className={`${styles.iconButton} ${styles.exitButton}`}
-              onClick={handleLeaveGame}
-              title="Leave Game"
-            >
-              <ExitIcon color="white" size={20} />
-            </button>
+            <RulesButton />
+            <LeaveButton onClick={handleLeaveGame} />
           </div>
         </div>
         
