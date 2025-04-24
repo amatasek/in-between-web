@@ -30,9 +30,34 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+/* Compact button style for mobile view */
+.compactButton {
+  padding: 8px;
+  min-width: 40px;
+  min-height: 40px;
+  font-size: 18px;
+  border-radius: 50%;
+  aspect-ratio: 1;
+}
+
 @media (max-width: 768px) {
   .rulesButton {
     padding: 7px 12px;
     font-size: 14px;
   }
-} 
+  
+  .compactButton {
+    padding: 6px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .compactButton {
+    padding: 5px;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 16px;
+  }
+}

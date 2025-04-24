@@ -8,6 +8,7 @@ import { ICONS } from '../constants/UIConstants';
 import MuteToggle from './MuteToggle.jsx';
 import GameSummaryModal from './GameSummaryModal.jsx';
 import GameRulesButton from './GameRulesButton.jsx';
+import ExitIcon from './icons/ExitIcon';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
@@ -172,18 +173,19 @@ const GameHeader = ({ handleLeaveGame }) => {
             </p>
           </div>
           
+          <div className={styles.mobileMuteContainer}>
+            <MuteToggle compact={true} />
+          </div>
+          
           <div className={styles.mobileActions}>
-            <div className={styles.muteToggleContainer}>
-              <MuteToggle compact={true} />
-            </div>
-            
-            <GameRulesButton />
+            <GameRulesButton compact={true} />
             
             <button 
-              className={styles.leaveButton}
+              className={`${styles.iconButton} ${styles.exitButton}`}
               onClick={handleLeaveGame}
+              title="Leave Game"
             >
-              Leave Game
+              <ExitIcon color="white" size={20} />
             </button>
           </div>
         </div>
@@ -214,8 +216,15 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
         </div>
       </div>
+      
       {/* Game Summary Modal */}
-      {showGameSummary && <GameSummaryModal onClose={() => setShowGameSummary(false)} />}
+      {showGameSummary && (
+        <GameSummaryModal 
+          onClose={() => setShowGameSummary(false)} 
+          gameId={gameId}
+          gameState={gameState}
+        />
+      )}
     </div>
   );
 };
