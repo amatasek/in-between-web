@@ -35,12 +35,13 @@ class GameTransactionService extends BaseService {
 
     try {
       // Update player's balance in the database
-      const balanceService = this.getService('balance');
-      const dbResult = await balanceService.updateBalance(userId, amount, `Game ${game.id}: ${reason}`);
+      const databaseService = this.getService('database');
+      await databaseService.updateBalance(userId, amount, `Game ${game.id}: ${reason}`);
+      const user = await databaseService.getUserById(userId);
       
       // Always update player's balance in the game state
       if (player) {
-        player.balance = dbResult.balance;
+        player.balance = user.balance;
       }
 
       // Always update the pot (negative amount to player means positive to pot)

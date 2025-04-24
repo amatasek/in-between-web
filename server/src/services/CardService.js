@@ -55,30 +55,11 @@ class CardService extends BaseService {
   }
 
   /**
-   * Ensure a deck is available for the game
-   * @param {Game} game - The game object
-   * @returns {Game} The game with a deck
-   */
-  ensureDeckAvailable(game) {
-    // Deck should already be created during game creation
-    // This is just a safety check in case the deck is missing or empty
-    if (!game) return game;
-    
-    if (!game.deck || game.deck.length === 0) {
-      console.warn(`[CARD_SERVICE] Deck not found for game ${game.id}, creating new deck`);
-      game.deck = this.shuffleDeck(this.createDeck());
-    }
-    
-    return game;
-  }
-
-  /**
    * Deal the first card (left card)
    * @param {Game} game - The game object
    * @returns {Game} The game with the first card dealt
    */
   dealFirstCard(game) {
-    game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
     // Deck renewal is now handled at the beginning of the dealing phase in GameTimingService
@@ -100,7 +81,6 @@ class CardService extends BaseService {
    * @returns {Game} The game with the second card dealt
    */
   dealSecondCard(game) {
-    game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
     // Deck renewal is now handled at the beginning of the dealing phase in GameTimingService
@@ -124,7 +104,6 @@ class CardService extends BaseService {
    * @returns {Object} The middle card that was dealt
    */
   dealThirdCard(game) {
-    game = this.ensureDeckAvailable(game);
     if (!game || !game.deck) return null;
     
     // Emergency fallback - this should never happen with the comprehensive check at the beginning of the dealing phase
@@ -147,11 +126,12 @@ class CardService extends BaseService {
   }
 
   /**
-   * Handle deck renewal when cards run low
+   * Handle deck renewal when the deck is running low
    * @param {Game} game - The game object
+   * @returns {Game} - The updated game object
    */
   handleDeckRenewal(game) {
-    if (!game) return;
+    if (!game) return game;
     
     gameLog(game, `Deck is running low (${game.deck.length} cards). Shuffling new deck...`);
     
@@ -159,16 +139,12 @@ class CardService extends BaseService {
     game.deckCount = (game.deckCount || 0) + 1;
     
     // Rotate dealer if there are multiple players
-    const connectedPlayers = game.getConnectedPlayers();
-    if (connectedPlayers.length > 1) {
-      const dealerChangeInfo = this.rotateDealerOnNewDeck(game);
-      if (dealerChangeInfo) {
-        game.dealerChanged = true;
-      }
-    }
+    this.rotateDealerOnNewDeck(game);
     
     // Create and shuffle a new deck
     game.deck = this.shuffleDeck(this.createDeck());
+    
+    return game;
   }
 
   /**
@@ -198,12 +174,6 @@ class CardService extends BaseService {
     });
     
     gameLog(game, `Dealer rotated from ${oldDealer} to ${newDealer} on new deck`);
-    
-    return {
-      message: `Dealer rotated to ${newDealer}`,
-      type: 'dealer',
-      deckNumber: game.deckCount
-    };
   }
 
   /**

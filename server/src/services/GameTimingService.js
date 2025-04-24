@@ -151,7 +151,6 @@ class GameTimingService extends BaseService {
         this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
           // Move to betting phase
           game.phase = GamePhases.BETTING;
-          gameLog(game, `${game.players[game.currentPlayerId]?.name} is betting`);
           
           // Set up auto-pass timer for the betting phase
           const currentPlayerId = game.currentPlayerId;
@@ -303,7 +302,7 @@ class GameTimingService extends BaseService {
     // Set timer for transition to next round
     this.timeouts[game.id].transitionToNextRound = setTimeout(async () => {
       // Start the next round
-      await gameService.startNextRound(game);
+      await gameService.handleRoundCompletion(game);
     }, GAME_CONSTANTS.TIMERS.RESULTS_DURATION);
     
     return game;
@@ -385,8 +384,7 @@ class GameTimingService extends BaseService {
       this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
         // Move to betting phase
         game.phase = GamePhases.BETTING;
-        gameLog(game, `${game.players[game.currentPlayerId]?.name} is betting`);
-        
+
         // Set up auto-pass timer for the betting phase
         const currentPlayerId = game.currentPlayerId;
         const playerName = game.players[currentPlayerId]?.name || 'Unknown player';
@@ -455,7 +453,6 @@ class GameTimingService extends BaseService {
     this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
       // Move to betting phase
       game.phase = GamePhases.BETTING;
-      gameLog(game, `${game.players[game.currentPlayerId]?.name} is betting`);
       
       // Set up auto-pass timer for the betting phase
       const currentPlayerId = game.currentPlayerId;
