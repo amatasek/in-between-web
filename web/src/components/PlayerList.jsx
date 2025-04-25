@@ -18,7 +18,7 @@ const PlayerList = () => {
     );
   }
   
-  const { players, currentPlayerId, dealerId, deckNumber, remainingCards } = gameState;
+  const { players, currentPlayerId, dealerId } = gameState;
   const currentUserId = socket?.auth?.userId;
   if (!players || Object.keys(players).length === 0) {
     return (
@@ -28,25 +28,11 @@ const PlayerList = () => {
     );
   }
 
-  // Display deck information if available
-  const renderDeckInfo = () => {
-    if (typeof deckNumber === 'number' && typeof remainingCards === 'number') {
-      return (
-        <div className={styles.deckInfo}>
-          <span className={styles.deckNumber}>Deck #{deckNumber}</span>
-          <span className={styles.remainingCards}>{remainingCards} cards remaining</span>
-        </div>
-      );
-    }
-    return null;
-  };
-
-
   
   return (
     <div className={styles.playersContainer}>
       <h3 className={styles.playersTitle}>Players</h3>
-      {renderDeckInfo()}
+      
       <div className={styles.playersList}>
         {/* Use gameState.seats to render players in seat order */}
         {gameState.seats

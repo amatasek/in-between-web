@@ -14,9 +14,8 @@ import LeaveButton from './common/LeaveButton';
 const phaseDisplayMap = {
   waiting: { text: 'Waiting for Players', icon: '👥' },
   dealing: { text: 'Dealing Cards', icon: ICONS.DEALER },
-  revealing: { text: 'Revealing Cards', icon: ICONS.CARDS },
+  revealing: { text: 'Revealing Cards', icon: '🥁' },
   results: { text: 'Round Results', icon: '🏆' }
-  // betting phase is handled dynamically to show player name
 };
 
 const GameHeader = ({ handleLeaveGame }) => {
