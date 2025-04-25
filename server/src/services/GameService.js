@@ -425,6 +425,9 @@ class GameService extends BaseService {
     // Get connected players
     const connectedPlayers = game.getConnectedPlayersInOrder();
     if (connectedPlayers.length === 0) return game;
+
+    // Start new round - this increments the round counter FIRST
+    game = gameStateService.startRound(game);
     
     // Handle player selection
     if (game.round === 1) {
@@ -439,9 +442,6 @@ class GameService extends BaseService {
       // Subsequent rounds: move to next player
       game = await playerManagementService.moveToNextPlayer(game);
     }
-    
-    // Start new round - this increments the round counter
-    game = gameStateService.startRound(game);
     
     // Start dealing sequence
     game = await this.startDealingSequence(game);
