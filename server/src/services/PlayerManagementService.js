@@ -117,6 +117,7 @@ class PlayerManagementService extends BaseService {
           const freshBalance = user?.balance || 0;
           console.log(`[PLAYER_MANAGEMENT] Refreshing balance for player ${player.name} (${userId}): ${player.balance} -> ${freshBalance}`);
           player.balance = freshBalance;
+          player.profileImg = user?.preferences?.profileImg || null; // Get profile image from preferences on reconnect
         } catch (error) {
           console.error(`[PLAYER_MANAGEMENT] Error refreshing balance for player ${player.name} (${userId}):`, error);
         }
@@ -178,6 +179,7 @@ class PlayerManagementService extends BaseService {
         const freshBalance = user?.balance || 0;
         console.log(`[PLAYER_MANAGEMENT] Set initial balance for new player ${name}: ${freshBalance}`);
         player.balance = freshBalance;
+        player.profileImg = user?.preferences?.profileImg || null; // Get profile image from preferences
       } catch (error) {
         console.error(`[PLAYER_MANAGEMENT] Error getting balance for new player ${name}:`, error);
         player.balance = 0; // Default to 0 if we can't get the balance

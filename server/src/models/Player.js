@@ -1,5 +1,3 @@
-const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
-
 /**
  * Player Model - Manages player state and actions
  * 
@@ -18,7 +16,7 @@ class Player {
     this.isConnected = true;
     this.currentBet = 0;
     this.joinedAt = Date.now();
-    // Media preferences are now handled entirely through HTTP routes
+    this.profileImg = null; // Add profile image URL
   }
 
   
@@ -35,16 +33,6 @@ class Player {
     this.currentBet = 0;
   }
   
-  // Balance methods handled by DatabaseService
-  
-  setReady(isReady) {
-    this.isReady = isReady;
-  }
-  
-  setConnected(isConnected) {
-    this.isConnected = isConnected;
-  }
-  
   toJSON() {
     return {
       userId: this.userId,
@@ -52,9 +40,8 @@ class Player {
       balance: this.balance,
       isReady: this.isReady,
       isConnected: this.isConnected,
-      disconnected: this.disconnected || false, // Include disconnected status
       currentBet: this.currentBet,
-      mediaPreferences: this.mediaPreferences || {}
+      profileImg: this.profileImg
     };
   }
 }

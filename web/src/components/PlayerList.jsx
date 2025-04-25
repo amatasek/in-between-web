@@ -72,7 +72,7 @@ const PlayerList = () => {
                 <UserAvatar 
                   user={{ 
                     username: player.name, 
-                    profileImg: player.mediaPreferences?.profileImg 
+                    profileImg: player.profileImg 
                   }} 
                   size="small" 
                   showName={false}
