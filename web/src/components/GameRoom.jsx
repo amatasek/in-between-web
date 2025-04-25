@@ -74,9 +74,10 @@ const GameRoom = () => {
   if (error) {
     return (
       <div className="error-container">
-        <h2>Error</h2>
+        <h2>An error occurred</h2>
         <p>{error}</p>
-        <button onClick={() => navigate('/')}>Return to Lobby</button>
+        {/* Suggest refreshing the page instead of navigating back */}
+        <button onClick={() => window.location.reload()}>Refresh Page</button>
       </div>
     );
   }
