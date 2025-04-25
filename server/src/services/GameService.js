@@ -749,6 +749,8 @@ class GameService extends BaseService {
     
     // Get required services
     const broadcastService = this.getService('broadcast');
+    const databaseService = this.getService('database');
+    const playerManagementService = this.getService('playerManagement');
     
     // Check if the pot is empty before proceeding
     if (game.pot === 0) {
@@ -772,6 +774,16 @@ class GameService extends BaseService {
       game.round += 1;
       
       gameLog(game, `Pot is empty. Waiting for players to ante up for round ${game.round}`);
+
+      // --- Concise Auto-ante if pot is zero --- 
+      const playerIds = Object.keys(game.players).filter(id => game.players[id]?.isConnected && !game.players[id].isReady);
+      if (playerIds.length > 0) {
+        const prefs = await databaseService.getPreferencesForUsers(playerIds);
+        for (const userId of playerIds) { // Loop required for sequential awaiting
+           if (prefs[userId]?.autoAnte) game = await playerManagementService.playerReady(game, userId);
+        }
+      }
+      // --- End Auto-ante --- 
 
       // Broadcast the current game state
       broadcastService.broadcastGameState(game);
