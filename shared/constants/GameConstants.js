@@ -10,6 +10,7 @@ const GAME_CONSTANTS = {
   STARTING_BALANCE: 1000,  // Starting player balance - $1000
   FULL_DECK_SIZE: 52,  // Number of cards in a full deck
   RECONNECTION_TIMEOUT: 30000,  // Time window for player reconnection (30 seconds)
+  MAX_SEATS: 16, // Maximum number of seats/players allowed in a game
   
   // Timer durations (in milliseconds)
   TIMERS: {
@@ -27,7 +28,7 @@ const GAME_CONSTANTS = {
 // Dual module support - cleaner implementation
 // For ES modules (Vite/client)
 export default GAME_CONSTANTS;
-export const { TIMERS, ANTE_AMOUNT, STARTING_BALANCE, FULL_DECK_SIZE, RECONNECTION_TIMEOUT } = GAME_CONSTANTS;
+export const { TIMERS, ANTE_AMOUNT, STARTING_BALANCE, FULL_DECK_SIZE, RECONNECTION_TIMEOUT, MAX_SEATS } = GAME_CONSTANTS;
 
 // For CommonJS (Node.js/server)
 if (typeof module !== 'undefined' && module.exports) {

@@ -3,7 +3,7 @@ const Player = require('../models/Player');
 const { gameLog } = require('../utils/logger');
 const { ANTE_AMOUNT } = require('../../../shared/constants/GameConstants');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
-const GAME_CONSTANTS = require('../../../shared/constants/GameConstants');
+const { MAX_SEATS } = require('../../../shared/constants/GameConstants');
 
 class PlayerManagementService extends BaseService {
   constructor() {
@@ -156,8 +156,8 @@ class PlayerManagementService extends BaseService {
     
     // For new players, check if the game is full
     let occupiedSeats = game.seats.filter(seat => seat !== null).length;
-    if (occupiedSeats >= game.MAX_SEATS) {
-      console.log(`[PLAYER_MANAGEMENT] Cannot add new player ${name} (${userId}): Game is full with ${occupiedSeats}/${game.MAX_SEATS} seats`);
+    if (occupiedSeats >= MAX_SEATS) {
+      console.log(`[PLAYER_MANAGEMENT] Cannot add new player ${name} (${userId}): Game is full with ${occupiedSeats}/${MAX_SEATS} seats`);
       return game;
     }
     
@@ -210,7 +210,7 @@ class PlayerManagementService extends BaseService {
     if (seatIndex === -1) {
       console.error(`[PLAYER_MANAGEMENT] Could not find an empty seat for player ${name}. This should never happen!`);
       // Try to create a new seat if possible
-      if (game.seats.length < game.MAX_SEATS) {
+      if (game.seats.length < MAX_SEATS) {
         seatIndex = game.seats.length;
         game.seats.push(null); // Add a new seat
         console.log(`[PLAYER_MANAGEMENT] Created new seat ${seatIndex} for player ${name}`);
@@ -234,7 +234,7 @@ class PlayerManagementService extends BaseService {
     
     // Initialize or update seat info
     if (!game.seatInfo) {
-      game.seatInfo = Array(game.MAX_SEATS).fill(null);
+      game.seatInfo = Array(MAX_SEATS).fill(null);
     }
     
     game.seatInfo[seatIndex] = {
@@ -245,7 +245,7 @@ class PlayerManagementService extends BaseService {
     };
     
     // Update the next seat index for future players
-    game.nextSeatIndex = (seatIndex + 1) % game.MAX_SEATS;
+    game.nextSeatIndex = (seatIndex + 1) % MAX_SEATS;
     
     // Update the game timestamp
     game.updateTimestamp();

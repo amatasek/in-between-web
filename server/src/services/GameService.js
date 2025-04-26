@@ -1,6 +1,7 @@
 const BaseService = require('./BaseService');
-const { gameLog } = require('../utils/logger');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
+const { gameLog } = require('../utils/logger');
+const { MAX_SEATS } = require('../../../shared/constants/GameConstants'); // Import MAX_SEATS
 
 /**
  * GameService - Orchestrates the game flow by coordinating between specialized services
@@ -138,8 +139,8 @@ class GameService extends BaseService {
       // Only check if the game is full for new connections, not reconnections
       if (!isReconnection) {
         const connectedPlayers = Object.values(currentGame.players).filter(p => p.isConnected);
-        if (connectedPlayers.length >= 6) {
-          console.log(`[GAME_SERVICE] Game ${gameId} is full (${connectedPlayers.length}/6 players)`);
+        if (connectedPlayers.length >= MAX_SEATS) {
+          console.log(`[GAME_SERVICE] Game ${gameId} is full (${connectedPlayers.length}/${MAX_SEATS} players)`);
           socket.emit('error', { message: 'Game is full' });
           return;
         }

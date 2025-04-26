@@ -1,4 +1,4 @@
-const { ANTE_AMOUNT } = require('../../../shared/constants/GameConstants');
+const { ANTE_AMOUNT, MAX_SEATS } = require('../../../shared/constants/GameConstants');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const { gameLog } = require('../utils/logger');
 
@@ -12,9 +12,8 @@ class Game {
     this.socketIdToUserId = {}; // Maps socketId to userId for quick lookups
     
     // Seat-based player management
-    this.MAX_SEATS = 32;
-    this.seats = Array(this.MAX_SEATS).fill(null); // Array of user IDs or null for empty seats
-    this.seatInfo = Array(this.MAX_SEATS).fill(null); // Array of player info objects
+    this.seats = Array(MAX_SEATS).fill(null); // Array of user IDs or null for empty seats
+    this.seatInfo = Array(MAX_SEATS).fill(null); // Array of player info objects
     
     this.nextSeatIndex = 0; // Next available seat index
     this.phase = GamePhases.WAITING;
@@ -51,7 +50,7 @@ class Game {
   assignSeat(playerId) {
     // Find the next available seat
     // Always fill sequentially without gaps
-    for (let seatIndex = 0; seatIndex < this.MAX_SEATS; seatIndex++) {
+    for (let seatIndex = 0; seatIndex < MAX_SEATS; seatIndex++) {
       if (this.seats[seatIndex] === null) {
         // Seat is available
         this.seats[seatIndex] = playerId;
@@ -216,7 +215,7 @@ class Game {
     const seatedPlayers = this.getSeatedPlayers();
     
     // Clear all seats first
-    this.seats = Array(this.MAX_SEATS).fill(null);
+    this.seats = Array(MAX_SEATS).fill(null);
     
     // Put dealer in seat 0 and others after in order
     const dealerIndex = seatedPlayers.indexOf(dealerId);
