@@ -514,7 +514,7 @@ class GameService extends BaseService {
     // Only start the game if all players are ready AND we have at least 2 unique users
     if (allReady && readyPlayerCount >= 2 && uniqueUserCount >= 2) {
       // Start the first round - this will select the player to the right of the dealer
-      game = await this.startNewRound(game, true);
+      game = await this.startNewRound(game);
     }
     
     return game;
@@ -750,7 +750,6 @@ class GameService extends BaseService {
     // Get required services
     const broadcastService = this.getService('broadcast');
     const databaseService = this.getService('database');
-    const playerManagementService = this.getService('playerManagement');
     
     // Check if the pot is empty before proceeding
     if (game.pot === 0) {
@@ -780,7 +779,7 @@ class GameService extends BaseService {
       if (playerIds.length > 0) {
         const prefs = await databaseService.getPreferencesForUsers(playerIds);
         for (const userId of playerIds) { // Loop required for sequential awaiting
-           if (prefs[userId]?.autoAnte) game = await playerManagementService.playerReady(game, userId);
+           if (prefs[userId]?.autoAnte) game = await this.playerReady(game, userId); // Use GameService.playerReady
         }
       }
       // --- End Auto-ante --- 
