@@ -426,17 +426,51 @@
   letter-spacing: 0.5px;
 }
 
-.searchContainer {
-  margin-bottom: 0.75rem;
-  width: 100%;
+.searchContainer { /* Apply margin to the container */
+  margin-bottom: 0.75rem; 
 }
 
+/* Target the TextField root element using the className passed to it */
+.searchContainer :global(div.MuiOutlinedInput-root) { /* Target specific div descendant */
+  background-color: #0a1622;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.searchContainer :global(div.MuiOutlinedInput-root:hover) {
+  background-color: #0c1825;
+}
+
+.searchContainer :global(div.MuiOutlinedInput-root.Mui-focused) {
+  background-color: #0d1927;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); 
+}
+
+/* Remove default fieldset border states */
+.searchContainer :global(div.MuiOutlinedInput-root fieldset),
+.searchContainer :global(div.MuiOutlinedInput-root:hover fieldset),
+.searchContainer :global(div.MuiOutlinedInput-root.Mui-focused fieldset) {
+  border: none; 
+}
+
+/* Style the input text and placeholder - these ARE descendants */
+.searchContainer :global(input.MuiOutlinedInput-input) { /* Target specific input descendant */
+  color: rgba(236, 240, 241, 0.9);
+  font-weight: 500;
+  /* Note: Padding is controlled by the TextField's 'size' prop */
+}
+
+.searchContainer :global(input.MuiOutlinedInput-input::placeholder) {
+  color: rgba(52, 152, 219, 0.5);
+  opacity: 1;
+}
+
+/* Search Icon styling (ensure InputAdornment is used correctly) */
 .searchIcon {
-  font-size: 1.2rem;
-  color: var(--info);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #3498db; 
+  /* Ensure proper spacing if needed, InputAdornment might handle it */
 }
 
 .gameListWrapper {

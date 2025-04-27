@@ -4,6 +4,7 @@ import Lobby from './components/Lobby';
 import GameRoom from './components/GameRoom';
 import { LoadingScreen } from './components/common/LoadingScreen';
 import { useAuth } from './contexts/AuthContext';
+import { LobbyProvider } from './contexts/LobbyContext';
 
 // Auth protection wrapper component
 const ProtectedRoute = ({ children }) => {
@@ -24,7 +25,13 @@ const ProtectedRoute = ({ children }) => {
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <ProtectedRoute><Lobby /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <LobbyProvider>
+          <Lobby />
+        </LobbyProvider>
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/auth',

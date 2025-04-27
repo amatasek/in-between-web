@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import { useSocket } from './SocketContext.jsx';
 import WelcomePopup from '../components/common/WelcomePopup';
 import { API_URL } from '../config';
@@ -68,7 +68,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Single Effect for Initial Authentication Check
+  const didInitialize = useRef(false);
   useEffect(() => {
+    // Prevent effect from running twice in Strict Mode
+    if (didInitialize.current) {
+      return;
+    }
+    didInitialize.current = true;
+
     const initializeAuth = async () => {
       let currentToken = null;
       try {
