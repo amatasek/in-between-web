@@ -7,13 +7,13 @@ import { useAuth } from './contexts/AuthContext';
 
 // Auth protection wrapper component
 const ProtectedRoute = ({ children }) => {
-  const { user, loading, token } = useAuth();
+  const { user, loading } = useAuth();
   
   if (loading) {
     return <LoadingScreen message="Checking authentication..." />;
   }
   
-  if (!user && !token) {
+  if (!user) {
     return <Navigate to="/auth" replace />;
   }
   
