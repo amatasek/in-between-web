@@ -15,53 +15,43 @@ class GameTransactionService extends BaseService {
    * This method centralizes all monetary changes in the game
    * All transactions are between a player and the pot
    * @param {Object} game - The game object
-   * @param {String} playerId - The player's ID
+   * @param {String} userIdForTx - The user ID for the transaction
    * @param {Number} amount - The amount of the transaction (positive for giving money to player, negative for taking)
    * @param {String} reason - The reason for the transaction
    * @returns {Object} The updated game object
    */
-  async processTransaction(game, playerId, amount, reason) {
-    if (!game || !playerId) return game;
-    
-    const player = game.players[playerId];
-    const playerName = player?.name || 'Unknown Player';
-    const userId = player?.userId;
-    
-    // Validate transaction
-    if (!userId) {
-      gameLog(game, `Cannot process transaction: Player ${playerName} has no user ID`);
-      return game;
-    }
+  async processTransaction(game, userIdForTx, amount, reason) {
+    if (!game || !userIdForTx) return game; // Basic validation
+
+    const player = game.players[userIdForTx]; 
+    const playerName = player?.name || 'Unknown Player'; 
 
     try {
-      // Update player's balance in the database
       const databaseService = this.getService('database');
-      await databaseService.updateBalance(userId, amount, `Game ${game.id}: ${reason}`);
-      const user = await databaseService.getUserById(userId);
-      
-      // Always update player's balance in the game state
-      if (player) {
+      await databaseService.updateBalance(userIdForTx, amount, `Game ${game.id}: ${reason}`);
+      const user = await databaseService.getUserById(userIdForTx);
+
+      // Update player's balance in game state if they still exist (e.g., not a refund on leave)
+      if (player) { 
         player.balance = user.balance;
       }
 
-      // Always update the pot (negative amount to player means positive to pot)
-      // When player receives money (positive amount), it comes from the pot
-      // When player pays money (negative amount), it goes to the pot
+      // Update pot: negative amount from player increases pot, positive amount decreases pot
       game.pot -= amount;
-      
+
       // Ensure pot never goes below zero
       if (game.pot < 0) {
         gameLog(game, `Warning: Pot went negative (${game.pot}), resetting to 0`);
         game.pot = 0;
       }
 
-      // Record the transaction in the game
-      this.recordTransactionInGame(game, playerId, amount, reason, playerName);
+      this.recordTransactionInGame(game, userIdForTx, amount, reason, playerName);
 
       return game;
     } catch (error) {
       gameLog(game, `Error processing transaction for ${playerName}: ${error.message}`);
-      return game;
+      // Re-throw the error so the caller knows the transaction failed
+      throw error;
     }
   }
 
@@ -78,12 +68,10 @@ class GameTransactionService extends BaseService {
   recordTransactionInGame(game, playerId, amount, reason, playerName) {
     if (!game || !playerId) return game;
 
-    // Initialize player transactions if not exists
     if (!game.gameTransactions[playerId]) {
       game.gameTransactions[playerId] = [];
     }
 
-    // Create the transaction record
     const transaction = {
       timestamp: new Date().toISOString(),
       playerId,
@@ -93,7 +81,6 @@ class GameTransactionService extends BaseService {
       round: game.round
     };
 
-    // Add to game transactions
     game.gameTransactions[playerId].push(transaction);
     
     return game;
@@ -137,8 +124,6 @@ class GameTransactionService extends BaseService {
     
     return totals;
   }
-
-
 }
 
 module.exports = new GameTransactionService();

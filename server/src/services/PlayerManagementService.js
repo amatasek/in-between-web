@@ -87,16 +87,10 @@ class PlayerManagementService extends BaseService {
       player.disconnectedAt = null;
       player.isConnected = true;
       
-      // Don't log reconnections to prevent noise in the game log
-      // gameLog(game, `${player.name} reconnected.`);
-      
-      // Maintain player's ready state during reconnection
-      // This ensures players don't have to ante up again after refreshing
-      console.log(`[PLAYER_MANAGEMENT] Maintaining ready state for player ${player.name} who reconnected: isReady=${player.isReady}`);
-      
-      // For reconnections, we preserve the player's original state
-      // No need to modify isReady or hasAnteUp - just log the current state
-      console.log(`[PLAYER_MANAGEMENT] Game is in phase ${game.phase}, reconnected player ${player.name} state: isReady=${player.isReady}, hasAnteUp=${player.hasAnteUp}`);
+      // Explicitly restore ready state if player had already anted up for the current hand
+      if (player.hasAnteUp) {
+        player.isReady = true;
+      }
       
       // If the player was already in the current round (had anted up), make sure they're still included
       if (game.antedPlayers && Array.isArray(game.antedPlayers) && !game.antedPlayers.includes(userId) && player.hasAnteUp) {
@@ -286,8 +280,43 @@ class PlayerManagementService extends BaseService {
     delete game.players[userId];
     
     // Add a prominent log message when a player leaves
-    gameLog(game, `${player.name} left`);
+    gameLog(game, `${player.name} left`); // Keep game log concise
     console.log(`[PLAYER_MANAGEMENT] Player ${player.name} left game ${game.id}`);
+    
+    // Check if the removed player was the dealer
+    if (game.dealerId === userId) {
+      const remainingPlayerIds = Object.keys(game.players);
+      if (remainingPlayerIds.length > 0) {
+        let newDealerId = null;
+        let checkedSeats = 0;
+        let currentSeatIndex = (seatIndex + 1) % MAX_SEATS; // Start checking from the next seat
+        
+        // Find the next occupied and connected seat
+        while (checkedSeats < MAX_SEATS) {
+          const potentialDealerId = game.seats[currentSeatIndex];
+          if (potentialDealerId && game.players[potentialDealerId] && game.players[potentialDealerId].isConnected) {
+            newDealerId = potentialDealerId;
+            break;
+          }
+          currentSeatIndex = (currentSeatIndex + 1) % MAX_SEATS;
+          checkedSeats++;
+        }
+        
+        // Fallback: If no connected player found, assign the first player in the remaining list
+        if (!newDealerId) {
+          newDealerId = remainingPlayerIds[0]; 
+          console.log(`[PLAYER_MANAGEMENT] No connected player found after dealer left. Assigning first remaining player ${newDealerId} as dealer.`);
+        }
+        
+        game.dealerId = newDealerId;
+        gameLog(game, `${game.players[newDealerId]?.name || 'Unknown'} is now the dealer.`);
+        console.log(`[PLAYER_MANAGEMENT] Assigned new dealer: ${newDealerId}`);
+      } else {
+        // No players left
+        game.dealerId = null;
+        console.log(`[PLAYER_MANAGEMENT] Last player left, clearing dealer.`);
+      }
+    }
     
     game.updateTimestamp();
     return game;

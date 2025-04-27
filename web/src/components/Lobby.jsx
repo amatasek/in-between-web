@@ -14,7 +14,7 @@ import soundService from '../services/SoundService';
 
 const Lobby = () => {
   const { gameList, loading: lobbyLoading, error: lobbyError } = useLobby(); // Assuming lobby context handles its own loading
-  const { user, logout, loading: authLoading } = useAuth();
+  const { user, logout, loading: authLoading, refreshUserData } = useAuth();
   const { socket, isConnected, loading: socketLoading } = useSocket();
   const { preferences } = usePreferences();
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,6 +24,15 @@ const Lobby = () => {
   const isSmallMobile = useMediaQuery('(max-width:400px)');
   
   const userId = user?.username ? `user_${user.username}` : null;
+
+  // Refresh user data (including balance) on lobby mount/reconnect
+  useEffect(() => {
+    // Effect runs on mount and when isConnected changes.
+    // We just need to ensure refreshUserData is available from the context.
+    if (refreshUserData) {
+      refreshUserData();
+    }
+  }, [isConnected, refreshUserData]);
 
   useEffect(() => {
     if (!user) {

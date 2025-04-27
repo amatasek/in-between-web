@@ -68,7 +68,7 @@ class BroadcastService extends BaseService {
     // Send game list to all connected clients
     connectionService.io.emit('gameList', gameList);
     
-    console.log(`[BROADCAST_SERVICE] Broadcasting list of ${gameList.length} available games to ${connectedClients} connected clients`);
+    console.log(`[BROADCAST_SERVICE] Broadcasting list of available games to ${connectedClients} connected clients`);
     console.log(`[BROADCAST_SERVICE] Game list data:`, JSON.stringify(gameList.map(g => ({ id: g.id, players: Object.keys(g.players || {}).length }))));
   }
 }

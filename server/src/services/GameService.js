@@ -1,7 +1,7 @@
 const BaseService = require('./BaseService');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const { gameLog } = require('../utils/logger');
-const { MAX_SEATS } = require('../../../shared/constants/GameConstants'); // Import MAX_SEATS
+const { MAX_SEATS, ANTE_AMOUNT } = require('../../../shared/constants/GameConstants'); // Import MAX_SEATS and ANTE_AMOUNT
 
 /**
  * GameService - Orchestrates the game flow by coordinating between specialized services
@@ -185,21 +185,6 @@ class GameService extends BaseService {
       
       // Update the game list for all clients in the lobby
       broadcastService.broadcastGameList();
-      
-      // Send updated balance to the user
-      if (user.userId) {
-        const databaseService = this.getService('database');
-        if (databaseService) {
-          try {
-            const userRecord = await databaseService.getUserById(user.userId);
-            const balance = userRecord?.balance || 0;
-            console.log(`[GAME_SERVICE] Sending updated balance to user ${user.username}: ${balance}`);
-            socket.emit('balanceUpdated', { balance });
-          } catch (error) {
-            console.error(`[GAME_SERVICE] Error getting balance for user ${user.username}:`, error);
-          }
-        }
-      }
     } catch (error) {
       console.error(`[GAME_SERVICE] Error joining game:`, error);
       console.error(`[GAME_SERVICE] Error processing game join:`, { 
@@ -216,7 +201,7 @@ class GameService extends BaseService {
    * @param {Socket} socket - The socket that triggered the event
    * @param {Object} data - Event data
    */
-  async handleLeaveGame(socket, data) {
+  async handleLeaveGame(socket, data) { // Socket is still needed here to get userId
     try {
       const connectionService = this.getService('connection');
       const gameId = data?.gameId || connectionService.getGameIdForSocket(socket.id);
@@ -226,82 +211,80 @@ class GameService extends BaseService {
         return;
       }
       
-      await this.leaveGame(socket, gameId);
+      // Get userId from the socket context
+      const userId = socket.user?.userId;
+      if (!userId) {
+        console.error(`[GAME_SERVICE] Cannot handleLeaveGame: No userId found on socket ${socket.id}`);
+        return;
+      }
+      
+      await this.leaveGame(userId, gameId); // Call refactored function
+      
     } catch (error) {
       console.error(`[GAME_SERVICE] Error leaving game:`, error);
     }
   }
   
   /**
-   * Process a player leaving a game
-   * @param {Socket} socket - The player's socket
+   * Processes a player leaving a game (called by handleLeaveGame or cleanupDisconnectedPlayer)
+   * Handles player removal, state updates, potential refunds, and game cleanup.
+   * @param {String} userId - The user ID of the player leaving
    * @param {String} gameId - The game ID
    */
-  async leaveGame(socket, gameId) {
+  async leaveGame(userId, gameId) {
+    if (!userId || !gameId) {
+      console.error('[GAME_SERVICE] leaveGame called with invalid userId or gameId.');
+      return;
+    }
+    
     try {
       const connectionService = this.getService('connection');
       const gameStateService = this.getService('gameState');
       const broadcastService = this.getService('broadcast');
+      const gameTransactionService = this.getService('gameTransaction');
+      const playerManagementService = this.getService('playerManagement');
       
-      // Get the game
       let game = gameStateService.getGame(gameId);
-      if (!game) {
-        console.log(`[GAME_SERVICE] Game ${gameId} not found when leaving`);
+      if (!game || !game.players[userId]) {
+        // Player or game not found, nothing to leave
+        console.log(`[GAME_SERVICE] leaveGame: Player ${userId} not found in game ${gameId}, or game doesn't exist.`);
         return;
       }
       
-      // Get the player ID - use userId from socket.user if available
-      let playerId = null;
+      // Step 1: Check if refund is needed BEFORE removing the player
+      let needsRefund = false;
+      const player = game.players[userId]; // Get player object using userId
+      if (game.phase === GamePhases.WAITING && player?.isReady) {
+        needsRefund = true;
+      }
       
-      if (socket.user && socket.user.userId) {
-        // First try to find the player by userId
-        const userId = socket.user.userId;
-        for (const id in game.players) {
-          if (game.players[id].userId === userId) {
-            playerId = id;
-            break;
-          }
+      // Step 2: Remove player object using PlayerManagementService with userId
+      game = playerManagementService.removePlayer(game, userId); // Use userId for removal
+
+      // Process refund if eligible
+      if (needsRefund) {
+        try {
+          // Use the correct userId variable for the transaction
+          game = await gameTransactionService.processTransaction(game, userId, ANTE_AMOUNT, 'Ante refund on leave');
+          gameLog(game, `Ante refunded to ${player.name} (User ID: ${userId}) on leave`); // Use userId variable
+        } catch (transactionError) {
+          // Log the error, but continue - balance will be fetched next anyway
+          console.error(`[GAME_SERVICE] Error processing ante refund for user ${userId}:`, transactionError); // Use userId variable
         }
       }
-      
-      // Fall back to socket.id if we couldn't find by userId
-      if (!playerId) {
-        playerId = socket.id;
+
+      // If the game becomes empty, remove it
+      if (Object.keys(game.players).length === 0) {
+        gameStateService.removeGame(gameId);
+        gameLog(game, `Removed empty game ${gameId}`);
+      } else {
+        // Game still has players. Dealer reassignment is handled by PlayerManagementService.removePlayer.
+        // Broadcast updated game state
+        broadcastService.broadcastGameState(game);
       }
-      
-      console.log(`[GAME_SERVICE] Removing player ${playerId} from game ${gameId}`);
-      
-      // Remove the player from the game (safely, returning ante if needed)
-      game = await this.safeRemovePlayer(game, playerId);
-      
-      // Remove socket from game room
-      connectionService.disassociateSocketFromGame(socket.id);
-      
-      // Send updated game state to all players
-      broadcastService.broadcastGameState(game);
-      
-      // Clean up the game if it's empty
-      this.cleanupGameIfEmpty(gameId);
-      
-      // Update game list for all clients
+
+      // Always broadcast the updated list of available games
       broadcastService.broadcastGameList();
-      
-      console.log(`[GAME_SERVICE] Player ${playerId} left game ${gameId}`);
-      
-      // Send updated balance to the user
-      if (socket.user && socket.user.userId) {
-        const databaseService = this.getService('database');
-        if (databaseService) {
-          try {
-            const userRecord = await databaseService.getUserById(socket.user.userId);
-            const balance = userRecord?.balance || 0;
-            console.log(`[GAME_SERVICE] Sending updated balance to user ${socket.user.username}: ${balance}`);
-            socket.emit('balanceUpdated', { balance });
-          } catch (error) {
-            console.error(`[GAME_SERVICE] Error getting balance for user ${socket.user.username}:`, error);
-          }
-        }
-      }
     } catch (error) {
       console.error(`[GAME_SERVICE] Error processing leave game:`, error);
     }
@@ -346,7 +329,6 @@ class GameService extends BaseService {
       }
       
       const games = gameStateService.getAvailableGames();
-      console.log(`[GAME_SERVICE] Returning ${games.length} available games`);
       return games;
     } catch (error) {
       console.error('[GAME_SERVICE] Error getting game list:', error);
@@ -354,34 +336,7 @@ class GameService extends BaseService {
     }
   }
 
-  // Pass-through methods removed to reduce unnecessary abstraction layers
   
-  /**
-   * Safely remove a player from the game, returning their ante if appropriate
-   * @param {Object} game - The game object
-   * @param {String} playerId - The player's ID
-   * @returns {Object} The updated game object
-   */
-  async safeRemovePlayer(game, playerId) {
-    if (!game || !game.players[playerId]) return game;
-    
-    // Check if player is anted up and game is in waiting phase
-    if (game.phase === 'waiting' && game.players[playerId]?.isReady) {
-      // Withdraw the player's ante before removing them
-      gameLog(game, `Player ${game.players[playerId]?.name} is anted up, returning ante before leaving`);
-      try {
-        const playerManagementService = this.getService('playerManagement');
-        game = await playerManagementService.playerUnready(game, playerId);
-      } catch (error) {
-        gameLog(game, `Error returning ante: ${error.message}`);
-      }
-    }
-    
-    // Remove player from game
-    const playerManagementService = this.getService('playerManagement');
-    return playerManagementService.removePlayer(game, playerId);
-  }
-
   /**
    * Initialize a new game instance
    * This is called when creating a brand new game
@@ -844,17 +799,11 @@ class GameService extends BaseService {
         }
       });
       
-      if (cleanedCount > 0) {
-        console.log(`[CLEANUP] Removed ${cleanedCount} inactive games`);
-      } else {
-        console.log(`[CLEANUP] No inactive games to remove`);
-      }
+      console.log(`[CLEANUP] Removed ${cleanedCount} inactive games`);
     } catch (error) {
       console.error(`[CLEANUP] Error cleaning up games: ${error.message}`);
     }
   }
-
-  // broadcastGameState method moved to BroadcastService
 }
 
 module.exports = new GameService();

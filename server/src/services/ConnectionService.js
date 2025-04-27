@@ -251,32 +251,27 @@ class ConnectionService extends BaseService {
             
             // Mark player as disconnected but don't remove them yet
             player.disconnected = true;
-            player.isConnected = false;
             player.disconnectedAt = Date.now();
+            player.isConnected = false;
             
-            // Schedule cleanup after reconnection timeout
-            // Store the timeout ID so we can clear it if the player reconnects
-            const timeoutId = setTimeout(() => {
-              this.cleanupDisconnectedPlayer(userId, gameId);
-            }, this.reconnectionTimeout);
+            // Log the reconnection for debugging
+            console.log(`[CONNECTION_SERVICE] Player ${player.name} (${player.userId}) is now marked as connected (disconnected=${player.disconnected}, isConnected=${player.isConnected})`);
             
-            // Store the timeout ID for later cancellation if needed
-            this.disconnectionTimeouts.set(userId, timeoutId);
-            console.log(`[CONNECTION_SERVICE] Set disconnection timeout for player ${userId} in game ${gameId}`);
+            // Associate socket with game
+            this.associateSocketWithGame(socket.id, gameId);
             
-            // Broadcast updated game state with disconnected player
-            const broadcastService = this.getService('broadcast');
-            if (broadcastService) {
-              console.log(`[CONNECTION_SERVICE] Broadcasting game state with disconnected player ${player.name}`);
-              broadcastService.broadcastGameState(game);
-            } else {
-              console.error(`[CONNECTION_SERVICE] Could not find broadcast service to update game state for disconnected player`);
-            }
+            // Remove from connected sockets map
+            this.connectedSockets.delete(socket.id);
           }
         }
         
-        // Remove from connected sockets map
-        this.connectedSockets.delete(socket.id);
+        // Broadcast updated game state with disconnected player
+        const broadcastService = this.getService('broadcast');
+        if (broadcastService) {
+          broadcastService.broadcastGameState(game);
+        } else {
+          console.error(`[CONNECTION_SERVICE] Could not find broadcast service to update game state for disconnected player`);
+        }
       }
     } catch (error) {
       console.error(`[CONNECTION_SERVICE] Error in disconnect:`, error);
@@ -445,7 +440,6 @@ class ConnectionService extends BaseService {
           // If game service isn't available, at least broadcast the game state
           const broadcastService = this.getService('broadcast');
           if (broadcastService) {
-            console.log(`[CONNECTION_SERVICE] Broadcasting game state after reconnection`);
             broadcastService.broadcastGameState(game);
           }
         }
@@ -464,7 +458,7 @@ class ConnectionService extends BaseService {
    * @param {string} userId - The user ID
    * @param {string} gameId - The game ID
    */
-  cleanupDisconnectedPlayer(userId, gameId) {
+  async cleanupDisconnectedPlayer(userId, gameId) {
     try {
       // Make sure userId is valid
       if (!userId) {
@@ -486,13 +480,9 @@ class ConnectionService extends BaseService {
       
       // Get the game
       const gameStateService = this.getService('gameState');
-      if (!gameStateService || !gameStateService.games || !gameStateService.games[gameId]) {
-        // Game no longer exists
-        this.disconnectedPlayers.delete(userId);
-        return;
-      }
-      
-      const game = gameStateService.games[gameId];
+      const gameService = this.getService('game');
+      const broadcastService = this.getService('broadcast');
+      let game = gameStateService.getGame(gameId); // Declare game once here
       
       // Now actually remove the player from the game
       const playerManagementService = this.getService('playerManagement');
@@ -506,16 +496,23 @@ class ConnectionService extends BaseService {
         }
       }
       
-      // Broadcast the updated game state to all players
-      const broadcastService = this.getService('broadcast');
-      if (broadcastService && game) {
-        console.log(`[CONNECTION_SERVICE] Broadcasting game state after player ${userId} was removed from game ${gameId}`);
-        broadcastService.broadcastGameState(game);
+      // If game service exists, call leaveGame (which handles broadcasts)
+      if (gameService) {
+        await gameService.leaveGame(userId, gameId);
+      } else {
+        console.error(`[CONNECTION_SERVICE] Game service not found for player ${userId} cleanup in game ${gameId}`);
+        
+        // Fallback: if no gameService, try broadcasting directly if possible
+        // Use the 'game' variable declared earlier
+        if (broadcastService && game) {
+          broadcastService.broadcastGameState(game);
+        }
       }
       
       // Check if the game is now empty and should be removed
-      const gameService = this.getService('game');
-      if (gameService) {
+      // Refresh the game state in case leaveGame modified it significantly
+      game = gameStateService.getGame(gameId); 
+      if (gameService && game && Object.keys(game.players).length === 0) {
         gameService.cleanupGameIfEmpty(gameId);
       }
       

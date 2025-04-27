@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useSocket } from './SocketContext.jsx';
 import WelcomePopup from '../components/common/WelcomePopup';
 import { API_URL } from '../config';
@@ -19,8 +19,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (socket && user) {
       // Listen for balance updates
-      socket.on('balanceUpdate', (data) => {
+      socket.on('balanceUpdated', (data) => { 
+        console.log('[AuthContext] Received balanceUpdated event:', data); 
         if (data && typeof data.balance === 'number') {
+          console.log(`[AuthContext] Updating user balance from ${user?.balance} to ${data.balance}`); 
           // Update user with new balance
           const updatedUser = {
             ...user,
@@ -29,12 +31,14 @@ export const AuthProvider = ({ children }) => {
           
           // Update state
           setUser(updatedUser);
+        } else {
+          console.warn('[AuthContext] Received invalid balance data:', data);
         }
       });
       
       // Clean up listener on unmount
       return () => {
-        socket.off('balanceUpdate');
+        socket.off('balanceUpdated');
       };
     }
   }, [socket, user]);
@@ -68,14 +72,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Single Effect for Initial Authentication Check
-  const didInitialize = useRef(false);
   useEffect(() => {
-    // Prevent effect from running twice in Strict Mode
-    if (didInitialize.current) {
-      return;
-    }
-    didInitialize.current = true;
-
     const initializeAuth = async () => {
       let currentToken = null;
       try {
@@ -159,15 +156,34 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     // Clear state
     setUser(null);
     setToken(null);
     setShowWelcomePopup(false);
     
-    // Clear localStorage (only token is stored now)ß
+    // Clear localStorage
     localStorage.removeItem('token');
-  };
+  }, []); // Empty dependency array means this function never changes
+
+  // Function to refresh user data from the /me endpoint
+  const refreshUserData = useCallback(async () => {
+    try {
+      // fetchUserData depends on the 'token' state variable
+      const userData = await fetchUserData(token);
+      if (userData) {
+        setUser(userData);
+      } else {
+        console.error('[Auth] Failed to refresh user data. Logging out.');
+        // logout is now stable thanks to useCallback above
+        logout();
+      }
+    } catch (error) { 
+      console.error('[Auth] Error during manual refresh. Logging out.', error);
+      logout();
+    }
+  // Add dependencies: token and logout
+  }, [token, logout]);
 
   if (loading) {
     return null; // or a loading spinner
@@ -175,25 +191,6 @@ export const AuthProvider = ({ children }) => {
   
   const handleCloseWelcomePopup = () => {
     setShowWelcomePopup(false);
-  };
-
-  // Function to refresh user data from the /me endpoint
-  const refreshUserData = async () => {
-    console.log('[Auth] Manually refreshing user data');
-    try {
-      const userData = await fetchUserData(token); // Use current token from state
-      if (userData) {
-        setUser(userData);
-        console.log('[Auth] User data refreshed.');
-      } else {
-        // Handle case where token might be invalid now, or fetch fails
-        console.error('[Auth] Failed to refresh user data. Logging out.');
-        logout(); // Log out if refresh fails
-      }
-    } catch (error) { 
-      console.error('[Auth] Error during manual refresh. Logging out.', error);
-      logout();
-    }
   };
 
   return (
