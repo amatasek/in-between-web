@@ -1,7 +1,8 @@
 const BaseService = require('./BaseService');
 const { GamePhases } = require('../../../shared/constants/GamePhases');
 const { gameLog } = require('../utils/logger');
-const { MAX_SEATS, ANTE_AMOUNT } = require('../../../shared/constants/GameConstants'); // Import MAX_SEATS and ANTE_AMOUNT
+const { MAX_SEATS, ANTE_AMOUNT } = require('../../../shared/constants/GameConstants');
+const Settings = require('../models/Settings');
 
 /**
  * GameService - Orchestrates the game flow by coordinating between specialized services
@@ -27,7 +28,7 @@ class GameService extends BaseService {
    * @param {Socket} socket - The socket to register handlers for
    */
   registerSocketEvents(socket) {
-    socket.on('createGame', () => this.handleCreateGame(socket));
+    socket.on('createGame', (data) => this.handleCreateGame(socket, data));
     socket.on('joinGame', (data) => this.handleJoinGame(socket, data));
     socket.on('getAvailableGames', () => this.sendGameListToClient(socket));
     socket.on('getGameList', () => this.sendGameListToClient(socket)); // Support client's expected event name
@@ -50,7 +51,7 @@ class GameService extends BaseService {
    * Handle create game event
    * @param {Socket} socket - The socket that triggered the event
    */
-  async handleCreateGame(socket) {
+  async handleCreateGame(socket, data = {}) {
     console.log('[GAME_SERVICE] Received createGame event from socket:', socket.id);
     try {
       // Get user from socket (attached by auth middleware)
@@ -62,9 +63,6 @@ class GameService extends BaseService {
       }
       
       console.log('[GAME_SERVICE] Creating game for user:', user);
-      
-      // Generate a random game ID
-      const gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
 
       // Get required services
       const gameStateService = this.getService('gameState');
@@ -72,20 +70,17 @@ class GameService extends BaseService {
       const connectionService = this.getService('connection');
       const broadcastService = this.getService('broadcast');
       
-      // Create game
-      const game = gameStateService.createGame(gameId);
-      
-      // Initialize the new game
-      await this.initializeGame(game);
+      // Create game with custom settings if provided
+      const game = gameStateService.createGame(new Settings(data.settings || {}));
       
       // Add player to game
       await playerManagementService.addPlayer(game, socket.id, user.username || `Player ${socket.id.slice(0,4)}`, user.userId);
       
       // Associate socket with game
-      connectionService.associateSocketWithGame(socket.id, gameId);
+      connectionService.associateSocketWithGame(socket.id, game.id);
       
       // Send game state to player
-      socket.emit('gameJoined', { 
+      socket.emit('gameCreated', { 
         game: game.toJSON(),
         playerId: socket.id
       });
@@ -123,6 +118,7 @@ class GameService extends BaseService {
 
       // Get required services
       const gameStateService = this.getService('gameState');
+      const playerManagementService = this.getService('playerManagement');
       const connectionService = this.getService('connection');
       const broadcastService = this.getService('broadcast');
       
@@ -136,6 +132,29 @@ class GameService extends BaseService {
         return;
       }
 
+      // Check if player is already in the game by userId
+      const existingPlayerIds = Object.keys(currentGame.players);
+      const existingPlayer = existingPlayerIds.find(id => {
+        return currentGame.players[id].userId === user.userId;
+      });
+
+      // Check password if required and it's not a reconnection
+      if (!existingPlayer && currentGame.settings?.isPrivate) {
+        // Check if password was provided in the payload
+        if (!data.password) {
+          // Password required but not provided by client
+          console.log(`[GAME_SERVICE] Password required for game ${gameId}, user ${user.username}`);
+          socket.emit('error', { message: 'Password required' }); // Specific message
+          return;
+        }
+        // Password was provided, now check if it's correct
+        if (currentGame.settings.password !== data.password) {
+          console.log(`[GAME_SERVICE] Invalid password attempt for game ${gameId} by user ${user.username}`);
+          socket.emit('error', { message: 'Invalid password' }); // Existing error
+          return;
+        }
+      }
+
       // Only check if the game is full for new connections, not reconnections
       if (!isReconnection) {
         const connectedPlayers = Object.values(currentGame.players).filter(p => p.isConnected);
@@ -146,15 +165,8 @@ class GameService extends BaseService {
         }
       }
 
-      // Check if player is already in the game by userId
-      const existingPlayerIds = Object.keys(currentGame.players);
-      const existingPlayer = existingPlayerIds.find(id => {
-        return currentGame.players[id].userId === user.userId;
-      });
-
       // Add or update player in the game
-      const playerManagementService = this.getService('playerManagement');
-      await playerManagementService.addPlayer(currentGame, socket.id, user.username || `Player ${socket.id.slice(0,4)}`, user.userId);
+      await playerManagementService.addPlayer(currentGame, socket.id, user.username, user.userId);
       
       // Associate socket with game
       // This will also clear any pending disconnection timeout
@@ -167,15 +179,12 @@ class GameService extends BaseService {
         console.log(`[GAME_SERVICE] Player ${user.username} (${user.userId}) joined game ${gameId}`);
       }
       
-      // Make sure the game has a valid phase before sending
-      const gameState = currentGame.toJSON ? currentGame.toJSON() : currentGame;
-      
       // Log the game state before sending
-      console.log(`[GAME_SERVICE] Player ${isReconnection ? 'reconnected to' : 'joined'} game ${gameId}, phase: ${gameState.phase}`);
+      console.log(`[GAME_SERVICE] Player ${isReconnection ? 'reconnected to' : 'joined'} game ${gameId}`);
       
       // Send game state to player with proper phase
       socket.emit('gameJoined', { 
-        game: gameState,
+        game: currentGame.toJSON(),
         playerId: socket.id,
         isReconnection: Boolean(existingPlayer || isReconnection)
       });
@@ -335,39 +344,13 @@ class GameService extends BaseService {
       return [];
     }
   }
-
-  
-  /**
-   * Initialize a new game instance
-   * This is called when creating a brand new game
-   * @param {Object} game - The game object to initialize
-   * @returns {Object} The initialized game
-   */
-  async initializeGame(game) {
-    if (!game) return game;
-    
-    // Set initial game state
-    game.round = 1; // Start with round 1 directly
-    game.phase = GamePhases.WAITING;
-    game.pot = 0;
-    
-    // Set dealer if not already set
-    if (!game.dealerId && game.seats.some(seat => seat !== null)) {
-      // Set the first player as dealer
-      game.dealerId = game.seats.find(seat => seat !== null);
-      gameLog(game, `Setting initial dealer: ${game.players[game.dealerId]?.name}`);
-    }
-    
-    gameLog(game, `Game initialized, waiting for players to ante up`);
-    return game;
-  }
   
   /**
    * Start a new round within the game
    * @param {Object} game - The game object
    * @returns {Object} The updated game object
    */
-  async startNewRound(game) {
+  async startOrResumeRound(game) {
     if (!game) return game;
     
     // Get required services
@@ -378,26 +361,11 @@ class GameService extends BaseService {
     // Clear any existing timeouts
     gameTimingService.clearGameTimeouts(game.id);
     
-    // Get connected players
-    const connectedPlayers = game.getConnectedPlayersInOrder();
-    if (connectedPlayers.length === 0) return game;
+    // Move to next player
+    await playerManagementService.moveToNextPlayer(game);
 
-    // Start new round - this increments the round counter FIRST
-    game = gameStateService.startRound(game);
-    
-    // Handle player selection
-    if (game.round === 1) {
-      // First round: select player after dealer
-      if (game.dealerId && connectedPlayers.includes(game.dealerId)) {
-        const dealerIndex = connectedPlayers.indexOf(game.dealerId);
-        game.currentPlayerId = connectedPlayers[(dealerIndex + 1) % connectedPlayers.length];
-      } else {
-        game.currentPlayerId = connectedPlayers[0];
-      }
-    } else {
-      // Subsequent rounds: move to next player
-      game = await playerManagementService.moveToNextPlayer(game);
-    }
+    // Prepare for deal
+    game = gameStateService.prepareForDeal(game);
     
     // Start dealing sequence
     game = await this.startDealingSequence(game);
@@ -469,8 +437,8 @@ class GameService extends BaseService {
     
     // Only start the game if all players are ready AND we have at least 2 unique users
     if (allReady && readyPlayerCount >= 2 && uniqueUserCount >= 2) {
-      // Start the first round - this will select the player to the right of the dealer
-      game = await this.startNewRound(game);
+      gameLog(game, `All players ready, starting round ${game.round}`);
+      game = await this.startOrResumeRound(game);
     }
     
     return game;
@@ -747,11 +715,8 @@ class GameService extends BaseService {
       return game;
     }
     
-    // For continuing the game with the next round
-    gameLog(game, `Starting next round`);
-    
-    // Start a new round
-    game = await this.startNewRound(game);
+    // Resume the round
+    game = await this.startOrResumeRound(game);
     
     // Broadcast the updated game state
     broadcastService.broadcastGameState(game);

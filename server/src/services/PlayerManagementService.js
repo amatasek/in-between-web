@@ -322,14 +322,22 @@ class PlayerManagementService extends BaseService {
     return game;
   }
 
-  // Media preferences are now handled entirely through HTTP routes
-  
+  /**
+   * Move to the next player in the game
+   * @param {Object} game - The game object
+   * @returns {Object} The updated game object
+   */
   moveToNextPlayer(game) {
-    if (!game || !game.currentPlayerId) return game;
-    
-    // Log the current player before moving
-    const currentPlayer = game.players[game.currentPlayerId];
-    // Detailed logging removed for cleaner game log
+    const connectedPlayers = game.getConnectedPlayersInOrder();
+    if (connectedPlayers.length < 2) return game;
+
+    gameLog(game, `Moving to next player after ${game.players[game.currentPlayerId]?.name || 'Unknown'}`);
+
+    // If no current player, start with the player after the dealer
+    if (!game.currentPlayerId && game.dealerId && connectedPlayers.includes(game.dealerId)) {
+      const dealerIndex = connectedPlayers.indexOf(game.dealerId);
+      game.currentPlayerId = connectedPlayers[dealerIndex];
+    }
     
     // Get the next player ID based on seat order - already using userId
     const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);

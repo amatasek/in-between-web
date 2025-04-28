@@ -48,7 +48,6 @@ class GameTimingService extends BaseService {
    */
   async handleDealingSequence(game) {
     // Get required services from the registry
-    const gameService = this.getService('game');
     const cardService = this.getService('card');
     const gameStateService = this.getService('gameState');
     const broadcastService = this.getService('broadcast');
@@ -63,8 +62,11 @@ class GameTimingService extends BaseService {
       game = cardService.dealFirstCard(game);
       broadcastService.broadcastGameState(game);
       
-      // Check if the first card is an Ace
-      if (game.firstCard && game.firstCard.value === 'A') {
+      // If ace choice is enabled and the first card is an Ace
+      if (
+        !!game.settings.enableAceChoice &&
+        game.firstCard.value === 'A') 
+      {
         game.waitingForAceDecision = true;
         gameLog(game, `${game.players[game.currentPlayerId]?.name} needs to choose Ace value`);
         
@@ -101,7 +103,6 @@ class GameTimingService extends BaseService {
               
               // Get the player and user data
               const databaseService = this.getService('database');
-              const gameEventService = this.getService('gameEvent');
               
               const player = currentGame.players[currentPlayerId];
               if (!player?.userId) {
@@ -141,8 +142,11 @@ class GameTimingService extends BaseService {
         game = cardService.dealSecondCard(game);
         broadcastService.broadcastGameState(game);
         
-        // Check if the first two cards form a matching pair (but aren't Aces)
-        if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
+        // If second chances are enabled and the first two cards form a matching pair
+        if (
+          !!game.settings.enableSecondChance &&
+          cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) 
+        {
           await this.handleMatchingPair(game);
           return;
         }
@@ -297,8 +301,6 @@ class GameTimingService extends BaseService {
 
     this.ensureGameTimeouts(game.id);
     
-
-    
     // Set timer for transition to next round
     this.timeouts[game.id].transitionToNextRound = setTimeout(async () => {
       // Start the next round
@@ -374,8 +376,11 @@ class GameTimingService extends BaseService {
       game = cardService.dealSecondCard(game);
       broadcastService.broadcastGameState(game);
       
-      // Check if the first two cards form a matching pair (but aren't Aces)
-      if (cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) {
+      // If second chances are enabled and the first two cards form a matching pair
+      if (
+        !!game.settings.enableSecondChance &&
+        cardService.isSecondChanceEligible(game.firstCard, game.secondCard)
+      ) {
         await this.handleMatchingPair(game);
         return;
       }
@@ -508,7 +513,6 @@ class GameTimingService extends BaseService {
    * @returns {Promise<void>}
    */
   async handleMatchingPair(game) {
-    const gameService = this.getService('game');
     const gameStateService = this.getService('gameState');
     
     game.waitingForSecondChance = true;

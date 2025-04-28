@@ -1,90 +1,145 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { GameProvider } from '../contexts/GameContext';
+import { GameProvider, useGameContext } from '../contexts/GameContext';
 import GameScreen from './GameScreen';
 import { useSocket } from '../contexts/SocketContext';
 import { LoadingScreen } from './common/LoadingScreen';
+import PasswordPromptModal from './common/PasswordPromptModal';
 import soundService from '../services/SoundService';
 
 const GameRoom = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const { socket, isConnected } = useSocket();
-  const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const hasInitiatedJoin = useRef(false); // Ref to track true initiation
 
-  // Handle return to lobby
-  const handleReturnToLobby = () => {
+  const handleReturnToLobby = useCallback(() => {
     if (socket && isConnected && gameId) {
-      soundService.play('ui.leave');
-      socket.emit('leaveGameLobby', { gameId });
+      soundService.play('ui.leave'); 
+      socket.emit('leaveGameLobby', { gameId }); 
       navigate('/');
     }
-  };
-
-  useEffect(() => {
-    if (!socket || !isConnected || !gameId) return;
-
-    setLoading(true);
-    
-    const onGameJoined = (data) => {
-      if (data && data.game && data.game.id === gameId) {
-        setGame(data.game);
-        setLoading(false);
-        setError(null);
-      }
-    };
-    
-    const onError = (error) => {
-      setError(error.message || 'An error occurred');
-      setLoading(false);
-      
-      if (error.message === 'Game not found') {
-        navigate('/');
-      }
-    };
-    
-    socket.on('gameJoined', onGameJoined);
-    socket.on('error', onError);
-    
-    // Play join sound when joining a game
-    soundService.play('ui.join');
-    
-    console.log(`[GameRoom] Joining game: ${gameId}`);
-    socket.emit('joinGame', { gameId });
-    
-    return () => {
-      console.log(`[GameRoom] Cleaning up event listeners for game: ${gameId}`);
-      socket.off('gameJoined', onGameJoined);
-      socket.off('error', onError);
-      
-      // Make sure we leave the game when unmounting if we're still connected
-      if (isConnected) {
-        console.log(`[GameRoom] Leaving game ${gameId} on unmount`);
-        socket.emit('leaveGameLobby', { gameId });
-      }
-    };
   }, [socket, isConnected, gameId, navigate]);
 
-  if (loading) {
-    return <LoadingScreen message={`Joining game ${gameId}...`} />;
-  }
+  const handlePasswordSubmit = useCallback((password) => {
+    setIsPasswordModalOpen(false);
+    if (socket && gameId && password) {
+      setError(null); 
+      socket.emit('joinGame', { gameId, password });
+      setLoading(true);
+    }
+  }, [socket, gameId]);
 
-  if (error) {
+  const handlePasswordCancel = useCallback(() => {
+    setIsPasswordModalOpen(false);
+    navigate('/');
+  }, [navigate]);
+
+  useEffect(() => {
+    setError(null);          
+    setIsPasswordModalOpen(false); 
+    setLoading(true);        
+  }, [gameId]);
+
+  useEffect(() => {
+    if (!socket) {
+      return; 
+    }
+
+    const onGameJoined = (data) => {
+      if (data && data.game && data.game.id === gameId) {
+        soundService.play('ui.join');
+        setLoading(false);
+        setError(null);
+        setIsPasswordModalOpen(false);
+      }
+    };
+
+    const onError = (errorData) => {
+      const message = errorData.message || 'An unknown error occurred';
+
+      if (message === 'Password required') {
+        console.error(errorData);
+        setIsPasswordModalOpen(true);
+        setLoading(false);
+        setError(null);
+      } else if (message === 'Invalid password') {
+        console.error(errorData);
+        setError('Invalid password.');
+        setIsPasswordModalOpen(true);
+        setLoading(false);
+      } else if (message === 'Game not found') {
+        navigate('/');
+      } else if (message === 'Game is full') {
+        setError(message);
+        setLoading(false);
+        setIsPasswordModalOpen(false);
+        setTimeout(() => navigate('/'), 3000);
+      } else {
+        setError(message);
+        setLoading(false);
+        setIsPasswordModalOpen(false);
+      }
+    };
+
+    socket.on('gameJoined', onGameJoined);
+    socket.on('error', onError);
+
+    return () => {
+      socket.off('gameJoined', onGameJoined);
+      socket.off('error', onError);
+    };
+  }, [socket, gameId, navigate]); 
+
+  useEffect(() => {
+    // Use ref to prevent double emission due to StrictMode or rapid state changes
+    if (socket && gameId && !hasInitiatedJoin.current) {
+      hasInitiatedJoin.current = true; // Mark as initiated *immediately*
+      setLoading(true); 
+      setError(null); 
+      setIsPasswordModalOpen(false); 
+      socket.emit('joinGame', { gameId });
+    } else {
+    }
+    // Dependencies remain minimal: only run when socket or gameId fundamentally change
+  }, [socket, gameId]); 
+
+  const GameRoomContent = () => {
+    const { gameState } = useGameContext(); 
+
     return (
-      <div className="error-container">
-        <h2>An error occurred</h2>
-        <p>{error}</p>
+      <>
+        <PasswordPromptModal 
+          isOpen={isPasswordModalOpen}
+          onClose={handlePasswordCancel}
+          onSubmit={handlePasswordSubmit}
+          gameId={gameId} 
+        />
+
+        {loading && <LoadingScreen message={`Joining game ${gameId}...`} />} 
+        
+        {error && !loading && !isPasswordModalOpen && (
+          <div className="error-container" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+            <h2>An error occurred</h2>
+            <p>{error}</p>
         {/* Suggest refreshing the page instead of navigating back */}
         <button onClick={() => window.location.reload()}>Refresh Page</button>
-      </div>
+          </div>
+        )}
+        
+        {!loading && !error && gameState && 
+          <GameScreen onReturnToLobby={handleReturnToLobby} />
+        }
+      </>
     );
-  }
+  };
 
   return (
-    <GameProvider gameId={gameId} initialGameState={game}>
-      <GameScreen onReturnToLobby={handleReturnToLobby} />
+    <GameProvider gameId={gameId}>
+      <GameRoomContent /> 
     </GameProvider>
   );
 };

@@ -181,27 +181,31 @@ const GameSummaryModal = ({ onClose }) => {
             )}
           </div>
           
-          {/* Settle Up Section */}
-          <div className={styles.settingSection}>
-            <h3>Settle Up</h3>
-            {settleUpPayments.length === 0 ? (
-              <p className={styles.noDataMessage}>No payments needed or no transactions recorded yet.</p>
-            ) : (
-              <div className={styles.settleUpTable}>
-                {settleUpPayments.map((payment, index) => (
-                  <div key={index} className={styles.paymentRow}>
-                    <span className={styles.paymentText}>
-                      <span className={styles.playerName}>{payment.fromName}</span> pays{' '}
-                      <span className={styles.playerName}>{payment.toName}</span>
-                    </span>
-                    <span className={styles.paymentAmount}>
-                      <CurrencyAmount amount={payment.amount} size="small" />
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Settle Up Section - Conditionally render based on private game setting */}
+          {gameState.settings.isPrivate && (
+            <div className={styles.settingSection}>
+              <h3>Settle Up</h3>
+              {settleUpPayments.length === 0 ? (
+                <p className={styles.noDataMessage}>No payments needed or no transactions recorded yet.</p>
+              ) : (
+                <div className={styles.settleUpTable}>
+                  {settleUpPayments.map((payment, index) => (
+                    <div key={index} className={styles.paymentRow}>
+                      <span className={styles.paymentText}>
+                        <span className={styles.playerName}>{payment.fromName}</span> pays{' '}
+                        <span className={styles.playerName}>{payment.toName}</span>
+                      </span>
+                      <span className={styles.paymentAmount}>
+                        <CurrencyAmount amount={payment.amount} size="small" />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {/* END Settle Up Section */}
+
         </div>
       </div>
     </div>

@@ -646,3 +646,16 @@
   color: rgba(255, 255, 255, 0.7);
   margin: 0.5rem 0;
 }
+
+.privatePill {
+  display: inline-flex; /* Use flex for alignment */
+  align-items: center; /* Vertically center icon and text */
+  background-color: rgba(255, 255, 255, 0.15); /* Subtle background */
+  color: rgba(255, 255, 255, 0.8); /* Slightly dimmed text */
+  padding: 0.2em 0.6em;
+  border-radius: 1em; /* Make it pill-shaped */
+  font-size: 0.75em;
+  margin-left: 0.75em;
+  vertical-align: middle; /* Align pill with text */
+  white-space: nowrap; /* Prevent wrapping */
+}
