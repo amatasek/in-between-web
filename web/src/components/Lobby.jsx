@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styles from './styles/Lobby.module.css';
-import { useLobby, LobbyProvider } from '../contexts/LobbyContext.jsx';
+import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { usePreferences } from '../contexts/PreferencesContext';
-import { CircularProgress, Box, Typography, TextField, useMediaQuery, InputAdornment } from '@mui/material';
+import { TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
 import CurrencyAmount from './common/CurrencyAmount';
-import PreferencesModal from './PreferencesModal.jsx';
-import PreferencesButton from './PreferencesButton.jsx';
+import PreferencesButton from './common/PreferencesButton.jsx';
 import UserAvatar from './UserAvatar.jsx';
 import soundService from '../services/SoundService';
 
@@ -19,7 +18,7 @@ const Lobby = () => {
   const { preferences } = usePreferences();
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null); // Local error state for lobby actions
-  const [showPreferences, setShowPreferences] = useState(false);
+
   const isMobile = useMediaQuery('(max-width:600px)');
   const isSmallMobile = useMediaQuery('(max-width:400px)');
   
@@ -139,7 +138,7 @@ const Lobby = () => {
      <div className={styles.lobbyContainer}>
        <AppHeader />
        
-       {showPreferences && <PreferencesModal onClose={() => setShowPreferences(false)} />}
+ 
        
        <div className={styles.formContainer}>
          <div className={styles.formSection}>
@@ -164,13 +163,13 @@ const Lobby = () => {
                  Balance: <CurrencyAmount amount={Number(user?.balance) || 0} size="medium" />
                </div>
                <div className={styles.headerButtons}>
-                 <PreferencesButton onClick={() => setShowPreferences(true)} />
                  <button 
                    className={styles.logoutButton}
                    onClick={logout}
                  >
                    <span className={styles.buttonText}>Logout</span>
                  </button>
+                 <PreferencesButton />
                </div>
              </div>
            </div>

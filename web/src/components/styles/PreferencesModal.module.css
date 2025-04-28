@@ -171,6 +171,28 @@
 }
 
 /* Media queries for responsiveness */
+.sectionHeader {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #64a9ff;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid rgba(100, 169, 255, 0.18);
+  border-radius: 0;
+  background: none;
+  text-shadow: none;
+  box-shadow: none;
+  padding-left: 10px;
+  padding-top: 4px;
+}
+
+
+.settingsContainer .sectionHeader:not(:first-child) {
+  margin-top: 32px;
+}
+
+
 @media (max-width: 600px) {
   .modalContent {
     width: 95%;

@@ -5,9 +5,9 @@ import { useSocket } from '../contexts/SocketContext';
 import GAME_CONSTANTS from '../../../shared/constants/GameConstants';
 const { TIMERS } = GAME_CONSTANTS;
 import { ICONS } from '../constants/UIConstants';
-import MuteToggle from './MuteToggle.jsx';
 import GameSummaryModal from './GameSummaryModal.jsx';
 import RulesButton from './common/RulesButton';
+import PreferencesButton from './common/PreferencesButton';
 import LeaveButton from './common/LeaveButton';
 
 // Phase display mapping with icons and friendly names
@@ -139,7 +139,7 @@ const GameHeader = ({ handleLeaveGame }) => {
         {/* Right: Rules, Leave and Mute buttons */}
         <div className={styles.headerRight}>
           <div className={styles.controlsGroup}>
-            <MuteToggle compact={true} />
+            <PreferencesButton />
             <RulesButton />
             <LeaveButton onClick={handleLeaveGame} />
           </div>
@@ -163,11 +163,10 @@ const GameHeader = ({ handleLeaveGame }) => {
             </p>
           </div>
           
-          <div className={styles.mobileMuteContainer}>
-            <MuteToggle compact={true} />
-          </div>
+
           
           <div className={styles.mobileActions}>
+            <PreferencesButton />
             <RulesButton />
             <LeaveButton onClick={handleLeaveGame} />
           </div>

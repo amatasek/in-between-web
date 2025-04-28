@@ -34,13 +34,7 @@
   box-sizing: border-box;
 }
 
-/* Centered mute button container for mobile */
-.mobileMuteContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 4px;
-}
+
 
 /* Mobile actions container */
 .mobileActions {
@@ -264,13 +258,6 @@
     margin-bottom: 8px;
   }
   
-  .muteToggleContainer {
-    display: flex;
-    justify-content: center;
-    flex: 1;
-    margin: 0;
-  }
-  
   /* Ensure phase indicator is centered in mobile bottom row */
   .mobileBottomRow .gamePhase {
     width: 100%;
@@ -291,13 +278,6 @@
   
   .mobileTopRow {
     margin-bottom: 6px;
-  }
-  
-  .muteToggleContainer {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    margin: 0;
   }
   
   .gameTitle {

@@ -199,7 +199,7 @@
     display: flex;
     gap: 8px;
     width: 100%;
-    justify-content: space-between;
+    justify-content: start;
   }
   
   .settingsButton,
@@ -207,6 +207,7 @@
     flex: 1;
     text-align: center;
     padding: 8px 0;
+    max-width: 120px;
   }
 }
 
