@@ -79,7 +79,7 @@ const Lobby = () => {
       clearTimeout(creationTimeout);
       socket.off('gameCreated', handleGameCreated);
       if (data?.game?.id) {
-        window.location.href = `/${data.game.id}`;
+        navigate(`/${data.game.id}`);
       } else {
         setError('Failed to create or join game. Invalid response.');
       }
