@@ -6,10 +6,13 @@ const { gameLog } = require('../utils/logger');
  * Game Model - Core game state and operations
  */
 class Game {
-  constructor(id) {
-    this.id = id;
+  constructor(settings) {
+    this.id = settings.customName || Math.random().toString(36).substring(2, 8).toUpperCase();
     this.players = {}; // Now keyed by userId instead of socketId
     this.socketIdToUserId = {}; // Maps socketId to userId for quick lookups
+
+    // Settings
+    this.settings = settings;
     
     // Seat-based player management
     this.seats = Array(MAX_SEATS).fill(null); // Array of user IDs or null for empty seats
@@ -22,6 +25,7 @@ class Game {
     this.round = 1;
     this.dealerId = null; // Will be set when first player joins
     this.currentPlayerId = null;
+
     // Individual card properties for sequential dealing
     this.firstCard = null;  // Left card (dealt first)
     this.secondCard = null; // Right card (dealt second)
@@ -40,32 +44,6 @@ class Game {
     // Track game transactions for running score
     this.gameTransactions = {};
   }
-
-  /**
-   * Assign a player to the next available seat
-   * Players fill in the next available seats in order
-   * @param {string} playerId - The player's ID
-   * @returns {number} The assigned seat index or -1 if no seats available
-   */
-  assignSeat(playerId) {
-    // Find the next available seat
-    // Always fill sequentially without gaps
-    for (let seatIndex = 0; seatIndex < MAX_SEATS; seatIndex++) {
-      if (this.seats[seatIndex] === null) {
-        // Seat is available
-        this.seats[seatIndex] = playerId;
-        this.seatInfo[seatIndex] = {
-          playerId,
-          name: this.players[playerId]?.name || `Player ${seatIndex + 1}`,
-          isDealer: false,
-          joinedAt: Date.now()
-        };
-        return seatIndex;
-      }
-    }
-    
-    return -1; // No seats available
-  }
   
   /**
    * Map a socket ID to a user ID
@@ -74,25 +52,6 @@ class Game {
    */
   mapSocketToUser(socketId, userId) {
     this.socketIdToUserId[socketId] = userId;
-  }
-
-  /**
-   * Get user ID from socket ID
-   * @param {string} socketId - The socket ID
-   * @returns {string|null} The user ID or null if not found
-   */
-  getUserIdFromSocket(socketId) {
-    return this.socketIdToUserId[socketId] || null;
-  }
-
-  /**
-   * Get player by socket ID
-   * @param {string} socketId - The socket ID
-   * @returns {Object|null} The player object or null if not found
-   */
-  getPlayerBySocketId(socketId) {
-    const userId = this.getUserIdFromSocket(socketId);
-    return userId ? this.players[userId] : null;
   }
 
   /**
@@ -157,84 +116,6 @@ class Game {
     
     return nextPlayerId;
   }
-
-  /**
-   * Get the first non-dealer player (player in position 1)
-   * @returns {string} The player ID in seat 1 or null if none
-   * @deprecated Use getNextPlayerAfterDealer() instead for consistent player rotation
-   */
-  getFirstNonDealerPlayer() {
-    // First non-dealer player is in seat 1
-    const playerId = this.seats[1];
-    if (playerId && this.players[playerId]?.isConnected) {
-      return playerId;
-    }
-    // Fallback to seat 0 if seat 1 is empty
-    return this.seats[0];
-  }
-  
-  /**
-   * Get the next player after the dealer
-   * @returns {string} The next player's ID after the dealer
-   */
-  getNextPlayerAfterDealer() {
-    return this.getNextPlayerInOrder(this.dealerId);
-  }
-  
-  /**
-   * Remove a player from their seat and compact seats
-   * @param {string} playerId - The player's ID to remove
-   */
-  removeSeat(playerId) {
-    const seatIndex = this.getPlayerSeat(playerId);
-    if (seatIndex !== -1) {
-      this.seats[seatIndex] = null;
-      // Compact seats to remove gaps
-      this.compactSeats();
-    }
-  }
-  
-  /**
-   * Get all seated players in order
-   * @returns {Array} Array of player IDs in seat order
-   */
-  getSeatedPlayers() {
-    // Return just the player IDs that are in seats (no nulls)
-    return this.seats.filter(playerId => playerId !== null);
-  }
-  
-  /**
-   * Compact seats to remove any gaps when players leave
-   * This maintains the dealer in seat 0 and keeps all other players in sequential seats
-   */
-  compactSeats() {
-    // Get the current dealer's ID
-    const dealerId = this.dealerId;
-    
-    // Get current seated players (not including null slots)
-    const seatedPlayers = this.getSeatedPlayers();
-    
-    // Clear all seats first
-    this.seats = Array(MAX_SEATS).fill(null);
-    
-    // Put dealer in seat 0 and others after in order
-    const dealerIndex = seatedPlayers.indexOf(dealerId);
-    if (dealerIndex !== -1) {
-      // Reorder so dealer is first, then all other players
-      const orderedPlayers = [
-        ...seatedPlayers.slice(dealerIndex),
-        ...seatedPlayers.slice(0, dealerIndex)
-      ];
-      
-      // Fill seats with the ordered players
-      orderedPlayers.forEach((playerId, index) => {
-        this.seats[index] = playerId;
-      });
-      
-      // Update next seat index
-      this.nextSeatIndex = orderedPlayers.length;
-    }
-  }
   
   /**
    * Get connected players in seat order
@@ -285,6 +166,7 @@ class Game {
     return {
       id: this.id,
       players: playerInfo,
+      settings: this.settings.toJSON(),
       seats: this.seats,
       phase: this.phase,
       pot: this.pot,
@@ -326,14 +208,6 @@ class Game {
 
   getPlayer(playerId) {
     return this.players[playerId];
-  }
-
-  getCurrentPlayer() {
-    return this.players[this.currentPlayerId];
-  }
-
-  getDealerName() {
-    return this.players[this.dealerId]?.name || 'Unknown';
   }
 }
 

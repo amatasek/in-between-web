@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,12 +11,15 @@ import CurrencyAmount from './common/CurrencyAmount';
 import PreferencesButton from './common/PreferencesButton.jsx';
 import UserAvatar from './UserAvatar.jsx';
 import soundService from '../services/SoundService';
+import GameSettingsModal from './GameSettingsModal.jsx';
+import GameCard from './GameCard'; // Import the new GameCard component
 
 const Lobby = () => {
   const { gameList, loading: lobbyLoading, error: lobbyError } = useLobby(); // Assuming lobby context handles its own loading
   const { user, logout, loading: authLoading, refreshUserData } = useAuth();
   const { socket, isConnected, loading: socketLoading } = useSocket();
   const { preferences } = usePreferences();
+  const navigate = useNavigate(); // Get navigate function
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null); // Local error state for lobby actions
 
@@ -23,6 +27,9 @@ const Lobby = () => {
   const isSmallMobile = useMediaQuery('(max-width:400px)');
   
   const userId = user?.username ? `user_${user.username}` : null;
+
+  // Modal state for custom game creation
+  const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
 
   // Refresh user data (including balance) on lobby mount/reconnect
   useEffect(() => {
@@ -53,37 +60,49 @@ const Lobby = () => {
     }
   }, [user, logout, isConnected]);
   
-  const handleCreateGame = () => {
+  // Shared game creation logic
+  const createGameWithSettings = (settings) => {
     if (!user?.id) {
       setError('Please log in to create a game');
       return;
     }
-    
     if (!isConnected) {
       setError('Not connected to server');
       return;
     }
-    
     setError(null);
-    soundService.play('ui.join');
-    
+
     const creationTimeout = setTimeout(() => {
       setError('Game creation timed out. Please try again.');
-    }, 5000); // 5 seconds
-    
+    }, 5000);
     const handleGameCreated = (data) => {
-      clearTimeout(creationTimeout); // Stop the timeout
-      socket.off('gameJoined', handleGameCreated); // Clean up listener
+      clearTimeout(creationTimeout);
+      socket.off('gameCreated', handleGameCreated);
       if (data?.game?.id) {
-        window.location.href = `/${data.game.id}`; // Temporary until navigate is added
+        window.location.href = `/${data.game.id}`;
       } else {
         setError('Failed to create or join game. Invalid response.');
       }
     };
-    
-    socket.on('gameJoined', handleGameCreated);
-    
-    socket.emit('createGame');
+    socket.on('gameCreated', handleGameCreated);
+    if (settings) {
+      socket.emit('createGame', { settings });
+    } else {
+      socket.emit('createGame');
+    }
+  };
+
+  const handleCreateGame = () => createGameWithSettings();
+
+  // Handler for custom game creation
+  const handleCreateCustomGame = () => {
+    setShowGameSettingsModal(true);
+  };
+
+  // Handler for submitting custom settings modal
+  const handleSubmitCustomSettings = (settings) => {
+    setShowGameSettingsModal(false);
+    createGameWithSettings(settings);
   };
   
   const handleJoinGame = (gameId) => {
@@ -99,9 +118,7 @@ const Lobby = () => {
     setError(null);
     soundService.play('ui.click'); // Play join sound
 
-    socket.emit('joinGame', { gameId });
-
-    window.location.href = `/${gameId}`; // Current
+    navigate(`/${gameId}`);
   };
   
   const handleSearchChange = (e) => {
@@ -182,9 +199,23 @@ const Lobby = () => {
                onClick={handleCreateGame}
                disabled={!user?.username}
              >
-               Create New Game
+               Create Quick Game
+             </button>
+             <button
+               className={`${styles.actionButton} ${styles.createButton}`}
+               style={{ marginTop: 8 }}
+               onClick={handleCreateCustomGame}
+               disabled={!user?.username}
+             >
+               Create Custom Game
              </button>
            </div>
+           {showGameSettingsModal && (
+             <GameSettingsModal
+               onSubmit={handleSubmitCustomSettings}
+               onClose={() => setShowGameSettingsModal(false)}
+             />
+           )}
          </div>
          
          {error && (
@@ -220,40 +251,12 @@ const Lobby = () => {
          {filteredGameList && filteredGameList.length > 0 ? (
            <div className={styles.gameListWrapper}>
              {filteredGameList.map(game => (
-               <div 
+               <GameCard 
                  key={game.id} 
-                 className={`${styles.gameListItem} 
-                   ${game.disconnectedPlayers?.some(player => player.userId === userId) ? styles.userDisconnectedGame : ''}
-                   ${game.allPlayers?.some(player => player.userId === userId && !player.disconnected) ? styles.userInGame : ''}`}
-               >
-                 <div className={styles.gameListInfo}>
-                   <div className={styles.gameListId}>
-                     {game.id}
-                     {game.disconnectedPlayers?.some(player => player.userId === userId) && (
-                       <span className={styles.disconnectedBadge} title="You're disconnected from this game">⚠️ Reconnect</span>
-                     )}
-                     {game.allPlayers?.some(player => player.userId === userId && !player.disconnected) && (
-                       <span className={styles.inGameBadge} title="You're in this game">You're In</span>
-                     )}
-                   </div>
-                   <div className={styles.gameListPlayers}>
-                     {game.playerCount} {game.playerCount === 1 ? 'player' : 'players'}
-                   </div>
-                 </div>
-                 <button 
-                   className={`${styles.joinGameButton} 
-                     ${game.disconnectedPlayers?.some(player => player.userId === userId) ? styles.reconnectButton : ''}
-                     ${game.allPlayers?.some(player => player.userId === userId && !player.disconnected) ? styles.continueButton : ''}`}
-                   onClick={() => handleJoinGame(game.id)}
-                   disabled={!user}
-                 >
-                   {game.disconnectedPlayers?.some(player => player.userId === userId) 
-                     ? 'Reconnect' 
-                     : game.allPlayers?.some(player => player.userId === userId && !player.disconnected) 
-                       ? 'Continue' 
-                       : 'Join'}
-                 </button>
-               </div>
+                 game={game} 
+                 onJoin={handleJoinGame} 
+                 userId={userId} // Pass userId
+               />
              ))}
            </div>
          ) : (

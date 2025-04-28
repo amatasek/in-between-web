@@ -34,6 +34,11 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   /** @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]} */
   const [error, setError] = useState(null);
 
+  // Function to explicitly clear the provider's error state
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
   // Initialize with socket error if any
   useEffect(() => {
     if (socketError) {
@@ -79,11 +84,13 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     // Handle receiving updated game state
     socket.on('gameState', (data) => {
-      console.debug('[GameContext] Received gameState:', data); 
       if (data && data.id) { 
-        setGameState(data);
+        // Restore check to prevent setting identical state
+        if (JSON.stringify(gameState) !== JSON.stringify(data)) {
+          setGameState(data);
+          clearError(); // Clear any previous context errors on successful state update
+        } 
       } else {
-        console.warn('[GameContext] Received incomplete gameState data:', data);
       }
     });
     
@@ -95,8 +102,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     // Clean up game-specific event listeners
     return () => {
-      // We don't clean up the gameJoined event here anymore since it's now
-      // exclusively handled by LobbyContext
       socket.off('gameReconnected');
       socket.off('gameState');
       socket.off('gameError');
@@ -215,7 +220,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     revealMiddleCard,
     nextRound,
     // Helper methods
-    clearError: () => setError(null)
+    clearError,
   };
 
   return (

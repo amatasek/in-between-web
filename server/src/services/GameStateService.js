@@ -13,10 +13,10 @@ class GameStateService extends BaseService {
     return this.games[gameId];
   }
 
-  createGame(gameId) {
-    const game = new Game(gameId);
-    this.games[gameId] = game;
-    gameLog(game, `New game created with id: ${gameId}`);
+  createGame(settings) {
+    const game = new Game(settings);
+    this.games[game.id] = game;
+    gameLog(game, `New game created with id: ${game.id}`);
 
     // Initialize the deck during game creation
     const cardService = this.getService('card');
@@ -37,7 +37,7 @@ class GameStateService extends BaseService {
     return game;
   }
 
-  startRound(game) {
+  prepareForDeal(game) {
     if (!game) return game;
     
     // Reset game state
@@ -45,10 +45,7 @@ class GameStateService extends BaseService {
     game.thirdCard = null;
     game.firstCard = null;
     game.secondCard = null;
-    
-    // Transition to dealing phase
     game.phase = GamePhases.DEALING;
-    gameLog(game, `All players ready, starting round ${game.round}`);
     
     game.updateTimestamp();
     return game;
@@ -116,6 +113,7 @@ class GameStateService extends BaseService {
         playerCount: connectedPlayerCount,
         phase: game.phase,
         pot: game.pot,
+        settings: game.settings.toJSON(),
         disconnectedPlayers: disconnectedPlayers,
         allPlayers: allPlayers
       };

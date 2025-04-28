@@ -61,6 +61,40 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.inputError {
+  border-color: var(--error-color) !important; /* Ensure override */
+  box-shadow: 0 0 0 1px var(--error-color);
+}
+
+.errorMessage {
+  color: var(--error-color);
+  font-size: 0.75rem; /* Smaller font */
+  position: absolute;
+  bottom: -16px; /* Position below input */
+  left: 0;
+  white-space: nowrap; /* Prevent wrapping */
+  margin-top: 2px;
+}
+
+/* Define styles for text inputs used in this modal */
+.textInput {
+  width: 100%; /* Fill the container */
+  padding: 0.6rem 0.8rem; /* Adjust padding as needed */
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle background */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+  border-radius: 4px;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box; /* CRITICAL: Include padding/border in width */
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: var(--info-light);
+  box-shadow: 0 0 0 2px rgba(var(--info-rgb), 0.2);
+}
+
 .settingsContainer {
   padding: 20px;
 }
@@ -68,7 +102,7 @@
 .settingItem {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* Align tops instead of centers */
   margin-bottom: 20px;
   padding: 15px 20px;
   background-color: rgba(255, 255, 255, 0.05);
@@ -77,12 +111,21 @@
   position: relative;
 }
 
+.settingControls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align toggle and input to the right */
+  width: 150px; /* Define a fixed width */
+  margin-left: 1rem; /* Add some space between description and controls */
+}
+
 .settingItem:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
 .settingDescription {
   flex: 1;
+  min-width: 0; /* Allow description to shrink */
 }
 
 .settingDescription h4 {
@@ -211,4 +254,36 @@
   .toggleContainer {
     align-self: flex-end;
   }
+}
+
+/* Footer for Modal Buttons */
+.modalFooter {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 1rem; /* Space between buttons */
+  padding: 15px 20px; /* Padding inside the footer */
+  border-top: 1px solid var(--border-color); /* Separator line */
+  background-color: rgba(0, 0, 0, 0.1); /* Slightly different background */
+  border-radius: 0 0 8px 8px; /* Match bottom corners of modal */
+}
+
+/* Cancel Button Style (mimics actionButton structure) */
+.cancelButton {
+  background: linear-gradient(to right, #6c757d, #495057); /* Gray gradient */
+  color: white;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: linear-gradient(to right, #5a6268, #343a40); /* Darker gray on hover */
+  box-shadow: var(--shadow-lg); /* Use existing shadow variables */
+  transform: translateY(-2px);
+}
+
+.cancelButton:disabled {
+  /* Use existing disabled styles from actionButton if applicable or define here */
+  background: var(--gradient-neutral);
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+  box-shadow: var(--shadow-sm);
 }

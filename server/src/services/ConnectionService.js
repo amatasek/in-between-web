@@ -169,7 +169,6 @@ class ConnectionService extends BaseService {
       // Let each service register its event handlers
       const gameService = this.getService('game');
       const gameEventService = this.getService('gameEvent');
-      const playerService = this.getService('player');
       
       if (gameService && typeof gameService.registerSocketEvents === 'function') {
         console.log(`[CONNECTION_SERVICE] Registering GameService events for socket: ${socket.id}`);
@@ -183,13 +182,6 @@ class ConnectionService extends BaseService {
         gameEventService.registerSocketEvents(socket);
       } else {
         console.warn(`[CONNECTION_SERVICE] GameEventService not available or missing registerSocketEvents method`);
-      }
-      
-      if (playerService && typeof playerService.registerSocketEvents === 'function') {
-        console.log(`[CONNECTION_SERVICE] Registering PlayerService events for socket: ${socket.id}`);
-        playerService.registerSocketEvents(socket);
-      } else {
-        console.warn(`[CONNECTION_SERVICE] PlayerService not available or missing registerSocketEvents method`);
       }
       
       console.log(`[CONNECTION_SERVICE] All service event handlers registered for socket: ${socket.id}`);
