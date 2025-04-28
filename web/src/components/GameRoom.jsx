@@ -18,10 +18,13 @@ const GameRoom = () => {
   const handleReturnToLobby = () => {
     if (socket && isConnected && gameId) {
       soundService.play('ui.leave');
-      socket.emit('leaveGameLobby', { gameId });
+      socket.emit('leaveGame', { gameId });
       navigate('/');
     }
   };
+
+  // Track the last joined gameId to avoid emitting leave for a game we never joined
+  const lastJoinedGameIdRef = React.useRef(null);
 
   useEffect(() => {
     if (!socket || !isConnected || !gameId) return;
@@ -33,6 +36,7 @@ const GameRoom = () => {
         setGame(data.game);
         setLoading(false);
         setError(null);
+        lastJoinedGameIdRef.current = gameId; // Mark this game as joined
       }
     };
     
@@ -58,11 +62,11 @@ const GameRoom = () => {
       console.log(`[GameRoom] Cleaning up event listeners for game: ${gameId}`);
       socket.off('gameJoined', onGameJoined);
       socket.off('error', onError);
-      
-      // Make sure we leave the game when unmounting if we're still connected
-      if (isConnected) {
-        console.log(`[GameRoom] Leaving game ${gameId} on unmount`);
-        socket.emit('leaveGameLobby', { gameId });
+      // Only emit leaveGame if we had actually joined a game previously
+      if (isConnected && lastJoinedGameIdRef.current && lastJoinedGameIdRef.current !== gameId) {
+        console.log(`[GameRoom] Leaving previous game ${lastJoinedGameIdRef.current} on unmount`);
+        socket.emit('leaveGame', { gameId: lastJoinedGameIdRef.current });
+        lastJoinedGameIdRef.current = null;
       }
     };
   }, [socket, isConnected, gameId, navigate]);
