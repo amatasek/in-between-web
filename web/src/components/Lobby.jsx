@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,7 +12,6 @@ import UserAvatar from './UserAvatar.jsx';
 import soundService from '../services/SoundService';
 
 const Lobby = () => {
-  const navigate = useNavigate();
   const { gameList, loading: lobbyLoading, error: lobbyError } = useLobby(); // Assuming lobby context handles its own loading
   const { user, logout, loading: authLoading, refreshUserData } = useAuth();
   const { socket, isConnected, loading: socketLoading } = useSocket();
@@ -77,9 +75,7 @@ const Lobby = () => {
       clearTimeout(creationTimeout); // Stop the timeout
       socket.off('gameJoined', handleGameCreated); // Clean up listener
       if (data?.game?.id) {
-        setTimeout(() => {
-          navigate(`/${data.game.id}`);
-        }, 100);
+        window.location.href = `/${data.game.id}`; // Temporary until navigate is added
       } else {
         setError('Failed to create or join game. Invalid response.');
       }
@@ -105,7 +101,7 @@ const Lobby = () => {
 
     socket.emit('joinGame', { gameId });
 
-    navigate(`/${gameId}`);
+    window.location.href = `/${gameId}`; // Current
   };
   
   const handleSearchChange = (e) => {
@@ -141,7 +137,9 @@ const Lobby = () => {
    return (
      <div className={styles.lobbyContainer}>
        <AppHeader />
-
+       
+ 
+       
        <div className={styles.formContainer}>
          <div className={styles.formSection}>
            <div className={styles.welcomeMessage}>

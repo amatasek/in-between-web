@@ -31,7 +31,7 @@ class GameService extends BaseService {
     socket.on('joinGame', (data) => this.handleJoinGame(socket, data));
     socket.on('getAvailableGames', () => this.sendGameListToClient(socket));
     socket.on('getGameList', () => this.sendGameListToClient(socket)); // Support client's expected event name
-    socket.on('leaveGame', (data) => this.handleLeaveGame(socket, data));
+    socket.on('leaveGameLobby', (data) => this.handleLeaveGame(socket, data));
   }
   
   /**
