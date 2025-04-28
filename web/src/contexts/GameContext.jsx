@@ -2,11 +2,6 @@ import React, { createContext, useState, useContext, useEffect, useCallback, use
 import { useSocket } from './SocketContext.jsx';
 import soundService from '../services/SoundService';
 
-// Import shared type definitions
-/** @typedef {import('../../../shared/types').GameState} GameState */
-/** @typedef {import('../../../shared/types').Card} Card */
-/** @typedef {import('../../../shared/types').Player} Player */
-
 // Create context
 const GameContext = createContext();
 
@@ -84,58 +79,14 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
     
     // Handle receiving updated game state
     socket.on('gameState', (data) => {
-      if (data && data.game) {
-        setGameState(data.game);
+      console.debug('[GameContext] Received gameState:', data); 
+      if (data && data.id) { 
+        setGameState(data);
+      } else {
+        console.warn('[GameContext] Received incomplete gameState data:', data);
       }
     });
     
-    // The gameJoined event is now handled exclusively in LobbyContext
-    // This prevents duplicate event handling issues that were causing
-    // game joining problems. By centralizing this event handling, we ensure
-    // consistent state transitions between lobby and game views.
-
-    // Game state updates
-    socket.on('gameState', (state) => {
-      if (state && state.id) {
-        // Process game state update
-        
-        // Check for player joins/leaves
-        if (state.players && prevPlayersRef.current) {
-          const currentPlayers = Object.keys(state.players);
-          const previousPlayers = Object.keys(prevPlayersRef.current);
-          
-          // Check for new players
-          const newPlayers = currentPlayers.filter(id => !previousPlayers.includes(id));
-          
-          // Check for players who left
-          const leftPlayers = previousPlayers.filter(id => !currentPlayers.includes(id));
-          
-          // Play join sound for new players
-          if (newPlayers.length > 0) {
-            soundService.play('ui.join');
-          }
-          
-          // Play leave sound for players who left
-          if (leftPlayers.length > 0) {
-            soundService.play('ui.leave');
-          }
-          
-          // Update previous players reference
-          prevPlayersRef.current = {...state.players};
-        }
-        
-        setGameState({...state});
-      }
-    });
-
-    // Legacy handler for backward compatibility
-    socket.on('gameUpdate', (state) => {
-      if (state && state.id) {
-        // Handle legacy game update format
-        setGameState({...state});
-      }
-    });
-
     // Game-specific error handling
     socket.on('gameError', (message) => {
       console.error('Game error:', message);
@@ -148,7 +99,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
       // exclusively handled by LobbyContext
       socket.off('gameReconnected');
       socket.off('gameState');
-      socket.off('gameUpdate');
       socket.off('gameError');
     };
   }, [socket]);

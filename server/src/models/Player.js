@@ -11,12 +11,14 @@ class Player {
     this.userId = userId;    // Database User ID - PRIMARY KEY
     this.socketId = socketId; // Current socket ID - can change on refresh
     this.name = name;
-    this.balance = 0;       // Will be loaded from database
+    this.balance = 0;
     this.isReady = false;
     this.isConnected = true;
+    this.disconnected = false;
+    this.disconnectedAt = null;
     this.currentBet = 0;
     this.joinedAt = Date.now();
-    this.profileImg = null; // Add profile image URL
+    this.profileImg = null;
   }
 
   
@@ -40,6 +42,8 @@ class Player {
       balance: this.balance,
       isReady: this.isReady,
       isConnected: this.isConnected,
+      disconnected: this.disconnected,
+      disconnectedAt: this.disconnectedAt,
       currentBet: this.currentBet,
       profileImg: this.profileImg
     };
