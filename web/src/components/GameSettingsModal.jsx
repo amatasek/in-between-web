@@ -126,25 +126,24 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
               </div>
               {/* Container for controls on the right */}
               <div className={styles.settingControls}>
-                <ToggleSwitch
-                  isChecked={settings.useCustomName}
-                  onChange={e => handleChange('useCustomName', e.target.checked)}
-                />
-                {settings.useCustomName && (
-                  <div style={{ marginTop: '8px', position: 'relative' }}>
-                    <input
-                      type="text"
-                      value={settings.customName || ''}
-                      onChange={e => handleChange('customName', e.target.value)}
-                      className={`${styles.textInput} ${errors.customName ? styles.inputError : ''}`}
-                      placeholder="Game Name"
-                      maxLength={26}
-                      autoFocus
-                    />
-                    {errors.customName && <span className={styles.errorMessage}>{errors.customName}</span>}
-                  </div>
-                )}
-              </div>
+  <ToggleSwitch
+    isChecked={settings.useCustomName}
+    onChange={e => handleChange('useCustomName', e.target.checked)}
+  />
+  {settings.useCustomName && (
+    <input
+      type="text"
+      value={settings.customName || ''}
+      onChange={e => handleChange('customName', e.target.value)}
+      className={`${styles.textInput} ${errors.customName ? styles.inputError : ''}`}
+      placeholder="Game Name"
+      maxLength={26}
+      autoFocus
+      style={{ marginTop: 8 }}
+    />
+  )}
+  {errors.customName && <span className={styles.errorMessage}>{errors.customName}</span>}
+</div>
             </div>
 
             {/* Private Game Setting */}
@@ -155,45 +154,48 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
               </div>
               {/* Container for controls on the right */}
               <div className={styles.settingControls}>
-                <ToggleSwitch
-                  isChecked={settings.isPrivate}
-                  onChange={e => handleChange('isPrivate', e.target.checked)}
-                />
-                {settings.isPrivate && (
-                  <div style={{ marginTop: '8px', position: 'relative' }}>
-                    <input
-                      type="text"
-                      value={settings.password || ''}
-                      onChange={e => handleChange('password', e.target.value)}
-                      className={`${styles.textInput} ${errors.password ? styles.inputError : ''}`}
-                      placeholder="Password"
-                      maxLength={36}
-                      autoFocus={settings.isPrivate && !settings.useCustomName}
-                    />
-                    {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
-                  </div>
-                )}
-              </div>
+  <ToggleSwitch
+    isChecked={settings.isPrivate}
+    onChange={e => handleChange('isPrivate', e.target.checked)}
+  />
+  {settings.isPrivate && (
+    <input
+      type="text"
+      value={settings.password || ''}
+      onChange={e => handleChange('password', e.target.value)}
+      className={`${styles.textInput} ${errors.password ? styles.inputError : ''}`}
+      placeholder="Password"
+      maxLength={36}
+      autoFocus={settings.isPrivate && !settings.useCustomName}
+      style={{ marginTop: 8 }}
+    />
+  )}
+  {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
+</div>
             </div>
             <div className={styles.settingItem}>
               <div className={styles.settingDescription}>
                 <h4>Enable Ace Choice</h4>
                 <p>Allow players to choose high/low on Ace</p>
               </div>
-              <ToggleSwitch
-                isChecked={settings.enableAceChoice}
-                onChange={e => handleChange('enableAceChoice', e.target.checked)}
-              />
+              <div className={styles.settingControls}>
+  <ToggleSwitch
+    isChecked={settings.enableAceChoice}
+    onChange={e => handleChange('enableAceChoice', e.target.checked)}
+  />
+</div>
             </div>
             <div className={styles.settingItem}>
               <div className={styles.settingDescription}>
                 <h4>Enable Second Chance</h4>
                 <p>Allow players to ante up for a second chance</p>
               </div>
-              <ToggleSwitch
-                isChecked={settings.enableSecondChance}
-                onChange={e => handleChange('enableSecondChance', e.target.checked)}
-              />
+              <div className={styles.settingControls}>
+  <ToggleSwitch
+    isChecked={settings.enableSecondChance}
+    onChange={e => handleChange('enableSecondChance', e.target.checked)}
+  />
+</div>
             </div>
           </div>
         </form>

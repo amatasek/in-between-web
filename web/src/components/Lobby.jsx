@@ -75,6 +75,7 @@ const Lobby = () => {
     const creationTimeout = setTimeout(() => {
       setError('Game creation timed out. Please try again.');
     }, 5000);
+
     const handleGameCreated = (data) => {
       clearTimeout(creationTimeout);
       socket.off('gameCreated', handleGameCreated);
@@ -84,7 +85,9 @@ const Lobby = () => {
         setError('Failed to create or join game. Invalid response.');
       }
     };
+
     socket.on('gameCreated', handleGameCreated);
+    
     if (settings) {
       socket.emit('createGame', { settings });
     } else {
