@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import styles from './styles/PreferencesModal.module.css'; // Styles for Modal structure
-import lobbyStyles from './styles/Lobby.module.css'; // Styles for Buttons, Inputs
 import ToggleSwitch from './ToggleSwitch.jsx';
+import lobbyStyles from './styles/Lobby.module.css';
+import BaseModal from './common/BaseModal';
+import baseModalStyles from './common/BaseModal.module.css';
 
 const DEFAULT_SETTINGS = {
   useCustomName: false,
@@ -110,115 +111,115 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
   };
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <div className={styles.modalHeader}>
-          <h2>Game Options</h2>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
-        </div>
-        <form id="gameSettingsForm" onSubmit={handleSubmit}>
-          <div className={styles.settingsContainer}>
-            {/* Custom Game Name Setting */}
-            <div className={styles.settingItem}>
-              <div className={styles.settingDescription}>
-                <h4>Custom Game Name</h4>
-                <p>Set a custom name for your game lobby</p>
-              </div>
-              {/* Container for controls on the right */}
-              <div className={styles.settingControls}>
-  <ToggleSwitch
-    isChecked={settings.useCustomName}
-    onChange={e => handleChange('useCustomName', e.target.checked)}
-  />
-  {settings.useCustomName && (
-    <input
-      type="text"
-      value={settings.customName || ''}
-      onChange={e => handleChange('customName', e.target.value)}
-      className={`${styles.textInput} ${errors.customName ? styles.inputError : ''}`}
-      placeholder="Game Name"
-      maxLength={26}
-      autoFocus
-      style={{ marginTop: 8 }}
-    />
-  )}
-  {errors.customName && <span className={styles.errorMessage}>{errors.customName}</span>}
-</div>
-            </div>
-
-            {/* Private Game Setting */}
-            <div className={styles.settingItem}>
-              <div className={styles.settingDescription}>
-                <h4>Private Game</h4>
-                <p>Only players with the password can join</p>
-              </div>
-              {/* Container for controls on the right */}
-              <div className={styles.settingControls}>
-  <ToggleSwitch
-    isChecked={settings.isPrivate}
-    onChange={e => handleChange('isPrivate', e.target.checked)}
-  />
-  {settings.isPrivate && (
-    <input
-      type="text"
-      value={settings.password || ''}
-      onChange={e => handleChange('password', e.target.value)}
-      className={`${styles.textInput} ${errors.password ? styles.inputError : ''}`}
-      placeholder="Password"
-      maxLength={36}
-      autoFocus={settings.isPrivate && !settings.useCustomName}
-      style={{ marginTop: 8 }}
-    />
-  )}
-  {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
-</div>
-            </div>
-            <div className={styles.settingItem}>
-              <div className={styles.settingDescription}>
-                <h4>Enable Ace Choice</h4>
-                <p>Allow players to choose high/low on Ace</p>
-              </div>
-              <div className={styles.settingControls}>
-  <ToggleSwitch
-    isChecked={settings.enableAceChoice}
-    onChange={e => handleChange('enableAceChoice', e.target.checked)}
-  />
-</div>
-            </div>
-            <div className={styles.settingItem}>
-              <div className={styles.settingDescription}>
-                <h4>Enable Second Chance</h4>
-                <p>Allow players to ante up for a second chance</p>
-              </div>
-              <div className={styles.settingControls}>
-  <ToggleSwitch
-    isChecked={settings.enableSecondChance}
-    onChange={e => handleChange('enableSecondChance', e.target.checked)}
-  />
-</div>
-            </div>
-          </div>
-        </form>
-        {/* Modal Footer for Buttons */}
-        <div className={styles.modalFooter}>
+    <BaseModal
+      title="Game Options"
+      onClose={onClose}
+      footer={
+        <div style={{ display: 'flex', gap: 8 }}>
           <button
             type="button"
             onClick={onClose}
-            className={`${lobbyStyles.actionButton} ${styles.cancelButton}`}
+            className={`${lobbyStyles.actionButton} ${lobbyStyles.cancelButton || ''}`}
           >
             Cancel
           </button>
           <button
             type="submit"
-            form="gameSettingsForm" // Link to the form
+            form="gameSettingsForm"
             className={`${lobbyStyles.actionButton} ${lobbyStyles.createButton}`}
-            disabled={Object.keys(errors).length > 0} // Disable if errors exist
+            disabled={Object.keys(errors).length > 0}
           >
             Create Game
           </button>
         </div>
-      </div>
-    </div>
+      }
+    >
+      <form id="gameSettingsForm" onSubmit={handleSubmit}>
+        <div className={baseModalStyles.settingsContainer}>
+          {/* Custom Game Name Setting */}
+          <div className={baseModalStyles.settingItem}>
+            <div className={baseModalStyles.settingDescription}>
+              <h4>Custom Game Name</h4>
+              <p>Set a custom name for your game lobby</p>
+            </div>
+            <div className={baseModalStyles.settingControls}>
+              <ToggleSwitch
+                isChecked={settings.useCustomName}
+                onChange={e => handleChange('useCustomName', e.target.checked)}
+              />
+              {settings.useCustomName && (
+                <input
+                  type="text"
+                  value={settings.customName || ''}
+                  onChange={e => handleChange('customName', e.target.value)}
+                  className={`${baseModalStyles.textInput}${errors.customName ? ' ' + baseModalStyles.inputError : ''}`}
+                  placeholder="Game Name"
+                  maxLength={26}
+                  autoFocus
+                  style={{ marginTop: 8 }}
+                />
+              )}
+              {errors.customName && <span className="errorMessage">{errors.customName}</span>}
+            </div>
+          </div>
+
+          {/* Private Game Setting */}
+          <div className={baseModalStyles.settingItem}>
+            <div className={baseModalStyles.settingDescription}>
+              <h4>Private Game</h4>
+              <p>Only players with the password can join</p>
+            </div>
+            <div className={baseModalStyles.settingControls}>
+              <ToggleSwitch
+                isChecked={settings.isPrivate}
+                onChange={e => handleChange('isPrivate', e.target.checked)}
+              />
+              {settings.isPrivate && (
+                <input
+                  type="text"
+                  value={settings.password || ''}
+                  onChange={e => handleChange('password', e.target.value)}
+                  className={`${baseModalStyles.textInput}${errors.password ? ' ' + baseModalStyles.inputError : ''}`}
+                  placeholder="Password"
+                  maxLength={36}
+                  autoFocus={settings.isPrivate && !settings.useCustomName}
+                  style={{ marginTop: 8 }}
+                />
+              )}
+              {errors.password && <span className="errorMessage">{errors.password}</span>}
+            </div>
+          </div>
+
+          {/* Ace Choice Setting */}
+          <div className={baseModalStyles.settingItem}>
+            <div className={baseModalStyles.settingDescription}>
+              <h4>Enable Ace Choice</h4>
+              <p>Allow players to choose high/low on Ace</p>
+            </div>
+            <div className={baseModalStyles.settingControls}>
+              <ToggleSwitch
+                isChecked={settings.enableAceChoice}
+                onChange={e => handleChange('enableAceChoice', e.target.checked)}
+              />
+            </div>
+          </div>
+
+          {/* Second Chance Setting */}
+          <div className={baseModalStyles.settingItem}>
+            <div className={baseModalStyles.settingDescription}>
+              <h4>Enable Second Chance</h4>
+              <p>Allow players to ante up for a second chance</p>
+            </div>
+            <div className={baseModalStyles.settingControls}>
+              <ToggleSwitch
+                isChecked={settings.enableSecondChance}
+                onChange={e => handleChange('enableSecondChance', e.target.checked)}
+              />
+            </div>
+          </div>
+        </div>
+      </form>
+    </BaseModal>
   );
 };
 

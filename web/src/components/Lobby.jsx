@@ -13,6 +13,7 @@ import UserAvatar from './UserAvatar.jsx';
 import soundService from '../services/SoundService';
 import GameSettingsModal from './GameSettingsModal.jsx';
 import GameCard from './GameCard'; // Import the new GameCard component
+import RulesButton from './common/RulesButton';
 
 const Lobby = () => {
   const { gameList, loading: lobbyLoading, error: lobbyError } = useLobby(); // Assuming lobby context handles its own loading
@@ -189,6 +190,7 @@ const Lobby = () => {
                  >
                    <span className={styles.buttonText}>Logout</span>
                  </button>
+                 <RulesButton />
                  <PreferencesButton />
                </div>
              </div>

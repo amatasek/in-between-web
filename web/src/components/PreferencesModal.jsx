@@ -1,6 +1,7 @@
 import React from 'react';
 import { usePreferences } from '../contexts/PreferencesContext';
-import styles from './styles/PreferencesModal.module.css';
+import baseModalStyles from './common/BaseModal.module.css';
+import BaseModal from './common/BaseModal';
 import ToggleSwitch from './ToggleSwitch.jsx';
 import FileUpload from './FileUpload.jsx';
 
@@ -17,86 +18,79 @@ const PreferencesModal = ({ onClose }) => {
 
   if (loading) {
     return (
-      <div className={styles.modalOverlay}>
-        <div className={styles.modalContent}>
-          <div className={styles.loadingMessage}>Loading preferences...</div>
-        </div>
-      </div>
+      <BaseModal title="Preferences" onClose={onClose}>
+        <div className={baseModalStyles.loadingMessage}>Loading preferences...</div>
+      </BaseModal>
     );
   }
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <div className={styles.modalHeader}>
-          <h2>Preferences</h2>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+    <BaseModal title="Preferences" onClose={onClose}>
+      <div className={baseModalStyles.settingsContainer}>
+        {/* Game Options Section */}
+        <div className={baseModalStyles.sectionHeader}>Game Options</div>
+
+        {/* Mute Setting */}
+        <div className={baseModalStyles.settingItem}>
+          <div className={baseModalStyles.settingDescription}>
+            <h4>Mute Sound</h4>
+            <p>Mute all game sound effects</p>
+          </div>
+          <ToggleSwitch 
+            isChecked={preferences.muted}
+            onChange={toggleMute}
+          />
         </div>
-        
-        
-        <div className={styles.settingsContainer}>
-          {/* Game Options Section */}
-          <div className={styles.sectionHeader}>Game Options</div>
 
-          {/* Mute Setting */}
-          <div className={styles.settingItem}>
-            <div className={styles.settingDescription}>
-              <h4>Mute Sound</h4>
-              <p>Mute all game sound effects</p>
-            </div>
-            <ToggleSwitch 
-              isChecked={preferences.muted}
-              onChange={toggleMute}
-            />
+        {/* Auto-Ante Setting */}
+        <div className={baseModalStyles.settingItem}>
+          <div className={baseModalStyles.settingDescription}>
+            <h4>Auto-Ante</h4>
+            <p>Automatically ante up when a new round begins</p>
           </div>
+          <ToggleSwitch 
+            isChecked={preferences.autoAnte}
+            onChange={toggleAutoAnte}
+          />
+        </div>
 
-          {/* Auto-Ante Setting */}
-          <div className={styles.settingItem}>
-            <div className={styles.settingDescription}>
-              <h4>Auto-Ante</h4>
-              <p>Automatically ante up when a new round begins</p>
-            </div>
-            <ToggleSwitch 
-              isChecked={preferences.autoAnte}
-              onChange={toggleAutoAnte}
-            />
+        {/* Customization Options Section */}
+        <div className={baseModalStyles.sectionHeader}>Customization Options</div>
+
+        {/* Profile Image Setting */}
+        <div className={baseModalStyles.settingItem}>
+          <div className={baseModalStyles.settingDescription}>
+            <h4>Profile Image</h4>
+            <p>Upload a profile image to personalize your account</p>
           </div>
+          <FileUpload
+            onUpload={uploadProfileImg}
+            currentFileUrl={preferences.profileImg}
+            acceptedFileTypes="image/jpeg,image/png,image/gif"
+            label="Image"
+            previewType="image"
+          />
+        </div>
 
-          {/* Customization Options Section */}
-          <div className={styles.sectionHeader}>Customization Options</div>
-
-          {/* Profile Image Setting */}
-          <div className={styles.settingItem}>
-            <div className={styles.settingDescription}>
-              <h4>Profile Image</h4>
-              <p>Upload a profile image to personalize your account</p>
-            </div>
-            <FileUpload
-              onUpload={uploadProfileImg}
-              currentFileUrl={preferences.profileImg}
-              acceptedFileTypes="image/jpeg,image/png,image/gif"
-              label="Image"
-              previewType="image"
-            />
+        {/* Two Second Pot GIF Setting */}
+        <div style={{ position: 'relative' }}>
+          <div style={{
+            position: 'absolute',
+            top: '-12px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: '#FFD700',
+            color: '#333',
+            padding: '2px 10px',
+            borderRadius: '4px',
+            fontWeight: 'bold',
+            fontSize: '14px',
+            zIndex: 2
+          }}>
+            COMING SOON
           </div>
-
-          {/* Two Second Pot GIF Setting */}
-          <div className={styles.settingItem} style={{ position: 'relative', border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px' }}>
-            <div style={{
-              position: 'absolute',
-              top: '-12px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: '#FFD700',
-              color: '#333',
-              padding: '2px 10px',
-              borderRadius: '4px',
-              fontWeight: 'bold',
-              fontSize: '14px'
-            }}>
-              COMING SOON
-            </div>
-            <div className={styles.settingDescription}>
+          <div className={baseModalStyles.settingItem} style={{ border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px', marginTop: '12px' }}>
+            <div className={baseModalStyles.settingDescription}>
               <h4>Two Second POT GIF</h4>
               <p>Upload a GIF to play when you slam the POT button</p>
             </div>
@@ -108,24 +102,27 @@ const PreferencesModal = ({ onClose }) => {
               previewType="image"
             />
           </div>
+        </div>
 
-          {/* Two Second Pot MP3 Setting */}
-          <div className={styles.settingItem} style={{ position: 'relative', border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px' }}>
-            <div style={{
-              position: 'absolute',
-              top: '-12px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: '#FFD700',
-              color: '#333',
-              padding: '2px 10px',
-              borderRadius: '4px',
-              fontWeight: 'bold',
-              fontSize: '14px'
-            }}>
-              COMING SOON
-            </div>
-            <div className={styles.settingDescription}>
+        {/* Two Second Pot Sound Setting */}
+        <div style={{ position: 'relative' }}>
+          <div style={{
+            position: 'absolute',
+            top: '-12px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: '#FFD700',
+            color: '#333',
+            padding: '2px 10px',
+            borderRadius: '4px',
+            fontWeight: 'bold',
+            fontSize: '14px',
+            zIndex: 2
+          }}>
+            COMING SOON
+          </div>
+          <div className={baseModalStyles.settingItem} style={{ border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px', marginTop: '12px' }}>
+            <div className={baseModalStyles.settingDescription}>
               <h4>Two Second POT Sound</h4>
               <p>Upload a sound to play when you slam the POT button</p>
             </div>
@@ -139,7 +136,7 @@ const PreferencesModal = ({ onClose }) => {
           </div>
         </div>
       </div>
-    </div>
+    </BaseModal>
   );
 };
 
