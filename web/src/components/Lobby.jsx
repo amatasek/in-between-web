@@ -7,6 +7,7 @@ import { useSocket } from '../contexts/SocketContext';
 import { usePreferences } from '../contexts/PreferencesContext';
 import { TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
+import OnlinePlayerCount from './common/OnlinePlayerCount';
 import CurrencyAmount from './common/CurrencyAmount';
 import PreferencesButton from './common/PreferencesButton.jsx';
 import UserAvatar from './UserAvatar.jsx';
@@ -158,9 +159,9 @@ const Lobby = () => {
    return (
      <div className={styles.lobbyContainer}>
        <AppHeader />
-       
- 
-       
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
+        <OnlinePlayerCount />
+      </div>       
        <div className={styles.formContainer}>
          <div className={styles.formSection}>
            <div className={styles.welcomeMessage}>

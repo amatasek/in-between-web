@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const BaseService = require('./BaseService');
 const { RECONNECTION_TIMEOUT } = require('../../../shared/constants/GameConstants');
-const { gameLog } = require('../utils/logger');
 
 class ConnectionService extends BaseService {
   constructor() {
@@ -145,7 +144,7 @@ class ConnectionService extends BaseService {
       
       // Register event handlers from other services
       this.registerServiceEventHandlers(socket);
-      
+
       // Check if this is a reconnection for a player who was in a game
       socket.on('authenticated', () => {
         this.handlePotentialReconnection(socket);
@@ -169,22 +168,19 @@ class ConnectionService extends BaseService {
       // Let each service register its event handlers
       const gameService = this.getService('game');
       const gameEventService = this.getService('gameEvent');
+      const gameStateService = this.getService('gameState');
       
-      if (gameService && typeof gameService.registerSocketEvents === 'function') {
-        console.log(`[CONNECTION_SERVICE] Registering GameService events for socket: ${socket.id}`);
-        gameService.registerSocketEvents(socket);
-      } else {
-        console.warn(`[CONNECTION_SERVICE] GameService not available or missing registerSocketEvents method`);
-      }
+      gameService.registerSocketEvents(socket);
+      gameEventService.registerSocketEvents(socket);
+      gameStateService.registerSocketEvents(socket);
       
-      if (gameEventService && typeof gameEventService.registerSocketEvents === 'function') {
-        console.log(`[CONNECTION_SERVICE] Registering GameEventService events for socket: ${socket.id}`);
-        gameEventService.registerSocketEvents(socket);
-      } else {
-        console.warn(`[CONNECTION_SERVICE] GameEventService not available or missing registerSocketEvents method`);
-      }
-      
-      console.log(`[CONNECTION_SERVICE] All service event handlers registered for socket: ${socket.id}`);
+      // --- ONLINE PLAYER COUNT FEATURE ---
+      socket.on('getOnlinePlayerCount', (cb) => {
+        if (typeof cb === 'function' && this.io && this.io.engine) {
+          cb(this.io.engine.clientsCount);
+          this.io.emit('onlinePlayerCountUpdate', this.io.engine.clientsCount);
+        }
+      });
     } catch (error) {
       console.error('[CONNECTION_SERVICE] Error registering event handlers:', error);
     }

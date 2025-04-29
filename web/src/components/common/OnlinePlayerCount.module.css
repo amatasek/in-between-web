@@ -1,0 +1,53 @@
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  background: rgba(30, 40, 30, 0.92);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.3em 1.1em 0.3em 0.6em;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.13);
+  font-weight: 600;
+  font-size: 1.08rem;
+  position: relative;
+  z-index: 10;
+  margin-top: -2rem;
+  margin-bottom: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  min-width: 92px;
+}
+
+.pulse {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #4aff80 60%, #1e7c3b 100%);
+  box-shadow: 0 0 0 0 #4aff80;
+  animation: pulse 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+  margin-right: 0.5em;
+  opacity: 0.88;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 #4aff80;
+    opacity: 1;
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(74,255,128,0.10);
+    opacity: 0.8;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74,255,128,0.0);
+    opacity: 1;
+  }
+}
+
+.text {
+  font-size: 1.02em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #eaffea;
+}

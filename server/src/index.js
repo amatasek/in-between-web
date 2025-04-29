@@ -258,13 +258,6 @@ initializeServices();
 // Initialize Socket.IO with our new service architecture
 const io = initializeSocketIO(server);
 
-// API route to get available games
-app.get('/api/games', (req, res) => {
-  const lobbyService = serviceRegistry.get('lobby');
-  const availableGames = lobbyService.getAvailableGames();
-  res.json({ games: availableGames });
-});
-
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   const gameService = serviceRegistry.get('game');

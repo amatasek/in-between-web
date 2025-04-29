@@ -19,7 +19,7 @@ const GameRoom = () => {
   const handleReturnToLobby = useCallback(() => {
     if (socket && isConnected && gameId) {
       soundService.play('ui.leave'); 
-      socket.emit('leaveGameLobby', { gameId }); 
+      socket.emit('leaveGame', { gameId }); 
       navigate('/');
     }
   }, [socket, isConnected, gameId, navigate]);

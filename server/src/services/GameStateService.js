@@ -8,6 +8,25 @@ class GameStateService extends BaseService {
     super();
     this.games = {};
   }
+
+  /**
+   * Register socket event handlers for game-related events
+   * @param {Socket} socket - The socket to register handlers for
+   */
+  registerSocketEvents(socket) {
+    socket.on('getGameList', () => this.handleGetGameList(socket));
+  }
+
+  /**
+   * Send the current list of games to a specific client
+   * @param {Socket} socket - The socket to send the game list to
+   */
+  handleGetGameList(socket) {
+    if (!socket) return;
+
+    const gameList = this.getAvailableGames();
+    socket.emit('gameList', gameList);
+  }
   
   getGame(gameId) {
     return this.games[gameId];

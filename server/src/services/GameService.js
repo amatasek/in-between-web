@@ -30,21 +30,7 @@ class GameService extends BaseService {
   registerSocketEvents(socket) {
     socket.on('createGame', (data) => this.handleCreateGame(socket, data));
     socket.on('joinGame', (data) => this.handleJoinGame(socket, data));
-    socket.on('getAvailableGames', () => this.sendGameListToClient(socket));
-    socket.on('getGameList', () => this.sendGameListToClient(socket)); // Support client's expected event name
-    socket.on('leaveGameLobby', (data) => this.handleLeaveGame(socket, data));
-  }
-  
-  /**
-   * Send the current list of games to a specific client
-   * @param {Socket} socket - The socket to send the game list to
-   */
-  sendGameListToClient(socket) {
-    if (!socket) return;
-    
-    const gameList = this.getAvailableGames();
-    socket.emit('gameList', gameList);
-    console.log(`[GAME_SERVICE] Sent list of ${gameList.length} available games to client ${socket.id}`);
+    socket.on('leaveGame', (data) => this.handleLeaveGame(socket, data));
   }
   
   /**
@@ -722,16 +708,6 @@ class GameService extends BaseService {
     broadcastService.broadcastGameState(game);
     
     return game;
-  }
-
-  getGame(gameId) {
-    const gameStateService = this.getService('gameState');
-    return gameStateService.getGame(gameId);
-  }
-
-  getAvailableGames() {
-    const gameStateService = this.getService('gameState');
-    return gameStateService.getAvailableGames();
   }
 
   cleanupGame(gameId) {
