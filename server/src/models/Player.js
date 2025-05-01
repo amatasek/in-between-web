@@ -19,6 +19,7 @@ class Player {
     this.currentBet = 0;
     this.joinedAt = Date.now();
     this.profileImg = null;
+    this.isSittingOut = false;
   }
 
   
@@ -45,7 +46,8 @@ class Player {
       disconnected: this.disconnected,
       disconnectedAt: this.disconnectedAt,
       currentBet: this.currentBet,
-      profileImg: this.profileImg
+      profileImg: this.profileImg,
+      isSittingOut: this.isSittingOut
     };
   }
 }

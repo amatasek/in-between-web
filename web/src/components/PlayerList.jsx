@@ -74,7 +74,14 @@ const PlayerList = () => {
               <div className={styles.playerBalanceContainer}>
                 <BalanceDisplay balance={Number(player.balance || 0)} />
 
-                <div className={`${styles.readyIndicator} ${player.isReady ? styles.ready : styles.notReady}`}></div>
+                <div 
+                  className={`
+                    ${styles.readyIndicator} 
+                    ${player.isSittingOut ? styles.sittingOut : (player.isReady ? styles.ready : styles.notReady)}
+                  `}
+                  title={player.isSittingOut ? 'Sitting Out' : (player.isReady ? 'Ready' : 'Not Ready')}
+                >
+                </div>
               </div>
             </div>
           );

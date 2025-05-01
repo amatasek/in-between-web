@@ -3,17 +3,16 @@ import styles from './styles/AnteControls.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
-import { usePreferences } from '../contexts/PreferencesContext';
 import CurrencyAmount from './common/CurrencyAmount';
 import { ICONS } from '../constants/UIConstants';
 import AutoAnteToggle from './AutoAnteToggle.jsx';
+
 
 const AnteControls = () => {
   // Get game state and actions from context
   const { gameState, playerReady, playerUnready } = useGameContext();
   const { socket } = useSocket();
   const { user } = useAuth();
-  const { preferences } = usePreferences();
   
   if (!gameState) return null;
   
@@ -53,7 +52,6 @@ const AnteControls = () => {
   const playerBalance = Number(myPlayer?.balance || 0);
   const isPlayerReady = myPlayer?.isReady;
   
-  
   // Check if player has enough chips
   const hasEnoughChips = playerBalance >= anteAmount;
   
@@ -63,10 +61,10 @@ const AnteControls = () => {
     <div className={styles.anteControlsWrapper}>
       <div className={styles.controlsContainer}>
         {/* Main action button (Ante or Back Out) */}
-        <div className={styles.buttonContainer}>
+        <div className={styles.buttonContainerRow}>
           {!isPlayerReady ? (
-            // Player is not ready - show Ante button
-            <>
+            // Player is not ready - show Ante button and Sit Out button side by side
+            <div className={styles.buttonContainerRow}>
               <button 
                 className={styles.anteButton}
                 onClick={playerReady}
@@ -81,31 +79,53 @@ const AnteControls = () => {
                   <span className={styles.buttonAmount}><CurrencyAmount amount={anteAmount} /></span>
                 </div>
               </button>
-              
+
+              <button
+                className={`${styles.backOutButton} ${styles.sitOutHalfWidth}`}
+                onClick={() => {
+                  if (socket && gameState && user) {
+                    socket.emit('sitOut', {
+                      gameId: gameState.id,
+                      userId: socket.auth?.userId || user.id
+                    });
+                  }
+                }}
+                disabled={myPlayer?.isSittingOut} // Disable if sitting out
+                title={myPlayer?.isSittingOut ? "You are currently sitting out" : "Sit out next round"}
+                aria-label="Sit Out"
+              >
+                <div className={styles.shimmerBorder}></div>
+                <div className={styles.buttonInfo}>
+                  <h3 className={styles.buttonLabel}>SIT OUT</h3>
+                </div>
+              </button>
+
               {!hasEnoughChips && (
                 <p className={styles.notEnoughChipsText}>Not enough coins (<CurrencyAmount amount={anteAmount} /> required)</p>
               )}
-            </>
+            </div>
           ) : (
             // Player is ready - show Back Out button
-            <button 
-              className={styles.backOutButton}
-              onClick={() => {
-                if (typeof playerUnready === 'function') {
-                  playerUnready();
-                } else {
-                  console.error('playerUnready is not a function');
-                }
-              }}
-              aria-label="Back out"
-            >
-              {/* Add shimmer border for glimmering effect */}
-              <div className={styles.shimmerBorder}></div>
-              <span className={styles.backOutIcon}>✕</span>
-              <div className={styles.buttonInfo}>
-                <h3 className={styles.buttonLabel}>BACK OUT</h3>
-              </div>
-            </button>
+            <div className={styles.buttonContainerRow}>
+              <button 
+                className={styles.backOutButton}
+                onClick={() => {
+                  if (typeof playerUnready === 'function') {
+                    playerUnready();
+                  } else {
+                    console.error('playerUnready is not a function');
+                  }
+                }}
+                aria-label="Back out"
+              >
+                {/* Add shimmer border for glimmering effect */}
+                <div className={styles.shimmerBorder}></div>
+                <span className={styles.backOutIcon}>✕</span>
+                <div className={styles.buttonInfo}>
+                  <h3 className={styles.buttonLabel}>BACK OUT</h3>
+                </div>
+              </button>
+            </div>
           )}
         </div>
         

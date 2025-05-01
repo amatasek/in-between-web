@@ -105,11 +105,6 @@
   animation: flash 1.5s infinite;
 }
 
-@keyframes flash {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-}
-
 .playerBalanceContainer {
   display: flex;
   align-items: center;
@@ -164,65 +159,33 @@
 }
 
 .readyIndicator {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-@media (max-width: 400px) {
-  .readyIndicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-  }
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.3s ease;
 }
 
 .ready {
   background-color: var(--success);
-  box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
-  position: relative;
-}
-
-.ready::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 14px;
-  line-height: 0.8;
-  font-weight: bold;
-  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 400px) {
-  .ready::after {
-    font-size: 12px;
-  }
 }
 
 .notReady {
-  background-color: var(--neutral-dark);
-  opacity: 0.5;
+  background-color: var(--neutral-light); /* Or a suitable grey */
 }
 
-.dealerBadge {
-  display: inline-block;
-  margin-left: 0.5rem;
-  color: #f1c40f;
-  animation: spin 2s infinite linear;
+.sittingOut {
+  background-color: var(--secondary);
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes flash {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes pulse {
+  0% { background-color: #2980b9; }
+  50% { background-color: #3498db; }
+  100% { background-color: #2980b9; }
 }
 
 .emptyPlayerList {
@@ -279,10 +242,4 @@
 
 .remainingCards {
   color: var(--text-secondary);
-}
-
-@keyframes pulse {
-  0% { background-color: #2980b9; }
-  50% { background-color: #3498db; }
-  100% { background-color: #2980b9; }
 }

@@ -297,6 +297,57 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* Container to hold buttons in a row */
+.buttonContainerRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Align buttons vertically */
+  justify-content: center; /* Center the group of buttons */
+  width: 100%; /* Ensure it takes available width */
+  gap: 12px;
+}
+
+/* New style for the half-width Sit Out button */
+.sitOutHalfWidth {
+  width: 60px; /* Adjust as needed, aiming for half of .anteButton */
+  min-width: 50px;
+  max-width: 70px;
+  padding-left: var(--spacing-xs); /* Reduced padding */
+  padding-right: var(--spacing-xs);
+  justify-content: center; /* Center label since icon is removed */
+}
+
+.sitOutHalfWidth:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none; /* Override any hover/active transforms */
+  box-shadow: none; /* Override any hover/active shadows */
+}
+
+.sitOutHalfWidth .buttonInfo {
+  margin-left: 0; /* Remove margin since icon is gone */
+  flex-grow: 1; /* Allow info to take space */
+  justify-content: center; /* Center content within buttonInfo */
+}
+
+.sitOutHalfWidth .buttonLabel {
+  /* Adjust font-size if needed */
+  font-size: 0.8rem; /* Slightly smaller font for smaller button */
+  text-align: center;
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 600px) {
+  .sitOutHalfWidth {
+    width: 40px;
+    min-width: 35px;
+    padding: 0.5rem 0.1rem;
+  }
+  .sitOutHalfWidth .buttonLabel {
+    font-size: 0.7rem; /* Even smaller font */
+  }
+}
+
 /* Animation keyframes */
 @keyframes shimmerGreenBorder {
   0% { background-position: 0% 50%; }

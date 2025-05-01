@@ -19,6 +19,7 @@ class GameEventService extends BaseService {
     socket.on('placeBet', (data) => this.handlePlaceBet(socket, data));
     socket.on('secondChance', (data) => this.handleSecondChance(socket, data));
     socket.on('chooseAceValue', (data) => this.handleChooseAceValue(socket, data));
+    socket.on('sitOut', (data) => this.handleSitOut(socket, data));
   }
   
   /**
@@ -332,7 +333,6 @@ class GameEventService extends BaseService {
       const userId = user.userId;
       
       const connectionService = this.getService('connection');
-      const gameService = this.getService('game');
       const gameStateService = this.getService('gameState');
       const gameTimingService = this.getService('gameTiming');
       const broadcastService = this.getService('broadcast');
@@ -412,6 +412,61 @@ class GameEventService extends BaseService {
     } catch (error) {
       console.error(`[GAME_EVENT_SERVICE] Error choosing Ace value:`, error);
       socket.emit('error', { message: 'Error choosing Ace value' });
+    }
+  }
+  
+  /**
+   * Handle sitOut event (player opts out of the next round)
+   * @param {Socket} socket - The socket that triggered the event
+   * @param {Object} data - Event data containing gameId
+   */
+  async handleSitOut(socket, data) {
+    try {
+      const user = socket.user;
+      if (!user || !user.userId) {
+        console.error('[GAME_EVENT_SERVICE] No valid user attached to socket for sitOut');
+        socket.emit('error', { message: 'Authentication required' });
+        return;
+      }
+      const userId = user.userId;
+      const gameId = data?.gameId; // gameId comes from client payload
+
+      if (!gameId) {
+        console.error('[GAME_EVENT_SERVICE] Missing gameId in sitOut event payload');
+        socket.emit('error', { message: 'Missing game identifier.' });
+        return;
+      }
+
+      const gameStateService = this.getService('gameState');
+      const broadcastService = this.getService('broadcast');
+      const playerManagementService = this.getService('playerManagement');
+
+      let game = gameStateService.getGame(gameId);
+      if (!game) {
+        console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found for sitOut`);
+        // Don't emit error, maybe game just ended?
+        return;
+      }
+
+      // Check if player exists in the game by userId
+      const player = game.players[userId];
+      if (!player) {
+        console.log(`[GAME_EVENT_SERVICE] Player with userId ${userId} not found in game ${gameId} for sitOut`);
+        // Don't emit error, maybe player was removed?
+        return;
+      }
+
+      // Ensure the socket-to-user mapping is up to date (good practice)
+      if (player.socketId !== socket.id) {
+        console.log(`[GAME_EVENT_SERVICE] Updating socket ID for player ${player.name} from ${player.socketId} to ${socket.id} during sitOut`);
+        game.updatePlayerSocket(userId, socket.id);
+      }
+
+      game = await playerManagementService.playerSitOut(game, userId);
+
+      broadcastService.broadcastGameState(game);
+    } catch (error) {
+      console.error(`[GAME_EVENT_SERVICE] Error in sitOut event:`, error);
     }
   }
   

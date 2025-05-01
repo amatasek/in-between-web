@@ -402,6 +402,7 @@ class PlayerManagementService extends BaseService {
       );
       
       player.isReady = true;
+      player.isSittingOut = false;
   
       gameLog(game, `${player.name} antes`);
 
@@ -457,6 +458,86 @@ class PlayerManagementService extends BaseService {
       return game;
     }
   }
+
+  /**
+   * Mark a player as sitting out for the next round.
+   * @param {Game} game - The game object.
+   * @param {string} userId - The ID of the player sitting out.
+   * @returns {Game} The updated game object.
+   */
+  async playerSitOut(game, userId) {
+    if (!game || !game.players || !game.players[userId]) {
+      console.error(`[PLAYER_MANAGEMENT] Cannot sit out: Player ${userId} or game ${game?.id} not found.`);
+      return game;
+    }
+
+    const player = game.players[userId];
+
+    // Players can only sit out during the WAITING phase
+    if (game.phase !== GamePhases.WAITING) {
+      console.log(`[PLAYER_MANAGEMENT] Player ${player.name} cannot sit out during phase: ${game.phase}`);
+      return game;
+    }
+
+    // Players can only sit out if they are not ready
+    if (player.isReady) {
+      console.log(`[PLAYER_MANAGEMENT] Player ${player.name} cannot sit out while ready`);
+      return game;
+    }
+
+    player.isSittingOut = true;
+    player.isReady = false;
+
+    gameLog(game.id, `Player ${player.name} is sitting out.`);
+    console.log(`[PLAYER_MANAGEMENT] Player ${player.name} (${userId}) marked as sitting out.`);
+
+    return game;
+  }
+
+  /**
+   * Move to the next player in the game
+   * @param {Object} game - The game object
+   * @returns {Object} The updated game object
+   */
+  moveToNextPlayer(game) {
+    const connectedPlayers = game.getConnectedPlayersInOrder();
+    if (connectedPlayers.length < 2) return game;
+
+    gameLog(game, `Moving to next player after ${game.players[game.currentPlayerId]?.name || 'Unknown'}`);
+
+    // If no current player, start with the player after the dealer
+    if (!game.currentPlayerId && game.dealerId && connectedPlayers.includes(game.dealerId)) {
+      const dealerIndex = connectedPlayers.indexOf(game.dealerId);
+      game.currentPlayerId = connectedPlayers[dealerIndex];
+    }
+    
+    // Get the next player ID based on seat order - already using userId
+    const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);
+    
+    if (nextPlayerId) {
+      // Store the previous player ID for logging
+      const prevPlayerId = game.currentPlayerId;
+      
+      // Update the current player
+      game.currentPlayerId = nextPlayerId;
+      
+      // Log the player change
+      if (prevPlayerId !== nextPlayerId) {
+        const nextPlayer = game.players[nextPlayerId];
+        if (nextPlayer) {
+          gameLog(game, `Turn: ${nextPlayer.name}`);
+        }
+      }
+    } else {
+      console.log(`[PLAYER_MANAGEMENT] No next player found after ${game.currentPlayerId}`);
+    }
+    
+    // Pot empty check is now handled in GameService.startNextRound
+    
+    game.updateTimestamp();
+    return game;
+  }
+
 }
 
 module.exports = new PlayerManagementService();
