@@ -87,7 +87,6 @@ class GameService extends BaseService {
   async handleJoinGame(socket, data) {
     try {
       const { gameId, isReconnection } = data;
-      let currentGame;
       
       const user = socket.user;
       
@@ -107,25 +106,26 @@ class GameService extends BaseService {
       const playerManagementService = this.getService('playerManagement');
       const connectionService = this.getService('connection');
       const broadcastService = this.getService('broadcast');
+      const gameTimingService = this.getService('gameTiming'); // Get timing service
       
       console.log(`[GAME_SERVICE] ${isReconnection ? 'Reconnecting' : 'Joining'} game ${gameId} for user ${user.username} (${user.userId})`);
       
       // Get the game
-      currentGame = gameStateService.getGame(gameId);
-      if (!currentGame) {
+      let game = gameStateService.getGame(gameId);
+      if (!game) {
         console.log(`[GAME_SERVICE] Game ${gameId} not found`);
         socket.emit('error', { message: 'Game not found' });
         return;
       }
 
       // Check if player is already in the game by userId
-      const existingPlayerIds = Object.keys(currentGame.players);
+      const existingPlayerIds = Object.keys(game.players);
       const existingPlayer = existingPlayerIds.find(id => {
-        return currentGame.players[id].userId === user.userId;
+        return game.players[id].userId === user.userId;
       });
 
       // Check password if required and it's not a reconnection
-      if (!existingPlayer && currentGame.settings?.isPrivate) {
+      if (!existingPlayer && game.settings?.isPrivate) {
         // Check if password was provided in the payload
         if (!data.password) {
           // Password required but not provided by client
@@ -134,7 +134,7 @@ class GameService extends BaseService {
           return;
         }
         // Password was provided, now check if it's correct
-        if (currentGame.settings.password !== data.password) {
+        if (game.settings.password !== data.password) {
           console.log(`[GAME_SERVICE] Invalid password attempt for game ${gameId} by user ${user.username}`);
           socket.emit('error', { message: 'Invalid password' }); // Existing error
           return;
@@ -143,7 +143,7 @@ class GameService extends BaseService {
 
       // Only check if the game is full for new connections, not reconnections
       if (!isReconnection) {
-        const connectedPlayers = Object.values(currentGame.players).filter(p => p.isConnected);
+        const connectedPlayers = Object.values(game.players).filter(p => p.isConnected);
         if (connectedPlayers.length >= MAX_SEATS) {
           console.log(`[GAME_SERVICE] Game ${gameId} is full (${connectedPlayers.length}/${MAX_SEATS} players)`);
           socket.emit('error', { message: 'Game is full' });
@@ -152,7 +152,7 @@ class GameService extends BaseService {
       }
 
       // Add or update player in the game
-      await playerManagementService.addPlayer(currentGame, socket.id, user.username, user.userId);
+      game = await playerManagementService.addPlayer(game, socket.id, user.username, user.userId);
       
       // Associate socket with game
       // This will also clear any pending disconnection timeout
@@ -170,16 +170,23 @@ class GameService extends BaseService {
       
       // Send game state to player with proper phase
       socket.emit('gameJoined', { 
-        game: currentGame.toJSON(),
+        game: game.toJSON(),
         playerId: socket.id,
         isReconnection: Boolean(existingPlayer || isReconnection)
       });
+
+      // If player joined/reconnected and game is in WAITING, start their inactivity timer
+      // Make sure player exists and isn't already sitting out
+      const player = game.players[user.userId];
+      if (game.phase === GamePhases.WAITING && player && !player.isSittingOut) {
+        await gameTimingService.startPlayerInactivityTimer(game, user.userId);
+      }
       
       // Broadcast updated game state to all players
-      broadcastService.broadcastGameState(currentGame);
+      broadcastService.broadcastGameState(game);
       
       // Update the game list for all clients in the lobby
-      broadcastService.broadcastGameList();
+      broadcastService.broadcastGameList(); 
     } catch (error) {
       console.error(`[GAME_SERVICE] Error joining game:`, error);
       console.error(`[GAME_SERVICE] Error processing game join:`, { 
@@ -338,6 +345,21 @@ class GameService extends BaseService {
    */
   async startOrResumeRound(game) {
     if (!game) return game;
+
+    // Count total players and ready players AFTER cleanup
+    const totalPlayerCount = Object.keys(game.players).length;
+    const readyPlayerCount = Object.values(game.players).filter(p => p.isReady).length;
+    const sittingOutCount = Object.values(game.players).filter(p => p.isSittingOut).length;
+    
+    // Check if all players are ready
+    const allReady = readyPlayerCount === (totalPlayerCount - sittingOutCount);
+
+    // Only start the game if everyone has a state, and there are at least 2 unique users
+    if (!allReady || readyPlayerCount < 2) {    
+      return game;
+    }
+
+    gameLog(game, `All players ready, starting round ${game.round}`);
     
     // Get required services
     const gameTimingService = this.getService('gameTiming');
@@ -392,40 +414,8 @@ class GameService extends BaseService {
     // Mark player as ready and handle ante
     game = await playerManagementService.playerReady(game, playerId);
     
-    // Count total players and ready players AFTER cleanup
-    const totalPlayerCount = Object.keys(game.players).length;
-    const readyPlayerCount = Object.values(game.players).filter(p => p.isReady).length;
-    
-    // Count unique users (to prevent the same user being counted twice after refresh)
-    const uniqueUserIds = new Set();
-    const uniqueReadyUserIds = new Set();
-    
-    Object.values(game.players).forEach(player => {
-      if (player.userId) {
-        uniqueUserIds.add(player.userId);
-        if (player.isReady) {
-          uniqueReadyUserIds.add(player.userId);
-        }
-      }
-    });
-    
-    const uniqueUserCount = uniqueUserIds.size;
-    
-    // Check if all players are ready
-    const allReady = readyPlayerCount === totalPlayerCount;
-
-    // CRITICAL: Ensure we have at least 2 UNIQUE USERS before starting the game
-    // This prevents the game from starting with only one real player
-    if (uniqueUserCount < 2) {
-      gameLog(game, `Cannot start game: Need at least 2 players.`);
-      return game;
-    }
-    
-    // Only start the game if all players are ready AND we have at least 2 unique users
-    if (allReady && readyPlayerCount >= 2 && uniqueUserCount >= 2) {
-      gameLog(game, `All players ready, starting round ${game.round}`);
-      game = await this.startOrResumeRound(game);
-    }
+    // Start or resume round
+    game = await this.startOrResumeRound(game);
     
     return game;
   }

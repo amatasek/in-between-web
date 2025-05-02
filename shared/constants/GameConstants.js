@@ -21,7 +21,8 @@ const GAME_CONSTANTS = {
     BETTING_DURATION: 30000,        // Duration for betting phase (30 seconds)
     DECISION_DURATION: 15000,       // Duration for ace and second chance decisions (15 seconds)
     REVEALING_DURATION: 3000,       // Duration for revealing phase
-    RESULTS_DURATION: 5000          // Duration to show results before moving to next round (5 seconds)
+    RESULTS_DURATION: 5000,         // Duration to show results before moving to next round (5 seconds)
+    PLAYER_INACTIVITY_TIMEOUT: 60000 // 1 minute timeout for inactive players in WAITING phase
   }
 };
 

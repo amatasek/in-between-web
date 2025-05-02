@@ -360,8 +360,6 @@ class PlayerManagementService extends BaseService {
       console.log(`[PLAYER_MANAGEMENT] No next player found after ${game.currentPlayerId}`);
     }
     
-    // Pot empty check is now handled in GameService.startNextRound
-    
     game.updateTimestamp();
     return game;
   }
@@ -531,8 +529,6 @@ class PlayerManagementService extends BaseService {
     } else {
       console.log(`[PLAYER_MANAGEMENT] No next player found after ${game.currentPlayerId}`);
     }
-    
-    // Pot empty check is now handled in GameService.startNextRound
     
     game.updateTimestamp();
     return game;

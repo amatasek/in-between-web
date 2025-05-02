@@ -2,7 +2,6 @@
  * BroadcastService - Handles broadcasting game state and other updates to clients
  */
 const BaseService = require('./BaseService');
-const { gameLog } = require('../utils/logger');
 
 class BroadcastService extends BaseService {
   constructor() {
@@ -69,7 +68,6 @@ class BroadcastService extends BaseService {
     connectionService.io.emit('gameList', gameList);
     
     console.log(`[BROADCAST_SERVICE] Broadcasting list of available games to ${connectedClients} connected clients`);
-    console.log(`[BROADCAST_SERVICE] Game list data:`, JSON.stringify(gameList.map(g => ({ id: g.id, players: Object.keys(g.players || {}).length }))));
   }
 }
 

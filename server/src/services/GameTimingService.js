@@ -26,7 +26,7 @@ class GameTimingService extends BaseService {
         clearTimeout(this.timeouts[gameId][key]);
       }
     });
-    
+
     // Delete the game's timeout object
     delete this.timeouts[gameId];
   }
@@ -38,6 +38,78 @@ class GameTimingService extends BaseService {
   ensureGameTimeouts(gameId) {
     if (!this.timeouts[gameId]) {
       this.timeouts[gameId] = {};
+    }
+  }
+
+  /**
+   * Helper to get a consistent key for inactivity timers
+   * @param {string} playerId - The ID of the player
+   * @returns {string} The timer key
+   */
+  getInactivityTimerKey(playerId) {
+    return `inactivity-${playerId}`;
+  }
+
+  /**
+   * Clears the inactivity timer for a specific player within a specific game.
+   * @param {string} gameId - The ID of the game.
+   * @param {string} playerId - The ID of the player.
+   */
+  clearPlayerInactivityTimer(gameId, playerId) {
+    const timerKey = this.getInactivityTimerKey(playerId);
+    if (this.timeouts[gameId] && this.timeouts[gameId][timerKey]) {
+      clearTimeout(this.timeouts[gameId][timerKey]); // Use standard clearTimeout
+      delete this.timeouts[gameId][timerKey]; // Remove the reference
+      console.log(`[GAME_TIMING_SERVICE] Cleared inactivity timer for player ${playerId}`);
+    }
+  }
+
+  /**
+   * Starts an inactivity timer for a player if they are in the WAITING phase,
+   * not ready, and not already sitting out.
+   * @param {Object} game - The current game state.
+   * @param {string} playerId - The ID of the player.
+   */
+  async startPlayerInactivityTimer(game, playerId) {
+    if (!game || !playerId || !game.id) return;
+
+    const gameId = game.id;
+    const timerKey = this.getInactivityTimerKey(playerId);
+    const player = game.players[playerId];
+
+    // Always clear existing timer before starting a new one
+    this.clearPlayerInactivityTimer(gameId, playerId);
+
+    // Only start timer if in WAITING phase, player exists, isn't ready, and isn't sitting out
+    if (game.phase === GamePhases.WAITING && player && !player.isReady && !player.isSittingOut) {
+
+      const timeoutCallback = async () => {
+        // Get fresh game state and services before acting
+        const playerManagementService = this.getService('playerManagement');
+        const broadcastService = this.getService('broadcast');
+
+        // Check if the timeout is still relevant
+        if (
+          game.phase === GamePhases.WAITING &&
+          !player.isReady &&
+          !player.isSittingOut
+        ) {
+          gameLog(game, `${player.name} sitting out due to inactivity.`);
+          
+          // Mark player as sitting out (modifies the passed 'game' instance)
+          game = await playerManagementService.playerSitOut(game, playerId);
+
+          // Clean up timer
+          this.clearPlayerInactivityTimer(game.id, playerId);
+
+          broadcastService.broadcastGameState(game);
+        }
+      };
+
+      // Use standard setTimeout and store the ID
+      this.ensureGameTimeouts(gameId); // Make sure the game's timeout object exists
+      this.timeouts[gameId][timerKey] = setTimeout(timeoutCallback, GAME_CONSTANTS.TIMERS.PLAYER_INACTIVITY_TIMEOUT);
+      console.log(`[GAME_TIMING_SERVICE] Started inactivity timer (${GAME_CONSTANTS.TIMERS.PLAYER_INACTIVITY_TIMEOUT / 1000}s) for player ${playerId}`);
     }
   }
 
@@ -280,7 +352,6 @@ class GameTimingService extends BaseService {
         // Save the game state
         await gameStateService.saveGame(game);
         
-        // NOTE: We don't set a timeout to call startNextRound here anymore
         // This is now handled exclusively by handleResultsSequence to avoid duplicate calls
       }, adjustedRevealingDuration);
     }, GAME_CONSTANTS.TIMERS.DEAL_THIRD_CARD_DELAY);
@@ -389,7 +460,7 @@ class GameTimingService extends BaseService {
       this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
         // Move to betting phase
         game.phase = GamePhases.BETTING;
-
+        
         // Set up auto-pass timer for the betting phase
         const currentPlayerId = game.currentPlayerId;
         const playerName = game.players[currentPlayerId]?.name || 'Unknown player';

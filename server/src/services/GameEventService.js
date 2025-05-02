@@ -42,6 +42,7 @@ class GameEventService extends BaseService {
       const gameService = this.getService('game');
       const gameStateService = this.getService('gameState');
       const broadcastService = this.getService('broadcast');
+      const gameTimingService = this.getService('gameTiming');
       
       const gameId = connectionService.getGameIdForSocket(socket.id);
       if (!gameId) {
@@ -86,6 +87,9 @@ class GameEventService extends BaseService {
       // Log player state after marking as ready
       console.log(`[GAME_EVENT_SERVICE] Player ${player.name} (${userId}) ready state after: ${player.isReady}`);
       
+      // Clear inactivity timer for this player IF they successfully readied
+      gameTimingService.clearPlayerInactivityTimer(game.id, player.userId);
+
       // Broadcast updated game state
       broadcastService.broadcastGameState(game);
     } catch (error) {
@@ -113,6 +117,7 @@ class GameEventService extends BaseService {
       const broadcastService = this.getService('broadcast');
       const playerManagementService = this.getService('playerManagement');
       const gameStateService = this.getService('gameState');
+      const gameTimingService = this.getService('gameTiming');
       
       const gameId = connectionService.getGameIdForSocket(socket.id);
       if (!gameId) {
@@ -142,6 +147,9 @@ class GameEventService extends BaseService {
 
       // Mark player as unready and return their ante
       game = await playerManagementService.playerUnready(game, userId);
+      
+      // Start inactivity timer for the player
+      gameTimingService.startPlayerInactivityTimer(game, userId);
       
       // Broadcast updated game state
       broadcastService.broadcastGameState(game);
@@ -440,6 +448,7 @@ class GameEventService extends BaseService {
       const gameStateService = this.getService('gameState');
       const broadcastService = this.getService('broadcast');
       const playerManagementService = this.getService('playerManagement');
+      const gameTimingService = this.getService('gameTiming'); // Get timing service
 
       let game = gameStateService.getGame(gameId);
       if (!game) {
@@ -464,12 +473,15 @@ class GameEventService extends BaseService {
 
       game = await playerManagementService.playerSitOut(game, userId);
 
+      // Clear inactivity timer since player is now sitting out
+      gameTimingService.clearPlayerInactivityTimer(game.id, player.userId);
+
       broadcastService.broadcastGameState(game);
     } catch (error) {
       console.error(`[GAME_EVENT_SERVICE] Error in sitOut event:`, error);
     }
   }
-  
+
   /**
    * Handle get balance event
    * @param {Socket} socket - The socket that triggered the event
