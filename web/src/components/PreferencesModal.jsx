@@ -18,14 +18,14 @@ const PreferencesModal = ({ onClose }) => {
 
   if (loading) {
     return (
-      <BaseModal title="Preferences" onClose={onClose}>
+      <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600, maxHeight: '25vh' }}>
         <div className={baseModalStyles.loadingMessage}>Loading preferences...</div>
       </BaseModal>
     );
   }
 
   return (
-    <BaseModal title="Preferences" onClose={onClose}>
+    <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600, maxHeight: '80vh' }}>
       <div className={baseModalStyles.settingsContainer}>
         {/* Game Options Section */}
         <div className={baseModalStyles.sectionHeader}>Game Options</div>

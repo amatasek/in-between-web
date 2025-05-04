@@ -188,3 +188,53 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.imBackButton {
+  padding: var(--button-padding-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--button-transition);
+  width: auto; 
+  display: inline-flex; 
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  box-shadow: var(--button-shadow);
+  margin: 20px; 
+
+  background: linear-gradient(to right, var(--info), var(--success));
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.imBackButton:hover:not(:disabled),
+.imBackButton:focus:not(:disabled) { 
+  background: linear-gradient(to right, var(--info-dark), var(--success-dark));
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.imBackButton:disabled {
+  background: var(--gradient-neutral);
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+  box-shadow: var(--shadow-sm);
+}
+
+/* GamePhase Indicator */
+.gamePhase {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}

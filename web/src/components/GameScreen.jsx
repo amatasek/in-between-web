@@ -14,6 +14,7 @@ import GameLog from './GameLog.jsx';
 
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const GameScreen = ({ onReturnToLobby }) => {
   // Get state and actions from context
@@ -42,8 +43,10 @@ const GameScreen = ({ onReturnToLobby }) => {
     }
   };
   
-  // Get the socket instance for player identification
-  const { socket } = useSocket();
+  // Get the socket instance for event emission
+  const { socket } = useSocket(); 
+  // Get the authenticated user data from AuthContext
+  const { user } = useAuth(); 
   
   // Safety check for null gameState or missing phase
   if (!gameState) {
@@ -56,6 +59,20 @@ const GameScreen = ({ onReturnToLobby }) => {
   
   // Make sure we have a valid phase
   const phase = gameState.phase || 'waiting';
+
+  // Find the current player based on the authenticated user ID from AuthContext
+  // Assuming the user object from AuthContext has an 'id' property
+  const currentUserId = user?.id; // Use user.id (adjust if property name is different e.g., user.userId)
+  const currentPlayer = gameState.players && currentUserId ? gameState.players[currentUserId] : null;
+
+  // Handler for the 'I'm Back' button
+  const handleImBackClick = () => {
+    if (socket && gameState.id) {
+      socket.emit('imBack', { gameId: gameState.id });
+    } else {
+      console.error("Cannot emit 'imBack': socket or gameId missing.");
+    }
+  };
 
 
   return (
@@ -77,22 +94,31 @@ const GameScreen = ({ onReturnToLobby }) => {
         {/* Always show the CardDisplay component */}
         <CardDisplay />
         
-        {phase === 'waiting' ? (
-          /* Show ante controls during waiting phase */
-          <AnteControls />
-        ) : phase === 'results' ? (
-          /* Show the results panel during results phase */
-          <ResultsPanel />
-        ) : gameState.waitingForAceDecision ? (
-          /* Show the Ace choice panel when first card is an Ace */
-          <AceChoicePanel />
-        ) : gameState.waitingForSecondChance ? (
-          /* Show the Second Chance panel when matching cards are dealt */
-          <SecondChancePanel />
-        ) : phase === 'betting' ? (
-          /* Show the betting panel only during betting phase */
-          <BettingPanel />
-        ) : null}
+        {/* Primary check: Is the current player sitting out? */}
+        {currentPlayer?.isSittingOut ? (
+          // If sitting out, always show the 'I'm Back!' button regardless of phase
+          <button onClick={handleImBackClick} className={styles.imBackButton}> 
+            I'm Back!
+          </button>
+        ) : (
+          // If not sitting out, render controls based on the game phase
+          phase === 'waiting' ? (
+            /* Show ante controls during waiting phase */
+            <AnteControls />
+          ) : phase === 'results' ? (
+            /* Show the results panel during results phase */
+            <ResultsPanel />
+          ) : gameState.waitingForAceDecision ? (
+            /* Show the Ace choice panel when first card is an Ace */
+            <AceChoicePanel />
+          ) : gameState.waitingForSecondChance ? (
+            /* Show the Second Chance panel when matching cards are dealt */
+            <SecondChancePanel />
+          ) : phase === 'betting' ? (
+            /* Show the betting panel only during betting phase */
+            <BettingPanel />
+          ) : null
+        )}
         
         <div className={styles.gameBottomSection}>
           <div className={styles.playerListContainer}>

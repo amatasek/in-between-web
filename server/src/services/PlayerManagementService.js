@@ -486,8 +486,37 @@ class PlayerManagementService extends BaseService {
     player.isSittingOut = true;
     player.isReady = false;
 
-    gameLog(game.id, `Player ${player.name} is sitting out.`);
+    gameLog(game, `${player.name} is sitting out`);
     console.log(`[PLAYER_MANAGEMENT] Player ${player.name} (${userId}) marked as sitting out.`);
+
+    return game;
+  }
+
+  /**
+   * Mark a player as returning from sitting out.
+   * @param {Game} game - The game object.
+   * @param {string} userId - The ID of the player returning.
+   * @returns {Game} The updated game object.
+   */
+  async playerReturn(game, userId) {
+    if (!game || !game.players || !game.players[userId]) {
+      console.error(`[PLAYER_MANAGEMENT] Cannot return: Player ${userId} or game ${game?.id} not found.`);
+      return game; // Return original game if player/game missing
+    }
+
+    const player = game.players[userId];
+
+    // Only players who are actually sitting out can return
+    if (!player.isSittingOut) {
+      gameLog(game, `Player ${player.name} tried to return but was not sitting out.`);
+      return game; // No change needed
+    }
+
+    // Mark player as no longer sitting out
+    player.isSittingOut = false;
+
+    gameLog(game, `${player.name} is back`);
+    console.log(`[PLAYER_MANAGEMENT] Player ${player.name} (${userId}) marked as returned (not sitting out).`);
 
     return game;
   }
@@ -501,8 +530,6 @@ class PlayerManagementService extends BaseService {
     const connectedPlayers = game.getConnectedPlayersInOrder();
     if (connectedPlayers.length < 2) return game;
 
-    gameLog(game, `Moving to next player after ${game.players[game.currentPlayerId]?.name || 'Unknown'}`);
-
     // If no current player, start with the player after the dealer
     if (!game.currentPlayerId && game.dealerId && connectedPlayers.includes(game.dealerId)) {
       const dealerIndex = connectedPlayers.indexOf(game.dealerId);
@@ -513,19 +540,12 @@ class PlayerManagementService extends BaseService {
     const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);
     
     if (nextPlayerId) {
-      // Store the previous player ID for logging
-      const prevPlayerId = game.currentPlayerId;
-      
       // Update the current player
       game.currentPlayerId = nextPlayerId;
+
+      const nextPlayer = game.players[nextPlayerId];
       
-      // Log the player change
-      if (prevPlayerId !== nextPlayerId) {
-        const nextPlayer = game.players[nextPlayerId];
-        if (nextPlayer) {
-          gameLog(game, `Turn: ${nextPlayer.name}`);
-        }
-      }
+      gameLog(game, `Turn: ${nextPlayer.name}`);
     } else {
       console.log(`[PLAYER_MANAGEMENT] No next player found after ${game.currentPlayerId}`);
     }
