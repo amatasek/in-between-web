@@ -94,15 +94,15 @@ class GameTimingService extends BaseService {
           !player.isReady &&
           !player.isSittingOut
         ) {
-          gameLog(game, `${player.name} sitting out due to inactivity.`);
+          // gameLog(game, `${player.name} sitting out due to inactivity.`);
           
-          // Mark player as sitting out (modifies the passed 'game' instance)
-          game = await playerManagementService.playerSitOut(game, playerId);
+          // // Mark player as sitting out (modifies the passed 'game' instance)
+          // game = await playerManagementService.playerSitOut(game, playerId);
 
-          // Clean up timer
-          this.clearPlayerInactivityTimer(game.id, playerId);
+          // // Clean up timer
+          // this.clearPlayerInactivityTimer(game.id, playerId);
 
-          broadcastService.broadcastGameState(game);
+          // broadcastService.broadcastGameState(game);
         }
       };
 
