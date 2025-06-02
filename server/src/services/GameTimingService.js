@@ -126,6 +126,11 @@ class GameTimingService extends BaseService {
     
     if (!game) return game;
 
+    // Ensure we have enough cards to deal
+    if (!game.deck || game.deck.length < 3) {
+      game = cardService.handleDeckRenewal(game);
+    }
+
     this.ensureGameTimeouts(game.id);
     
     // Set timer for first card

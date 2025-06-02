@@ -376,25 +376,7 @@ class GameService extends BaseService {
     game = gameStateService.prepareForDeal(game);
     
     // Start dealing sequence
-    game = await this.startDealingSequence(game);
-    
-    return game;
-  }
-
-  async startDealingSequence(game) {
-    if (!game) return game;
-    
-    // Get required services
-    const gameTimingService = this.getService('gameTiming');
-    const cardService = this.getService('card');
-    
-    // Ensure we have enough cards to deal
-    if (!game.deck || game.deck.length < 3) {
-      game = cardService.handleDeckRenewal(game);
-    }
-    
-    // GameTimingService will handle all the timing and state transitions
-    await gameTimingService.handleDealingSequence(game);
+    game = await gameTimingService.handleDealingSequence(game);
     
     return game;
   }
@@ -486,38 +468,40 @@ class GameService extends BaseService {
   async placeBet(game, playerId, amount) {
     if (!game) return game;
     
-    // Place the bet using betting service
     const bettingService = this.getService('betting');
-    let updatedGame = await bettingService.placeBet(game, playerId, amount);
+    const gameTimingService = this.getService('gameTiming');
+
+    // Place the bet using betting service
+    game = await bettingService.placeBet(game, playerId, amount);
     
     // If player passed (amount is 0), handle the phase transition
     if (amount === 0) {
       // Get the next active player (only considering players who have anted up)
       const playerManagementService = this.getService('playerManagement');
-      const nextPlayerId = playerManagementService.getNextActivePlayer(updatedGame, playerId);
+      const nextPlayerId = playerManagementService.getNextActivePlayer(game, playerId);
       
       if (!nextPlayerId) {
         // If no eligible players, process the game outcome directly
         // This avoids duplicate calls to handleResultsSequence
-        return await this.processGameOutcome(updatedGame);
+        return await this.processGameOutcome(game);
       }
       
       // Set the next player and reset cards
-      updatedGame.currentPlayerId = nextPlayerId;
-      updatedGame.firstCard = updatedGame.secondCard = updatedGame.thirdCard = null;
-      updatedGame.phase = GamePhases.DEALING;
+      game.currentPlayerId = nextPlayerId;
+      game.firstCard = game.secondCard = game.thirdCard = null;
+      game.phase = GamePhases.DEALING;
       
       // Start dealing sequence for the next player
-      updatedGame = await this.startDealingSequence(updatedGame);
+      game = await gameTimingService.handleDealingSequence(game);
     }
     // If player placed a bet, move to revealing phase
     else if (amount > 0) {
-      updatedGame.phase = GamePhases.REVEALING;
+      game.phase = GamePhases.REVEALING;
       const gameTimingService = this.getService('gameTiming');
-      await gameTimingService.handleRevealingSequence(updatedGame);
+      await gameTimingService.handleRevealingSequence(game);
     }
     
-    return updatedGame;
+    return game;
   }
 
   async processGameOutcome(game) {
