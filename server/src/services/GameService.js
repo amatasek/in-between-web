@@ -634,6 +634,7 @@ class GameService extends BaseService {
     // Get required services
     const broadcastService = this.getService('broadcast');
     const databaseService = this.getService('database');
+    const gameTimingService = this.getService('gameTiming');
     
     // Check if the pot is empty before proceeding
     if (game.pot === 0) {
@@ -659,7 +660,7 @@ class GameService extends BaseService {
       gameLog(game, `Pot is empty. Waiting for players to ante up for round ${game.round}`);
 
       // --- Concise Auto-ante if pot is zero --- 
-      const playerIds = Object.keys(game.players).filter(id => game.players[id]?.isConnected && !game.players[id].isReady);
+      const playerIds = Object.keys(game.players).filter(id => game.players[id]?.isConnected && !game.players[id].isReady && !game.players[id].isSittingOut);
       if (playerIds.length > 0) {
         const prefs = await databaseService.getPreferencesForUsers(playerIds);
         for (const userId of playerIds) { // Loop required for sequential awaiting
@@ -667,6 +668,17 @@ class GameService extends BaseService {
         }
       }
       // --- End Auto-ante --- 
+
+      // --- Start inactivity timers for players who did not auto-ante ---
+      const playerEntriesToStartTimerFor = Object.entries(game.players).filter(
+        ([userId, player]) => player.isConnected && !player.isSittingOut && !player.isReady
+      );
+
+      for (const [userId, player] of playerEntriesToStartTimerFor) {
+        // userId is the key from game.players and is guaranteed to be defined here
+        gameTimingService.startPlayerInactivityTimer(game, userId); // Pass the userId (key)
+      }
+      // --- End inactivity timers ---
 
       // Broadcast the current game state
       broadcastService.broadcastGameState(game);

@@ -96,23 +96,29 @@ class Game {
       return null;
     }
     
-    // Get all connected players in seat order
-    const connectedPlayers = this.getConnectedPlayersInOrder();
-    if (connectedPlayers.length <= 1) {
-      gameLog(this, `Only one connected player, returning same player`);
-      return playerId;
+    // Get all active players in seat order
+    const activePlayers = this.getActivePlayersInOrder();
+    if (activePlayers.length === 0) {
+      gameLog(this, `No active players found.`);
+      return null; // Or handle as appropriate, maybe return current player if they are the only one
     }
-    
-    // Find the index of the current player in the connected players array
-    const currentIndex = connectedPlayers.indexOf(playerId);
+    if (activePlayers.length === 1) {
+      gameLog(this, `Only one active player, returning same player: ${activePlayers[0]}`);
+      return activePlayers[0];
+    }
+  
+    // Find the index of the current player in the active players array
+    const currentIndex = activePlayers.indexOf(playerId);
     if (currentIndex === -1) {
-      gameLog(this, `Current player ${playerId} not found in connected players list`);
-      return connectedPlayers[0]; // Return the first connected player
+      // If current player is not in the active list (e.g., they just sat out),
+      // or if playerId is null/undefined, default to the first active player.
+      gameLog(this, `Current player ${playerId} not found in active players list or no current player; defaulting to first active player.`);
+      return activePlayers[0]; 
     }
-    
+  
     // Get the next player in the array, wrapping around if necessary
-    const nextIndex = (currentIndex + 1) % connectedPlayers.length;
-    const nextPlayerId = connectedPlayers[nextIndex];
+    const nextIndex = (currentIndex + 1) % activePlayers.length;
+    const nextPlayerId = activePlayers[nextIndex];
     
     return nextPlayerId;
   }
@@ -125,7 +131,16 @@ class Game {
     return this.seats
       .filter(playerId => playerId !== null && 
               this.players[playerId]?.isConnected && 
-              !this.players[playerId]?.disconnected);
+          !this.players[playerId]?.disconnected);
+  }
+
+  /**
+   * Get active (connected and not sitting out) players in seat order
+   * @returns {Array} Array of active player IDs in seat order
+   */
+  getActivePlayersInOrder() {
+    const connectedPlayers = this.getConnectedPlayersInOrder();
+    return connectedPlayers.filter(playerId => !this.players[playerId]?.isSittingOut);
   }
 
   /**

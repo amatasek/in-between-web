@@ -328,15 +328,15 @@ class PlayerManagementService extends BaseService {
    * @returns {Object} The updated game object
    */
   moveToNextPlayer(game) {
-    const connectedPlayers = game.getConnectedPlayersInOrder();
-    if (connectedPlayers.length < 2) return game;
+    const activePlayers = game.getActivePlayersInOrder();
+    if (activePlayers.length < 2) return game;
 
     gameLog(game, `Moving to next player after ${game.players[game.currentPlayerId]?.name || 'Unknown'}`);
 
     // If no current player, start with the player after the dealer
-    if (!game.currentPlayerId && game.dealerId && connectedPlayers.includes(game.dealerId)) {
-      const dealerIndex = connectedPlayers.indexOf(game.dealerId);
-      game.currentPlayerId = connectedPlayers[dealerIndex];
+    if (!game.currentPlayerId && game.dealerId && activePlayers.includes(game.dealerId)) {
+      const dealerIndex = activePlayers.indexOf(game.dealerId);
+      game.currentPlayerId = activePlayers[dealerIndex];
     }
     
     // Get the next player ID based on seat order - already using userId
@@ -469,6 +469,8 @@ class PlayerManagementService extends BaseService {
       return game;
     }
 
+    const gameService = this.getService('game');
+
     const player = game.players[userId];
 
     // Players can only sit out during the WAITING phase
@@ -488,6 +490,9 @@ class PlayerManagementService extends BaseService {
 
     gameLog(game, `${player.name} is sitting out`);
     console.log(`[PLAYER_MANAGEMENT] Player ${player.name} (${userId}) marked as sitting out.`);
+
+    // Start or resume round
+    game = await gameService.startOrResumeRound(game);
 
     return game;
   }

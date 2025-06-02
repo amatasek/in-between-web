@@ -87,22 +87,38 @@ class GameTimingService extends BaseService {
         // Get fresh game state and services before acting
         const playerManagementService = this.getService('playerManagement');
         const broadcastService = this.getService('broadcast');
+        const gameStateService = this.getService('gameState');
 
-        // Check if the timeout is still relevant
+        let freshGame = gameStateService.getGame(gameId);
+        if (!freshGame) {
+          console.warn(`[GameTimingService.startPlayerInactivityTimer] Game ${gameId} not found for player ${playerId} inactivity timeout.`);
+          return;
+        }
+
+        const freshPlayer = freshGame.players[playerId];
+        if (!freshPlayer) {
+          console.warn(`[GameTimingService.startPlayerInactivityTimer] Player ${playerId} not found in game ${gameId} for inactivity timeout.`);
+          // Player might have left, timer is no longer relevant for them.
+          this.clearPlayerInactivityTimer(gameId, playerId); // Clear timer as a precaution
+          return;
+        }
+
+        // Check if the timeout is still relevant using fresh state
         if (
-          game.phase === GamePhases.WAITING &&
-          !player.isReady &&
-          !player.isSittingOut
+          freshGame.phase === GamePhases.WAITING &&
+          !freshPlayer.isReady &&
+          !freshPlayer.isSittingOut
         ) {
-          // gameLog(game, `${player.name} sitting out due to inactivity.`);
+          gameLog(freshGame, `${freshPlayer.name} sitting out due to inactivity.`);
           
-          // // Mark player as sitting out (modifies the passed 'game' instance)
-          // game = await playerManagementService.playerSitOut(game, playerId);
+          freshGame = await playerManagementService.playerSitOut(freshGame, playerId);
 
-          // // Clean up timer
-          // this.clearPlayerInactivityTimer(game.id, playerId);
-
-          // broadcastService.broadcastGameState(game);
+          this.clearPlayerInactivityTimer(freshGame.id, playerId);
+          broadcastService.broadcastGameState(freshGame);
+          await gameStateService.saveGame(freshGame);
+        } else {
+          // Conditions not met with fresh state, timer might be stale, ensure it's cleared
+          this.clearPlayerInactivityTimer(gameId, playerId);
         }
       };
 

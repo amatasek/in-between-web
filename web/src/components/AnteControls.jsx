@@ -80,7 +80,6 @@ const AnteControls = () => {
                 </div>
               </button>
 
-              {/* Temporarily commented out sit out button
               <button
                 className={`${styles.backOutButton} ${styles.sitOutHalfWidth}`}
                 onClick={() => {
@@ -100,7 +99,7 @@ const AnteControls = () => {
                   <h3 className={styles.buttonLabel}>SIT OUT</h3>
                 </div>
               </button>
-              */}
+             
 
               {!hasEnoughChips && (
                 <p className={styles.notEnoughChipsText}>Not enough coins (<CurrencyAmount amount={anteAmount} /> required)</p>

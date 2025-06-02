@@ -22,7 +22,7 @@ const GAME_CONSTANTS = {
     DECISION_DURATION: 15000,       // Duration for ace and second chance decisions (15 seconds)
     REVEALING_DURATION: 3000,       // Duration for revealing phase
     RESULTS_DURATION: 5000,         // Duration to show results before moving to next round (5 seconds)
-    PLAYER_INACTIVITY_TIMEOUT: 60000 // 1 minute timeout for inactive players in WAITING phase
+    PLAYER_INACTIVITY_TIMEOUT: 30000//Timeout for inactive players in WAITING phase
   }
 };
 
