@@ -84,8 +84,7 @@ class AuthService extends BaseService {
 
     console.log('[AUTH] User found:', { 
       username,
-      hasPassword: !!user.password,
-      storedPassword: user.password
+      hasPassword: !!user.password
     });
 
     if (!user.password) {
@@ -93,10 +92,7 @@ class AuthService extends BaseService {
       throw new Error('Invalid username or password');
     }
 
-    console.log('[AUTH] Comparing passwords:', {
-      providedPassword: password,
-      storedHashedPassword: user.password
-    });
+    // Password validation
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {

@@ -135,7 +135,7 @@ class GameService extends BaseService {
         }
         // Password was provided, now check if it's correct
         if (game.settings.password !== data.password) {
-          console.log(`[GAME_SERVICE] Invalid password attempt for game ${gameId} by user ${user.username}`);
+          console.log(`[GAME_SERVICE] Invalid password attempt for game ${gameId}`);
           socket.emit('error', { message: 'Invalid password' }); // Existing error
           return;
         }
