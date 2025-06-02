@@ -1,0 +1,103 @@
+.add-sound-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.add-sound-form {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.form-header {
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.add-sound-form form {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 0.3rem;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.file-selection {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.file-selection input {
+  flex: 1;
+}
+
+.btn.select-file {
+  background-color: #95a5a6;
+  color: white;
+  white-space: nowrap;
+}
+
+.form-footer {
+  padding: 1rem;
+  background-color: var(--light-gray);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin: 0 -1.5rem -1.5rem -1.5rem;
+}
+
+@media (max-width: 768px) {
+  .add-sound-form {
+    width: 95%;
+    max-height: 80vh;
+  }
+  
+  .file-selection {
+    flex-direction: column;
+  }
+}
