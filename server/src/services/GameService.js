@@ -175,11 +175,22 @@ class GameService extends BaseService {
         isReconnection: Boolean(existingPlayer || isReconnection)
       });
 
-      // If player joined/reconnected and game is in WAITING, start their inactivity timer
+      // If player joined/reconnected and game is in WAITING, check for auto-ante
       // Make sure player exists and isn't already sitting out
       const player = game.players[user.userId];
       if (game.phase === GamePhases.WAITING && player && !player.isSittingOut) {
-        await gameTimingService.startPlayerInactivityTimer(game, user.userId);
+        // Check if player has auto-ante enabled and apply it if so
+        if (!player.isReady) {
+          const databaseService = this.getService('database');
+          const userPrefs = await databaseService.getPreferences(user.userId);
+          if (userPrefs?.autoAnte) {
+            console.log(`[GAME_SERVICE] Auto-ante enabled for ${user.username}, applying ante automatically`);
+            game = await this.playerReady(game, user.userId);
+          } else {
+            // Only start inactivity timer if player didn't auto-ante
+            await gameTimingService.startPlayerInactivityTimer(game, user.userId);
+          }
+        }
       }
       
       // Broadcast updated game state to all players
