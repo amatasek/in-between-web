@@ -131,156 +131,148 @@ class GameTimingService extends BaseService {
       game = cardService.handleDeckRenewal(game);
     }
 
-    this.ensureGameTimeouts(game.id);
+    const gameId = game.id;
+    this.ensureGameTimeouts(gameId);
     
     // Set timer for first card
-    this.timeouts[game.id].dealFirstCard = setTimeout(async () => {
+    this.timeouts[gameId].dealFirstCard = setTimeout(async () => {
+      let currentGame = gameStateService.getGame(gameId);
+      if (!currentGame) {
+        console.warn(`[GameTimingService] Game ${gameId} not found for dealFirstCard timeout.`);
+        return;
+      }
+
       // Deal first card
-      game = cardService.dealFirstCard(game);
-      broadcastService.broadcastGameState(game);
+      currentGame = cardService.dealFirstCard(currentGame);
+      broadcastService.broadcastGameState(currentGame);
       
       // If ace choice is enabled and the first card is an Ace
       if (
-        !!game.settings.enableAceChoice &&
-        game.firstCard.value === 'A') 
+        !!currentGame.settings.enableAceChoice &&
+        currentGame.firstCard.value === 'A') 
       {
-        game.waitingForAceDecision = true;
-        gameLog(game, `${game.players[game.currentPlayerId]?.name} needs to choose Ace value`);
+        currentGame.waitingForAceDecision = true;
+        gameLog(currentGame, `${currentGame.players[currentGame.currentPlayerId]?.name} needs to choose Ace value`);
         
-        // Broadcast the game state with the waitingForAceDecision flag
-        broadcastService.broadcastGameState(game);
+        broadcastService.broadcastGameState(currentGame);
+        await gameStateService.saveGame(currentGame);
         
-        // Save the game state
-        await gameStateService.saveGame(game);
+        const currentPlayerId = currentGame.currentPlayerId;
+        const currentRound = currentGame.round;
         
-        // Set up auto-timeout for ace decision
-        const currentPlayerId = game.currentPlayerId;
-        const currentRound = game.round;
-        
-        // Clear any existing auto-ace-decision timeout
-        if (this.timeouts[game.id].autoAceDecision) {
-          clearTimeout(this.timeouts[game.id].autoAceDecision);
+        if (this.timeouts[gameId].autoAceDecision) {
+          clearTimeout(this.timeouts[gameId].autoAceDecision);
         }
         
-        // Set timer for auto-ace-decision if player doesn't respond within the decision duration
-        this.timeouts[game.id].autoAceDecision = setTimeout(async () => {
+        this.timeouts[gameId].autoAceDecision = setTimeout(async () => {
           try {
-            // Get the latest game state
-            const currentGame = gameStateService.getGame(game.id);
-            if (!currentGame) return;
+            const freshGameForAce = gameStateService.getGame(gameId);
+            if (!freshGameForAce) {
+                console.warn(`[GameTimingService] Game ${gameId} not found for autoAceDecision timeout.`);
+                return;
+            }
             
-            // Check if we're still waiting for ace decision, it's still this player's turn, and we're in the same round
-            if (currentGame.waitingForAceDecision && 
-                currentGame.currentPlayerId === currentPlayerId && 
-                currentGame.round === currentRound) {
+            if (freshGameForAce.waitingForAceDecision && 
+                freshGameForAce.currentPlayerId === currentPlayerId && 
+                freshGameForAce.round === currentRound) {
               
-              // Auto-choose high for player after timeout
-              const timeoutPlayerName = currentGame.players[currentPlayerId]?.name || 'Unknown player';
-              gameLog(currentGame, `Auto-choosing high ace value for player ${timeoutPlayerName} due to timeout`);
+              const timeoutPlayerName = freshGameForAce.players[currentPlayerId]?.name || 'Unknown player';
+              gameLog(freshGameForAce, `Auto-choosing high ace value for player ${timeoutPlayerName} due to timeout`);
               
-              // Get the player and user data
               const databaseService = this.getService('database');
-              
-              const player = currentGame.players[currentPlayerId];
+              const player = freshGameForAce.players[currentPlayerId];
               if (!player?.userId) {
                 console.error(`[GAME_TIMING_SERVICE] Cannot auto-choose ace value: player ${currentPlayerId} has no userId`);
                 return;
               }
-              
               const user = await databaseService.getUserById(player.userId);
               if (!user) {
                 console.error(`[GAME_TIMING_SERVICE] Cannot auto-choose ace value: user ${player.userId} not found`);
                 return;
               }
               
-              // Set the ace value directly in the game object
-              currentGame.firstCard.isAceLow = false; // Auto-choose HIGH
-              currentGame.waitingForAceDecision = false;
-              
-              gameLog(currentGame, `Auto-choosing Ace HIGH for player ${timeoutPlayerName} due to timeout`);
-              
-              // Save the updated game state
-              await gameStateService.saveGame(currentGame);
-              
-              // Resume the dealing sequence
-              this.resumeDealingAfterAceChoice(currentGame);
+              freshGameForAce.firstCard.isAceLow = false;
+              freshGameForAce.waitingForAceDecision = false;
+              gameLog(freshGameForAce, `Auto-choosing Ace HIGH for player ${timeoutPlayerName} due to timeout`);
+              await gameStateService.saveGame(freshGameForAce);
+              this.resumeDealingAfterAceChoice(freshGameForAce);
             }
           } catch (error) {
-            console.error(`Error in auto-ace-decision timeout for game ${game.id}:`, error);
+            console.error(`Error in auto-ace-decision timeout for game ${gameId}:`, error);
           }
         }, GAME_CONSTANTS.TIMERS.DECISION_DURATION);
         
-        return game; // Exit the function early - we'll resume after the player's choice
+        return;
       }
 
-      // Set timer for second card
-      this.timeouts[game.id].dealSecondCard = setTimeout(async () => {
-        // Deal second card
-        game = cardService.dealSecondCard(game);
-        broadcastService.broadcastGameState(game);
+
+      this.timeouts[gameId].dealSecondCard = setTimeout(async () => {
+        let freshGameForSecondCard = gameStateService.getGame(gameId);
+        if (!freshGameForSecondCard) {
+          console.warn(`[GameTimingService] Game ${gameId} not found for dealSecondCard timeout.`);
+          return;
+        }
+
+        freshGameForSecondCard = cardService.dealSecondCard(freshGameForSecondCard);
+        broadcastService.broadcastGameState(freshGameForSecondCard);
         
-        // If second chances are enabled and the first two cards form a matching pair
         if (
-          !!game.settings.enableSecondChance &&
-          cardService.isSecondChanceEligible(game.firstCard, game.secondCard)) 
+          !!freshGameForSecondCard.settings.enableSecondChance &&
+          cardService.isSecondChanceEligible(freshGameForSecondCard.firstCard, freshGameForSecondCard.secondCard)) 
         {
-          await this.handleMatchingPair(game);
+          await this.handleMatchingPair(freshGameForSecondCard); 
           return;
         }
         
-        // Set timer for transition to betting phase
-        this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
-          // Move to betting phase
-          game.phase = GamePhases.BETTING;
+
+        this.timeouts[gameId].transitionToBetting = setTimeout(async () => {
+          let freshGameForBetting = gameStateService.getGame(gameId);
+          if (!freshGameForBetting) {
+            console.warn(`[GameTimingService] Game ${gameId} not found for transitionToBetting timeout.`);
+            return;
+          }
+
+          freshGameForBetting.phase = GamePhases.BETTING;
           
-          // Set up auto-pass timer for the betting phase
-          const currentPlayerId = game.currentPlayerId;
-          const playerName = game.players[currentPlayerId]?.name || 'Unknown player';
-          const currentRound = game.round;
+          const currentPlayerId = freshGameForBetting.currentPlayerId;
+          const playerName = freshGameForBetting.players[currentPlayerId]?.name || 'Unknown player';
+          const currentRound = freshGameForBetting.round;
           
-          // Clear any existing auto-bet timeout
-          if (this.timeouts[game.id].autoBet) {
-            clearTimeout(this.timeouts[game.id].autoBet);
+          if (this.timeouts[gameId].autoBet) {
+            clearTimeout(this.timeouts[gameId].autoBet);
           }
           
-          // Use the standard betting duration from game constants
           const betTimeoutDuration = GAME_CONSTANTS.TIMERS.BETTING_DURATION;
           
-          // Set timer for auto-pass if player doesn't respond within the betting duration
-          this.timeouts[game.id].autoBet = setTimeout(async () => {
+          this.timeouts[gameId].autoBet = setTimeout(async () => {
             try {
-              // Get the latest game state
-              const currentGame = gameStateService.getGame(game.id);
-              if (!currentGame) return;
+              const freshestGameForAutoBet = gameStateService.getGame(gameId);
+              if (!freshestGameForAutoBet) {
+                console.warn(`[GameTimingService] Game ${gameId} not found for autoBet timeout.`);
+                return;
+              }
               
-              // Check if we're still in betting phase, it's still this player's turn, and we're in the same round
-              if (currentGame.phase === GamePhases.BETTING && 
-                  currentGame.currentPlayerId === currentPlayerId && 
-                  currentGame.round === currentRound) {
+              if (freshestGameForAutoBet.phase === GamePhases.BETTING && 
+                  freshestGameForAutoBet.currentPlayerId === currentPlayerId && 
+                  freshestGameForAutoBet.round === currentRound) {
                 
-                // Auto-pass for player after timeout
-                gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
-                
-                // Instead of using the GameEventService with a mock socket, use the GameService directly
-                // This avoids the issue with the mock socket not being properly associated with the game
+                gameLog(freshestGameForAutoBet, `Auto-passing for player ${playerName} due to timeout`);
                 const gameService = this.getService('game');
-                
-                // Call placeBet directly with the currentPlayerId and a bet of 0 (pass)
                 console.log(`[GAME_TIMING_SERVICE] Auto-passing by directly calling GameService.placeBet with currentPlayerId=${currentPlayerId}`);
-                await gameService.placeBet(currentGame, currentPlayerId, 0);
+                await gameService.placeBet(freshestGameForAutoBet, currentPlayerId, 0);
               }
             } catch (error) {
-              console.error(`Error in auto-pass timeout for game ${game.id}:`, error);
+              console.error(`Error in auto-pass timeout for game ${gameId}:`, error);
             }
           }, betTimeoutDuration);
           
-          // Broadcast the updated game state
-          broadcastService.broadcastGameState(game);
-        }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
-      }, GAME_CONSTANTS.TIMERS.DEAL_FIRST_CARD_DELAY);
+          broadcastService.broadcastGameState(freshGameForBetting);
+          await gameStateService.saveGame(freshGameForBetting);
+        }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY); // Reverted to original
+      }, GAME_CONSTANTS.TIMERS.DEAL_FIRST_CARD_DELAY); // Corrected to DEAL_FIRST_CARD_DELAY
+    }, GAME_CONSTANTS.TIMERS.DEAL_FIRST_CARD_DELAY); // Reverted to original for dealFirstCard
     
-    }, GAME_CONSTANTS.TIMERS.DEAL_FIRST_CARD_DELAY);
-    
+
     return game;
   }
 
@@ -376,11 +368,17 @@ class GameTimingService extends BaseService {
     if (!game) return game;
 
     this.ensureGameTimeouts(game.id);
-    
+    const gameId = game.id; // Store gameId before the timeout
+
     // Set timer for transition to next round
-    this.timeouts[game.id].transitionToNextRound = setTimeout(async () => {
-      // Start the next round
-      await gameService.handleRoundCompletion(game);
+    this.timeouts[gameId].transitionToNextRound = setTimeout(async () => {
+      const currentGame = gameService.games[gameId]; // Fetch the latest game state
+      if (currentGame) {
+        // Start the next round with the fresh game state
+        await gameService.handleRoundCompletion(currentGame);
+      } else {
+        console.warn(`[GameTimingService] Game with ID ${gameId} not found for handleRoundCompletion.`);
+      }
     }, GAME_CONSTANTS.TIMERS.RESULTS_DURATION);
     
     return game;
@@ -448,67 +446,82 @@ class GameTimingService extends BaseService {
     
     // Set timer for second card
     this.timeouts[game.id].dealSecondCard = setTimeout(async () => {
+      const gameId = game.id;
+      let freshGameForSecondCard = gameStateService.getGame(gameId);
+      if (!freshGameForSecondCard) {
+        console.warn(`[GameTimingService.resumeDealingAfterAceChoice] Game ${gameId} not found in dealSecondCard timeout.`);
+        return;
+      }
+
       // Deal second card
-      game = cardService.dealSecondCard(game);
-      broadcastService.broadcastGameState(game);
-      
+      freshGameForSecondCard = cardService.dealSecondCard(freshGameForSecondCard);
+      broadcastService.broadcastGameState(freshGameForSecondCard);
+      await gameStateService.saveGame(freshGameForSecondCard);
+
       // If second chances are enabled and the first two cards form a matching pair
       if (
-        !!game.settings.enableSecondChance &&
-        cardService.isSecondChanceEligible(game.firstCard, game.secondCard)
+        !!freshGameForSecondCard.settings.enableSecondChance &&
+        cardService.isSecondChanceEligible(freshGameForSecondCard.firstCard, freshGameForSecondCard.secondCard)
       ) {
-        await this.handleMatchingPair(game);
+        await this.handleMatchingPair(freshGameForSecondCard);
         return;
       }
       
       // Set timer for transition to betting phase
-      this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
+
+      this.timeouts[gameId].transitionToBetting = setTimeout(async () => {
+
+        let freshGameForBetting = gameStateService.getGame(gameId);
+        if (!freshGameForBetting) {
+          console.warn(`[GameTimingService.resumeDealingAfterAceChoice] Game ${gameId} not found in transitionToBetting timeout.`);
+          return;
+        }
+
         // Move to betting phase
-        game.phase = GamePhases.BETTING;
+        freshGameForBetting.phase = GamePhases.BETTING;
         
         // Set up auto-pass timer for the betting phase
-        const currentPlayerId = game.currentPlayerId;
-        const playerName = game.players[currentPlayerId]?.name || 'Unknown player';
-        const currentRound = game.round;
+        const currentPlayerIdForAutoPass = freshGameForBetting.currentPlayerId;
+        const playerNameForAutoPass = freshGameForBetting.players[currentPlayerIdForAutoPass]?.name || 'Unknown player';
+        const currentRoundForAutoPass = freshGameForBetting.round;
         
-        // Clear any existing auto-bet timeout
-        if (this.timeouts[game.id].autoBet) {
-          clearTimeout(this.timeouts[game.id].autoBet);
+        // Clear any existing auto-bet timeout for this gameId
+        if (this.timeouts[gameId] && this.timeouts[gameId].autoBet) {
+          clearTimeout(this.timeouts[gameId].autoBet);
         }
         
-        // Use the standard betting duration from game constants
         const betTimeoutDuration = GAME_CONSTANTS.TIMERS.BETTING_DURATION;
         
         // Set timer for auto-pass if player doesn't respond within the betting duration
-        this.timeouts[game.id].autoBet = setTimeout(async () => {
+        this.ensureGameTimeouts(gameId);
+        this.timeouts[gameId].autoBet = setTimeout(async () => {
           try {
             // Get the latest game state
-            const currentGame = gameStateService.getGame(game.id);
-            if (!currentGame) return;
+            const latestGame = gameStateService.getGame(gameId);
+            if (!latestGame) {
+              console.warn(`[GameTimingService.resumeDealingAfterAceChoice] Game ${gameId} not found in autoBet timeout.`);
+              return;
+            }
             
             // Check if we're still in betting phase, it's still this player's turn, and we're in the same round
-            if (currentGame.phase === GamePhases.BETTING && 
-                currentGame.currentPlayerId === currentPlayerId && 
-                currentGame.round === currentRound) {
+            if (latestGame.phase === GamePhases.BETTING && 
+                latestGame.currentPlayerId === currentPlayerIdForAutoPass && 
+                latestGame.round === currentRoundForAutoPass) {
               
-              // Auto-pass for player after timeout
-              gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
-              
-              // Instead of using the GameEventService with a mock socket, use the GameService directly
-              // This avoids the issue with the mock socket not being properly associated with the game
+              gameLog(latestGame, `Auto-passing for player ${playerNameForAutoPass} due to timeout`);
               const gameService = this.getService('game');
-              
-              // Call placeBet directly with the currentPlayerId and a bet of 0 (pass)
-              console.log(`[GAME_TIMING_SERVICE] Auto-passing by directly calling GameService.placeBet with currentPlayerId=${currentPlayerId}`);
-              await gameService.placeBet(currentGame, currentPlayerId, 0);
+
+              console.log(`[GAME_TIMING_SERVICE] Auto-passing by directly calling GameService.placeBet with currentPlayerId=${currentPlayerIdForAutoPass} for game ${gameId}`);
+              await gameService.placeBet(latestGame, currentPlayerIdForAutoPass, 0);
             }
           } catch (error) {
-            console.error(`Error in auto-pass timeout for game ${game.id}:`, error);
+            console.error(`Error in auto-pass timeout for game ${gameId}:`, error);
           }
         }, betTimeoutDuration);
         
         // Broadcast the updated game state
-        broadcastService.broadcastGameState(game);
+        broadcastService.broadcastGameState(freshGameForBetting);
+        await gameStateService.saveGame(freshGameForBetting);
       }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     
@@ -532,52 +545,58 @@ class GameTimingService extends BaseService {
     
     // Set timer for transition to betting phase
     this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
+
+      let freshGameForBetting = gameStateService.getGame(game.id);
+      if (!freshGameForBetting) {
+        console.warn(`[GameTimingService.resumeAfterSecondChance] Game ${game.id} not found in transitionToBetting timeout.`);
+        return;
+      }
+
       // Move to betting phase
-      game.phase = GamePhases.BETTING;
+      freshGameForBetting.phase = GamePhases.BETTING;
       
       // Set up auto-pass timer for the betting phase
-      const currentPlayerId = game.currentPlayerId;
-      const playerName = game.players[currentPlayerId]?.name || 'Unknown player';
-      const currentRound = game.round;
+      const currentPlayerIdForAutoPass = freshGameForBetting.currentPlayerId;
+      const playerNameForAutoPass = freshGameForBetting.players[currentPlayerIdForAutoPass]?.name || 'Unknown player';
+      const currentRoundForAutoPass = freshGameForBetting.round;
       
-      // Clear any existing auto-bet timeout
-      if (this.timeouts[game.id].autoBet) {
+      // Clear any existing auto-bet timeout for this game.id
+      if (this.timeouts[game.id] && this.timeouts[game.id].autoBet) {
         clearTimeout(this.timeouts[game.id].autoBet);
       }
       
-      // Use the standard betting duration from game constants
       const betTimeoutDuration = GAME_CONSTANTS.TIMERS.BETTING_DURATION;
       
       // Set timer for auto-pass if player doesn't respond within the betting duration
+      this.ensureGameTimeouts(game.id);
       this.timeouts[game.id].autoBet = setTimeout(async () => {
         try {
           // Get the latest game state
-          const currentGame = gameStateService.getGame(game.id);
-          if (!currentGame) return;
+          const latestGameForAutoBet = gameStateService.getGame(game.id);
+          if (!latestGameForAutoBet) {
+            console.warn(`[GameTimingService.resumeAfterSecondChance] Game ${game.id} not found in autoBet timeout.`);
+            return;
+          }
           
           // Check if we're still in betting phase, it's still this player's turn, and we're in the same round
-          if (currentGame.phase === GamePhases.BETTING && 
-              currentGame.currentPlayerId === currentPlayerId && 
-              currentGame.round === currentRound) {
+          if (latestGameForAutoBet.phase === GamePhases.BETTING && 
+              latestGameForAutoBet.currentPlayerId === currentPlayerIdForAutoPass && 
+              latestGameForAutoBet.round === currentRoundForAutoPass) {
             
-            // Auto-pass for player after timeout
-            gameLog(currentGame, `Auto-passing for player ${playerName} due to timeout`);
-            
-            // Instead of using the GameEventService with a mock socket, use the GameService directly
-            // This avoids the issue with the mock socket not being properly associated with the game
-            const gameService = this.getService('game');
-            
-            // Call placeBet directly with the currentPlayerId and a bet of 0 (pass)
-            console.log(`[GAME_TIMING_SERVICE] Auto-passing by directly calling GameService.placeBet with currentPlayerId=${currentPlayerId}`);
-            await gameService.placeBet(currentGame, currentPlayerId, 0);
+            gameLog(latestGameForAutoBet, `Auto-passing for player ${playerNameForAutoPass} due to timeout`);
+            const gameService = this.getService('game'); // gameService is defined in the outer function scope
+
+            console.log(`[GAME_TIMING_SERVICE] Auto-passing by directly calling GameService.placeBet with currentPlayerId=${currentPlayerIdForAutoPass} for game ${game.id}`);
+            await gameService.placeBet(latestGameForAutoBet, currentPlayerIdForAutoPass, 0);
           }
         } catch (error) {
           console.error(`Error in auto-pass timeout for game ${game.id}:`, error);
         }
       }, betTimeoutDuration);
       
-      // Broadcast the updated game state
-      broadcastService.broadcastGameState(game);
+
+      broadcastService.broadcastGameState(freshGameForBetting);
+      await gameStateService.saveGame(freshGameForBetting);
     }, GAME_CONSTANTS.TIMERS.DEAL_SECOND_CARD_DELAY);
     
     return game;

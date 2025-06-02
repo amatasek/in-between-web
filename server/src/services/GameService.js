@@ -670,16 +670,17 @@ class GameService extends BaseService {
 
       // Broadcast the current game state
       broadcastService.broadcastGameState(game);
-      
-      // Return early to prevent starting a new round
-      return game;
+      // gameStateService.saveGame will be called at the end of the function
+    } else {
+      // Pot is not empty, resume the round
+      game = await this.startOrResumeRound(game);
+      // Broadcast the updated game state after resuming/starting round
+      broadcastService.broadcastGameState(game);
     }
     
-    // Resume the round
-    game = await this.startOrResumeRound(game);
-    
-    // Broadcast the updated game state
-    broadcastService.broadcastGameState(game);
+    // Always save the game state after all operations and broadcasts
+    const gameStateService = this.getService('gameState');
+    await gameStateService.saveGame(game);
     
     return game;
   }

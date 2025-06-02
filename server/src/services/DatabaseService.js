@@ -215,7 +215,6 @@ class DatabaseService {
   }
 
   async updateBalance(userId, amount, reason) {
-    console.log('[DB] Updating balance:', { userId, amount, reason });
     const user = await this.getUserById(userId);
     if (!user) {
       throw new Error('User not found');
