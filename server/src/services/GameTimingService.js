@@ -289,10 +289,11 @@ class GameTimingService extends BaseService {
     const broadcastService = this.getService('broadcast');
     
     if (!game) return game;
-    
-    // Store the current player ID to ensure it's preserved throughout the sequence
-    const currentPlayerId = game.currentPlayerId;
-    if (!currentPlayerId) {
+
+    const gameId = game.id; // Capture gameId for use in timeouts
+    // Store the current player ID from the initial game state for potential restoration
+    const initialCurrentPlayerId = game.currentPlayerId;
+    if (!initialCurrentPlayerId) {
       gameLog(game, `WARNING: Current player is undefined at start of revealing sequence`);
       // Try to set a valid player if possible
       const connectedPlayers = Object.keys(game.players).filter(id => !game.players[id].disconnected);
@@ -309,45 +310,60 @@ class GameTimingService extends BaseService {
     broadcastService.broadcastGameState(game);
     
     // Deal the third card after the specified delay (2 seconds)
-    this.timeouts[game.id].dealThirdCard = setTimeout(() => {
-      game = cardService.dealThirdCard(game);
+    this.timeouts[gameId].dealThirdCard = setTimeout(async () => {
+      let freshGameForThirdCard = gameStateService.getGame(gameId);
+      if (!freshGameForThirdCard) {
+        console.warn(`[GameTimingService.handleRevealingSequence] Game ${gameId} not found in dealThirdCard timeout.`);
+        return;
+      }
+
+      freshGameForThirdCard = cardService.dealThirdCard(freshGameForThirdCard);
       
       // Ensure current player is still set after dealing third card
-      if (!game.currentPlayerId && currentPlayerId) {
-        game.currentPlayerId = currentPlayerId;
-        gameLog(game, `Restored current player to ${game.players[currentPlayerId]?.name} after dealing third card`);
+      if (!freshGameForThirdCard.currentPlayerId && initialCurrentPlayerId) {
+        freshGameForThirdCard.currentPlayerId = initialCurrentPlayerId;
+        gameLog(freshGameForThirdCard, `Restored current player to ${freshGameForThirdCard.players[initialCurrentPlayerId]?.name} after dealing third card`);
       }
       
-      broadcastService.broadcastGameState(game);
+      broadcastService.broadcastGameState(freshGameForThirdCard);
+      await gameStateService.saveGame(freshGameForThirdCard); // Save state after third card deal
       
       // Set timer for results phase - adjust the duration to maintain the original total timing
       // Subtract the DEAL_THIRD_CARD_DELAY from REVEALING_DURATION to keep the total consistent
       const adjustedRevealingDuration = Math.max(0, GAME_CONSTANTS.TIMERS.REVEALING_DURATION - GAME_CONSTANTS.TIMERS.DEAL_THIRD_CARD_DELAY);
       
-      this.timeouts[game.id].transitionToResults = setTimeout(async () => {
+      this.timeouts[gameId].transitionToResults = setTimeout(async () => {
+        let freshGameForResults = gameStateService.getGame(gameId);
+        if (!freshGameForResults) {
+          console.warn(`[GameTimingService.handleRevealingSequence] Game ${gameId} not found in transitionToResults timeout.`);
+          return;
+        }
+
         // Ensure current player is still set before processing outcome
-        if (!game.currentPlayerId && currentPlayerId) {
-          game.currentPlayerId = currentPlayerId;
-          gameLog(game, `Restored current player to ${game.players[currentPlayerId]?.name} before processing outcome`);
+        if (!freshGameForResults.currentPlayerId && initialCurrentPlayerId) {
+          freshGameForResults.currentPlayerId = initialCurrentPlayerId;
+          gameLog(freshGameForResults, `Restored current player to ${freshGameForResults.players[initialCurrentPlayerId]?.name} before processing outcome`);
         }
         
         // Process the outcome after the full revealing duration
-        game = await gameService.processGameOutcome(game);
+        freshGameForResults = await gameService.processGameOutcome(freshGameForResults);
         
-        // Ensure current player is still set after processing outcome
-        if (!game.currentPlayerId && currentPlayerId) {
-          game.currentPlayerId = currentPlayerId;
-          gameLog(game, `Restored current player to ${game.players[currentPlayerId]?.name} after processing outcome`);
+        // Ensure current player is still set after processing outcome (processGameOutcome might change it)
+        if (!freshGameForResults.currentPlayerId && initialCurrentPlayerId) {
+          // This check might be redundant if processGameOutcome guarantees a player, or complex if it intentionally clears it.
+          // For now, we'll keep the pattern of trying to restore if it's missing and we had an initial one.
+          freshGameForResults.currentPlayerId = initialCurrentPlayerId;
+          gameLog(freshGameForResults, `Restored current player to ${freshGameForResults.players[initialCurrentPlayerId]?.name} after processing outcome`);
         }
         
         // Move to results phase
-        game.phase = GamePhases.RESULTS;
+        freshGameForResults.phase = GamePhases.RESULTS;
 
         // Broadcast the updated game state
-        broadcastService.broadcastGameState(game);
+        broadcastService.broadcastGameState(freshGameForResults);
         
         // Save the game state
-        await gameStateService.saveGame(game);
+        await gameStateService.saveGame(freshGameForResults);
         
         // This is now handled exclusively by handleResultsSequence to avoid duplicate calls
       }, adjustedRevealingDuration);
@@ -364,6 +380,7 @@ class GameTimingService extends BaseService {
   async handleResultsSequence(game) {
     // Get required services from the registry
     const gameService = this.getService('game');
+    const gameStateService = this.getService('gameState'); // Added this line
     
     if (!game) return game;
 
@@ -372,13 +389,14 @@ class GameTimingService extends BaseService {
 
     // Set timer for transition to next round
     this.timeouts[gameId].transitionToNextRound = setTimeout(async () => {
-      const currentGame = gameService.games[gameId]; // Fetch the latest game state
-      if (currentGame) {
-        // Start the next round with the fresh game state
-        await gameService.handleRoundCompletion(currentGame);
-      } else {
-        console.warn(`[GameTimingService] Game with ID ${gameId} not found for handleRoundCompletion.`);
+      let freshGame = gameStateService.getGame(gameId);
+      if (!freshGame) {
+        console.warn(`[GameTimingService.handleResultsSequence] Game with ID ${gameId} not found for handleRoundCompletion.`);
+        return;
       }
+      // Pass the fresh game state to handleRoundCompletion
+      // gameService.handleRoundCompletion is expected to handle its own state saving.
+      await gameService.handleRoundCompletion(freshGame);
     }, GAME_CONSTANTS.TIMERS.RESULTS_DURATION);
     
     return game;

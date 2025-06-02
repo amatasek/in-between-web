@@ -114,6 +114,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
     <BaseModal
       title="Game Options"
       onClose={onClose}
+      style={{ maxWidth: 600 }}
       footer={
         <div style={{ display: 'flex', gap: 8 }}>
           <button
