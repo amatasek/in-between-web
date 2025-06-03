@@ -6,5 +6,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveSoundConfig: (config) => ipcRenderer.invoke('save-sound-config', config),
   selectAudioFile: () => ipcRenderer.invoke('select-audio-file'),
   addSoundToSprite: (params) => ipcRenderer.invoke('add-sound-to-sprite', params),
-  playSound: (params) => ipcRenderer.invoke('play-sound', params)
+  playSound: (params) => ipcRenderer.invoke('play-sound', params),
+  regenerateSoundSprite: () => ipcRenderer.invoke('regenerate-sound-sprite')
 });

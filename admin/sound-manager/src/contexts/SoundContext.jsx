@@ -145,6 +145,43 @@ export const SoundProvider = ({ children }) => {
     }
   };
   
+  // Regenerate the sound sprite from individual sound files
+  const regenerateSoundSprite = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const result = await window.electronAPI.regenerateSoundSprite();
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      // Reload the sound configuration after regeneration
+      const configResult = await window.electronAPI.getSoundConfig();
+      
+      if (configResult.error) {
+        throw new Error(configResult.error);
+      }
+      
+      setSoundConfig(configResult.soundConfig);
+      setUiSounds(configResult.uiSounds);
+      
+      setLoading(false);
+      return {
+        success: true,
+        message: result.message,
+        soundCount: result.soundCount,
+        totalDuration: result.totalDuration
+      };
+    } catch (err) {
+      console.error('Failed to regenerate sound sprite:', err);
+      setError(err.message);
+      setLoading(false);
+      return { success: false, error: err.message };
+    }
+  };
+  
   return (
     <SoundContext.Provider
       value={{
@@ -155,7 +192,8 @@ export const SoundProvider = ({ children }) => {
         playSound,
         addSound,
         updateSound,
-        saveSoundConfig
+        saveSoundConfig,
+        regenerateSoundSprite
       }}
     >
       {children}
