@@ -38,11 +38,23 @@ class ServiceRegistry {
     });
     
     // Call init on services that have it
-    Object.values(this.services).forEach(service => {
-      if (typeof service.init === 'function') {
-        service.init();
-      }
-    });
+    // Using Promise.all to handle async init methods
+    const initPromises = Object.values(this.services)
+      .filter(service => typeof service.init === 'function')
+      .map(async service => {
+        try {
+          console.log(`[SERVICE_REGISTRY] Initializing service: ${service.constructor.name}`);
+          await service.init();
+          console.log(`[SERVICE_REGISTRY] Service initialized: ${service.constructor.name}`);
+        } catch (error) {
+          console.error(`[SERVICE_REGISTRY] Error initializing service ${service.constructor.name}:`, error);
+        }
+      });
+    
+    // Execute all init promises
+    Promise.all(initPromises)
+      .then(() => console.log('[SERVICE_REGISTRY] All services initialized'))
+      .catch(error => console.error('[SERVICE_REGISTRY] Error during service initialization:', error));
   }
 }
 

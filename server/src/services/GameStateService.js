@@ -7,7 +7,25 @@ class GameStateService extends BaseService {
   constructor() {
     super();
     this.games = {};
+    this.initialized = false;
   }
+  
+  /**
+   * Initialize the service - called after all services are registered
+   */
+  async init() {
+    if (this.initialized) return;
+    
+    console.log('[GAME_STATE_SERVICE] Initializing GameStateService');
+    
+    // Load existing games from the database
+    await this.loadGamesFromDatabase();
+    
+    this.initialized = true;
+    console.log('[GAME_STATE_SERVICE] Initialization complete');
+  }
+  
+
 
   /**
    * Register socket event handlers for game-related events
@@ -28,11 +46,60 @@ class GameStateService extends BaseService {
     socket.emit('gameList', gameList);
   }
   
-  getGame(gameId) {
-    return this.games[gameId];
+  /**
+   * Get a game by ID, either from memory cache or database
+   * @param {string} gameId - The ID of the game to get
+   * @param {boolean} [forceRefresh=false] - If true, forces a database refresh even if in cache
+   * @returns {Promise<Game|null>} The game, or null if not found
+   */
+  async getGame(gameId, forceRefresh = false) {
+    if (!gameId) {
+      console.error('[GAME_STATE_SERVICE] Attempted to get game with undefined ID');
+      return null;
+    }
+
+    // First check in-memory cache unless forced refresh
+    if (!forceRefresh && this.games[gameId]) {
+      return this.games[gameId];
+    }
+
+    // If not in memory or forced refresh, try to get from database
+    const databaseService = this.getService('database');
+    try {
+      const gameData = await databaseService.getGame(gameId);
+      if (gameData) {
+        // Hydrate the game and store in memory for future access
+        const hydratedGame = this.hydrateGame(gameData);
+        if (hydratedGame) {
+          this.games[gameId] = hydratedGame;
+          console.log(`[GAME_STATE_SERVICE] ${forceRefresh ? 'Refreshed' : 'Loaded'} game ${gameId} from database`);
+          return hydratedGame;
+        } else {
+          console.error(`[GAME_STATE_SERVICE] Failed to hydrate game ${gameId} from database`);
+        }
+      } else {
+        console.log(`[GAME_STATE_SERVICE] Game ${gameId} not found in database`);
+      }
+    } catch (error) {
+      console.error(`[GAME_STATE_SERVICE] Error getting game ${gameId} from database:`, error);
+    }
+
+    // If game not found in cache or database, or if hydration failed
+    if (this.games[gameId] && forceRefresh) {
+      // If we failed to refresh but have a cached version, use that
+      console.log(`[GAME_STATE_SERVICE] Using cached version of game ${gameId} after failed refresh`);
+      return this.games[gameId];
+    }
+    
+    return null;
   }
 
-  createGame(settings) {
+  /**
+   * Create a new game with the specified settings
+   * @param {Object} settings - Game settings
+   * @returns {Promise<Object>} The created game
+   */
+  async createGame(settings) {
     const game = new Game(settings);
     this.games[game.id] = game;
     gameLog(game, `New game created with id: ${game.id}`);
@@ -42,18 +109,45 @@ class GameStateService extends BaseService {
     game.deck = cardService.shuffleDeck(cardService.createDeck());  
     gameLog(game, `Deck with ${game.deck.length} cards shuffled`);
     
+    // Immediately save to database to ensure persistence
+    await this.saveGame(game);
+    console.log(`[GAME_STATE_SERVICE] Game ${game.id} saved to database after creation`);
+    
     return game;
   }
 
   /**
    * Save the game state
    * @param {Object} game - The game to save
-   * @returns {Object} The saved game
+   * @param {boolean} [updateCache=true] - Whether to update the in-memory cache
+   * @returns {Promise<Object>} The saved game
    */
-  saveGame(game) {
-    if (!game || !game.id) return game;
-    this.games[game.id] = game;
-    return game;
+  async saveGame(game, updateCache = true) {
+    if (!game || !game.id) {
+      console.error('[GAME_STATE_SERVICE] Attempted to save invalid game object');
+      return Promise.resolve(game);
+    }
+    
+    // Ensure game timestamp is updated
+    if (typeof game.updateTimestamp === 'function') {
+      game.updateTimestamp();
+    }
+    
+    // Update in-memory cache if requested
+    if (updateCache) {
+      this.games[game.id] = game;
+    }
+    
+    // Perform database persistence
+    try {
+      const databaseService = this.getService('database');
+      await databaseService.saveGame(game);
+      return game;
+    } catch (error) {
+      console.error(`[GAME_STATE_SERVICE] Error saving game ${game.id} to database:`, error);
+      // Still return the game even if save failed - in-memory operations can continue
+      return game;
+    }
   }
 
   prepareForDeal(game) {
@@ -70,33 +164,33 @@ class GameStateService extends BaseService {
     return game;
   }
 
-  moveToNextPhase(game) {
-    if (!game) return game;
-    
-    const phaseOrder = [
-      GamePhases.WAITING,
-      GamePhases.DEALING,
-      GamePhases.BETTING,
-      GamePhases.REVEALING,
-      GamePhases.RESULTS
-    ];
-    
-    const currentIndex = phaseOrder.indexOf(game.phase);
-    if (currentIndex >= 0 && currentIndex < phaseOrder.length - 1) {
-      game.phase = phaseOrder[currentIndex + 1];
-      gameLog(game, `Game entering ${game.phase} phase`);
+
+
+  /**
+   * Remove a game from memory and database
+   * @param {string} gameId - The ID of the game to remove
+   * @returns {Promise<boolean>} Success status of the removal
+   */
+  async removeGame(gameId) {
+    if (!gameId) {
+      console.error('[GAME_STATE_SERVICE] Attempted to remove game with undefined ID');
+      return false;
     }
     
-    game.updateTimestamp();
-    return game;
-  }
-
-  getGame(gameId) {
-    return this.games[gameId];
-  }
-
-  removeGame(gameId) {
+    console.log(`[GAME_STATE_SERVICE] Removing game ${gameId}`);
+    
+    // Remove from in-memory cache
     delete this.games[gameId];
+    
+    // Remove from database
+    try {
+      const databaseService = this.getService('database');
+      await databaseService.deleteGame(gameId);
+      return true;
+    } catch (error) {
+      console.error(`[GAME_STATE_SERVICE] Error removing game ${gameId} from database:`, error);
+      return false;
+    }
   }
 
   getAvailableGames() {
@@ -132,7 +226,7 @@ class GameStateService extends BaseService {
         playerCount: connectedPlayerCount,
         phase: game.phase,
         pot: game.pot,
-        settings: game.settings.toJSON(),
+        settings: game.settings && typeof game.settings.toJSON === 'function' ? game.settings.toJSON() : game.settings,
         disconnectedPlayers: disconnectedPlayers,
         allPlayers: allPlayers
       };
@@ -200,6 +294,111 @@ class GameStateService extends BaseService {
       if (seatIndex !== -1) {
         game.seats[seatIndex] = null;
       }
+    }
+  }
+
+  /**
+   * Hydrate a game object from database data
+   * @param {Object} gameData - Raw game data from database
+   * @returns {Game} - Properly hydrated Game instance
+   */
+  hydrateGame(gameData) {
+    try {
+      if (!gameData) return null;
+      
+      // Get required models
+      const Game = require('../models/Game');
+      const Player = require('../models/Player');
+      const Settings = require('../models/Settings');
+      const gameId = gameData.id || gameData._id;
+      
+      // Reconstruct settings object
+      const settingsInstance = gameData.settings 
+        ? new Settings(gameData.settings) 
+        : new Settings();
+      
+      // Create a new Game instance with reconstructed settings
+      const game = new Game(settingsInstance);
+      
+      // Copy basic properties (excluding special properties)
+      Object.entries(gameData).forEach(([key, value]) => {
+        if (!['_id', '_rev', 'players', 'settings', 'gameLog', 'gameTransactions'].includes(key)) {
+          game[key] = value;
+        }
+      });
+      
+      // Ensure the game has the correct ID
+      game.id = gameId;
+      
+      // Hydrate players if they exist
+      if (gameData.players) {
+        game.players = {};
+        
+        Object.entries(gameData.players).forEach(([playerId, playerData]) => {
+          // Create a new Player instance
+          const player = new Player(
+            playerData.userId || playerId,
+            playerData.name,
+            playerData.socketId
+          );
+          
+          // Copy all player properties except methods
+          Object.entries(playerData).forEach(([key, value]) => {
+            if (key !== 'toJSON') {
+              player[key] = value;
+            }
+          });
+          
+          // Add player to game
+          game.players[playerId] = player;
+        });
+      }
+      
+      // Copy arrays and objects using spread to avoid reference issues
+      if (gameData.gameLog) game.gameLog = [...gameData.gameLog];
+      if (gameData.gameTransactions) game.gameTransactions = {...gameData.gameTransactions};
+      
+      console.log(`[GAME_STATE_SERVICE] Successfully hydrated game ${gameId}`);
+      return game;
+    } catch (error) {
+      console.error('[GAME_STATE_SERVICE] Error hydrating game:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Load all games from the database into memory
+   * @returns {Promise<void>}
+   */
+  async loadGamesFromDatabase() {
+    try {
+      const databaseService = this.getService('database');
+      const games = await databaseService.getAllGames();
+      
+      console.log(`[GAME_STATE_SERVICE] Loading ${games.length} games from database`);
+      
+      // Use Promise.all to process games in parallel for better performance
+      const hydratedGames = await Promise.all(
+        games.map(async (gameData) => {
+          try {
+            return this.hydrateGame(gameData);
+          } catch (error) {
+            console.error(`[GAME_STATE_SERVICE] Error loading game ${gameData.id || gameData._id}:`, error);
+            return null;
+          }
+        })
+      );
+      
+      // Filter out null results and add to cache
+      hydratedGames
+        .filter(game => game !== null)
+        .forEach(game => {
+          this.games[game.id] = game;
+        });
+      
+      console.log(`[GAME_STATE_SERVICE] Successfully loaded ${Object.keys(this.games).length} games from database`);
+    } catch (error) {
+      console.error('[GAME_STATE_SERVICE] Error loading games from database:', error);
     }
   }
 }

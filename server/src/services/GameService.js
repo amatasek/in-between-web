@@ -57,10 +57,10 @@ class GameService extends BaseService {
       const broadcastService = this.getService('broadcast');
       
       // Create game with custom settings if provided
-      const game = gameStateService.createGame(new Settings(data.settings || {}));
+      const game = await gameStateService.createGame(new Settings(data.settings || {}));
       
       // Add player to game
-      await playerManagementService.addPlayer(game, socket.id, user.username || `Player ${socket.id.slice(0,4)}`, user.userId);
+      await playerManagementService.addPlayer(game, socket.id, user.username, user.userId);
       
       // Associate socket with game
       connectionService.associateSocketWithGame(socket.id, game.id);
@@ -110,8 +110,8 @@ class GameService extends BaseService {
       
       console.log(`[GAME_SERVICE] ${isReconnection ? 'Reconnecting' : 'Joining'} game ${gameId} for user ${user.username} (${user.userId})`);
       
-      // Get the game
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
+      
       if (!game) {
         console.log(`[GAME_SERVICE] Game ${gameId} not found`);
         socket.emit('error', { message: 'Game not found' });
@@ -251,13 +251,12 @@ class GameService extends BaseService {
     }
     
     try {
-      const connectionService = this.getService('connection');
       const gameStateService = this.getService('gameState');
       const broadcastService = this.getService('broadcast');
       const gameTransactionService = this.getService('gameTransaction');
       const playerManagementService = this.getService('playerManagement');
       
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game || !game.players[userId]) {
         // Player or game not found, nothing to leave
         console.log(`[GAME_SERVICE] leaveGame: Player ${userId} not found in game ${gameId}, or game doesn't exist.`);
@@ -307,12 +306,12 @@ class GameService extends BaseService {
    * Clean up a game if it has no players
    * @param {String} gameId - The game ID to check
    */
-  cleanupGameIfEmpty(gameId) {
+  async cleanupGameIfEmpty(gameId) {
     const gameStateService = this.getService('gameState');
     const broadcastService = this.getService('broadcast');
     
-    // Get the game
-    const game = gameStateService.getGame(gameId);
+    const game = await gameStateService.getGame(gameId);
+    
     if (!game) return;
     
     // Check if the game has any connected players

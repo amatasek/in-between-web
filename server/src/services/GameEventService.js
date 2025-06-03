@@ -53,7 +53,7 @@ class GameEventService extends BaseService {
         return;
       }
 
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game) {
         console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found`);
         return;
@@ -128,7 +128,7 @@ class GameEventService extends BaseService {
         return;
       }
 
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game) {
         console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found`);
         return;
@@ -192,7 +192,7 @@ class GameEventService extends BaseService {
         return;
       }
 
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game) {
         console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found`);
         return;
@@ -260,7 +260,7 @@ class GameEventService extends BaseService {
       }
       
       // Get the game
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game) {
         console.error('[GAME_EVENT_SERVICE] Game not found:', gameId);
         socket.emit('error', { message: 'Game not found' });
@@ -356,7 +356,7 @@ class GameEventService extends BaseService {
       }
       
       // Get the game
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game) {
         console.error('[GAME_EVENT_SERVICE] Game not found:', gameId);
         socket.emit('error', { message: 'Game not found' });
@@ -452,7 +452,7 @@ class GameEventService extends BaseService {
       const playerManagementService = this.getService('playerManagement');
       const gameTimingService = this.getService('gameTiming'); // Get timing service
 
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game) {
         console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found for sitOut`);
         // Don't emit error, maybe game just ended?
@@ -511,7 +511,7 @@ class GameEventService extends BaseService {
       const playerManagementService = this.getService('playerManagement');
       const gameTimingService = this.getService('gameTiming'); // Get timing service
 
-      let game = gameStateService.getGame(gameId);
+      let game = await gameStateService.getGame(gameId);
       if (!game) {
         console.log(`[GAME_EVENT_SERVICE] Game ${gameId} not found for sitOut`);
         // Don't emit error, maybe game just ended?

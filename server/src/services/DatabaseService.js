@@ -258,10 +258,28 @@ class DatabaseService {
 
   // Game operations
   async saveGame(game) {
+    if (!game || !game.id) {
+      console.error('[DATABASE_SERVICE] Cannot save game: Invalid game object');
+      return null;
+    }
+
+    // Create a plain object copy of the game for PouchDB
     const gameDoc = {
-      _id: game.id,
-      ...game
+      _id: game.id
     };
+
+    // Copy all properties from the game object, excluding functions
+    for (const key in game) {
+      if (typeof game[key] !== 'function') {
+        // Special handling for settings to ensure we don't use toJSON during serialization
+        if (key === 'settings') {
+          // Create a complete copy of all settings properties for database
+          gameDoc.settings = { ...game.settings };
+        } else {
+          gameDoc[key] = game[key];
+        }
+      }
+    }
 
     try {
       const existingGame = await gameDb.get(game.id);
@@ -270,6 +288,7 @@ class DatabaseService {
       // Game doesn't exist yet, which is fine
     }
 
+    console.log(`[DATABASE_SERVICE] Saving game ${game.id} to database`);
     return gameDb.put(gameDoc);
   }
 

@@ -89,7 +89,7 @@ class GameTimingService extends BaseService {
         const broadcastService = this.getService('broadcast');
         const gameStateService = this.getService('gameState');
 
-        let freshGame = gameStateService.getGame(gameId);
+        let freshGame = await gameStateService.getGame(gameId);
         if (!freshGame) {
           console.warn(`[GameTimingService.startPlayerInactivityTimer] Game ${gameId} not found for player ${playerId} inactivity timeout.`);
           return;
@@ -152,7 +152,7 @@ class GameTimingService extends BaseService {
     
     // Set timer for first card
     this.timeouts[gameId].dealFirstCard = setTimeout(async () => {
-      let currentGame = gameStateService.getGame(gameId);
+      let currentGame = await gameStateService.getGame(gameId);
       if (!currentGame) {
         console.warn(`[GameTimingService] Game ${gameId} not found for dealFirstCard timeout.`);
         return;
@@ -182,7 +182,7 @@ class GameTimingService extends BaseService {
         
         this.timeouts[gameId].autoAceDecision = setTimeout(async () => {
           try {
-            const freshGameForAce = gameStateService.getGame(gameId);
+            const freshGameForAce = await gameStateService.getGame(gameId);
             if (!freshGameForAce) {
                 console.warn(`[GameTimingService] Game ${gameId} not found for autoAceDecision timeout.`);
                 return;
@@ -223,7 +223,7 @@ class GameTimingService extends BaseService {
 
 
       this.timeouts[gameId].dealSecondCard = setTimeout(async () => {
-        let freshGameForSecondCard = gameStateService.getGame(gameId);
+        let freshGameForSecondCard = await gameStateService.getGame(gameId);
         if (!freshGameForSecondCard) {
           console.warn(`[GameTimingService] Game ${gameId} not found for dealSecondCard timeout.`);
           return;
@@ -242,7 +242,7 @@ class GameTimingService extends BaseService {
         
 
         this.timeouts[gameId].transitionToBetting = setTimeout(async () => {
-          let freshGameForBetting = gameStateService.getGame(gameId);
+          let freshGameForBetting = await gameStateService.getGame(gameId);
           if (!freshGameForBetting) {
             console.warn(`[GameTimingService] Game ${gameId} not found for transitionToBetting timeout.`);
             return;
@@ -262,7 +262,7 @@ class GameTimingService extends BaseService {
           
           this.timeouts[gameId].autoBet = setTimeout(async () => {
             try {
-              const freshestGameForAutoBet = gameStateService.getGame(gameId);
+              const freshestGameForAutoBet = await gameStateService.getGame(gameId);
               if (!freshestGameForAutoBet) {
                 console.warn(`[GameTimingService] Game ${gameId} not found for autoBet timeout.`);
                 return;
@@ -327,7 +327,7 @@ class GameTimingService extends BaseService {
     
     // Deal the third card after the specified delay (2 seconds)
     this.timeouts[gameId].dealThirdCard = setTimeout(async () => {
-      let freshGameForThirdCard = gameStateService.getGame(gameId);
+      let freshGameForThirdCard = await gameStateService.getGame(gameId);
       if (!freshGameForThirdCard) {
         console.warn(`[GameTimingService.handleRevealingSequence] Game ${gameId} not found in dealThirdCard timeout.`);
         return;
@@ -349,7 +349,7 @@ class GameTimingService extends BaseService {
       const adjustedRevealingDuration = Math.max(0, GAME_CONSTANTS.TIMERS.REVEALING_DURATION - GAME_CONSTANTS.TIMERS.DEAL_THIRD_CARD_DELAY);
       
       this.timeouts[gameId].transitionToResults = setTimeout(async () => {
-        let freshGameForResults = gameStateService.getGame(gameId);
+        let freshGameForResults = await gameStateService.getGame(gameId);
         if (!freshGameForResults) {
           console.warn(`[GameTimingService.handleRevealingSequence] Game ${gameId} not found in transitionToResults timeout.`);
           return;
@@ -405,7 +405,7 @@ class GameTimingService extends BaseService {
 
     // Set timer for transition to next round
     this.timeouts[gameId].transitionToNextRound = setTimeout(async () => {
-      let freshGame = gameStateService.getGame(gameId);
+      let freshGame = await gameStateService.getGame(gameId);
       if (!freshGame) {
         console.warn(`[GameTimingService.handleResultsSequence] Game with ID ${gameId} not found for handleRoundCompletion.`);
         return;
@@ -481,7 +481,7 @@ class GameTimingService extends BaseService {
     // Set timer for second card
     this.timeouts[game.id].dealSecondCard = setTimeout(async () => {
       const gameId = game.id;
-      let freshGameForSecondCard = gameStateService.getGame(gameId);
+      let freshGameForSecondCard = await gameStateService.getGame(gameId);
       if (!freshGameForSecondCard) {
         console.warn(`[GameTimingService.resumeDealingAfterAceChoice] Game ${gameId} not found in dealSecondCard timeout.`);
         return;
@@ -505,7 +505,7 @@ class GameTimingService extends BaseService {
 
       this.timeouts[gameId].transitionToBetting = setTimeout(async () => {
 
-        let freshGameForBetting = gameStateService.getGame(gameId);
+        let freshGameForBetting = await gameStateService.getGame(gameId);
         if (!freshGameForBetting) {
           console.warn(`[GameTimingService.resumeDealingAfterAceChoice] Game ${gameId} not found in transitionToBetting timeout.`);
           return;
@@ -531,7 +531,7 @@ class GameTimingService extends BaseService {
         this.timeouts[gameId].autoBet = setTimeout(async () => {
           try {
             // Get the latest game state
-            const latestGame = gameStateService.getGame(gameId);
+            const latestGame = await gameStateService.getGame(gameId);
             if (!latestGame) {
               console.warn(`[GameTimingService.resumeDealingAfterAceChoice] Game ${gameId} not found in autoBet timeout.`);
               return;
@@ -580,7 +580,7 @@ class GameTimingService extends BaseService {
     // Set timer for transition to betting phase
     this.timeouts[game.id].transitionToBetting = setTimeout(async () => {
 
-      let freshGameForBetting = gameStateService.getGame(game.id);
+      let freshGameForBetting = await gameStateService.getGame(game.id);
       if (!freshGameForBetting) {
         console.warn(`[GameTimingService.resumeAfterSecondChance] Game ${game.id} not found in transitionToBetting timeout.`);
         return;
@@ -606,7 +606,7 @@ class GameTimingService extends BaseService {
       this.timeouts[game.id].autoBet = setTimeout(async () => {
         try {
           // Get the latest game state
-          const latestGameForAutoBet = gameStateService.getGame(game.id);
+          const latestGameForAutoBet = await gameStateService.getGame(game.id);
           if (!latestGameForAutoBet) {
             console.warn(`[GameTimingService.resumeAfterSecondChance] Game ${game.id} not found in autoBet timeout.`);
             return;
@@ -670,7 +670,7 @@ class GameTimingService extends BaseService {
     this.timeouts[game.id].autoSecondChance = setTimeout(async () => {
       try {
         // Get the latest game state
-        const currentGame = gameStateService.getGame(game.id);
+        const currentGame = await gameStateService.getGame(game.id);
         if (!currentGame) return;
         
         // Check if we're still waiting for second chance decision, it's still this player's turn, and we're in the same round
