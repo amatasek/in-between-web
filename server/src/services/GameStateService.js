@@ -168,6 +168,7 @@ class GameStateService extends BaseService {
 
   /**
    * Remove a game from memory and database
+   * Archives the game to history before removal
    * @param {string} gameId - The ID of the game to remove
    * @returns {Promise<boolean>} Success status of the removal
    */
@@ -179,16 +180,28 @@ class GameStateService extends BaseService {
     
     console.log(`[GAME_STATE_SERVICE] Removing game ${gameId}`);
     
-    // Remove from in-memory cache
-    delete this.games[gameId];
-    
-    // Remove from database
     try {
+      // Get the game data before we remove it
+      const game = this.games[gameId];
+      
+      if (game) {
+        // Archive the game to history before removing it
+        const gameHistoryService = this.getService('gameHistory');
+        await gameHistoryService.archiveGame(game);
+        console.log(`[GAME_STATE_SERVICE] Game ${gameId} archived to history`);
+      } else {
+        console.warn(`[GAME_STATE_SERVICE] Game ${gameId} not found in memory cache, cannot archive`);
+      }
+      
+      // Remove from in-memory cache
+      delete this.games[gameId];
+      
+      // Remove from database
       const databaseService = this.getService('database');
       await databaseService.deleteGame(gameId);
       return true;
     } catch (error) {
-      console.error(`[GAME_STATE_SERVICE] Error removing game ${gameId} from database:`, error);
+      console.error(`[GAME_STATE_SERVICE] Error removing game ${gameId}:`, error);
       return false;
     }
   }
