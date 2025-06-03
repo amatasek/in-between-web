@@ -21,7 +21,7 @@ Two important configuration files manage the sound assets:
 - `ui-sounds.mp3` / `ui-sounds.webm` - UI sound sprite containing:
   - `join`: Sound played when a player joins a game
   - `leave`: Sound played when a player leaves a game
-  - `my-turn`: Sound played when it's the player's turn
+  - `alert`: Sound played when it's the player's turn
 
 ## Adding New Sound Effects
 

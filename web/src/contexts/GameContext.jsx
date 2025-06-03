@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { useSocket } from './SocketContext.jsx';
+import { useAuth } from './AuthContext.jsx';
 import soundService from '../services/SoundService';
 
 // Create context
@@ -18,6 +19,9 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   // Get socket from socket context
   const { socket, error: socketError } = useSocket();
   
+  // Get user from auth context
+  const { user } = useAuth();
+  
   // Game-specific state - we only need to track the full gameState object and error
   /** @type {[GameState|null, React.Dispatch<React.SetStateAction<GameState|null>>]} */
   const [gameState, setGameState] = useState(initialGameState);
@@ -25,12 +29,9 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   // Keep track of previous players to detect joins/leaves
   const prevPlayersRef = useRef({});
   
-  // Initialize with the provided game state if available
-  useEffect(() => {
-    // No need to log the initial state
-    // Initialize sound service
-    soundService.initialize();
-  }, []);
+  // Keep track of previous active player to detect turn changes
+  const prevActivePlayerRef = useRef(null);
+  
   /** @type {[string|null, React.Dispatch<React.SetStateAction<string|null>>]} */
   const [error, setError] = useState(null);
 
@@ -48,7 +49,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   // Set up game-specific event handlers
   useEffect(() => {
     if (!socket) return;
-    
+
     // Handle game reconnection
     socket.on('gameReconnected', (data) => {
       console.log(`[Game] Reconnected to game: ${data.gameId}`, data.game);
@@ -56,22 +57,12 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
       // Update game state with the full state from the server
       setGameState(data.game);
       
-      // Set the player ID to the current user ID (not socket ID)
-      if (socket.auth?.userId) {
-        setPlayerId(socket.auth.userId);
-        console.log(`[Game] Successfully reconnected as user ID: ${socket.auth.userId}`);
-      } else {
-        // Fallback to socket ID if user ID is not available
-        setPlayerId(socket.id);
-        console.log(`[Game] Successfully reconnected as socket ID: ${socket.id} (user ID not available)`);
-      }
+      // Log reconnection with user ID from AuthContext
+      console.log(`[Game] Successfully reconnected as user ID: ${user?.id}`);
       
       // Clear any errors
       setError(null);
-      
-      // Play a sound to indicate successful reconnection
-      soundService.play('ui.connect');
-      
+
       // CRITICAL: Force a refresh of the player's game state to ensure betting works
       if (data.game && data.game.id) {
         // Small delay to ensure the state is fully updated
@@ -87,6 +78,21 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
       if (data && data.id) { 
         // Restore check to prevent setting identical state
         if (JSON.stringify(gameState) !== JSON.stringify(data)) {
+          // Check if it's now the player's turn and play alert sound if needed
+          if (data.currentPlayerId && user?.id) {
+            const isMyTurn = data.currentPlayerId === user.id;
+            const wasPreviouslyMyTurn = prevActivePlayerRef.current === user.id;
+            
+            // Only play sound if it wasn't my turn before but now it is
+            if (isMyTurn && !wasPreviouslyMyTurn) {
+              console.log('[Turn Debug] Playing alert sound!');
+              soundService.play('ui.alert');
+            }
+            
+            // Update the previous active player reference
+            prevActivePlayerRef.current = data.currentPlayerId;
+          }
+          
           setGameState(data);
           clearError(); // Clear any previous context errors on successful state update
         } 

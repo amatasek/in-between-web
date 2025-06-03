@@ -12,7 +12,7 @@
           "duration": 1000,
           "description": "Sound played when a player leaves a game"
         },
-        "my-turn": {
+        "alert": {
           "start": 3000,
           "duration": 1000,
           "description": "Sound played when it's the player's turn"

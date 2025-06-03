@@ -54,8 +54,9 @@ class SoundService {
     // UI category sprites
     if (category === 'ui') {
       // Match the exact timing from ui-sounds.json
-      sprites.join = [0, 1000];     // 0 to 1.0 seconds
-      sprites.leave = [1500, 1000]; // 1.5 to 2.5 seconds
+      sprites.join = [0, 500]; 
+      sprites.leave = [500, 1000];
+      sprites.alert = [1500, 1500]; 
     }
     
     // Create the Howl instance with the sprites
