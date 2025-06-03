@@ -106,6 +106,8 @@
   font-weight: bold;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
 }
 
 .deckCount {
@@ -113,6 +115,14 @@
   font-weight: bold;
   color: #3498db;
   text-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.deckCounter {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-weight: normal;
+  margin-left: 0.5rem;
+  position: relative;
 }
 
 @media (max-width: 600px) {

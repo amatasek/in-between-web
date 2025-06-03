@@ -66,6 +66,8 @@
   font-weight: bold;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
 }
 
 .potAmount {
@@ -73,6 +75,14 @@
   font-weight: bold;
   color: #f1c40f;
   text-shadow: 0 0 5px rgba(241, 196, 15, 0.3);
+}
+
+.potCounter {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-weight: normal;
+  margin-left: 0.5rem;
+  position: relative;
 }
 
 @media (max-width: 600px) {

@@ -9,7 +9,7 @@ const PotDisplay = () => {
   
   if (!gameState) return null;
   
-  const { pot } = gameState;
+  const { pot, round = 1 } = gameState;
   
   return (
     <div className={styles.potDisplayContainer}>
@@ -17,7 +17,9 @@ const PotDisplay = () => {
         <span className={styles.potIcon}>{ICONS.POT}</span>
       </div>
       <div className={styles.potInfo}>
-        <h3 className={styles.potLabel}>POT</h3>
+        <h3 className={styles.potLabel}>
+          POT <span className={styles.potCounter}>({round})</span>
+        </h3>
         <span className={styles.potAmount}><CurrencyAmount amount={pot} size="medium" /></span>
       </div>
     </div>
