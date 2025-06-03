@@ -1,16 +1,14 @@
 import React, { useMemo } from 'react';
-import { useGameContext } from '../contexts/GameContext';
 import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 import TransactionDownloadButton from './common/TransactionDownloadButton';
 
 /**
  * Game Summary Modal component that displays running scores and settle-up calculations
+ * Can be used with active game data from GameContext or with historical game data passed directly
  */
-const GameSummaryModal = ({ onClose }) => {
-  const { gameState } = useGameContext();
-  
-  if (!gameState) {
+const GameSummaryModal = ({ onClose, gameData }) => {
+  if (!gameData) {
     return (
       <div className={styles.modalOverlay}>
         <div className={styles.modalContent}>
@@ -26,7 +24,11 @@ const GameSummaryModal = ({ onClose }) => {
     );
   }
 
-  const { gameTransactions = {}, players = {}, id: gameId } = gameState;
+  // Extract data from gameData
+  // For historical games, the structure might be slightly different
+  const gameTransactions = gameData.gameTransactions || gameData.gameData?.gameTransactions || {};
+  const players = gameData.players || gameData.gameData?.players || {};
+  const gameId = gameData._id || gameData.id || 'unknown';
   
   // Get player names (including those who left)
   const playerNames = {};
@@ -156,7 +158,7 @@ const GameSummaryModal = ({ onClose }) => {
         <div className={styles.modalHeader}>
           <h2>Game Summary ({gameId})</h2>
           <div className={styles.headerButtons}>
-            <TransactionDownloadButton gameState={gameState} />
+            <TransactionDownloadButton gameState={gameData} />
             <button className={styles.closeButton} onClick={onClose}>×</button>
           </div>
         </div>
@@ -182,7 +184,7 @@ const GameSummaryModal = ({ onClose }) => {
           </div>
           
           {/* Settle Up Section - Conditionally render based on private game setting */}
-          {gameState.settings.isPrivate && (
+          {gameData.settings?.isPrivate && (
             <div className={styles.settingSection}>
               <h3>Settle Up</h3>
               {settleUpPayments.length === 0 ? (

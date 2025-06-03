@@ -1,7 +1,14 @@
 import React from 'react';
 import IconButton from './IconButton';
 import DownloadIcon from '../icons/DownloadIcon';
-import { useGameContext } from '../../contexts/GameContext';
+// Optional import - only used if gameState not provided via props
+let useGameContext;
+try {
+  useGameContext = require('../../contexts/GameContext').useGameContext;
+} catch (error) {
+  // Context not available - will rely on props
+  useGameContext = () => ({ gameState: null });
+}
 
 /**
  * A specialized button component for downloading game transactions as CSV
@@ -15,12 +22,26 @@ const TransactionDownloadButton = ({
   gameState: propGameState,
   ...restProps 
 }) => {
-  // Use provided gameState or get from context
-  const contextValue = useGameContext();
-  const gameState = propGameState || contextValue?.gameState;
+  // Use provided gameState or try to get from context if available
+  let contextValue;
+  try {
+    contextValue = useGameContext ? useGameContext() : { gameState: null };
+  } catch (error) {
+    // Context not available
+    contextValue = { gameState: null };
+  }
+  
+  // Handle both the original gameState format and our new gameData format
+  const gameData = propGameState || contextValue?.gameState;
+  
+  // Extract data based on structure
+  // For historical games from the API, the structure might be slightly different
+  const gameTransactions = gameData?.gameTransactions || gameData?.gameData?.gameTransactions || {};
+  const players = gameData?.players || gameData?.gameData?.players || {};
+  const gameId = gameData?._id || gameData?.id || 'unknown';
 
   const downloadTransactionsCSV = () => {
-    if (!gameState || !gameState.gameTransactions) return;
+    if (!gameTransactions || Object.keys(gameTransactions).length === 0) return;
     
     // Create CSV header
     let csvContent = "Player,Transaction Type,Amount,Round,Timestamp\n";
@@ -28,10 +49,10 @@ const TransactionDownloadButton = ({
     // Collect all transactions into a single array with player info
     const allTransactions = [];
     
-    Object.entries(gameState.gameTransactions).forEach(([playerId, transactions]) => {
+    Object.entries(gameTransactions).forEach(([playerId, transactions]) => {
       if (!transactions || !Array.isArray(transactions)) return;
       
-      const playerName = transactions[0]?.playerName || gameState.players[playerId]?.name || 'Unknown Player';
+      const playerName = transactions[0]?.playerName || players[playerId]?.name || 'Unknown Player';
       
       transactions.forEach(tx => {
         allTransactions.push({
@@ -39,13 +60,13 @@ const TransactionDownloadButton = ({
           playerName,
           ...tx,
           // Ensure timestamp is a Date object for sorting
-          timestampObj: tx.timestamp ? new Date(tx.timestamp) : new Date(0)
+          timestamp: tx.timestamp ? new Date(tx.timestamp) : new Date()
         });
       });
     });
     
     // Sort all transactions by timestamp in ascending order
-    allTransactions.sort((a, b) => a.timestampObj - b.timestampObj);
+    allTransactions.sort((a, b) => a.timestamp - b.timestamp);
     
     // Add sorted transaction data to CSV
     allTransactions.forEach(tx => {
@@ -78,7 +99,7 @@ const TransactionDownloadButton = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `game-${gameState.id}-transactions.csv`);
+    link.setAttribute('download', `game-${gameId}-transactions.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();

@@ -95,7 +95,7 @@ initializeServices();
 // Mount routes with service injection
 app.use('/auth', injectServices(['auth', 'database']), authRoutes);
 app.use('/preferences', injectServices(['auth', 'database']), preferencesRoutes);
-app.use('/games', injectServices(['game', 'gameHistory']), gamesRoutes);
+app.use('/api/games', injectServices(['game', 'gameHistory']), gamesRoutes);
 
 // Use the filesPath from the already imported config
 const filesDir = config.filesPath;

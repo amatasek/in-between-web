@@ -10,6 +10,7 @@ import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
 import CurrencyAmount from './common/CurrencyAmount';
 import PreferencesButton from './common/PreferencesButton.jsx';
+import PlayerStatsButton from './common/PlayerStatsButton.jsx';
 import UserAvatar from './UserAvatar.jsx';
 import soundService from '../services/SoundService';
 import GameSettingsModal from './GameSettingsModal.jsx';
@@ -192,6 +193,7 @@ const Lobby = () => {
                    <span className={styles.buttonText}>Logout</span>
                  </button>
                  <RulesButton />
+                 <PlayerStatsButton />
                  <PreferencesButton />
                </div>
              </div>

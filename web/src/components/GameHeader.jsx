@@ -203,8 +203,7 @@ const GameHeader = ({ handleLeaveGame }) => {
       {showGameSummary && (
         <GameSummaryModal 
           onClose={() => setShowGameSummary(false)} 
-          gameId={gameId}
-          gameState={gameState}
+          gameData={gameState}
         />
       )}
     </div>

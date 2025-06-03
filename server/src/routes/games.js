@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
+const { serviceRegistry } = require('../serviceIntegration');
 
 // GET /games - Get list of available games
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const gameService = req.services.game;
+    const gameService = serviceRegistry.get('game');
     
     if (!gameService) {
       return res.status(500).json({ error: 'Game service not available' });
@@ -23,8 +24,18 @@ router.get('/', authenticateToken, async (req, res) => {
 // GET /games/history - Get paginated game history for the authenticated user
 router.get('/history', authenticateToken, async (req, res) => {
   try {
-    // Extract user info from auth token
-    const { username } = req.user;
+    console.log('[GAMES_ROUTE] History request with userId:', req.userId);
+    
+    // Get access to AuthService to decode the token directly
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN format
+    const authService = serviceRegistry.get('auth');
+    
+    // Extract the username directly from token
+    const decoded = authService.verifyToken(token);
+    const username = decoded.username;
+    
+    console.log('[GAMES_ROUTE] Extracted username from token:', username);
     
     if (!username) {
       return res.status(401).json({ error: 'User not properly authenticated' });

@@ -1,0 +1,247 @@
+.statsPlaceholder {
+  background: linear-gradient(to right, rgba(41, 128, 185, 0.1), rgba(52, 152, 219, 0.2));
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.historyTable {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(44, 62, 80, 0.2);
+  table-layout: fixed;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr;
+  background: linear-gradient(to right, #2c3e50, #34495e);
+  color: white;
+  font-weight: bold;
+  padding: 12px 10px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.gameNameHeader, .playerCountHeader, .roundsHeader, .endDateHeader {
+  padding: 8px;
+}
+
+.gameNameHeader {
+  text-align: left;
+}
+
+.playerCountHeader, .roundsHeader {
+  text-align: center;
+}
+
+.endDateHeader {
+  text-align: right;
+}
+
+.historyRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr;
+  padding: 12px 15px;
+  border-bottom: 1px solid rgba(189, 195, 199, 0.3);
+}
+
+.gameNameCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 5px;
+  text-align: left;
+}
+
+.playerCountCell, .roundsCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  text-align: center;
+}
+
+.endDateCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 5px;
+  text-align: right;
+}
+
+.gameNameLink {
+  color: #3498db;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.gameNameLink:hover {
+  color: #2980b9;
+}
+
+.gameNameLink:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #2980b9;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.gameNameLink:hover:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.gameName, .playerCount, .endDate {
+  padding: 4px;
+}
+
+.gameName {
+  font-weight: bold;
+  word-break: break-word;
+  color: #2980b9;
+  font-size: 1.05em;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.gameName::before {
+  content: '#';
+  opacity: 0.5;
+  margin-right: 2px;
+  font-weight: normal;
+}
+
+.playerCount {
+  text-align: center;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playerCount::before {
+  content: '👥';
+  margin-right: 5px;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
+.endDate {
+  text-align: right;
+  color: #7f8c8d;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.endDate::before {
+  content: '🕒';
+  margin-right: 5px;
+  opacity: 0.7;
+}
+
+.paginationControls {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.pageButton {
+  background: transparent;
+  color: #7f8c8d;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.pageButton:disabled {
+  color: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pageInfo {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 8px 0 15px;
+  font-style: italic;
+}
+
+.errorMessage {
+  color: #e74c3c;
+  padding: 15px;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.emptyMessage {
+  text-align: center;
+  padding: 25px;
+  color: #7f8c8d;
+  font-style: italic;
+  background-color: rgba(236, 240, 241, 0.5);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px dashed #bdc3c7;
+  font-size: 1.05em;
+}
+
+.loadingMessage {
+  text-align: center;
+  padding: 20px;
+  color: #3498db;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.loadingSpinner {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(52, 152, 219, 0.3);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
