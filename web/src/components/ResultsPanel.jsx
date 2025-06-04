@@ -37,7 +37,7 @@ const ResultsPanel = () => {
         
         {result.winnings > 0 && (
           <p className={styles.winningsText}>
-            Winnings: <CurrencyAmount amount={result.winnings} size="medium" />
+            Winnings: <CurrencyAmount amount={result.winnings / 2} size="medium" />
           </p>
         )}
         

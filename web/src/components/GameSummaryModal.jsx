@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 import TransactionDownloadButton from './common/TransactionDownloadButton';
@@ -26,9 +26,13 @@ const GameSummaryModal = ({ onClose, gameData }) => {
 
   // Extract data from gameData
   // For historical games, the structure might be slightly different
-  const gameTransactions = gameData.gameTransactions || gameData.gameData?.gameTransactions || {};
+  const gameTransactions = gameData.gameTransactions || gameData.gameData?.gameTransactions || [];
   const players = gameData.players || gameData.gameData?.players || {};
   const gameId = gameData._id || gameData.id || 'unknown';
+  const showPayoutsTab = gameData.settings?.isPrivate || gameData.gameData?.settings?.isPrivate;
+  
+  // Ensure gameTransactions is always an array
+  const transactions = Array.isArray(gameTransactions) ? gameTransactions : [];
   
   // Get player names (including those who left)
   const playerNames = {};
@@ -39,21 +43,29 @@ const GameSummaryModal = ({ onClose, gameData }) => {
   });
   
   // Then add players who left but have transactions
-  Object.entries(gameTransactions).forEach(([playerId, transactions]) => {
-    if (!playerNames[playerId] && transactions && transactions.length > 0) {
-      playerNames[playerId] = transactions[0].playerName || 'Unknown Player';
+  transactions.forEach(tx => {
+    if (tx.playerId && !playerNames[tx.playerId]) {
+      playerNames[tx.playerId] = tx.playerName || 'Unknown Player';
     }
   });
 
-  // Calculate player totals directly from transactions
+  // Calculate player totals directly from flat transaction array
   const playerTotals = useMemo(() => {
     const totals = {};
-    Object.entries(gameTransactions).forEach(([playerId, transactions]) => {
-      if (!transactions || !Array.isArray(transactions)) return;
-      totals[playerId] = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+    
+    // Group transactions by player ID and sum up amounts
+    transactions.forEach(tx => {
+      if (!tx.playerId) return;
+      
+      if (!totals[tx.playerId]) {
+        totals[tx.playerId] = 0;
+      }
+      
+      totals[tx.playerId] += tx.amount;
     });
+    
     return totals;
-  }, [gameTransactions]);
+  }, [transactions]);
   
   // Calculate settle-up payments
   const settleUpPayments = useMemo(() => {
@@ -152,6 +164,9 @@ const GameSummaryModal = ({ onClose, gameData }) => {
     return payments;
   }, [playerTotals, playerNames]);
 
+  // Track the active tab - start with 'totals' tab
+  const [activeTab, setActiveTab] = useState('totals');
+
   return (
     <div className={styles.modalOverlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={styles.modalContent}>
@@ -164,29 +179,48 @@ const GameSummaryModal = ({ onClose, gameData }) => {
         </div>
         
         <div className={styles.settingsContainer}>
-          {/* Totals Section */}
-          <div className={styles.settingSection}>
-            <h3>Totals</h3>
-            {Object.keys(playerTotals).length === 0 ? (
-              <p className={styles.noDataMessage}>No transactions recorded yet.</p>
-            ) : (
-              <div className={styles.totalsTable}>
-                {Object.entries(playerTotals).map(([playerId, total]) => (
-                  <div key={playerId} className={styles.totalRow}>
-                    <span className={styles.playerName}>{playerNames[playerId] || 'Unknown Player'}</span>
-                    <span className={`${styles.totalAmount} ${total >= 0 ? styles.positive : styles.negative}`}>
-                      <CurrencyAmount amount={total} size="small" />
-                    </span>
-                  </div>
-                ))}
-              </div>
+          {/* Tab Bar Navigation */}
+          <div className={styles.tabsContainer}>
+            <button 
+              className={`${styles.tabButton} ${activeTab === 'totals' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('totals')}
+            >
+              Game Totals
+            </button>
+            
+            {showPayoutsTab && (
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'payouts' ? styles.activeTab : ''}`}
+                onClick={() => setActiveTab('payouts')}
+              >
+                Payouts
+              </button>
             )}
           </div>
+
+          {/* Totals Tab Content */}
+          {activeTab === 'totals' && (
+            <div className={styles.tabContent}>
+              {Object.keys(playerTotals).length === 0 ? (
+                <p className={styles.noDataMessage}>No transactions recorded yet.</p>
+              ) : (
+                <div className={styles.totalsTable}>
+                  {Object.entries(playerTotals).map(([playerId, total]) => (
+                    <div key={playerId} className={styles.totalRow}>
+                      <span className={styles.playerName}>{playerNames[playerId] || 'Unknown Player'}</span>
+                      <span className={`${styles.totalAmount} ${total >= 0 ? styles.positive : styles.negative}`}>
+                        <CurrencyAmount amount={total} size="small" />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           
-          {/* Settle Up Section - Conditionally render based on private game setting */}
-          {gameData.settings?.isPrivate && (
-            <div className={styles.settingSection}>
-              <h3>Settle Up</h3>
+          {/* Payouts Tab Content - Only shown for private games and when selected */}
+          {activeTab === 'payouts' && showPayoutsTab && (
+            <div className={styles.tabContent}>
               {settleUpPayments.length === 0 ? (
                 <p className={styles.noDataMessage}>No payments needed or no transactions recorded yet.</p>
               ) : (
@@ -206,8 +240,6 @@ const GameSummaryModal = ({ onClose, gameData }) => {
               )}
             </div>
           )}
-          {/* END Settle Up Section */}
-
         </div>
       </div>
     </div>

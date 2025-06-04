@@ -1,5 +1,6 @@
 const BaseService = require('./BaseService');
 const { gameLog } = require('../utils/logger');
+const Transaction = require('../models/Transaction');
 
 /**
  * GameTransactionService - Central service for all monetary changes in the game
@@ -58,6 +59,7 @@ class GameTransactionService extends BaseService {
   /**
    * Record a transaction in the game without updating the player's balance
    * This is used internally by processTransaction and should not be called directly
+   * Transactions are always stored in a flat array format
    * @param {Object} game - The game object
    * @param {String} playerId - The player's ID
    * @param {Number} amount - The amount of the transaction
@@ -68,20 +70,23 @@ class GameTransactionService extends BaseService {
   recordTransactionInGame(game, playerId, amount, reason, playerName) {
     if (!game || !playerId) return game;
 
-    if (!game.gameTransactions[playerId]) {
-      game.gameTransactions[playerId] = [];
+    // Initialize gameTransactions as an array if it doesn't exist
+    if (!game.gameTransactions || !Array.isArray(game.gameTransactions)) {
+      game.gameTransactions = [];
     }
 
-    const transaction = {
-      timestamp: new Date().toISOString(),
+    // Create a new Transaction object with the current pot amount
+    const transaction = new Transaction({
       playerId,
       playerName: playerName || game.players[playerId]?.name || 'Unknown Player',
       amount,
       reason,
-      round: game.round
-    };
+      round: game.round,
+      potAmount: game.pot // Include current pot amount for POT bet and penalty identification
+    });
 
-    game.gameTransactions[playerId].push(transaction);
+    // Add the transaction to the flat array
+    game.gameTransactions.push(transaction.toJSON());
     
     return game;
   }
@@ -93,11 +98,14 @@ class GameTransactionService extends BaseService {
    * @returns {Number} The player's running total
    */
   getPlayerTotal(game, playerId) {
-    if (!game || !playerId || !game.gameTransactions[playerId]) return 0;
+    if (!game || !playerId || !game.gameTransactions || !Array.isArray(game.gameTransactions)) {
+      return 0;
+    }
     
-    return game.gameTransactions[playerId].reduce((total, transaction) => {
-      return total + transaction.amount;
-    }, 0);
+    // Filter transactions by player ID and sum the amounts
+    return game.gameTransactions
+      .filter(tx => tx.playerId === playerId)
+      .reduce((total, transaction) => total + transaction.amount, 0);
   }
 
   /**

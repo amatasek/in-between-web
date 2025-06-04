@@ -555,7 +555,7 @@ class GameService extends BaseService {
             `Won bet in round ${game.round}`
           );
           
-          gameLog(game, `${player.name} wins ${winnings} coins`);
+          gameLog(game, `${player.name} wins ${winnings / 2} coins`);
         } catch (error) {
           gameLog(game, `Error processing win for ${player.name}: ${error.message}`);
         }
@@ -573,7 +573,7 @@ class GameService extends BaseService {
             game, 
             game.currentPlayerId, // Use the currentPlayerId directly instead of player.id
             -additionalPenalty, 
-            `Triple Ace penalty in round ${game.round}`
+            `3x Penalty (Triple Ace) in round ${game.round}`
           );
           
           gameLog(game, `Triple Ace! ${player.name} pays 3x penalty (${player.currentBet * 3} coins)`);
@@ -594,7 +594,7 @@ class GameService extends BaseService {
             game, 
             game.currentPlayerId, // Use the currentPlayerId directly instead of player.id
             -additionalPenalty, 
-            `Tie penalty in round ${game.round}`
+            `2x Penalty (Tie) in round ${game.round}`
           );
           
           gameLog(game, `Tie! ${player.name} pays 2x penalty (${player.currentBet * 2} coins)`);

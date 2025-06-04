@@ -41,8 +41,8 @@ class Game {
     this.gameLog = [];
     this.maxLogEntries = 50; // Maximum number of log entries to keep
     
-    // Track game transactions for running score
-    this.gameTransactions = {};
+    // Track game transactions for running score - flat ledger of all game transactions
+    this.gameTransactions = [];
   }
   
   /**

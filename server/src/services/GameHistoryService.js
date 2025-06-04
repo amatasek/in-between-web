@@ -11,15 +11,51 @@ if (!fs.existsSync(historyDbPath)) {
   fs.mkdirSync(historyDbPath, { recursive: true });
 }
 
-// Create the game history database
-const gameHistoryDb = new PouchDB(historyDbPath);
-
 /**
  * GameHistoryService - Manages the storage of completed games for historical analysis
  */
 class GameHistoryService extends BaseService {
   constructor() {
     super();
+    this.initializeDatabase();
+  }
+
+  /**
+   * Initialize the game history database
+   */
+  initializeDatabase() {
+    try {
+      // Create a new PouchDB instance
+      this.gameHistoryDb = new PouchDB(historyDbPath);
+      console.log('[GAME_HISTORY_SERVICE] Successfully initialized database at:', historyDbPath);
+
+      // Test database connection
+      this.gameHistoryDb.info()
+        .then(info => {
+          console.log('[GAME_HISTORY_SERVICE] Database info:', info);
+        })
+        .catch(error => {
+          console.error('[GAME_HISTORY_SERVICE] Database connection error:', error);
+          // Try to recreate database if there's an error
+          this.gameHistoryDb = new PouchDB(historyDbPath);
+        });
+    } catch (error) {
+      console.error('[GAME_HISTORY_SERVICE] Failed to initialize database:', error);
+    }
+  }
+
+  /**
+   * Clean up database connections
+   */
+  async cleanup() {
+    if (this.gameHistoryDb) {
+      try {
+        await this.gameHistoryDb.close();
+        console.log('[GAME_HISTORY_SERVICE] Database connection closed');
+      } catch (error) {
+        console.error('[GAME_HISTORY_SERVICE] Error closing database:', error);
+      }
+    }
   }
 
   /**
@@ -57,7 +93,7 @@ class GameHistoryService extends BaseService {
         roundCount: game.round
       };
 
-      return await gameHistoryDb.put(gameHistoryDoc);
+      return await this.gameHistoryDb.put(gameHistoryDoc);
     } catch (error) {
       console.error(`[GAME_HISTORY_SERVICE] Error archiving game ${game.id}:`, error);
       return null;
@@ -70,6 +106,8 @@ class GameHistoryService extends BaseService {
    * @returns {Boolean} - True if the game is empty and shouldn't be archived
    */
   isEmptyGame(game) {
+    if (!game) return true;
+    
     // Check if game is at round 1 (no rounds completed)
     const isFirstRound = game.round === 1 || game.round === 0;
     
@@ -79,23 +117,19 @@ class GameHistoryService extends BaseService {
     // Check if no bets were placed in the game transaction log
     let hasBets = false;
     
-    // Only proceed checking transactions if we have them
-    if (game.gameTransactions && Object.keys(game.gameTransactions).length > 0) {
-      // Look through all player transactions
-      Object.values(game.gameTransactions).forEach(playerTxs => {
+    // Only proceed checking transactions if we have them as an array
+    if (Array.isArray(game.gameTransactions) && game.gameTransactions.length > 0) {
+      // Look through all transactions
+      game.gameTransactions.forEach(tx => {
         // Check if any transactions were betting-related
-        playerTxs.forEach(tx => {
-          if (tx.reason && (
-              tx.reason.includes('bet') || 
-              tx.reason.includes('Bet') || 
-              tx.reason.includes('ante') || 
-              tx.reason.includes('Ante') ||
-              tx.reason.includes('win') ||
-              tx.reason.includes('Win')
-          )) {
-            hasBets = true;
-          }
-        });
+        if (tx.reason && (
+            tx.reason.includes('bet') || 
+            tx.reason.includes('Bet') || 
+            tx.reason.includes('win') ||
+            tx.reason.includes('Win')
+        )) {
+          hasBets = true;
+        }
       });
     }
     
@@ -110,14 +144,36 @@ class GameHistoryService extends BaseService {
    * @returns {Object} - Prepared game data
    */
   prepareGameDataForArchive(game) {
-    // Create a deep copy without functions and circular references
-    return JSON.parse(JSON.stringify(game, (key, value) => {
+    // Create a deep copy of the game object
+    const gameCopy = JSON.parse(JSON.stringify(game, (key, value) => {
       // Exclude functions during serialization
       if (typeof value === 'function') {
         return undefined;
       }
       return value;
     }));
+    
+    // Ensure gameTransactions is a valid array
+    if (!gameCopy.gameTransactions || !Array.isArray(gameCopy.gameTransactions)) {
+      gameCopy.gameTransactions = [];
+    }
+    
+    // Ensure all transactions have the standardized fields
+    if (gameCopy.gameTransactions.length > 0) {
+      const Transaction = require('../models/Transaction');
+      
+      // Process each transaction to ensure it has all required fields including potAmount
+      gameCopy.gameTransactions = gameCopy.gameTransactions.map(tx => {
+        // Always create a standardized transaction to ensure all fields are present
+        // This ensures new fields like potAmount are included in all transactions
+        return new Transaction(tx).toJSON();
+      });
+      
+      // Make sure transactions are sorted by timestamp
+      gameCopy.gameTransactions.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    }
+    
+    return gameCopy;
   }
 
   /**
@@ -134,7 +190,7 @@ class GameHistoryService extends BaseService {
     };
     
     // If game has no transactions, return default values
-    if (!game.gameTransactions || Object.keys(game.gameTransactions).length === 0) {
+    if (!game.gameTransactions || !Array.isArray(game.gameTransactions) || game.gameTransactions.length === 0) {
       // If we have players but no transactions, at least capture current player names
       if (game.players) {
         Object.values(game.players).forEach(player => {
@@ -146,22 +202,16 @@ class GameHistoryService extends BaseService {
       return result;
     }
     
-    // Collect all transactions from the gameTransactions object
-    const allTransactions = [];
-    Object.entries(game.gameTransactions).forEach(([playerId, playerTransactions]) => {
-      playerTransactions.forEach(transaction => {
-        allTransactions.push(transaction);
-        
-        // Extract player information from each transaction
-        if (transaction.playerId && transaction.playerName) {
-          result.uniquePlayers.set(transaction.playerId, transaction.playerName);
-        }
-      });
+    // Transactions are already an array, so just sort them
+    const sortedTransactions = [...game.gameTransactions].sort((a, b) => {
+      return new Date(a.timestamp) - new Date(b.timestamp);
     });
     
-    // Sort all transactions by timestamp
-    const sortedTransactions = allTransactions.sort((a, b) => {
-      return new Date(a.timestamp) - new Date(b.timestamp);
+    // Extract player information from each transaction
+    sortedTransactions.forEach(tx => {
+      if (tx.playerId && tx.playerName) {
+        result.uniquePlayers.set(tx.playerId, tx.playerName);
+      }
     });
     
     // Get timestamps from first and last transactions
@@ -207,7 +257,7 @@ class GameHistoryService extends BaseService {
       console.log(`[GAME_HISTORY_SERVICE] Retrieving historical games for player: ${playerName}`);
       
       // Get all games from the database with pagination
-      const result = await gameHistoryDb.allDocs({
+      const result = await this.gameHistoryDb.allDocs({
         include_docs: true,
         limit: 100, // Get more results to filter from
         skip: 0

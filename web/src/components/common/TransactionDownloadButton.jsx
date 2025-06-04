@@ -36,47 +36,42 @@ const TransactionDownloadButton = ({
   
   // Extract data based on structure
   // For historical games from the API, the structure might be slightly different
-  const gameTransactions = gameData?.gameTransactions || gameData?.gameData?.gameTransactions || {};
-  const players = gameData?.players || gameData?.gameData?.players || {};
+  const gameTransactions = gameData?.gameTransactions || gameData?.gameData?.gameTransactions || [];
   const gameId = gameData?._id || gameData?.id || 'unknown';
 
   const downloadTransactionsCSV = () => {
-    if (!gameTransactions || Object.keys(gameTransactions).length === 0) return;
+    // Ensure we have transactions as an array
+    const transactions = Array.isArray(gameTransactions) ? gameTransactions : [];
+    
+    if (transactions.length === 0) return;
     
     // Create CSV header
     let csvContent = "Player,Transaction Type,Amount,Round,Timestamp\n";
     
-    // Collect all transactions into a single array with player info
-    const allTransactions = [];
-    
-    Object.entries(gameTransactions).forEach(([playerId, transactions]) => {
-      if (!transactions || !Array.isArray(transactions)) return;
-      
-      const playerName = transactions[0]?.playerName || players[playerId]?.name || 'Unknown Player';
-      
-      transactions.forEach(tx => {
-        allTransactions.push({
-          playerId,
-          playerName,
-          ...tx,
-          // Ensure timestamp is a Date object for sorting
-          timestamp: tx.timestamp ? new Date(tx.timestamp) : new Date()
-        });
-      });
-    });
+    // Make a copy of transactions for sorting
+    const sortedTransactions = [...transactions].map(tx => ({
+      ...tx,
+      // Ensure timestamp is a Date object for sorting
+      timestamp: tx.timestamp ? new Date(tx.timestamp) : new Date()
+    }));
     
     // Sort all transactions by timestamp in ascending order
-    allTransactions.sort((a, b) => a.timestamp - b.timestamp);
+    sortedTransactions.sort((a, b) => a.timestamp - b.timestamp);
     
     // Add sorted transaction data to CSV
-    allTransactions.forEach(tx => {
+    sortedTransactions.forEach(tx => {
       // Format date for display
       const timestamp = tx.timestamp ? new Date(tx.timestamp).toLocaleString() : 'N/A';
+      
       // Escape any commas in the player name
-      const escapedName = tx.playerName.includes(',') ? `"${tx.playerName}"` : tx.playerName;
-      // Format the transaction reason as a clean transaction type
-      let transactionType = 'Transaction';
-      if (tx.reason) {
+      const playerName = tx.playerName || tx.player || 'Unknown Player';
+      const escapedName = playerName.includes(',') ? `"${playerName}"` : playerName;
+      
+      // Use the transactionType field if available, otherwise derive it from reason
+      let transactionType = tx.transactionType || 'Transaction';
+      
+      // If we need to derive the transaction type from the reason
+      if (!tx.transactionType && tx.reason) {
         // Extract the action part from the reason (e.g., "Ante in round 1" -> "Ante")
         const reasonParts = tx.reason.split(' ');
         transactionType = reasonParts[0]; // Take the first word as the type
@@ -90,6 +85,7 @@ const TransactionDownloadButton = ({
           transactionType = 'Penalty';
         }
       }
+      
       // Add the transaction row
       csvContent += `${escapedName},${transactionType},${tx.amount},${tx.round || 'N/A'},${timestamp}\n`;
     });
