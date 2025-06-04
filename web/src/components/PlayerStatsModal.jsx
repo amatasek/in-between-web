@@ -5,6 +5,7 @@ import BaseModal from './common/BaseModal';
 import GameSummaryModal from './GameSummaryModal';
 import CurrencyAmount from './common/CurrencyAmount';
 import styles from './styles/PlayerStatsModal.module.css';
+import { API_URL } from '../config';
 
 const PlayerStatsModal = ({ onClose }) => {
   const { token } = useAuth();
@@ -26,7 +27,7 @@ const PlayerStatsModal = ({ onClose }) => {
       setError(null);
       
       try {
-        const response = await fetch(`/api/games/history?pageSize=${pageSize}&pageNumber=${currentPage}`, {
+        const response = await fetch(`${API_URL}/games/history?pageSize=${pageSize}&pageNumber=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -56,7 +57,7 @@ const PlayerStatsModal = ({ onClose }) => {
       setStatsError(null);
       
       try {
-        const response = await fetch('/api/stats/me', {
+        const response = await fetch(`${API_URL}/stats/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
