@@ -1,0 +1,75 @@
+/* Stats Content Styles */
+.noDataMessage {
+  color: #666;
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(52, 152, 219, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  margin: 10px;
+}
+
+.tabContent {
+  width: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+  margin-bottom: 20px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 5px;
+}
+
+.statItem {
+  background: linear-gradient(to bottom, #f9f9f9, #f0f0f0);
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.statItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statLabel {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 3px;
+  font-weight: 600;
+}
+
+.statValue {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+}
+
+.statSuffix {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+/* Make the stats grid responsive on smaller screens */
+@media (max-width: 600px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

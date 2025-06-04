@@ -199,6 +199,11 @@
   flex: 1;
   display: flex;
   align-items: center;
+}
+
+/* Stats Tab Styles are now in GameStats.module.css */
+
+.paymentAmount {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.95rem;
 }

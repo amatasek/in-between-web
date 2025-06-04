@@ -161,7 +161,8 @@ const PlayerStatsModal = ({ onClose }) => {
     // Find the selected game in our existing data
     const selectedGame = historyData.games.find(game => game._id === gameId);
     if (selectedGame) {
-      setSelectedGameData(selectedGame);
+      // Just pass the gameData object which already has the correct structure
+      setSelectedGameData(selectedGame.gameData);
       setShowGameSummary(true);
     }
   };

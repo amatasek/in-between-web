@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 import TransactionDownloadButton from './common/TransactionDownloadButton';
+import GameStats from './GameStats';
 
 /**
  * Game Summary Modal component that displays running scores and settle-up calculations
@@ -24,12 +25,11 @@ const GameSummaryModal = ({ onClose, gameData }) => {
     );
   }
 
-  // Extract data from gameData
-  // For historical games, the structure might be slightly different
-  const gameTransactions = gameData.gameTransactions || gameData.gameData?.gameTransactions || [];
-  const players = gameData.players || gameData.gameData?.players || {};
-  const gameId = gameData._id || gameData.id || 'unknown';
-  const showPayoutsTab = gameData.settings?.isPrivate || gameData.gameData?.settings?.isPrivate;
+  // Extract data from gameData with clean access now that structure is consistent
+  const gameTransactions = gameData.gameTransactions || [];
+  const players = gameData.players || {};
+  const gameId = gameData.id || 'unknown';
+  const showPayoutsTab = gameData.settings?.isPrivate || false;
   
   // Ensure gameTransactions is always an array
   const transactions = Array.isArray(gameTransactions) ? gameTransactions : [];
@@ -185,7 +185,14 @@ const GameSummaryModal = ({ onClose, gameData }) => {
               className={`${styles.tabButton} ${activeTab === 'totals' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('totals')}
             >
-              Game Totals
+              Totals
+            </button>
+            
+            <button 
+              className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('stats')}
+            >
+              Stats
             </button>
             
             {showPayoutsTab && (
@@ -218,6 +225,11 @@ const GameSummaryModal = ({ onClose, gameData }) => {
             </div>
           )}
           
+          {/* Stats Tab Content */}
+          {activeTab === 'stats' && (
+            <GameStats gameData={gameData} />
+          )}
+
           {/* Payouts Tab Content - Only shown for private games and when selected */}
           {activeTab === 'payouts' && showPayoutsTab && (
             <div className={styles.tabContent}>
