@@ -109,13 +109,13 @@ class GameTimingService extends BaseService {
           !freshPlayer.isReady &&
           !freshPlayer.isSittingOut
         ) {
-          gameLog(freshGame, `${freshPlayer.name} sitting out due to inactivity.`);
+          // gameLog(freshGame, `${freshPlayer.name} sitting out due to inactivity.`);
           
-          freshGame = await playerManagementService.playerSitOut(freshGame, playerId);
+          // freshGame = await playerManagementService.playerSitOut(freshGame, playerId);
 
-          this.clearPlayerInactivityTimer(freshGame.id, playerId);
-          broadcastService.broadcastGameState(freshGame);
-          await gameStateService.saveGame(freshGame);
+          // this.clearPlayerInactivityTimer(freshGame.id, playerId);
+          // broadcastService.broadcastGameState(freshGame);
+          // await gameStateService.saveGame(freshGame);
         } else {
           // Conditions not met with fresh state, timer might be stale, ensure it's cleared
           this.clearPlayerInactivityTimer(gameId, playerId);
