@@ -189,19 +189,6 @@ class GameHistoryService extends BaseService {
       uniquePlayers: new Map() // Map of player IDs to names
     };
     
-    // If game has no transactions, return default values
-    if (!game.gameTransactions || !Array.isArray(game.gameTransactions) || game.gameTransactions.length === 0) {
-      // If we have players but no transactions, at least capture current player names
-      if (game.players) {
-        Object.values(game.players).forEach(player => {
-          if (player.userId && player.name) {
-            result.uniquePlayers.set(player.userId, player.name);
-          }
-        });
-      }
-      return result;
-    }
-    
     // Transactions are already an array, so just sort them
     const sortedTransactions = [...game.gameTransactions].sort((a, b) => {
       return new Date(a.timestamp) - new Date(b.timestamp);
