@@ -259,15 +259,39 @@ class GameHistoryService extends BaseService {
       // Get all games from the database with pagination
       const result = await this.gameHistoryDb.allDocs({
         include_docs: true,
-        limit: 100, // Get more results to filter from
-        skip: 0
       });
       
       // Filter games where the player participated
+      const playerLowerCase = playerName.toLowerCase();
       const allMatchingGames = result.rows.map(row => row.doc).filter(game => {
-        return Array.isArray(game.allPlayers) && 
-               game.allPlayers.some(name => 
-                 name.toLowerCase().includes(playerName.toLowerCase()));
+        // Skip games with no allPlayers array
+        if (!Array.isArray(game.allPlayers)) return false;
+        
+        // CHECK 1: Look for exact match in allPlayers array
+        if (game.allPlayers.some(name => name && name.toLowerCase() === playerLowerCase)) {
+          return true;
+        }
+        
+        // CHECK 2: Look for player in game transactions
+        const gameData = game.gameData || {};
+        let gameTransactions = [];
+        
+        if (Array.isArray(gameData.gameTransactions)) {
+          gameTransactions = gameData.gameTransactions;
+        } else if (gameData.gameTransactions && typeof gameData.gameTransactions === 'object') {
+          Object.values(gameData.gameTransactions).forEach(txArray => {
+            if (Array.isArray(txArray)) gameTransactions = gameTransactions.concat(txArray);
+          });
+        }
+        
+        if (gameTransactions.some(tx => tx && tx.playerName && tx.playerName.toLowerCase() === playerLowerCase)) {
+          return true;
+        }
+        
+        // CHECK 3: Check the players object
+        const players = gameData.players || game.players || {};
+        return Object.values(players).some(player => player && player.name && 
+          player.name.toLowerCase() === playerLowerCase);
       });
       
       // Apply pagination to filtered results
