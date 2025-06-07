@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import styles from './styles/GameStats.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 
@@ -39,11 +39,11 @@ const GameStats = ({ gameData }) => {
       playerTransactions[tx.playerId].push(tx);
     });
 
-    // Calculate rounds played
-    const rounds = new Set(transactions.map(tx => tx.round)).size;
+    // Get rounds from game data
+    const rounds = gameData.round || 1;
     
-    // Calculate total decks
-    const decks = transactions.find(tx => tx.deckCount !== undefined)?.deckCount || 1;
+    // Calculate total decks - get from game data, not transactions
+    const decks = gameData.deckCount || 1;
 
     // Calculate total ante amount
     const totalAnteAmount = transactions
@@ -168,15 +168,15 @@ const GameStats = ({ gameData }) => {
     // Build stats array with all the interesting stats we've calculated
     return [
       {
-        key: 'totalRounds',
-        label: 'Total Rounds',
-        value: rounds,
-        type: 'number'
-      },
-      {
         key: 'totalDecks',
         label: 'Total Decks',
         value: decks,
+        type: 'number'
+      },
+      {
+        key: 'totalRounds',
+        label: 'Total Rounds',
+        value: rounds,
         type: 'number'
       },
       {
