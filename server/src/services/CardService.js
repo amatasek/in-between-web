@@ -67,7 +67,7 @@ class CardService extends BaseService {
     // Deal the first card (left position)
     const firstCard = game.deck.pop();
     
-    gameLog(game, `Left card: ${firstCard.value}${firstCard.suit}`);
+    gameLog(game, `Left card: ${this.getCardDisplay(firstCard)}`);
     
     // Update game state
     game.firstCard = firstCard;
@@ -90,7 +90,7 @@ class CardService extends BaseService {
     
     // Second card is now dealt
     
-    gameLog(game, `Right card: ${secondCard.value}${secondCard.suit}`);
+    gameLog(game, `Right card: ${this.getCardDisplay(secondCard)}`);
     
     // Update game state
     game.secondCard = secondCard;
@@ -120,7 +120,7 @@ class CardService extends BaseService {
     // Update game state
     game.thirdCard = thirdCard;
     
-    gameLog(game, `Middle card: ${thirdCard.value}${thirdCard.suit}`);
+    gameLog(game, `Middle card: ${this.getCardDisplay(thirdCard)}`);
     
     return game;
   }
@@ -194,6 +194,15 @@ class CardService extends BaseService {
     
     // Check if the middle card's value is between the outer cards' values
     return thirdValue > lowerValue && thirdValue < higherValue;
+  }
+
+  /**
+   * Get the display string for a card with Ace direction indicator
+   * @param {Object} card - The card object
+   * @returns {String} The display string for the card
+   */
+  getCardDisplay(card) {
+    return card.value === 'A' ? `${card.value}${card.isAceLow ? '\u2193' : '\u2191'}${card.suit}` : `${card.value}${card.suit}`;
   }
 
   /**
