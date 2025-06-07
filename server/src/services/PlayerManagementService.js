@@ -491,8 +491,8 @@ class PlayerManagementService extends BaseService {
     gameLog(game, `${player.name} is sitting out`);
     console.log(`[PLAYER_MANAGEMENT] Player ${player.name} (${userId}) marked as sitting out.`);
 
-    // Start or resume round
-    game = await gameService.startOrResumeRound(game);
+    // Start round
+    game = await gameService.startRound(game);
 
     return game;
   }

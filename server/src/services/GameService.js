@@ -353,24 +353,28 @@ class GameService extends BaseService {
    * @param {Object} game - The game object
    * @returns {Object} The updated game object
    */
-  async startOrResumeRound(game) {
+  async startRound(game) {
     if (!game) return game;
 
-    // Count total players and ready players AFTER cleanup
+    // All players must EITHER be ready (anted) OR sitting out to start the round
     const totalPlayerCount = Object.keys(game.players).length;
     const readyPlayerCount = Object.values(game.players).filter(p => p.isReady).length;
     const sittingOutCount = Object.values(game.players).filter(p => p.isSittingOut).length;
     
-    // Check if all players are ready
-    const allReady = readyPlayerCount === (totalPlayerCount - sittingOutCount);
+    const allAccountedFor = readyPlayerCount + sittingOutCount === totalPlayerCount;
 
-    // Only start the game if everyone has a state, and there are at least 2 unique users
-    if (!allReady || readyPlayerCount < 2) {    
+    if (!allAccountedFor || readyPlayerCount < 2) {
       return game;
     }
 
     gameLog(game, `All players ready, starting round ${game.round}`);
     
+    return await this.dealNextPlayer(game);
+  }
+
+  async dealNextPlayer(game) {
+    if (!game) return game;
+
     // Get required services
     const gameTimingService = this.getService('gameTiming');
     const gameStateService = this.getService('gameState');
@@ -406,8 +410,8 @@ class GameService extends BaseService {
     // Mark player as ready and handle ante
     game = await playerManagementService.playerReady(game, playerId);
     
-    // Start or resume round
-    game = await this.startOrResumeRound(game);
+    // Start round
+    game = await this.startRound(game);
     
     return game;
   }
@@ -694,8 +698,8 @@ class GameService extends BaseService {
       broadcastService.broadcastGameState(game);
       // gameStateService.saveGame will be called at the end of the function
     } else {
-      // Pot is not empty, resume the round
-      game = await this.startOrResumeRound(game);
+      // Pot is not empty, deal to next player
+      game = await this.dealNextPlayer(game);
       // Broadcast the updated game state after resuming/starting round
       broadcastService.broadcastGameState(game);
     }
