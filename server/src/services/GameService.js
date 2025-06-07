@@ -612,11 +612,12 @@ class GameService extends BaseService {
         // We already recorded the transaction when the bet was placed, no need to record again
       }
       
-      // Store result
+      // Store result (capture bet amount before reset)
       game.result = {
         playerId: game.currentPlayerId, // Use the currentPlayerId directly instead of player.id
         outcome: isWin ? 'win' : (isTie || isTripleAceTie) ? 'tie' : 'lose',
         winnings,
+        betAmount: player.currentBet, // Store the bet amount for display
         isTripleAceTie: isTripleAceTie // Flag to indicate a triple ace tie for special handling
       };
       

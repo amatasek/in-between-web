@@ -1,6 +1,4 @@
-import React from 'react';
 import { useGameContext } from '../contexts/GameContext';
-import { useSocket } from '../contexts/SocketContext';
 import styles from './styles/ResultsPanel.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 
@@ -9,43 +7,78 @@ import CurrencyAmount from './common/CurrencyAmount';
  */
 const ResultsPanel = () => {
   const { gameState } = useGameContext();
-  const { socket } = useSocket();
 
   // If there's no result, don't render anything
   if (!gameState.result) return null;
 
   const { result, players, resultCountdown } = gameState;
-  const isCurrentPlayer = result.playerId === socket?.id;
-  const playerName = isCurrentPlayer ? 'You' : players[result.playerId]?.name;
-  const outcomeText = isCurrentPlayer 
-    ? (result.outcome === 'win' ? 'Won' : result.outcome === 'tie' ? 'PENALTY!' : 'Lost')
-    : (result.outcome === 'win' ? 'Won' : result.outcome === 'tie' ? 'PENALTY!' : 'Lost');
+  const playerName = players[result.playerId]?.name;
+
+  const renderWinResult = () => (
+    <>
+      <h2 className={`${styles.resultText} ${styles.winText}`}>
+        {playerName} WON!
+      </h2>
+      {result.winnings > 0 && (
+        <p className={styles.winningsText}>
+          Winnings: <CurrencyAmount amount={result.winnings / 2} size="medium" />
+        </p>
+      )}
+    </>
+  );
+
+  const renderLossResult = () => (
+    <>
+      <h2 className={`${styles.resultText} ${styles.loseText}`}>
+        {playerName} LOST!
+      </h2>
+      {result.betAmount > 0 && (
+        <p className={styles.winningsText}>
+          Loss: <CurrencyAmount amount={result.betAmount} size="medium" />
+        </p>
+      )}
+    </>
+  );
+
+  const renderTieResult = () => {
+    const penaltyAmount = result.betAmount * (result.isTripleAceTie ? 3 : 2);
+    
+    return (
+      <>
+        <div className={styles.penaltyWarning}>
+          <div className={styles.cautionTape}></div>
+        </div>
+        <h2 className={`${styles.resultText} ${styles.tieText}`}>
+          {playerName} {result.isTripleAceTie ? '3X' : '2X'} PENALTY!
+        </h2>
+        {result.betAmount > 0 && (
+          <p className={styles.winningsText}>
+            Penalty: <CurrencyAmount amount={penaltyAmount} size="medium" />
+          </p>
+        )}
+      </>
+    );
+  };
+
+  const renderOutcome = () => {
+    switch (result.outcome) {
+      case 'win':
+        return renderWinResult();
+      case 'lose':
+        return renderLossResult();
+      case 'tie':
+        return renderTieResult();
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className={styles.resultsPanel}>
       {/* Card display section removed - cards are now visible in the game board */}
 
       <div className={styles.resultContent}>
-        {result.outcome === 'tie' && (
-          <div className={styles.penaltyWarning}>
-            <div className={styles.cautionTape}></div>
-          </div>
-        )}
-        <h2 className={`${styles.resultText} ${styles[result.outcome + 'Text']}`}>
-          {playerName} {outcomeText}{result.outcome !== 'tie' && '!'}
-        </h2>
-        
-        {result.winnings > 0 && (
-          <p className={styles.winningsText}>
-            Winnings: <CurrencyAmount amount={result.winnings / 2} size="medium" />
-          </p>
-        )}
-        
-        {result.outcome === 'tie' && (
-          <p className={styles.penaltyText}>
-            {result.isTripleAceTie ? '3X PENALTY' : '2X PENALTY'}
-          </p>
-        )}
+        {renderOutcome()}
         
         {resultCountdown && (
           <div className={styles.countdownContainer}>
