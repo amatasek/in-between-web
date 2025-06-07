@@ -168,8 +168,12 @@ class PlayerStats {
         if (betAmount > stats.biggestBet) {
           stats.biggestBet = betAmount;
         }
-      } else if (amount < 0 && !txType.includes('bet')) { 
-        // For losses that aren't bets (like penalties), track as loss
+        // Also track bet amounts as potential losses since bets can be lost
+        if (betAmount > stats.biggestLoss) {
+          stats.biggestLoss = betAmount;
+        }
+      } else if (amount < 0) { 
+        // For other losses (like penalties), also track as potential biggest loss
         const lossAmount = Math.abs(amount);
         if (lossAmount > stats.biggestLoss) {
           stats.biggestLoss = lossAmount;
