@@ -30,9 +30,11 @@ console.log(`[DB] Using database path: ${config.dbPath}`);
 // Use absolute paths for PouchDB to avoid path resolution issues
 const userDbPath = path.resolve(config.dbPath, 'users');
 const gameDbPath = path.resolve(config.dbPath, 'games');
+const purchaseDbPath = path.resolve(config.dbPath, 'purchases');
 
 console.log(`[DB] User database path: ${userDbPath}`);
 console.log(`[DB] Game database path: ${gameDbPath}`);
+console.log(`[DB] Purchase database path: ${purchaseDbPath}`);
 
 // Ensure the specific database directories exist
 if (!fs.existsSync(userDbPath)) {
@@ -45,13 +47,23 @@ if (!fs.existsSync(gameDbPath)) {
   fs.mkdirSync(gameDbPath, { recursive: true });
 }
 
+if (!fs.existsSync(purchaseDbPath)) {
+  console.log(`[DB] Creating purchases database directory: ${purchaseDbPath}`);
+  fs.mkdirSync(purchaseDbPath, { recursive: true });
+}
+
 // Database instances with configured path
 const userDb = new PouchDB(userDbPath);
 const gameDb = new PouchDB(gameDbPath);
+const purchaseDb = new PouchDB(purchaseDbPath);
 
 // Create indexes for efficient querying
 userDb.createIndex({
   index: { fields: ['username'] }
+}).catch(console.error);
+
+purchaseDb.createIndex({
+  index: { fields: ['userId', 'purchasedAt'] }
 }).catch(console.error);
 
 class DatabaseService {
@@ -321,6 +333,41 @@ class DatabaseService {
     });
     return result.rows.map(row => row.doc);
   }
+
+  // Purchase operations
+  async createPurchase(purchaseData) {
+    console.log('[DB] Creating purchase record:', { id: purchaseData.id, userId: purchaseData.userId });
+    try {
+      const result = await purchaseDb.put(purchaseData);
+      console.log('[DB] Purchase record saved successfully:', result);
+      return result;
+    } catch (error) {
+      console.error('[DB] Error creating purchase record:', error);
+      throw error;
+    }
+  }
+
+  async getPurchasesByUserId(userId, options = {}) {
+    const { limit = 50, skip = 0 } = options;
+    
+    try {
+      const result = await purchaseDb.find({
+        selector: {
+          type: 'purchase',
+          userId: userId
+        },
+        sort: [{ 'purchasedAt': 'desc' }],
+        limit,
+        skip
+      });
+      
+      return result.docs;
+    } catch (error) {
+      console.error('[DB] Error getting purchases by user ID:', error);
+      throw error;
+    }
+  }
+
 }
 
 module.exports = new DatabaseService();

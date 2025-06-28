@@ -11,9 +11,11 @@ import OnlinePlayerCount from './common/OnlinePlayerCount';
 import CurrencyAmount from './common/CurrencyAmount';
 import PreferencesButton from './common/PreferencesButton.jsx';
 import PlayerStatsButton from './common/PlayerStatsButton.jsx';
+import StoreButton from './StoreButton.jsx';
 import UserAvatar from './UserAvatar.jsx';
 import soundService from '../services/SoundService';
 import GameSettingsModal from './GameSettingsModal.jsx';
+import StoreModal from './StoreModal.jsx';
 import GameCard from './GameCard'; // Import the new GameCard component
 import RulesButton from './common/RulesButton';
 
@@ -31,8 +33,9 @@ const Lobby = () => {
   
   const userId = user?.username ? `user_${user.username}` : null;
 
-  // Modal state for custom game creation
+  // Modal state for custom game creation and store
   const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
+  const [showStoreModal, setShowStoreModal] = useState(false);
 
   // Refresh user data (including balance) on lobby mount/reconnect
   useEffect(() => {
@@ -194,6 +197,7 @@ const Lobby = () => {
                  </button>
                  <RulesButton />
                  <PlayerStatsButton />
+                 <StoreButton onClick={() => setShowStoreModal(true)} />
                  <PreferencesButton />
                </div>
              </div>
@@ -222,6 +226,17 @@ const Lobby = () => {
              <GameSettingsModal
                onSubmit={handleSubmitCustomSettings}
                onClose={() => setShowGameSettingsModal(false)}
+             />
+           )}
+           {showStoreModal && (
+             <StoreModal
+               onClose={() => {
+                 setShowStoreModal(false);
+                 // Refresh user data to update balance after purchase
+                 if (refreshUserData) {
+                   refreshUserData();
+                 }
+               }}
              />
            )}
          </div>

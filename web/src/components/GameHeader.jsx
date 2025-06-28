@@ -6,8 +6,10 @@ import GAME_CONSTANTS from '../../../shared/constants/GameConstants';
 const { TIMERS } = GAME_CONSTANTS;
 import { ICONS } from '../constants/UIConstants';
 import GameSummaryModal from './GameSummaryModal.jsx';
+import StoreModal from './StoreModal.jsx';
 import RulesButton from './common/RulesButton';
 import PreferencesButton from './common/PreferencesButton';
+import StoreButton from './StoreButton';
 import LeaveButton from './common/LeaveButton';
 
 // Phase display mapping with icons and friendly names
@@ -24,6 +26,7 @@ const GameHeader = ({ handleLeaveGame }) => {
   const currentPhase = gameState?.phase || 'waiting';
   const [timeLeft, setTimeLeft] = useState(null);
   const [showGameSummary, setShowGameSummary] = useState(false);
+  const [showStoreModal, setShowStoreModal] = useState(false);
 
   // Timer effect for phases
   useEffect(() => {
@@ -140,6 +143,7 @@ const GameHeader = ({ handleLeaveGame }) => {
         <div className={styles.headerRight}>
           <div className={styles.controlsGroup}>
             <PreferencesButton />
+            <StoreButton onClick={() => setShowStoreModal(true)} />
             <RulesButton />
             <LeaveButton onClick={handleLeaveGame} />
           </div>
@@ -167,6 +171,7 @@ const GameHeader = ({ handleLeaveGame }) => {
           
           <div className={styles.mobileActions}>
             <PreferencesButton />
+            <StoreButton onClick={() => setShowStoreModal(true)} />
             <RulesButton />
             <LeaveButton onClick={handleLeaveGame} />
           </div>
@@ -204,6 +209,13 @@ const GameHeader = ({ handleLeaveGame }) => {
         <GameSummaryModal 
           onClose={() => setShowGameSummary(false)} 
           gameData={gameState}
+        />
+      )}
+      
+      {/* Store Modal */}
+      {showStoreModal && (
+        <StoreModal
+          onClose={() => setShowStoreModal(false)}
         />
       )}
     </div>
