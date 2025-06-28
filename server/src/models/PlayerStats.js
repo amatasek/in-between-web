@@ -56,7 +56,7 @@ class PlayerStats {
     });
     
     // Calculate derived stats
-    this.averageRounds = this.gamesPlayed > 0 ? this.totalRounds / this.gamesPlayed : 0;
+    this.averageRounds = this.gamesPlayed > 0 ? Math.round(this.totalRounds / this.gamesPlayed) : 0;
     this.winRate = this.totalBets > 0 ? this.totalWins / this.totalBets : 0;
     this.penaltyRate = this.totalBets > 0 ? this.totalPenalties / this.totalBets : 0;
     this.potBetRate = this.totalBets > 0 ? this.potBets / this.totalBets : 0;
@@ -180,9 +180,28 @@ class PlayerStats {
         }
       }
       
-      // For profit, simply sum all transaction amounts
-      // Positive = player received money, negative = player paid money
-      stats.profit += amount;
+      // Track profit by only adding the net result of each bet
+      // For wins, the amount already includes the bet amount, so we don't need to add the bet separately
+      if (txType.includes('win')) {
+        stats.profit += amount;  // Win amount already includes the bet
+      } else if (txType.includes('bet') && amount < 0) {
+        // Only count the bet if it's a loss (no corresponding win)
+        // We'll verify if there's a matching win for this bet
+        const hasMatchingWin = userTransactions.some(t => 
+          t !== tx && 
+          Math.abs(t.amount) === Math.abs(amount) && 
+          t.transactionType && 
+          t.transactionType.toLowerCase().includes('win')
+        );
+        
+        if (!hasMatchingWin) {
+          // Only count the bet as a loss if there's no corresponding win
+          stats.profit += amount;
+        }
+      } else if (!txType.includes('bet')) {
+        // For non-bet transactions (like penalties), just add the amount
+        stats.profit += amount;
+      }
       
       // Process penalties based on transaction type
       if (txType === '2x' || txType === '3x' || txReason.includes('penalty')) {
