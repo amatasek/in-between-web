@@ -104,10 +104,12 @@ class GameTimingService extends BaseService {
         }
 
         // Check if the timeout is still relevant using fresh state
+        // Skip auto sit out in round 1 to give players time to understand the game
         if (
           freshGame.phase === GamePhases.WAITING &&
           !freshPlayer.isReady &&
-          !freshPlayer.isSittingOut
+          !freshPlayer.isSittingOut &&
+          freshGame.round > 1
         ) {
           gameLog(freshGame, `${freshPlayer.name} sitting out due to inactivity.`);
           
