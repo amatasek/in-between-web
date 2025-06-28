@@ -7,7 +7,7 @@
 const GAME_CONSTANTS = {
   // Game configuration
   ANTE_AMOUNT: 1,  // Fixed ante amount - always $1
-  STARTING_BALANCE: 1000,  // Starting player balance - $1000
+  STARTING_BALANCE: 2000,  // Starting player balance
   FULL_DECK_SIZE: 52,  // Number of cards in a full deck
   RECONNECTION_TIMEOUT: 30000,  // Time window for player reconnection (30 seconds)
   MAX_SEATS: 16, // Maximum number of seats/players allowed in a game

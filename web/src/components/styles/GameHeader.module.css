@@ -1,5 +1,5 @@
 .headerContainer {
-  padding: var(--spacing-md) var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   background: linear-gradient(120deg, #2c3e50, #3498db);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-lg);
@@ -30,11 +30,18 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 10px 10px; /* Reduced horizontal padding */
+  padding: 2px 5px;
   box-sizing: border-box;
 }
 
 
+
+/* Mobile right container */
+.mobileRight {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
 
 /* Mobile actions container */
 .mobileActions {
@@ -116,7 +123,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 6px;
+}
+
+.mobileControlsStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 
 /* Header left spacing is handled in the mobile layout */
@@ -205,6 +219,20 @@
 
 .gameIdLink:active {
   color: #1abc9c;
+}
+
+.balanceDisplay {
+  font-size: 0.8rem;
+  color: #ecf0f1;
+  margin: 0 0 0.3rem 0;
+  white-space: nowrap;
+  font-weight: 600;
+  padding: 0.15rem 0.35rem;
+  background: rgba(52, 152, 219, 0.2);
+  border-radius: 8px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  text-align: center;
 }
 
 /* Ensure the game ID text container has proper spacing and alignment */

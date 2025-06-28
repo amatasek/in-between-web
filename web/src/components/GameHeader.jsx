@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styles from './styles/GameHeader.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
+import { useAuth } from '../contexts/AuthContext';
 import GAME_CONSTANTS from '../../../shared/constants/GameConstants';
 const { TIMERS } = GAME_CONSTANTS;
 import { ICONS } from '../constants/UIConstants';
+import CurrencyAmount from './common/CurrencyAmount';
 import GameSummaryModal from './GameSummaryModal.jsx';
 import StoreModal from './StoreModal.jsx';
 import RulesButton from './common/RulesButton';
@@ -23,6 +25,12 @@ const phaseDisplayMap = {
 const GameHeader = ({ handleLeaveGame }) => {
   const { gameState, gameId } = useGameContext();
   const { socket } = useSocket();
+  const { user } = useAuth();
+  
+  // Get the current user's balance from game state (real-time) or fallback to auth context
+  const currentUserId = socket?.auth?.userId;
+  const currentPlayer = currentUserId && gameState?.players ? gameState.players[currentUserId] : null;
+  const playerBalance = currentPlayer?.balance ?? user?.balance ?? 0;
   const currentPhase = gameState?.phase || 'waiting';
   const [timeLeft, setTimeLeft] = useState(null);
   const [showGameSummary, setShowGameSummary] = useState(false);
@@ -139,20 +147,25 @@ const GameHeader = ({ handleLeaveGame }) => {
           </div>
         </div>
         
-        {/* Right: Rules, Leave and Mute buttons */}
+        {/* Right: Balance and buttons */}
         <div className={styles.headerRight}>
-          <div className={styles.controlsGroup}>
-            <PreferencesButton />
-            <StoreButton onClick={() => setShowStoreModal(true)} />
-            <RulesButton />
-            <LeaveButton onClick={handleLeaveGame} />
+          <div className={styles.controlsStack}>
+            <div className={styles.balanceDisplay}>
+              Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
+            </div>
+            <div className={styles.controlsGroup}>
+              <PreferencesButton />
+              <StoreButton onClick={() => setShowStoreModal(true)} />
+              <RulesButton />
+              <LeaveButton onClick={handleLeaveGame} />
+            </div>
           </div>
         </div>
       </div>
       
       {/* Mobile layout - two rows */}
       <div className={styles.mobileLayout}>
-        {/* Top row: Logo/ID, Mute, Rules, Leave */}
+        {/* Top row: Logo/ID, Balance/Buttons */}
         <div className={styles.mobileTopRow}>
           <div className={styles.headerLeft}>
             <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
@@ -167,13 +180,18 @@ const GameHeader = ({ handleLeaveGame }) => {
             </p>
           </div>
           
-
-          
-          <div className={styles.mobileActions}>
-            <PreferencesButton />
-            <StoreButton onClick={() => setShowStoreModal(true)} />
-            <RulesButton />
-            <LeaveButton onClick={handleLeaveGame} />
+          <div className={styles.mobileRight}>
+            <div className={styles.mobileControlsStack}>
+              <div className={styles.balanceDisplay}>
+                Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
+              </div>
+              <div className={styles.mobileActions}>
+                <PreferencesButton />
+                <StoreButton onClick={() => setShowStoreModal(true)} />
+                <RulesButton />
+                <LeaveButton onClick={handleLeaveGame} />
+              </div>
+            </div>
           </div>
         </div>
         

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import styles from './styles/PlayerList.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
@@ -18,8 +18,27 @@ const PlayerList = () => {
     );
   }
   
-  const { players, currentPlayerId, dealerId } = gameState;
+  const { players, currentPlayerId, dealerId, gameTransactions = [] } = gameState;
   const currentUserId = socket?.auth?.userId;
+  
+  // Calculate player totals from game transactions (same logic as GameSummaryModal)
+  const playerTotals = useMemo(() => {
+    const totals = {};
+    const transactions = Array.isArray(gameTransactions) ? gameTransactions : [];
+    
+    // Group transactions by player ID and sum up amounts
+    transactions.forEach(tx => {
+      if (!tx.playerId) return;
+      
+      if (!totals[tx.playerId]) {
+        totals[tx.playerId] = 0;
+      }
+      
+      totals[tx.playerId] += tx.amount;
+    });
+    
+    return totals;
+  }, [gameTransactions]);
   if (!players || Object.keys(players).length === 0) {
     return (
       <div className={styles.emptyPlayerList}>
@@ -31,7 +50,7 @@ const PlayerList = () => {
   
   return (
     <div className={styles.playersContainer}>
-      <h3 className={styles.playersTitle}>Players</h3>
+      <h3 className={styles.playersTitle}>Scoreboard</h3>
       
       <div className={styles.playersList}>
         {/* Use gameState.seats to render players in seat order */}
@@ -72,7 +91,7 @@ const PlayerList = () => {
                 </span>
               </div>
               <div className={styles.playerBalanceContainer}>
-                <BalanceDisplay balance={Number(player.balance || 0)} />
+                <BalanceDisplay balance={playerTotals[playerId] || 0} />
 
                 <div 
                   className={`
