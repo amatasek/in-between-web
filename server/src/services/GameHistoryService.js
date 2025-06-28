@@ -281,7 +281,14 @@ class GameHistoryService extends BaseService {
           player.name.toLowerCase() === playerLowerCase);
       });
       
-      // Apply pagination to filtered results
+      // Sort games by end date (most recent first)
+      allMatchingGames.sort((a, b) => {
+        const dateA = new Date(a.endedAt || a.createdAt || 0);
+        const dateB = new Date(b.endedAt || b.createdAt || 0);
+        return dateB - dateA; // Descending order (most recent first)
+      });
+      
+      // Apply pagination to filtered and sorted results
       const paginatedGames = allMatchingGames.slice(skip, skip + limit);
       
       console.log(`[GAME_HISTORY_SERVICE] Retrieved ${paginatedGames.length} historical games out of ${allMatchingGames.length} matches`);
