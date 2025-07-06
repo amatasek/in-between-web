@@ -279,7 +279,6 @@ class PlayerManagementService extends BaseService {
     const activePlayers = game.getActivePlayersInOrder();
     if (activePlayers.length < 2) return game;
 
-    gameLog(game, `Moving to next player after ${game.players[game.currentPlayerId]?.name || 'Unknown'}`);
 
     // If no current player, start with the player after the dealer
     if (!game.currentPlayerId && game.dealerId && activePlayers.includes(game.dealerId)) {
@@ -474,38 +473,6 @@ class PlayerManagementService extends BaseService {
     return game;
   }
 
-  /**
-   * Move to the next player in the game
-   * @param {Object} game - The game object
-   * @returns {Object} The updated game object
-   */
-  moveToNextPlayer(game) {
-    const connectedPlayers = game.getConnectedPlayersInOrder();
-    if (connectedPlayers.length < 2) return game;
-
-    // If no current player, start with the player after the dealer
-    if (!game.currentPlayerId && game.dealerId && connectedPlayers.includes(game.dealerId)) {
-      const dealerIndex = connectedPlayers.indexOf(game.dealerId);
-      game.currentPlayerId = connectedPlayers[dealerIndex];
-    }
-    
-    // Get the next player ID based on seat order - already using userId
-    const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);
-    
-    if (nextPlayerId) {
-      // Update the current player
-      game.currentPlayerId = nextPlayerId;
-
-      const nextPlayer = game.players[nextPlayerId];
-      
-      gameLog(game, `Turn: ${nextPlayer.name}`);
-    } else {
-      console.log(`[PLAYER_MANAGEMENT] No next player found after ${game.currentPlayerId}`);
-    }
-    
-    game.updateTimestamp();
-    return game;
-  }
 
   /**
    * Restore ante state for a player who was part of the current round

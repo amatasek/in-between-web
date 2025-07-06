@@ -363,11 +363,30 @@ class GameService extends BaseService {
     
     const allAccountedFor = readyPlayerCount + sittingOutCount === totalPlayerCount;
 
+    // Need at least 2 players who have anted up to start a round
     if (!allAccountedFor || readyPlayerCount < 2) {
       return game;
     }
 
     gameLog(game, `All players ready, starting round ${game.round}`);
+    
+    // Capture players who anted for this round BEFORE phase changes
+    game.antedPlayersForRound = game.seats
+      .filter(playerId => {
+        const player = game.players[playerId];
+        return playerId !== null && player && player.isReady;
+      })
+      .map(userId => {
+        const seatIndex = game.seats.indexOf(userId);
+        return {
+          userId,
+          seatIndex,
+          name: game.players[userId]?.name || 'Unknown'
+        };
+      });
+    
+    console.log(`[GAME_SERVICE] Captured ${game.antedPlayersForRound.length} players for round ${game.round}:`, 
+      game.antedPlayersForRound.map(p => `${p.name} (seat ${p.seatIndex})`));
     
     return await this.dealNextPlayer(game);
   }
@@ -674,6 +693,9 @@ class GameService extends BaseService {
       // This is the true definition of a new "round" in the game
       game.round += 1;
       
+      // Clean up any disconnected players who didn't reconnect during the round
+      this.removeDisconnectedPlayers(game);
+      
       gameLog(game, `Pot is empty. Waiting for players to ante up for round ${game.round}`);
 
       // --- Concise Auto-ante if pot is zero --- 
@@ -747,6 +769,35 @@ class GameService extends BaseService {
       console.log(`[CLEANUP] Removed ${cleanedCount} inactive games`);
     } catch (error) {
       console.error(`[CLEANUP] Error cleaning up games: ${error.message}`);
+    }
+  }
+
+  /**
+   * Remove disconnected players who didn't reconnect during the round
+   * @param {Object} game - The game object
+   */
+  removeDisconnectedPlayers(game) {
+    if (!game || !game.players) return;
+    
+    const playersToRemove = [];
+    
+    // Find disconnected players
+    Object.keys(game.players).forEach(userId => {
+      const player = game.players[userId];
+      if (player && player.disconnected && !player.isConnected) {
+        playersToRemove.push(userId);
+      }
+    });
+    
+    if (playersToRemove.length > 0) {
+      console.log(`[GAME_SERVICE] Removing ${playersToRemove.length} disconnected players at round end`);
+      
+      const playerManagementService = this.getService('playerManagement');
+      playersToRemove.forEach(userId => {
+        const playerName = game.players[userId]?.name || 'Unknown';
+        console.log(`[GAME_SERVICE] Removing disconnected player ${playerName} (${userId})`);
+        game = playerManagementService.removePlayer(game, userId);
+      });
     }
   }
 }

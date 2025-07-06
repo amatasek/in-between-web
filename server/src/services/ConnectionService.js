@@ -479,7 +479,18 @@ class ConnectionService extends BaseService {
       const gameStateService = this.getService('gameState');
       const gameService = this.getService('game');
       const broadcastService = this.getService('broadcast');
-      let game = gameStateService.getGame(gameId); // Declare game once here
+      let game = await gameStateService.getGame(gameId); // Get fresh game state from database
+      
+      // Check if player was part of the current round (had anted)
+      const wasPartOfCurrentRound = game && game.antedPlayersForRound && 
+        game.antedPlayersForRound.some(p => p.userId === userId);
+      
+      if (wasPartOfCurrentRound) {
+        console.log(`[CONNECTION_SERVICE] Player ${userId} anted for current round - keeping in game until round ends`);
+        // Don't remove the player, just keep them marked as disconnected
+        // They'll be cleaned up at round end
+        return;
+      }
       
       // If game service exists, call leaveGame (which handles broadcasts)
       if (gameService) {
@@ -497,7 +508,7 @@ class ConnectionService extends BaseService {
       // Check if the game is now empty and should be removed
       // Refresh the game state in case leaveGame modified it significantly
       game = gameStateService.getGame(gameId); 
-      if (gameService && game && Object.keys(game.players).length === 0) {
+      if (gameService && game && game.players && Object.keys(game.players).length === 0) {
         gameService.cleanupGameIfEmpty(gameId);
       }
       

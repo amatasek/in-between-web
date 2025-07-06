@@ -148,17 +148,17 @@ class Game {
 
   /**
    * Get players who have anted up for the current round in seat order
+   * Uses antedPlayersForRound for authoritative tracking (includes disconnected players)
    * @returns {Array} Array of anted player IDs in seat order
    */
   getAntedPlayersInOrder() {
-    return this.seats
-      .filter(playerId => {
-        const player = this.players[playerId];
-        return playerId !== null && 
-               player?.isConnected && 
-               !player?.disconnected &&
-               player?.isReady;
-      });
+    if (!this.antedPlayersForRound) {
+      return [];
+    }
+    
+    return this.antedPlayersForRound
+      .sort((a, b) => a.seatIndex - b.seatIndex) // Ensure seat order
+      .map(p => p.userId);
   }
 
   toJSON() {
