@@ -659,8 +659,10 @@ class GameService extends BaseService {
       // Reset all player ready states
       Object.values(game.players).forEach(player => {
         player.isReady = false;
-        player.hasAnted = false;
       });
+      
+      // Clear the round-specific ante tracking
+      game.antedPlayersForRound = [];
       
       // Clear all cards from the game state
       game.firstCard = null;

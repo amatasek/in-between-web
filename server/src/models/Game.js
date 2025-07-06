@@ -43,6 +43,9 @@ class Game {
     
     // Track game transactions for running score - flat ledger of all game transactions
     this.gameTransactions = [];
+    
+    // Track players who anted up for the current round with their seat positions
+    this.antedPlayersForRound = [];
   }
   
   /**

@@ -160,6 +160,19 @@ class GameStateService extends BaseService {
     game.secondCard = null;
     game.phase = GamePhases.DEALING;
     
+    // Capture players who anted for this round with their seat positions
+    game.antedPlayersForRound = game.getAntedPlayersInOrder().map(userId => {
+      const seatIndex = game.seats.indexOf(userId);
+      return {
+        userId,
+        seatIndex,
+        name: game.players[userId]?.name || 'Unknown'
+      };
+    });
+    
+    console.log(`[GAME_STATE] Captured ${game.antedPlayersForRound.length} players for round ${game.round}:`, 
+      game.antedPlayersForRound.map(p => `${p.name} (seat ${p.seatIndex})`));
+    
     game.updateTimestamp();
     return game;
   }
