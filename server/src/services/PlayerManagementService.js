@@ -10,46 +10,6 @@ class PlayerManagementService extends BaseService {
     super();
   }
 
-  /**
-   * Get the next active player based on game phase and current player
-   * During active gameplay (not waiting phase), only players who have anted up can take turns
-   * @param {Object} game - The game object
-   * @param {string} [currentPlayerId=null] - The current player's ID (optional)
-   * @returns {string} The next player's ID or null if no eligible players
-   */
-  getNextActivePlayer(game, currentPlayerId = null) {
-    if (!game) return null;
-    
-    // Use the game's current player if none specified
-    currentPlayerId = currentPlayerId || game.currentPlayerId;
-    
-    // During active gameplay (not waiting phase), only consider players who have anted up
-    const playerList = (game.phase !== GamePhases.WAITING)
-      ? game.getAntedPlayersInOrder()
-      : game.getConnectedPlayersInOrder();
-    
-    if (playerList.length === 0) return null;
-    if (playerList.length === 1) return playerList[0];
-    
-    // If current player isn't in the eligible list or isn't specified
-    if (!currentPlayerId || !playerList.includes(currentPlayerId)) {
-      // ONLY select the player after dealer for a brand new game (round 1)
-      // This fixes the issue where player rotation was being reset during ongoing games
-      if (game.round === 1 && game.dealerId && playerList.includes(game.dealerId)) {
-        console.log(`[PLAYER_MANAGEMENT] Brand new game (round ${game.round}), selecting player after dealer`);
-        const dealerIndex = playerList.indexOf(game.dealerId);
-        return playerList[(dealerIndex + 1) % playerList.length];
-      }
-      
-      // For all other cases, just take the first player in the list
-      console.log(`[PLAYER_MANAGEMENT] Current player not in eligible list, defaulting to first player`);
-      return playerList[0]; // Default to first player
-    }
-    
-    // Get next player in rotation
-    const currentIndex = playerList.indexOf(currentPlayerId);
-    return playerList[(currentIndex + 1) % playerList.length];
-  }
 
   /**
    * Add a player to the game
@@ -227,6 +187,11 @@ class PlayerManagementService extends BaseService {
     // Remove from players
     delete game.players[userId];
     
+    // Clean up antedPlayersForRound to prevent stale references
+    if (game.antedPlayersForRound) {
+      game.antedPlayersForRound = game.antedPlayersForRound.filter(p => p.userId !== userId);
+    }
+    
     // Add a prominent log message when a player leaves
     gameLog(game, `${player.name} left`); // Keep game log concise
     console.log(`[PLAYER_MANAGEMENT] Player ${player.name} left game ${game.id}`);
@@ -276,17 +241,15 @@ class PlayerManagementService extends BaseService {
    * @returns {Object} The updated game object
    */
   moveToNextPlayer(game) {
-    const activePlayers = game.getActivePlayersInOrder();
-    if (activePlayers.length < 2) return game;
+    const antedPlayers = game.getAntedPlayersInOrder();
+    if (antedPlayers.length < 2) return game;
 
-
-    // If no current player, start with the player after the dealer
-    if (!game.currentPlayerId && game.dealerId && activePlayers.includes(game.dealerId)) {
-      const dealerIndex = activePlayers.indexOf(game.dealerId);
-      game.currentPlayerId = activePlayers[dealerIndex];
+    // If no current player, start with first anted player
+    if (!game.currentPlayerId) {
+      game.currentPlayerId = antedPlayers[0];
     }
     
-    // Get the next player ID based on seat order - already using userId
+    // Get the next player ID - now uses anted players only
     const nextPlayerId = game.getNextPlayerInOrder(game.currentPlayerId);
     
     if (nextPlayerId) {

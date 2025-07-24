@@ -509,9 +509,8 @@ class GameService extends BaseService {
     
     // If player passed (amount is 0), handle the phase transition
     if (amount === 0) {
-      // Get the next active player (only considering players who have anted up)
-      const playerManagementService = this.getService('playerManagement');
-      const nextPlayerId = playerManagementService.getNextActivePlayer(game, playerId);
+      // Get the next anted player in rotation
+      const nextPlayerId = game.getNextPlayerInOrder(playerId);
       
       if (!nextPlayerId) {
         // If no eligible players, process the game outcome directly

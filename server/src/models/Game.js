@@ -92,38 +92,29 @@ class Game {
    * @returns {string} The next player's ID
    */
   getNextPlayerInOrder(playerId) {
-    // Find the current player's seat
-    const currentSeat = this.getPlayerSeat(playerId);
-    if (currentSeat === -1) {
-      gameLog(this, `WARNING: Could not find seat for player ID: ${playerId}`);
+    // During active rounds, ONLY players who anted can be dealt to
+    const eligiblePlayers = this.getAntedPlayersInOrder();
+    
+    if (eligiblePlayers.length === 0) {
+      gameLog(this, `No anted players found for dealing rotation.`);
       return null;
     }
+    if (eligiblePlayers.length === 1) {
+      gameLog(this, `Only one anted player, returning same player: ${eligiblePlayers[0]}`);
+      return eligiblePlayers[0];
+    }
     
-    // Get all active players in seat order
-    const activePlayers = this.getActivePlayersInOrder();
-    if (activePlayers.length === 0) {
-      gameLog(this, `No active players found.`);
-      return null; // Or handle as appropriate, maybe return current player if they are the only one
-    }
-    if (activePlayers.length === 1) {
-      gameLog(this, `Only one active player, returning same player: ${activePlayers[0]}`);
-      return activePlayers[0];
-    }
-  
-    // Find the index of the current player in the active players array
-    const currentIndex = activePlayers.indexOf(playerId);
+    // Find current player in the anted players list
+    const currentIndex = eligiblePlayers.indexOf(playerId);
     if (currentIndex === -1) {
-      // If current player is not in the active list (e.g., they just sat out),
-      // or if playerId is null/undefined, default to the first active player.
-      gameLog(this, `Current player ${playerId} not found in active players list or no current player; defaulting to first active player.`);
-      return activePlayers[0]; 
+      gameLog(this, `WARNING: Current player ${playerId} not found in anted players list`);
+      // Return first anted player as fallback
+      return eligiblePlayers[0];
     }
-  
-    // Get the next player in the array, wrapping around if necessary
-    const nextIndex = (currentIndex + 1) % activePlayers.length;
-    const nextPlayerId = activePlayers[nextIndex];
     
-    return nextPlayerId;
+    // Return next player in rotation
+    const nextIndex = (currentIndex + 1) % eligiblePlayers.length;
+    return eligiblePlayers[nextIndex];
   }
   
   /**
@@ -157,6 +148,7 @@ class Game {
     }
     
     return this.antedPlayersForRound
+      .filter(p => this.players[p.userId]) // Only include existing players
       .sort((a, b) => a.seatIndex - b.seatIndex) // Ensure seat order
       .map(p => p.userId);
   }
