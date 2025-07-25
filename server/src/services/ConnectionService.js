@@ -177,8 +177,13 @@ class ConnectionService extends BaseService {
       // --- ONLINE PLAYER COUNT FEATURE ---
       socket.on('getOnlinePlayerCount', (cb) => {
         if (typeof cb === 'function' && this.io && this.io.engine) {
-          cb(this.io.engine.clientsCount);
-          this.io.emit('onlinePlayerCountUpdate', this.io.engine.clientsCount);
+          const realPlayerCount = this.io.engine.clientsCount;
+          const botService = this.getService('bot');
+          const botCount = botService ? (botService.activeBots.size + botService.readyBots.length) : 0;
+          const totalCount = realPlayerCount + botCount;
+          
+          cb(totalCount);
+          this.io.emit('onlinePlayerCountUpdate', totalCount);
         }
       });
     } catch (error) {
