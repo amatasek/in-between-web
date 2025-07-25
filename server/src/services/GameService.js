@@ -287,15 +287,14 @@ class GameService extends BaseService {
 
       // If the game becomes empty, remove it
       if (Object.keys(game.players).length === 0) {
-        gameStateService.removeGame(gameId);
+        await gameStateService.removeGame(gameId);
         gameLog(game, `Removed empty game ${gameId}`);
       } else {
         // Game still has players. Dealer reassignment is handled by PlayerManagementService.removePlayer.
-        // Broadcast updated game state
         broadcastService.broadcastGameState(game);
       }
 
-      // Always broadcast the updated list of available games
+      // Always broadcast updated game list after game state changes
       broadcastService.broadcastGameList();
     } catch (error) {
       console.error(`[GAME_SERVICE] Error processing leave game:`, error);
