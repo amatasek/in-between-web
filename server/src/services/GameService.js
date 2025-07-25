@@ -734,6 +734,77 @@ class GameService extends BaseService {
     return game;
   }
 
+  /**
+   * Clean up a stuck game with pot refunds
+   * @param {Object} game - The stuck game object
+   */
+  async cleanupStuckGame(game) {
+    if (!game) return;
+    
+    try {
+      console.log(`[CLEANUP] Cleaning up stuck game ${game.id} with ${game.pot} coins in pot`);
+      
+      // Refund pot to players if there's money to distribute
+      if (game.pot > 0) {
+        await this.refundPotToPlayers(game);
+      }
+      
+      // Standard cleanup
+      this.cleanupGame(game.id);
+      
+    } catch (error) {
+      console.error(`[CLEANUP] Error cleaning up stuck game ${game.id}:`, error);
+      // Still try standard cleanup even if refund fails
+      this.cleanupGame(game.id);
+    }
+  }
+
+  /**
+   * Refund pot money to players in a reasonable way
+   * @param {Object} game - The game object
+   */
+  async refundPotToPlayers(game) {
+    if (!game.pot || game.pot <= 0) return;
+    
+    const gameTransactionService = this.getService('gameTransaction');
+    const connectedPlayers = Object.values(game.players).filter(p => p.isConnected);
+    
+    if (connectedPlayers.length === 0) {
+      console.log(`[CLEANUP] No connected players to refund pot of ${game.pot} coins`);
+      return;
+    }
+    
+    // Split pot evenly among connected players
+    const refundPerPlayer = Math.floor(game.pot / connectedPlayers.length);
+    const remainder = game.pot % connectedPlayers.length;
+    
+    console.log(`[CLEANUP] Refunding ${refundPerPlayer} coins to ${connectedPlayers.length} players (${remainder} coins remainder)`);
+    
+    for (let i = 0; i < connectedPlayers.length; i++) {
+      const player = connectedPlayers[i];
+      let refundAmount = refundPerPlayer;
+      
+      // Give remainder to first player(s)
+      if (i < remainder) {
+        refundAmount += 1;
+      }
+      
+      if (refundAmount > 0) {
+        try {
+          await gameTransactionService.processTransaction(
+            game,
+            player.userId,
+            refundAmount,
+            `Stuck game cleanup refund`
+          );
+          console.log(`[CLEANUP] Refunded ${refundAmount} coins to ${player.name}`);
+        } catch (error) {
+          console.error(`[CLEANUP] Failed to refund ${refundAmount} coins to ${player.name}:`, error);
+        }
+      }
+    }
+  }
+
   cleanupGame(gameId) {
     const gameTimingService = this.getService('gameTiming');
     const gameStateService = this.getService('gameState');
@@ -747,24 +818,36 @@ class GameService extends BaseService {
    */
   cleanupGames() {
     const now = Date.now();
-    const INACTIVE_THRESHOLD = 3 * 60 * 60 * 1000; // 3 hours
+    const STUCK_GAME_THRESHOLD = 5 * 60 * 1000; // 5 minutes for stuck games
+    const INACTIVE_THRESHOLD = 60 * 60 * 1000; // 1 hour for general cleanup
     
     try {
       const gameIds = Object.keys(this.games);
       let cleanedCount = 0;
+      let stuckCount = 0;
       
       gameIds.forEach(gameId => {
         const game = this.games[gameId];
+        if (!game || !game.lastUpdated) return;
         
-        // Check if game is inactive (hasn't been updated in a while)
-        if (game && game.lastUpdated && (now - game.lastUpdated > INACTIVE_THRESHOLD)) {
-          console.log(`[CLEANUP] Removing inactive game ${gameId} (last active ${Math.floor((now - game.lastUpdated) / 60000)} minutes ago)`);
+        const minutesInactive = Math.floor((now - game.lastUpdated) / 60000);
+        
+        // Check for stuck games (not in WAITING phase and inactive for 5+ minutes)
+        if (game.phase !== GamePhases.WAITING && (now - game.lastUpdated > STUCK_GAME_THRESHOLD)) {
+          console.log(`[CLEANUP] Found stuck game ${gameId} in phase ${game.phase} (inactive ${minutesInactive} minutes)`);
+          this.cleanupStuckGame(game);
+          stuckCount++;
+          cleanedCount++;
+        }
+        // Check for generally inactive games (3+ hours)
+        else if (now - game.lastUpdated > INACTIVE_THRESHOLD) {
+          console.log(`[CLEANUP] Removing inactive game ${gameId} (last active ${minutesInactive} minutes ago)`);
           this.cleanupGame(gameId);
           cleanedCount++;
         }
       });
       
-      console.log(`[CLEANUP] Removed ${cleanedCount} inactive games`);
+      console.log(`[CLEANUP] Cleaned up ${cleanedCount} games (${stuckCount} stuck, ${cleanedCount - stuckCount} inactive)`);
     } catch (error) {
       console.error(`[CLEANUP] Error cleaning up games: ${error.message}`);
     }

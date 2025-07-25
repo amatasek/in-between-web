@@ -275,13 +275,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Set up scheduled cleanup tasks
-const CLEANUP_INTERVAL_MS = 1000 * 60 * 10; // Run cleanup every 10 minutes
-setInterval(() => {
-  console.log('[SERVER] Running scheduled cleanup tasks');
-  const gameService = serviceRegistry.get('game');
-  const lobbyService = serviceRegistry.get('lobby');
-  
+// Run initial cleanup on startup
+console.log('[SERVER] Running startup cleanup tasks');
+const gameService = serviceRegistry.get('game');
+const lobbyService = serviceRegistry.get('lobby');
+
+function runCleanupTasks() {
   // Use the lobbyService to clean up empty games
   if (lobbyService && typeof lobbyService.cleanupEmptyGames === 'function') {
     lobbyService.cleanupEmptyGames();
@@ -289,6 +288,16 @@ setInterval(() => {
     // Fallback to the original cleanup method
     gameService.cleanupGames();
   }
+}
+
+// Run cleanup immediately on startup
+runCleanupTasks();
+
+// Set up scheduled cleanup tasks - run more frequently to catch stuck games
+const CLEANUP_INTERVAL_MS = 1000 * 60 * 2; // Run cleanup every 2 minutes
+setInterval(() => {
+  console.log('[SERVER] Running scheduled cleanup tasks');
+  runCleanupTasks();
 }, CLEANUP_INTERVAL_MS);
 
 // Verify database paths in production
