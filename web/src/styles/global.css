@@ -1,5 +1,11 @@
 /* Global styles for the In-Between card game */
 
+/* 
+ * Gamepad Navigation Styles
+ * Provides visual feedback for controller/keyboard navigation
+ * Only active when gamepad-navigation-active class is present on body
+ */
+
 /* Prevent flash of auth screen on page load when user is already logged in */
 html.loading {
   background-color: #1a1a2e;
@@ -7,4 +13,41 @@ html.loading {
 
 html.loading * {
   visibility: hidden;
+}
+
+/* Gamepad focus indicators - only show when gamepad/keyboard is active */
+body.gamepad-navigation-active [data-gamepad-focusable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  border-radius: 8px !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Ensure focus is visible for buttons and inputs */
+[data-gamepad-focusable="true"] {
+  transition: outline 0.2s ease, box-shadow 0.2s ease, border-radius 0.2s ease;
+}
+
+/* Hide default focus outline when gamepad navigation is not active */
+body:not(.gamepad-navigation-active) [data-gamepad-focusable="true"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Scrollable container focus styling */
+body.gamepad-navigation-active [data-gamepad-scrollable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  border-radius: 8px !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Hide scrollable outline when gamepad navigation is not active */
+body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }

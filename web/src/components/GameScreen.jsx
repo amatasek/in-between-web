@@ -15,6 +15,7 @@ import GameLog from './GameLog.jsx';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
 
 const GameScreen = ({ onReturnToLobby }) => {
   // Get state and actions from context
@@ -23,6 +24,9 @@ const GameScreen = ({ onReturnToLobby }) => {
     error,
     clearError
   } = useGameContext();
+  
+  // Initialize gamepad navigation
+  const { isGamepadConnected } = useGamepadNavigation(true);
   
   // Auto-clear errors after 10 seconds
   useEffect(() => {
@@ -97,7 +101,7 @@ const GameScreen = ({ onReturnToLobby }) => {
         {/* Primary check: Is the current player sitting out? */}
         {currentPlayer?.isSittingOut ? (
           // If sitting out, always show the 'I'm Back!' button regardless of phase
-          <button onClick={handleImBackClick} className={styles.imBackButton}> 
+          <button onClick={handleImBackClick} className={styles.imBackButton} data-gamepad-focusable="true"> 
             I'm Back!
           </button>
         ) : (

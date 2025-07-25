@@ -10,15 +10,20 @@ export default function BaseModal({ title, onClose, children, footer, className 
         onClick={e => e.stopPropagation()}
         {...props}
       >
-        <button
-          className={styles.closeButton}
-          onClick={onClose}
-          aria-label="Close"
-          type="button"
-        >
-          &times;
-        </button>
-        {title && <div className={styles.header}>{title}</div>}
+        {title && (
+          <div className={styles.header}>
+            <h2>{title}</h2>
+            <button
+              className={styles.closeButton}
+              onClick={onClose}
+              aria-label="Close"
+              type="button"
+              data-gamepad-focusable="true"
+            >
+              ×
+            </button>
+          </div>
+        )}
         <div className={styles.content}>{children}</div>
         {footer && <div className={styles.footer}>{footer}</div>}
       </div>

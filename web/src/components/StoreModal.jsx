@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BaseModal from './common/BaseModal';
 import baseModalStyles from './common/BaseModal.module.css';
+import styles from './styles/PlayerStatsModal.module.css';
 import storeService from '../services/StoreService';
 
 const StoreModal = ({ onClose }) => {
@@ -71,23 +72,11 @@ const StoreModal = ({ onClose }) => {
   return (
     <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800, maxHeight: '80vh' }}>
       {/* Tab Navigation */}
-      <div style={{ 
-        display: 'flex', 
-        borderBottom: '1px solid #223344', 
-        marginBottom: '1.5rem' 
-      }}>
+      <div className={styles.tabsContainer}>
         <button
-          style={{
-            padding: '0.75rem 1.5rem',
-            fontWeight: '500',
-            transition: 'color 0.2s',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: activeTab === 'coins' ? '#64a9ff' : '#a0b9d6',
-            borderBottom: activeTab === 'coins' ? '2px solid #64a9ff' : 'none'
-          }}
+          className={`${styles.tabButton} ${activeTab === 'coins' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('coins')}
+          data-gamepad-focusable="true"
         >
           Coin Packs
         </button>
@@ -209,16 +198,11 @@ const StoreModal = ({ onClose }) => {
                       opacity: purchasing === offering.id ? 0.6 : 1,
                       cursor: purchasing === offering.id ? 'not-allowed' : 'pointer'
                     }}
+                    data-gamepad-focusable="true"
                   >
                     {purchasing === offering.id ? (
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{
-                          animation: 'spin 1s linear infinite',
-                          borderRadius: '50%',
-                          width: '16px',
-                          height: '16px',
-                          border: '2px solid transparent',
-                          borderTop: '2px solid currentColor',
+                        <div className={styles.loadingSpinner} style={{
                           marginRight: '0.5rem'
                         }}></div>
                         Processing...
@@ -233,13 +217,6 @@ const StoreModal = ({ onClose }) => {
           )}
         </div>
       )}
-      
-      <style jsx>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </BaseModal>
   );
 };

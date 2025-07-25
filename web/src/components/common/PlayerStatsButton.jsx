@@ -3,7 +3,7 @@ import BarChartIcon from '../icons/BarChartIcon';
 import PlayerStatsModal from '../PlayerStatsModal';
 import IconButton from './IconButton';
 
-const PlayerStatsButton = () => {
+const PlayerStatsButton = ({ ...props }) => {
   const [isStatsOpen, setIsStatsOpen] = useState(false);
 
   const openStats = () => {
@@ -22,6 +22,7 @@ const PlayerStatsButton = () => {
         aria-label="Open Player Stats"
         variant="stats"
         title="Player Stats"
+        {...props}
       />
       {/* Render the modal conditionally */}
       {isStatsOpen && <PlayerStatsModal isOpen={isStatsOpen} onClose={closeStats} />}

@@ -49,6 +49,20 @@
   box-shadow: 0 0 1px var(--success);
 }
 
+/* Gamepad focus indicators for the toggle */
+:global(body.gamepad-navigation-active) .toggleInput:focus + .toggleSlider {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Hide outline when gamepad navigation is not active */
+:global(body:not(.gamepad-navigation-active)) .toggleInput:focus + .toggleSlider {
+  outline: none !important;
+}
+
 .toggleInput:checked + .toggleSlider:before {
   transform: translateX(24px);
 }

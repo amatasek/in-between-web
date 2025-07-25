@@ -2,7 +2,7 @@ import React from 'react';
 import StoreIcon from './icons/StoreIcon';
 import IconButton from './common/IconButton';
 
-const StoreButton = ({ onClick }) => {
+const StoreButton = ({ onClick, ...props }) => {
   return (
     <IconButton
       onClick={onClick}
@@ -10,6 +10,7 @@ const StoreButton = ({ onClick }) => {
       aria-label="Store"
       variant="store"
       title="Store"
+      {...props}
     />
   );
 };

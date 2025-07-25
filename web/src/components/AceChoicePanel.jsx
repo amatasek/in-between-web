@@ -52,12 +52,14 @@ const AceChoicePanel = () => {
           <button 
             className={`${styles.aceChoiceButton} ${styles.aceHighButton}`}
             onClick={() => handleAceChoice(false)}
+            data-gamepad-focusable="true"
           >
             <span className={styles.buttonContent}>ACE HIGH <ArrowIcon direction="up" color="white" size={20} /></span>
           </button>
           <button 
             className={`${styles.aceChoiceButton} ${styles.aceLowButton}`}
             onClick={() => handleAceChoice(true)}
+            data-gamepad-focusable="true"
           >
             <span className={styles.buttonContent}>ACE LOW <ArrowIcon direction="down" color="white" size={20} /></span>
           </button>

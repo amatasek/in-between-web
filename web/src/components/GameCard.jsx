@@ -56,7 +56,8 @@ function GameCard({ game, onJoin, userId }) {
       <button 
         className={buttonClass} // Use joinGameButton + conditional
         onClick={() => onJoin(game.id)}
-        disabled={!userId} 
+        disabled={!userId}
+        data-gamepad-focusable="true"
       >
         {buttonText} 
       </button>

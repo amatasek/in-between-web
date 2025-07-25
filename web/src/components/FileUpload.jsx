@@ -98,6 +98,7 @@ const FileUpload = ({
         onClick={handleButtonClick}
         className={`${styles.uploadButton} ${currentFileUrl ? styles.changeButton : ''}`}
         disabled={isUploading}
+        data-gamepad-focusable="true"
       >
         {isUploading ? 'Uploading...' : currentFileUrl ? `Change ${label}` : `Upload ${label}`}
       </button>

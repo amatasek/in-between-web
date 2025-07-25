@@ -85,7 +85,6 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
             
             // Only play sound if it wasn't my turn before but now it is
             if (isMyTurn && !wasPreviouslyMyTurn) {
-              console.log('[Turn Debug] Playing alert sound!');
               soundService.play('ui.alert');
             }
             

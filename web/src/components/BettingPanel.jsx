@@ -75,6 +75,7 @@ const BettingPanel = () => {
           <button
             className={`${styles.betButton} ${styles.extremeButton} ${styles.passButton}`}
             onClick={() => placeBet(0)}
+            data-gamepad-focusable="true"
           >
             PASS
           </button>
@@ -83,6 +84,7 @@ const BettingPanel = () => {
             amount={potAmount}
             onClick={() => placeBet(potAmount)}
             disabled={potAmount > playerBalance}
+            data-gamepad-focusable="true"
           />
         </div>
         
@@ -97,6 +99,7 @@ const BettingPanel = () => {
                 className={`${styles.betButton} ${disabled ? styles.disabledButton : ''}`}
                 onClick={() => placeBet(amount)}
                 disabled={disabled}
+                data-gamepad-focusable="true"
               >
                 <CurrencyAmount amount={amount} />
               </button>
@@ -112,11 +115,13 @@ const BettingPanel = () => {
               value={customBet}
               onChange={handleCustomBetChange}
               onKeyPress={handleKeyPress}
+              data-gamepad-focusable="true"
             />
             <button
               className={styles.customBetButton}
               onClick={handleCustomBetSubmit}
               disabled={!customBet}
+              data-gamepad-focusable="true"
             >
               Bet
             </button>

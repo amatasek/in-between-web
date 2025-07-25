@@ -115,6 +115,8 @@ const GameHeader = ({ handleLeaveGame }) => {
               className={styles.gameIdLink} 
               onClick={() => setShowGameSummary(true)}
               title="Click to view game summary"
+              data-gamepad-focusable="true"
+              tabIndex="0"
             >
               Game #{gameId}
             </span>
@@ -154,10 +156,10 @@ const GameHeader = ({ handleLeaveGame }) => {
               Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
             </div>
             <div className={styles.controlsGroup}>
-              <PreferencesButton />
-              <StoreButton onClick={() => setShowStoreModal(true)} />
-              <RulesButton />
-              <LeaveButton onClick={handleLeaveGame} />
+              <PreferencesButton data-gamepad-focusable="true" />
+              <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
+              <RulesButton data-gamepad-focusable="true" />
+              <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
             </div>
           </div>
         </div>
@@ -174,6 +176,8 @@ const GameHeader = ({ handleLeaveGame }) => {
                 className={styles.gameIdLink} 
                 onClick={() => setShowGameSummary(true)}
                 title="Click to view game summary"
+                data-gamepad-focusable="true"
+                tabIndex="0"
               >
                 Game #{gameId}
               </span>
@@ -186,10 +190,10 @@ const GameHeader = ({ handleLeaveGame }) => {
                 Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
               </div>
               <div className={styles.mobileActions}>
-                <PreferencesButton />
-                <StoreButton onClick={() => setShowStoreModal(true)} />
-                <RulesButton />
-                <LeaveButton onClick={handleLeaveGame} />
+                <PreferencesButton data-gamepad-focusable="true" />
+                <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
+                <RulesButton data-gamepad-focusable="true" />
+                <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
               </div>
             </div>
           </div>

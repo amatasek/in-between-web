@@ -15,7 +15,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
         <div className={styles.modalContent}>
           <div className={styles.modalHeader}>
             <h2>Game Summary</h2>
-            <button className={styles.closeButton} onClick={onClose}>×</button>
+            <button className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
           </div>
           <div className={styles.settingsContainer}>
             <div className={styles.loadingMessage}>Loading game data...</div>
@@ -174,7 +174,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
           <h2>Game Summary ({gameId})</h2>
           <div className={styles.headerButtons}>
             <TransactionDownloadButton gameState={gameData} />
-            <button className={styles.closeButton} onClick={onClose}>×</button>
+            <button className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
           </div>
         </div>
         
@@ -184,6 +184,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
             <button 
               className={`${styles.tabButton} ${activeTab === 'totals' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('totals')}
+              data-gamepad-focusable="true"
             >
               Totals
             </button>
@@ -191,6 +192,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
             <button 
               className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('stats')}
+              data-gamepad-focusable="true"
             >
               Stats
             </button>
@@ -199,6 +201,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
               <button 
                 className={`${styles.tabButton} ${activeTab === 'payouts' ? styles.activeTab : ''}`}
                 onClick={() => setActiveTab('payouts')}
+                data-gamepad-focusable="true"
               >
                 Payouts
               </button>

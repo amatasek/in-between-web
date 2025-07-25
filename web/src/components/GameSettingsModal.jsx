@@ -121,6 +121,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
             type="button"
             onClick={onClose}
             className={`${lobbyStyles.actionButton} ${lobbyStyles.cancelButton || ''}`}
+            data-gamepad-focusable="true"
           >
             Cancel
           </button>
@@ -129,6 +130,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
             form="gameSettingsForm"
             className={`${lobbyStyles.actionButton} ${lobbyStyles.createButton}`}
             disabled={Object.keys(errors).length > 0}
+            data-gamepad-focusable="true"
           >
             Create Game
           </button>
@@ -158,6 +160,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   maxLength={26}
                   autoFocus
                   style={{ marginTop: 8 }}
+                  data-gamepad-focusable="true"
                 />
               )}
               {errors.customName && <span className="errorMessage">{errors.customName}</span>}
@@ -185,6 +188,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   maxLength={36}
                   autoFocus={settings.isPrivate && !settings.useCustomName}
                   style={{ marginTop: 8 }}
+                  data-gamepad-focusable="true"
                 />
               )}
               {errors.password && <span className="errorMessage">{errors.password}</span>}

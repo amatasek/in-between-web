@@ -30,12 +30,13 @@ function PasswordPromptModal({ isOpen, onClose, onSubmit, gameId }) {
             className={styles.passwordInput}
             autoFocus
             required
+            data-gamepad-focusable="true"
           />
           <div className={styles.modalActions}>
-            <button type="button" onClick={handleCancel} className={`${styles.modalButton} ${styles.cancelButton}`}>
+            <button type="button" onClick={handleCancel} className={`${styles.modalButton} ${styles.cancelButton}`} data-gamepad-focusable="true">
               Cancel
             </button>
-            <button type="submit" className={`${styles.modalButton} ${styles.submitButton}`}>
+            <button type="submit" className={`${styles.modalButton} ${styles.submitButton}`} data-gamepad-focusable="true">
               Join Game
             </button>
           </div>

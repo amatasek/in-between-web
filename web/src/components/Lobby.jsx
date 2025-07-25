@@ -5,6 +5,7 @@ import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { usePreferences } from '../contexts/PreferencesContext';
+import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
 import { TextField, useMediaQuery, InputAdornment } from '@mui/material';
 import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
@@ -24,6 +25,9 @@ const Lobby = () => {
   const { user, logout, loading: authLoading, refreshUserData } = useAuth();
   const { socket, isConnected, loading: socketLoading } = useSocket();
   const { preferences } = usePreferences();
+  
+  // Initialize gamepad navigation
+  const { isGamepadConnected } = useGamepadNavigation(true);
   const navigate = useNavigate(); // Get navigate function
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null); // Local error state for lobby actions
@@ -192,13 +196,14 @@ const Lobby = () => {
                  <button 
                    className={styles.logoutButton}
                    onClick={logout}
+                   data-gamepad-focusable="true"
                  >
                    <span className={styles.buttonText}>Logout</span>
                  </button>
-                 <RulesButton />
-                 <PlayerStatsButton />
-                 <StoreButton onClick={() => setShowStoreModal(true)} />
-                 <PreferencesButton />
+                 <RulesButton data-gamepad-focusable="true" />
+                 <PlayerStatsButton data-gamepad-focusable="true" />
+                 <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
+                 <PreferencesButton data-gamepad-focusable="true" />
                </div>
              </div>
            </div>
@@ -210,6 +215,7 @@ const Lobby = () => {
                className={`${styles.actionButton} ${styles.createButton}`}
                onClick={handleCreateGame}
                disabled={!user?.username}
+               data-gamepad-focusable="true"
              >
                Create Quick Game
              </button>
@@ -218,6 +224,7 @@ const Lobby = () => {
                style={{ marginTop: 8 }}
                onClick={handleCreateCustomGame}
                disabled={!user?.username}
+               data-gamepad-focusable="true"
              >
                Create Custom Game
              </button>
@@ -261,6 +268,7 @@ const Lobby = () => {
              value={searchQuery}
              onChange={handleSearchChange}
              size={isSmallMobile ? "small" : "medium"}
+             inputProps={{ "data-gamepad-focusable": "true" }}
              InputProps={{
                startAdornment: (
                  <InputAdornment position="start">

@@ -12,13 +12,14 @@ import CurrencyAmount from './common/CurrencyAmount';
  * @param {boolean} props.disabled - Whether the button is disabled
  * @param {function} props.onClick - Function to call when the button is clicked
  */
-const PotButton = ({ amount, disabled, onClick }) => {
+const PotButton = ({ amount, disabled, onClick, ...props }) => {
   return (
     <button
       className={`${styles.potButton} ${disabled ? styles.disabled : ''}`}
       onClick={onClick}
       disabled={disabled}
       aria-label={`Bet the pot: ${amount} chips`}
+      {...props}
     >
       {/* Layer 2: Gold border with texture */}
       <div className={styles.shimmerBorder}></div>

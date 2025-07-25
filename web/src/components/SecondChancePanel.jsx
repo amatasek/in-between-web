@@ -61,6 +61,7 @@ const SecondChancePanel = () => {
           <button
             className={`${styles.secondChanceButton} ${styles.anteAgainButton}`}
             onClick={() => handleSecondChance(true)}
+            data-gamepad-focusable="true"
           >
             {loading && actionType === 'ante' ? 'Processing...' : (
               <>
@@ -73,6 +74,7 @@ const SecondChancePanel = () => {
           <button
             className={`${styles.secondChanceButton} ${styles.passButton}`}
             onClick={() => handleSecondChance(false)}
+            data-gamepad-focusable="true"
           >
             {loading && actionType === 'pass' ? 'Processing...' : 'Pass'}
           </button>

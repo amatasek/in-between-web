@@ -15,7 +15,12 @@ const GameRulesModal = ({ onClose }) => {
       onClose={onClose}
       style={{ maxWidth: 600 }}
     >
-      <div className={baseModalStyles.content} style={{ maxHeight: '60vh', overflowY: 'auto', padding: '0' }}>
+      <div 
+        className={`${baseModalStyles.content} ${baseModalStyles.scrollableContent}`} 
+        style={{ maxHeight: '60vh', padding: '0' }}
+        data-gamepad-scrollable="true"
+        tabIndex="0"
+      >
         <div style={{ marginBottom: 22 }}>
           <div className={baseModalStyles.sectionHeader}>Objective</div>
           <div className={baseModalStyles.settingDescription}>

@@ -70,6 +70,7 @@ const AnteControls = () => {
                 onClick={playerReady}
                 disabled={!hasEnoughChips}
                 aria-label="Ante up"
+                data-gamepad-focusable="true"
               >
                 {/* Add shimmer border for glimmering effect */}
                 <div className={styles.shimmerBorder}></div>
@@ -93,6 +94,7 @@ const AnteControls = () => {
                 disabled={myPlayer?.isSittingOut} // Disable if sitting out
                 title={myPlayer?.isSittingOut ? "You are currently sitting out" : "Sit out next round"}
                 aria-label="Sit Out"
+                data-gamepad-focusable="true"
               >
                 <div className={styles.shimmerBorder}></div>
                 <div className={styles.buttonInfo}>
@@ -117,6 +119,7 @@ const AnteControls = () => {
                   }
                 }}
                 aria-label="Back out"
+                data-gamepad-focusable="true"
               >
                 {/* Add shimmer border for glimmering effect */}
                 <div className={styles.shimmerBorder}></div>

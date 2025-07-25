@@ -177,12 +177,14 @@ const PlayerStatsModal = ({ onClose }) => {
             <button 
               className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('stats')}
+              data-gamepad-focusable="true"
             >
               Lifetime Stats
             </button>
             <button 
               className={`${styles.tabButton} ${activeTab === 'history' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('history')}
+              data-gamepad-focusable="true"
             >
               Game History
             </button>
@@ -203,9 +205,13 @@ const PlayerStatsModal = ({ onClose }) => {
                   <p>No lifetime statistics available.</p>
                 </div>
               ) : (
-                <div className={styles.statsGrid}>
-                  {lifetimeStats.map((stat) => (
-                    <div key={stat.key} className={styles.statItem}>
+                <div 
+                  className={styles.statsGrid}
+                  data-gamepad-scrollable="true"
+                  tabIndex="0"
+                >
+                  {lifetimeStats.map((stat, index) => (
+                    <div key={stat.key || `stat-${index}`} className={styles.statItem}>
                       <div className={styles.statLabel}>{stat.label}</div>
                       <div className={styles.statValue}>
                         {formatStatValue(stat.type, stat.value)}
@@ -234,7 +240,11 @@ const PlayerStatsModal = ({ onClose }) => {
                 </div>
               ) : (
                 <>
-                  <div className={styles.historyTable}>
+                  <div 
+                    className={styles.historyTable}
+                    data-gamepad-scrollable="true"
+                    tabIndex="0"
+                  >
                     <div className={styles.tableHeader}>
                       <div className={styles.gameNameHeader}>Game</div>
                       <div className={styles.playerCountHeader}>Players</div>
@@ -248,6 +258,9 @@ const PlayerStatsModal = ({ onClose }) => {
                           <span 
                             className={styles.gameNameLink} 
                             onClick={() => handleGameClick(game._id)}
+                            tabIndex="0"
+                            role="button"
+                            data-gamepad-focusable="true"
                           >
                             #{game._id}
                           </span>
@@ -265,6 +278,7 @@ const PlayerStatsModal = ({ onClose }) => {
                       disabled={currentPage === 0}
                       className={styles.pageButton}
                       aria-label="Previous page"
+                      data-gamepad-focusable="true"
                     >
                       &larr;
                     </button>
@@ -278,6 +292,7 @@ const PlayerStatsModal = ({ onClose }) => {
                       disabled={!historyData.pagination || historyData.games.length < pageSize}
                       className={styles.pageButton}
                       aria-label="Next page"
+                      data-gamepad-focusable="true"
                     >
                       &rarr;
                     </button>

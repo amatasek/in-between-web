@@ -36,28 +36,39 @@
 }
 
 .header {
-  font-size: 1.4rem;
-  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 20px 32px 10px 32px;
   border-bottom: 1px solid #223344;
   background: transparent;
   border-radius: 16px 16px 0 0;
 }
 
+.header h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
 .closeButton {
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  font-size: 2rem;
-  color: #888;
   background: none;
   border: none;
+  color: white;
+  font-size: 1.8rem;
   cursor: pointer;
-  z-index: 2;
-  transition: color 0.15s;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
 }
+
 .closeButton:hover {
-  color: #fff;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .sectionHeader {
@@ -180,6 +191,51 @@
   padding: 18px 32px 0 32px;
   overflow-y: auto;
   flex: 1 1 auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
+}
+
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(100, 169, 255, 0.3);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 169, 255, 0.5);
+}
+
+/* Scrollable content area with custom scrollbar styling */
+.scrollableContent {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
+}
+
+.scrollableContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollableContent::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.scrollableContent::-webkit-scrollbar-thumb {
+  background: rgba(100, 169, 255, 0.3);
+  border-radius: 4px;
+}
+
+.scrollableContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 169, 255, 0.5);
 }
 
 /* Shared settings panel styles for all modals */

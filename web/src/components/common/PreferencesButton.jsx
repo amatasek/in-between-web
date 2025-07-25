@@ -22,6 +22,7 @@ const PreferencesButton = () => {
         aria-label="Open Preferences"
         variant="preferences"
         title="Preferences"
+        data-gamepad-focusable="true"
       />
       {/* Render the modal conditionally */}
       {isPreferencesOpen && <PreferencesModal isOpen={isPreferencesOpen} onClose={closePreferences} />}
