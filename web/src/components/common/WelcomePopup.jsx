@@ -12,10 +12,10 @@ import { ICONS } from '../../constants/UIConstants';
 const WelcomePopup = ({ username, balance, onClose }) => {
   return (
     <div className={styles.overlay}>
-      <div className={styles.popup}>
+      <div className={styles.popup} role="dialog" aria-labelledby="welcome-title">
         <div className={styles.header}>
-          <h2>Welcome, {username}!</h2>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <h2 id="welcome-title">Welcome, {username}!</h2>
+          <button className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
         </div>
         <div className={styles.content}>
           <p className={styles.message}>
@@ -30,7 +30,7 @@ const WelcomePopup = ({ username, balance, onClose }) => {
           </p>
         </div>
         <div className={styles.footer}>
-          <button className={styles.actionButton} onClick={onClose}>
+          <button className={styles.actionButton} onClick={onClose} data-gamepad-focusable="true">
             Let's Play!
           </button>
         </div>

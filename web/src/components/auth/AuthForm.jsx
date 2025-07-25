@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
   Box,
-  TextField,
   Button,
   Typography,
   Paper,
   Alert,
   useMediaQuery,
 } from '@mui/material';
+import GamepadTextField from '../GamepadTextField';
 import styles from './AuthForm.module.css';
 
 const AuthForm = ({ onSubmit, mode }) => {
@@ -41,7 +41,8 @@ const AuthForm = ({ onSubmit, mode }) => {
       )}
 
       <form onSubmit={handleSubmit}>
-        <TextField
+        <GamepadTextField
+          title="Enter Username"
           label="Username"
           variant="outlined"
           fullWidth
@@ -81,7 +82,8 @@ const AuthForm = ({ onSubmit, mode }) => {
           }}
         />
         
-        <TextField
+        <GamepadTextField
+          title="Enter Password"
           label="Password"
           type="password"
           variant="outlined"
@@ -128,6 +130,7 @@ const AuthForm = ({ onSubmit, mode }) => {
           fullWidth
           size="large"
           className={styles.submitButton}
+          data-gamepad-focusable="true"
           sx={{
             mt: isSmallMobile ? 2 : 3,
             background: 'linear-gradient(to right, var(--info), var(--success))',

@@ -3,6 +3,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AuthForm from './AuthForm.jsx';
 import { useAuth } from '../../contexts/AuthContext';
+import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
 import styles from './AuthPage.module.css';
 import AppHeader from '../common/AppHeader';
 
@@ -10,6 +11,9 @@ const AuthPage = () => {
   const [mode, setMode] = useState('login');
   const { login } = useAuth();
   const navigate = useNavigate();
+  
+  // Initialize gamepad navigation
+  useGamepadNavigation(true);
 
   const [error, setError] = useState(null);
 
@@ -24,7 +28,6 @@ const AuthPage = () => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     const endpoint = `${API_URL}/auth/${mode}`;
     
-    console.log(`[Auth] ${mode.toUpperCase()} attempt: ${username}`);
 
     try {
       const requestBody = { username, password };
@@ -59,7 +62,6 @@ const AuthPage = () => {
         throw new Error('Invalid server response format');
       }
 
-      console.log(`[Auth] ${mode.toUpperCase()} successful: ${data.user.username}`);
       try {
         login(data.user, data.token);
         // Navigate to the lobby after successful login
@@ -97,6 +99,7 @@ const AuthPage = () => {
           <Button
             color="primary"
             onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+            data-gamepad-focusable="true"
             sx={{
               color: '#ecf0f1',
               textTransform: 'none',
