@@ -270,14 +270,13 @@ class BotService extends BaseService {
   }
 
   async handleAceDecision(bot, gameState, botPlayer) {
-    if (gameState.currentPlayerId !== bot.id) return;
+    if (gameState.currentPlayerId !== bot.id || bot.isProcessingAce) return;
     
+    bot.isProcessingAce = true;
     const timeoutId = setTimeout(() => {
       bot.pendingTimeouts.delete(timeoutId);
+      bot.isProcessingAce = false;
       if (!this.activeBots.has(bot.id)) return;
-      
-      const currentGame = this.getService('gameState').games[bot.gameId];
-      if (currentGame?.currentPlayerId !== bot.id || !currentGame?.waitingForAceDecision) return;
       
       const aceChoice = bot.decisionEngine.makeAceDecision(gameState);
       const decision = { isAceLow: aceChoice === 'low' };
@@ -287,14 +286,13 @@ class BotService extends BaseService {
   }
 
   async handleSecondChance(bot, gameState, botPlayer) {
-    if (gameState.currentPlayerId !== bot.id) return;
+    if (gameState.currentPlayerId !== bot.id || bot.isProcessingSecondChance) return;
     
+    bot.isProcessingSecondChance = true;
     const timeoutId = setTimeout(() => {
       bot.pendingTimeouts.delete(timeoutId);
+      bot.isProcessingSecondChance = false;
       if (!this.activeBots.has(bot.id)) return;
-      
-      const currentGame = this.getService('gameState').games[bot.gameId];
-      if (currentGame?.currentPlayerId !== bot.id || !currentGame?.waitingForSecondChance) return;
       
       const decision = bot.decisionEngine.makeSecondChanceDecision(gameState, botPlayer);
       bot.socket.emit('secondChance', { anteAgain: decision.accepted });
@@ -331,7 +329,7 @@ class BotService extends BaseService {
     bot.pendingTimeouts?.forEach(clearTimeout);
     bot.pendingTimeouts?.clear();
     
-    Object.assign(bot, { isProcessingReady: false, isProcessingBet: false, isLeavingGame: false, lastProcessedState: null });
+    Object.assign(bot, { isProcessingReady: false, isProcessingBet: false, isProcessingAce: false, isProcessingSecondChance: false, isLeavingGame: false, lastProcessedState: null });
 
     if (this.botsByGame.has(bot.gameId)) {
       this.botsByGame.get(bot.gameId).delete(botId);
