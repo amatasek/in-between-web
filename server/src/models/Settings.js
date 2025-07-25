@@ -10,6 +10,7 @@ class Settings {
     this.password = options.password ?? null;
     this.enableAceChoice = options.enableAceChoice ?? true;
     this.enableSecondChance = options.enableSecondChance ?? true;
+    this.numberOfBots = options.numberOfBots ?? 0;
 
     // Custom Name Validation (only if a name is actually provided)
     if (this.customName) {
@@ -32,13 +33,20 @@ class Settings {
       // If private is true but no password given, this is an invalid state
       throw new Error('A password is required for private games.');
     }
+
+    // Number of Bots Validation
+    const { MAX_SEATS } = require('../../../shared/constants/GameConstants');
+    if (this.numberOfBots < 0 || this.numberOfBots > MAX_SEATS) {
+      throw new Error(`Number of bots must be between 0 and ${MAX_SEATS}.`);
+    }
   }
 
   toJSON() {
     return {
       isPrivate: this.isPrivate,
       enableAceChoice: this.enableAceChoice,
-      enableSecondChance: this.enableSecondChance
+      enableSecondChance: this.enableSecondChance,
+      numberOfBots: this.numberOfBots
     };
   }
 }

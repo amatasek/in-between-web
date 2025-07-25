@@ -105,7 +105,7 @@ const Lobby = () => {
     }
   };
 
-  const handleCreateGame = () => createGameWithSettings();
+  const handleCreateGame = () => createGameWithSettings({ numberOfBots: 5 });
 
   // Handler for custom game creation
   const handleCreateCustomGame = () => {

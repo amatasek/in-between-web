@@ -11,6 +11,7 @@ const DEFAULT_SETTINGS = {
   password: '',
   enableAceChoice: true,
   enableSecondChance: true,
+  numberOfBots: 0,
 };
 
 const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClose }) => {
@@ -42,6 +43,13 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
         newErrors.password = 'Password must be 3-36 characters.';
       }
     }
+
+    // Validate Number of Bots
+    const botCount = currentSettings.numberOfBots;
+    if (botCount < 0 || botCount > 16) {
+      newErrors.numberOfBots = 'Number of bots must be between 0 and 16.';
+    }
+
     return newErrors;
   };
 
@@ -87,6 +95,13 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
       setErrors(currentErrors => {
         const newErrors = { ...currentErrors };
         delete newErrors.password;
+        return newErrors;
+      });
+    }
+    if (key === 'numberOfBots' && errors.numberOfBots) {
+      setErrors(currentErrors => {
+        const newErrors = { ...currentErrors };
+        delete newErrors.numberOfBots;
         return newErrors;
       });
     }
@@ -192,6 +207,26 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 />
               )}
               {errors.password && <span className="errorMessage">{errors.password}</span>}
+            </div>
+          </div>
+
+          {/* Number of Bots Setting */}
+          <div className={baseModalStyles.settingItem}>
+            <div className={baseModalStyles.settingDescription}>
+              <h4>Number of Bots</h4>
+              <p>Add AI players to your game (0-16)</p>
+            </div>
+            <div className={baseModalStyles.settingControls}>
+              <input
+                type="number"
+                min="0"
+                max="16"
+                value={settings.numberOfBots}
+                onChange={e => handleChange('numberOfBots', parseInt(e.target.value) || 0)}
+                className={`${baseModalStyles.textInput}${errors.numberOfBots ? ' ' + baseModalStyles.inputError : ''}`}
+                data-gamepad-focusable="true"
+              />
+              {errors.numberOfBots && <span className="errorMessage">{errors.numberOfBots}</span>}
             </div>
           </div>
 
