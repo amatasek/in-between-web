@@ -2,9 +2,9 @@ import React from 'react';
 import styles from './BaseModal.module.css';
 
 // BaseModal: Shared modal structure for all app modals
-export default function BaseModal({ title, onClose, children, footer, className = '', ...props }) {
+export default function BaseModal({ title, onClose, children, footer, className = '', overlayStyle, ...props }) {
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} style={overlayStyle} onClick={onClose}>
       <div
         className={`${styles.modal} ${className}`}
         onClick={e => e.stopPropagation()}

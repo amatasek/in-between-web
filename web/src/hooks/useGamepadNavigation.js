@@ -39,18 +39,43 @@ export const useGamepadNavigation = (isEnabled = true) => {
       }
       
       // Check if element is behind a modal
-      const modals = document.querySelectorAll('[class*="modal"], [class*="Modal"], [role="dialog"]');
+      const modals = document.querySelectorAll('[class*="modal"], [class*="Modal"], [role="dialog"], [class*="overlay"]');
       if (modals.length > 0) {
-        // Sort modals by z-index to find the topmost one
-        const sortedModals = Array.from(modals).sort((a, b) => {
-          const aZIndex = parseInt(window.getComputedStyle(a).zIndex) || 0;
-          const bZIndex = parseInt(window.getComputedStyle(b).zIndex) || 0;
-          return bZIndex - aZIndex; // Highest z-index first
+        // Filter to only get actual modal containers (not overlays)
+        const modalContainers = Array.from(modals).filter(modal => {
+          const className = modal.className;
+          // Look for actual modal content containers, not just overlays
+          return className.includes('modal') || className.includes('Modal') || modal.getAttribute('role') === 'dialog';
         });
         
-        // Only include elements that are inside the topmost modal
-        const topmostModal = sortedModals[0];
-        return topmostModal && topmostModal.contains(element);
+        if (modalContainers.length > 0) {
+          // Sort modals by z-index to find the topmost one
+          const sortedModals = modalContainers.sort((a, b) => {
+            let aZIndex = parseInt(window.getComputedStyle(a).zIndex) || 0;
+            let bZIndex = parseInt(window.getComputedStyle(b).zIndex) || 0;
+            
+            // If z-index is auto/0, check the parent overlay
+            if (aZIndex === 0) {
+              const aOverlay = a.parentElement;
+              if (aOverlay && aOverlay.classList.toString().includes('overlay')) {
+                aZIndex = parseInt(window.getComputedStyle(aOverlay).zIndex) || 0;
+              }
+            }
+            
+            if (bZIndex === 0) {
+              const bOverlay = b.parentElement;
+              if (bOverlay && bOverlay.classList.toString().includes('overlay')) {
+                bZIndex = parseInt(window.getComputedStyle(bOverlay).zIndex) || 0;
+              }
+            }
+            
+            return bZIndex - aZIndex; // Highest z-index first
+          });
+          
+          // Only include elements that are inside the topmost modal
+          const topmostModal = sortedModals[0];
+          return topmostModal && topmostModal.contains(element);
+        }
       }
       
       return true;
@@ -351,6 +376,22 @@ export const useGamepadNavigation = (isEnabled = true) => {
             prevStates.stickMoved = true;
           } else if (Math.abs(leftStickX) <= deadzone && Math.abs(leftStickY) <= deadzone) {
             prevStates.stickMoved = false;
+          }
+
+          // Right analog stick page scrolling
+          const rightStickX = gamepad.axes[2] || 0;
+          const rightStickY = gamepad.axes[3] || 0;
+          const scrollDeadzone = 0.2;
+          const scrollSpeed = 8;
+
+          if (Math.abs(rightStickY) > scrollDeadzone) {
+            const scrollAmount = rightStickY * scrollSpeed;
+            window.scrollBy(0, scrollAmount);
+          }
+          
+          if (Math.abs(rightStickX) > scrollDeadzone) {
+            const scrollAmount = rightStickX * scrollSpeed;
+            window.scrollBy(scrollAmount, 0);
           }
         }
       }

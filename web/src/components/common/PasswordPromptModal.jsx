@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from '../../styles/PasswordPromptModal.module.css';
+import GamepadInput from '../GamepadInput';
 
 function PasswordPromptModal({ isOpen, onClose, onSubmit, gameId }) {
   const [password, setPassword] = useState('');
@@ -23,14 +24,14 @@ function PasswordPromptModal({ isOpen, onClose, onSubmit, gameId }) {
         <h2>Password Required</h2>
         <p>Please enter the password for game <strong>{gameId || ''}</strong>:</p>
         <form onSubmit={handleSubmit}>
-          <input
+          <GamepadInput
+            title="Enter Game Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={styles.passwordInput}
             autoFocus
             required
-            data-gamepad-focusable="true"
           />
           <div className={styles.modalActions}>
             <button type="button" onClick={handleCancel} className={`${styles.modalButton} ${styles.cancelButton}`} data-gamepad-focusable="true">

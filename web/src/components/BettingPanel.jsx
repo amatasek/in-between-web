@@ -4,6 +4,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import CurrencyAmount from './common/CurrencyAmount';
 import PotButton from './PotButton.jsx';
+import GamepadInput from './GamepadInput';
 
 const BettingPanel = () => {
   // Get game state and actions from context
@@ -108,14 +109,14 @@ const BettingPanel = () => {
           
           {/* Custom bet input */}
           <div className={styles.customBetContainer}>
-            <input
-              type="text"
+            <GamepadInput
+              title="Enter Bet Amount"
+              type="number"
               className={styles.customBetInput}
               placeholder="Custom"
               value={customBet}
               onChange={handleCustomBetChange}
               onKeyPress={handleKeyPress}
-              data-gamepad-focusable="true"
             />
             <button
               className={styles.customBetButton}

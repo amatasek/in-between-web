@@ -64,7 +64,6 @@ export const PreferencesProvider = ({ children }) => {
       return;
     }
     
-    console.log('[Preferences] Loading preferences for user:', user.username);
       
     try {
       setLoading(true);
@@ -143,7 +142,6 @@ export const PreferencesProvider = ({ children }) => {
       
       // If updating the muted preference, sync with sound service
       if (key === 'muted') {
-        console.log(`[Preferences] Updating sound muted state to: ${value}`);
         soundService.setMuted(value);
       }
       
@@ -162,12 +160,9 @@ export const PreferencesProvider = ({ children }) => {
       }
       
       const data = await response.json();
-      console.log(`[Preferences] Updated ${key}:`, data);
       
       // Format preferences data with proper image URLs
       const formattedData = formatPreferencesData(data);
-      
-      console.log(`[Preferences] Formatted ${key} response:`, formattedData);
       
       // Update with the formatted server response (in case there were any changes)
       setPreferences(formattedData);
@@ -200,11 +195,6 @@ export const PreferencesProvider = ({ children }) => {
       return false;
     }
     
-    console.log('[Preferences] Starting GIF upload:', {
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
-    });
     
     try {
       const formData = new FormData();
@@ -219,7 +209,6 @@ export const PreferencesProvider = ({ children }) => {
         return false;
       }
       
-      console.log(`[Preferences] Sending GIF upload request to: ${API_URL}/preferences/twoSecondPotGif`);
       
       const response = await fetch(`${API_URL}/preferences/twoSecondPotGif`, {
         method: 'POST',
@@ -230,11 +219,6 @@ export const PreferencesProvider = ({ children }) => {
       });
       
       const responseText = await response.text();
-      console.log('[Preferences] GIF upload response:', {
-        status: response.status,
-        statusText: response.statusText,
-        responseText
-      });
       
       if (!response.ok) {
         throw new Error(`Failed to upload GIF file: ${responseText}`);
@@ -242,11 +226,9 @@ export const PreferencesProvider = ({ children }) => {
       
       // Parse the response text as JSON
       const data = responseText ? JSON.parse(responseText) : {};
-      console.log('[Preferences] Uploaded GIF:', data);
       
       // Format the file URL for consistency
       const formattedUrl = formatImageUrl(data.fileUrl);
-      console.log('[Preferences] Formatted GIF URL:', formattedUrl);
       
       // Update preferences with the formatted file URL
       setPreferences(prev => ({
@@ -268,11 +250,6 @@ export const PreferencesProvider = ({ children }) => {
       return false;
     }
     
-    console.log('[Preferences] Starting MP3 upload:', {
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
-    });
     
     try {
       const formData = new FormData();
@@ -287,7 +264,6 @@ export const PreferencesProvider = ({ children }) => {
         return false;
       }
       
-      console.log(`[Preferences] Sending MP3 upload request to: ${API_URL}/preferences/twoSecondPotMp3`);
       
       const response = await fetch(`${API_URL}/preferences/twoSecondPotMp3`, {
         method: 'POST',
@@ -298,11 +274,6 @@ export const PreferencesProvider = ({ children }) => {
       });
       
       const responseText = await response.text();
-      console.log('[Preferences] MP3 upload response:', {
-        status: response.status,
-        statusText: response.statusText,
-        responseText
-      });
       
       if (!response.ok) {
         throw new Error(`Failed to upload MP3 file: ${responseText}`);
@@ -310,7 +281,6 @@ export const PreferencesProvider = ({ children }) => {
       
       // Parse the response text as JSON
       const data = responseText ? JSON.parse(responseText) : {};
-      console.log('[Preferences] Uploaded MP3:', data);
       
       // Update preferences with the file URL
       setPreferences(prev => ({
@@ -332,11 +302,6 @@ export const PreferencesProvider = ({ children }) => {
       return false;
     }
     
-    console.log('[Preferences] Starting profile image upload:', {
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type
-    });
     
     try {
       const formData = new FormData();
@@ -351,7 +316,6 @@ export const PreferencesProvider = ({ children }) => {
         return false;
       }
       
-      console.log(`[Preferences] Sending profile image upload request to: ${API_URL}/preferences/profileImg`);
       
       const response = await fetch(`${API_URL}/preferences/profileImg`, {
         method: 'POST',
@@ -362,11 +326,6 @@ export const PreferencesProvider = ({ children }) => {
       });
       
       const responseText = await response.text();
-      console.log('[Preferences] Profile image upload response:', {
-        status: response.status,
-        statusText: response.statusText,
-        responseText
-      });
       
       if (!response.ok) {
         throw new Error(`Failed to upload profile image: ${responseText}`);
@@ -374,11 +333,9 @@ export const PreferencesProvider = ({ children }) => {
       
       // Parse the response text as JSON
       const data = responseText ? JSON.parse(responseText) : {};
-      console.log('[Preferences] Uploaded profile image:', data);
       
       // Format the file URL for consistency
       const formattedUrl = formatImageUrl(data.fileUrl);
-      console.log('[Preferences] Formatted profile image URL:', formattedUrl);
       
       // Update preferences with the formatted file URL
       setPreferences(prev => ({

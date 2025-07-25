@@ -3,6 +3,7 @@ import ToggleSwitch from './ToggleSwitch.jsx';
 import lobbyStyles from './styles/Lobby.module.css';
 import BaseModal from './common/BaseModal';
 import baseModalStyles from './common/BaseModal.module.css';
+import GamepadInput from './GamepadInput';
 
 const DEFAULT_SETTINGS = {
   useCustomName: false,
@@ -166,7 +167,8 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 onChange={e => handleChange('useCustomName', e.target.checked)}
               />
               {settings.useCustomName && (
-                <input
+                <GamepadInput
+                  title="Enter Game Name"
                   type="text"
                   value={settings.customName || ''}
                   onChange={e => handleChange('customName', e.target.value)}
@@ -175,7 +177,6 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   maxLength={26}
                   autoFocus
                   style={{ marginTop: 8 }}
-                  data-gamepad-focusable="true"
                 />
               )}
               {errors.customName && <span className="errorMessage">{errors.customName}</span>}
@@ -194,8 +195,9 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 onChange={e => handleChange('isPrivate', e.target.checked)}
               />
               {settings.isPrivate && (
-                <input
-                  type="text"
+                <GamepadInput
+                  title="Enter Game Password"
+                  type="password"
                   value={settings.password || ''}
                   onChange={e => handleChange('password', e.target.value)}
                   className={`${baseModalStyles.textInput}${errors.password ? ' ' + baseModalStyles.inputError : ''}`}
@@ -203,7 +205,6 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   maxLength={36}
                   autoFocus={settings.isPrivate && !settings.useCustomName}
                   style={{ marginTop: 8 }}
-                  data-gamepad-focusable="true"
                 />
               )}
               {errors.password && <span className="errorMessage">{errors.password}</span>}
@@ -217,14 +218,14 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
               <p>Add AI players to your game (0-16)</p>
             </div>
             <div className={baseModalStyles.settingControls}>
-              <input
+              <GamepadInput
+                title="Number of AI Players"
                 type="number"
                 min="0"
                 max="16"
                 value={settings.numberOfBots}
                 onChange={e => handleChange('numberOfBots', parseInt(e.target.value) || 0)}
                 className={`${baseModalStyles.textInput}${errors.numberOfBots ? ' ' + baseModalStyles.inputError : ''}`}
-                data-gamepad-focusable="true"
               />
               {errors.numberOfBots && <span className="errorMessage">{errors.numberOfBots}</span>}
             </div>

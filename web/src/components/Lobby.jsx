@@ -6,7 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { usePreferences } from '../contexts/PreferencesContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
-import { TextField, useMediaQuery, InputAdornment } from '@mui/material';
+import { useMediaQuery, InputAdornment } from '@mui/material';
+import GamepadTextField from './GamepadTextField';
 import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
 import CurrencyAmount from './common/CurrencyAmount';
@@ -261,14 +262,15 @@ const Lobby = () => {
          
          {/* Search bar for filtering games */}
          <div className={styles.searchContainer}>
-           <TextField
+           <GamepadTextField
+             title="Search Games"
              placeholder="Search games by ID"
              variant="outlined"
              fullWidth
              value={searchQuery}
              onChange={handleSearchChange}
              size={isSmallMobile ? "small" : "medium"}
-             inputProps={{ "data-gamepad-focusable": "true" }}
+             type="text"
              InputProps={{
                startAdornment: (
                  <InputAdornment position="start">

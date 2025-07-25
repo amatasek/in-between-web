@@ -25,6 +25,21 @@ body.gamepad-navigation-active [data-gamepad-focusable="true"]:focus {
   z-index: 100 !important;
 }
 
+/* Material-UI specific focus styling for inputs */
+body.gamepad-navigation-active .MuiOutlinedInput-root input[data-gamepad-focusable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+}
+
+/* Make sure the outline is visible above Material-UI styles */
+body.gamepad-navigation-active .MuiTextField-root [data-gamepad-focusable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  z-index: 1000 !important;
+}
+
 /* Ensure focus is visible for buttons and inputs */
 [data-gamepad-focusable="true"] {
   transition: outline 0.2s ease, box-shadow 0.2s ease, border-radius 0.2s ease;

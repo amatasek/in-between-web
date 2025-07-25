@@ -1,0 +1,175 @@
+/* Virtual Keyboard Modal Styles */
+.keyboardModal {
+  max-width: 600px;
+  width: 90vw;
+}
+
+.inputDisplay {
+  padding: 16px 16px 8px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+.tempInput {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 16px;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+}
+
+.tempInput::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+}
+
+.keyboardGrid {
+  padding: 16px;
+}
+
+.keyRow {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.keyRow:last-child {
+  margin-bottom: 0;
+}
+
+.key {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 8px;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  flex: 1;
+  max-width: 48px;
+}
+
+.key:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
+.key:active {
+  transform: translateY(0);
+  background: var(--bg-active);
+}
+
+.specialKey {
+  background: var(--bg-secondary);
+  font-size: 14px;
+}
+
+.specialKey:hover {
+  background: var(--bg-secondary-hover);
+}
+
+.spaceKey {
+  flex: 3;
+  max-width: none;
+}
+
+.activeShift {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+}
+
+.activeShift:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Gamepad navigation focus styling */
+:global(body.gamepad-navigation-active) .key:focus {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+  background: var(--bg-hover);
+  border-color: var(--accent-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .keyboardOverlay {
+    padding: 10px;
+  }
+  
+  .keyboard {
+    max-width: 100%;
+  }
+  
+  .key {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 8px 6px;
+    font-size: 14px;
+  }
+  
+  .keyboardGrid {
+    padding: 12px;
+  }
+  
+  .keyRow {
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .key {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 6px 4px;
+    font-size: 12px;
+  }
+  
+  .keyboardGrid {
+    padding: 8px;
+  }
+  
+  .keyRow {
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+}
+
+/* Number pad specific styles */
+.keyboard[data-type="number"] .keyRow {
+  justify-content: center;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.keyboard[data-type="number"] .key {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  font-size: 18px;
+}
+
+@media (max-width: 480px) {
+  .keyboard[data-type="number"] .key {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+}
