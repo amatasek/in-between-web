@@ -5,9 +5,8 @@
 
 // Game Icons
 export const ICONS = {
-  COIN: '🔶', // Yellow/gold diamond icon for currency
   POT: '🍯',
   DEALER: '🃏',
   CHECK: '✓',
-  DECK: '🃏' // Card deck icon
+  DECK: '🃏'
 };

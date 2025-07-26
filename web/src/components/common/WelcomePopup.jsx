@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './WelcomePopup.module.css';
-import { ICONS } from '../../constants/UIConstants';
+import CoinIcon from './CoinIcon';
 
 /**
  * A popup component that displays a welcome message and balance reset notification
@@ -22,7 +22,7 @@ const WelcomePopup = ({ username, balance, onClose }) => {
             Your balance has been reset to:
           </p>
           <p className={styles.balance}>
-            <span className={styles.coinIcon}>{ICONS.COIN}</span>
+            <CoinIcon size="large" />
             <span className={styles.balanceAmount}>{balance}</span>
           </p>
           <p className={styles.subtext}>

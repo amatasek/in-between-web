@@ -3,12 +3,15 @@
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 .currencyAmount span {
   display: inline-flex;
   align-items: center;
+  line-height: inherit;
 }
 
 /* Dark pill-shaped background */

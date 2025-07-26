@@ -74,7 +74,12 @@ const GameHeader = ({ handleLeaveGame }) => {
   
   // Override phase info if waiting for Ace decision
   if (gameState?.waitingForAceDecision && currentPhase === 'dealing') {
-    phaseInfo = { text: 'Choosing Ace Value', icon: ICONS.DEALER };
+    phaseInfo = { text: 'Choosing Ace Value', icon: '🤔' };
+  }
+  
+  // Override phase info if waiting for second chance decision
+  if (gameState?.waitingForSecondChance) {
+    phaseInfo = { text: 'Second Chance Decision', icon: '🤔' };
   }
   
   // Check if current user is the current player (using userId instead of socket.id)
@@ -89,17 +94,17 @@ const GameHeader = ({ handleLeaveGame }) => {
         // It's YOUR turn to bet
         phaseInfo = {
           text: `Pass or Bet`,
-          icon: ICONS.COIN
+          icon: '🤔'
         };
       } else {
         // It's someone else's turn
         phaseInfo = {
           text: `${currentPlayer.name} is Betting`,
-          icon: ICONS.COIN
+          icon: '🤔'
         };
       }
     } else {
-      phaseInfo = { text: 'Betting Round', icon: ICONS.COIN };
+      phaseInfo = { text: 'Betting Round', icon: '🤔' };
     }
   }
   
