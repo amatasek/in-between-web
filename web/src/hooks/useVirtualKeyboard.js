@@ -82,7 +82,9 @@ export const useVirtualKeyboard = () => {
     
     const handleClick = (e) => {
       // Show virtual keyboard on click if gamepad is connected
-      if (isGamepadActive) {
+      // AND if the gamepad navigation is currently active (showing focus indicators)
+      // This prevents autoFocus from opening the keyboard
+      if (isGamepadActive && document.body.classList.contains('gamepad-navigation-active')) {
         e.preventDefault();
         showKeyboard(actualInput, type, title);
       }

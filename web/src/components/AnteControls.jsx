@@ -71,6 +71,7 @@ const AnteControls = () => {
                 disabled={!hasEnoughChips}
                 aria-label="Ante up"
                 data-gamepad-focusable="true"
+                autoFocus
               >
                 {/* Add shimmer border for glimmering effect */}
                 <div className={styles.shimmerBorder}></div>

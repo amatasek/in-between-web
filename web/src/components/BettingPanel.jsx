@@ -77,6 +77,7 @@ const BettingPanel = () => {
             className={`${styles.betButton} ${styles.extremeButton} ${styles.passButton}`}
             onClick={() => placeBet(0)}
             data-gamepad-focusable="true"
+            autoFocus
           >
             PASS
           </button>

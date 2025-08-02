@@ -101,7 +101,7 @@ const GameScreen = ({ onReturnToLobby }) => {
         {/* Primary check: Is the current player sitting out? */}
         {currentPlayer?.isSittingOut ? (
           // If sitting out, always show the 'I'm Back!' button regardless of phase
-          <button onClick={handleImBackClick} className={styles.imBackButton} data-gamepad-focusable="true"> 
+          <button onClick={handleImBackClick} className={styles.imBackButton} data-gamepad-focusable="true" autoFocus> 
             I'm Back!
           </button>
         ) : (

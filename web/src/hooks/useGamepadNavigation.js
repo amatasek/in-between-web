@@ -103,10 +103,22 @@ export const useGamepadNavigation = (isEnabled = true) => {
     // Show focus indicator when navigating
     setShowFocusIndicator(true);
     
-    const currentIndex = navigableElements.findIndex(el => el === focusedElement);
+    // Always check the actual focused element in the DOM first
+    const actualFocusedElement = document.activeElement;
+    let currentElement = focusedElement;
+    
+    // If the actual focused element is navigable and different from our state, sync it
+    if (actualFocusedElement && 
+        actualFocusedElement.getAttribute('data-gamepad-focusable') === 'true' &&
+        navigableElements.includes(actualFocusedElement)) {
+      currentElement = actualFocusedElement;
+      setFocusedElement(actualFocusedElement);
+    }
+    
+    const currentIndex = navigableElements.findIndex(el => el === currentElement);
     
     // If no element is currently focused or element not found, start with first element
-    if (currentIndex === -1 || !focusedElement) {
+    if (currentIndex === -1 || !currentElement) {
       const firstElement = navigableElements[0];
       setFocusedElement(firstElement);
       firstElement.focus();
@@ -114,23 +126,23 @@ export const useGamepadNavigation = (isEnabled = true) => {
     }
     
     // Handle scrollable content before spatial navigation
-    const currentElement = navigableElements[currentIndex];
-    const isScrollable = currentElement?.getAttribute('data-gamepad-scrollable') === 'true';
+    const currentElem = navigableElements[currentIndex];
+    const isScrollable = currentElem?.getAttribute('data-gamepad-scrollable') === 'true';
     
     if (isScrollable && (direction === 'up' || direction === 'down')) {
       const scrollAmount = 50;
-      const isAtTop = currentElement.scrollTop <= 0;
-      const isAtBottom = currentElement.scrollTop >= currentElement.scrollHeight - currentElement.clientHeight;
+      const isAtTop = currentElem.scrollTop <= 0;
+      const isAtBottom = currentElem.scrollTop >= currentElem.scrollHeight - currentElem.clientHeight;
       
       if (direction === 'up' && !isAtTop) {
-        currentElement.scrollTop = Math.max(0, currentElement.scrollTop - scrollAmount);
+        currentElem.scrollTop = Math.max(0, currentElem.scrollTop - scrollAmount);
         return;
       }
       
       if (direction === 'down' && !isAtBottom) {
-        currentElement.scrollTop = Math.min(
-          currentElement.scrollHeight - currentElement.clientHeight,
-          currentElement.scrollTop + scrollAmount
+        currentElem.scrollTop = Math.min(
+          currentElem.scrollHeight - currentElem.clientHeight,
+          currentElem.scrollTop + scrollAmount
         );
         return;
       }
@@ -140,14 +152,14 @@ export const useGamepadNavigation = (isEnabled = true) => {
     
     if (direction === 'up' || direction === 'down') {
       // Vertical navigation with intelligent spatial detection
-      let currentRect = currentElement?.getBoundingClientRect();
+      let currentRect = currentElem?.getBoundingClientRect();
       if (!currentRect) return;
       
       // Handle zero-dimension elements (hidden inputs, toggles)
       if (currentRect.width === 0 && currentRect.height === 0) {
-        const label = currentElement.closest('label');
-        const container = currentElement.closest('[class*="toggle"]') || currentElement.closest('[class*="Toggle"]');
-        const parent = label || container || currentElement.parentElement;
+        const label = currentElem.closest('label');
+        const container = currentElem.closest('[class*="toggle"]') || currentElem.closest('[class*="Toggle"]');
+        const parent = label || container || currentElem.parentElement;
         if (parent) {
           currentRect = parent.getBoundingClientRect();
         }
@@ -219,7 +231,7 @@ export const useGamepadNavigation = (isEnabled = true) => {
       }
     } else {
       // Horizontal navigation within rows
-      const currentRect = currentElement?.getBoundingClientRect();
+      const currentRect = currentElem?.getBoundingClientRect();
       if (!currentRect) {
         if (direction === 'left') {
           nextElement = currentIndex > 0 ? navigableElements[currentIndex - 1] : navigableElements[navigableElements.length - 1];
@@ -238,7 +250,7 @@ export const useGamepadNavigation = (isEnabled = true) => {
           })
           .sort((a, b) => a.rect.left - b.rect.left);
         
-        const currentRowIndex = sameRowElements.findIndex(({ el }) => el === currentElement);
+        const currentRowIndex = sameRowElements.findIndex(({ el }) => el === currentElem);
         
         if (currentRowIndex !== -1 && sameRowElements.length > 1) {
           if (direction === 'left') {
@@ -259,11 +271,16 @@ export const useGamepadNavigation = (isEnabled = true) => {
   }, [navigableElements, focusedElement]);
 
   const activateElement = useCallback(() => {
-    if (focusedElement) {
+    // Check actual DOM focus first, fallback to our tracked element
+    const elementToActivate = document.activeElement?.getAttribute('data-gamepad-focusable') === 'true' 
+      ? document.activeElement 
+      : focusedElement;
+      
+    if (elementToActivate) {
       // Show focus indicator when activating
       setShowFocusIndicator(true);
       // Simulate click on the focused element
-      focusedElement.click();
+      elementToActivate.click();
     }
   }, [focusedElement]);
 
@@ -272,6 +289,20 @@ export const useGamepadNavigation = (isEnabled = true) => {
     if (!isEnabled) return;
 
     const handleKeyDown = (e) => {
+      // Check if we're in a text input field
+      const isTextInput = document.activeElement && (
+        document.activeElement.tagName === 'INPUT' || 
+        document.activeElement.tagName === 'TEXTAREA'
+      );
+
+      // For text inputs, only prevent default for arrow keys (not Enter)
+      // This allows normal form submission with Enter key
+      if (isTextInput && e.key === 'Enter') {
+        // Don't prevent default, don't activate element
+        // Let the form handle the Enter key naturally
+        return;
+      }
+
       // Prevent default behavior for navigation keys
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
         e.preventDefault();
@@ -440,9 +471,45 @@ export const useGamepadNavigation = (isEnabled = true) => {
     if (navigableElements.length > 0 && !focusedElement) {
       const firstElement = navigableElements[0];
       setFocusedElement(firstElement);
-      firstElement.focus();
+      // Don't focus initially - let autoFocus handle it
+      // firstElement.focus();
     }
   }, [navigableElements.length]); // Only depend on length, not the array itself
+  
+  // Sync focus state when elements gain focus outside of gamepad navigation
+  useEffect(() => {
+    if (!isEnabled) return;
+    
+    const handleFocusChange = (e) => {
+      // Check if the focused element is a navigable element
+      const target = e.target;
+      if (target && target.getAttribute('data-gamepad-focusable') === 'true') {
+        // Register elements first to ensure the list is up to date
+        registerNavigableElements();
+        // Small delay to let the registration complete
+        setTimeout(() => {
+          // Find the element in our navigable elements list
+          const currentNavigableElements = Array.from(
+            document.querySelectorAll('[data-gamepad-focusable="true"]:not([disabled]), [data-gamepad-scrollable="true"]')
+          );
+          
+          if (currentNavigableElements.includes(target)) {
+            setFocusedElement(target);
+            // Don't show focus indicator on programmatic focus (like autoFocus)
+            // Only show it when navigating with keyboard/gamepad
+            // setShowFocusIndicator(true);
+          }
+        }, 0);
+      }
+    };
+    
+    // Listen for focus events globally to catch autoFocus and programmatic focus changes
+    document.addEventListener('focus', handleFocusChange, true); // Use capture phase
+    
+    return () => {
+      document.removeEventListener('focus', handleFocusChange, true);
+    };
+  }, [isEnabled, registerNavigableElements]);
 
   // Re-register elements when DOM changes
   useEffect(() => {
