@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 import TransactionDownloadButton from './common/TransactionDownloadButton';
@@ -10,7 +11,7 @@ import GameStats from './GameStats';
  */
 const GameSummaryModal = ({ onClose, gameData }) => {
   if (!gameData) {
-    return (
+    const loadingContent = (
       <div className={styles.modalOverlay}>
         <div className={styles.modalContent}>
           <div className={styles.modalHeader}>
@@ -23,6 +24,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
         </div>
       </div>
     );
+    return createPortal(loadingContent, document.body);
   }
 
   // Extract data from gameData with clean access now that structure is consistent
@@ -167,7 +169,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
   // Track the active tab - start with 'totals' tab
   const [activeTab, setActiveTab] = useState('totals');
 
-  return (
+  const modalContent = (
     <div className={styles.modalOverlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
@@ -259,6 +261,9 @@ const GameSummaryModal = ({ onClose, gameData }) => {
       </div>
     </div>
   );
+
+  // Render modal using portal to document.body to avoid transform context issues
+  return createPortal(modalContent, document.body);
 };
 
 export default GameSummaryModal;

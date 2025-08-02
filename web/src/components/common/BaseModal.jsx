@@ -1,9 +1,10 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import styles from './BaseModal.module.css';
 
 // BaseModal: Shared modal structure for all app modals
 export default function BaseModal({ title, onClose, children, footer, className = '', overlayStyle, ...props }) {
-  return (
+  const modalContent = (
     <div className={styles.overlay} style={overlayStyle} onClick={onClose}>
       <div
         className={`${styles.modal} ${className}`}
@@ -29,4 +30,7 @@ export default function BaseModal({ title, onClose, children, footer, className 
       </div>
     </div>
   );
+
+  // Render modal using portal to document.body to avoid transform context issues
+  return createPortal(modalContent, document.body);
 }

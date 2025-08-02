@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router-dom';
 import soundService from './services/SoundService';
 import { router } from './router';
 import { VirtualKeyboardProvider } from './contexts/VirtualKeyboardContext';
+import { ToastProvider } from './contexts/ToastContext';
 import './styles/global.css';
 
 function App() {
@@ -12,9 +13,11 @@ function App() {
   }, []);
 
   return (
-    <VirtualKeyboardProvider>
-      <RouterProvider router={router} />
-    </VirtualKeyboardProvider>
+    <ToastProvider>
+      <VirtualKeyboardProvider>
+        <RouterProvider router={router} />
+      </VirtualKeyboardProvider>
+    </ToastProvider>
   );
 }
 

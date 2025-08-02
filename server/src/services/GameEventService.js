@@ -22,6 +22,7 @@ class GameEventService extends BaseService {
     socket.on('chooseAceValue', (data) => this.handleChooseAceValue(socket, data));
     socket.on('sitOut', (data) => this.handleSitOut(socket, data));
     socket.on('imBack', (data) => this.handleImBack(socket, data));
+    socket.on('emojiReaction', (data) => this.handleEmojiReaction(socket, data));
   }
   
   /**
@@ -547,6 +548,47 @@ class GameEventService extends BaseService {
     } catch (error) {
       console.error(`[GAME_EVENT_SERVICE] Error handling imBack for user ${socket.user?.userId}:`, error);
       socket.emit('error', { message: 'An error occurred while processing your return.' });
+    }
+  }
+
+  /**
+   * Handle emoji reaction event
+   * @param {Socket} socket - The socket that triggered the event
+   * @param {Object} data - Event data containing gameId, emoji, color, playerName
+   */
+  async handleEmojiReaction(socket, data) {
+    try {
+      const { gameId, emoji, color, playerName } = data;
+      
+      if (!gameId || !emoji || !playerName) {
+        console.error('[GAME_EVENT_SERVICE] Invalid emoji reaction data:', data);
+        return;
+      }
+
+      // Verify the player is in the game
+      const gameStateService = this.getService('gameState');
+      const game = await gameStateService.getGame(gameId);
+      
+      if (!game) {
+        console.error(`[GAME_EVENT_SERVICE] Game ${gameId} not found for emoji reaction`);
+        return;
+      }
+
+      // Send emoji reaction as toast notification to all players in the room
+      const notificationService = this.getService('notification');
+      if (notificationService) {
+        notificationService.notifyRoom(
+          gameId, 
+          '', // No title for emoji reactions
+          playerName, // Player name as message
+          emoji, 
+          color || '#9b59b6', 
+          2000 // Shorter duration for emoji reactions
+        );
+      }
+      
+    } catch (error) {
+      console.error(`[GAME_EVENT_SERVICE] Error handling emoji reaction:`, error);
     }
   }
 

@@ -62,6 +62,7 @@ const SecondChancePanel = () => {
             className={`${styles.secondChanceButton} ${styles.anteAgainButton}`}
             onClick={() => handleSecondChance(true)}
             data-gamepad-focusable="true"
+            autoFocus
           >
             {loading && actionType === 'ante' ? 'Processing...' : (
               <>

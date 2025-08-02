@@ -15,6 +15,41 @@ html.loading * {
   visibility: hidden;
 }
 
+/* Mobile Scaling - Scale down UI on small screens */
+@media (max-width: 600px) {
+  :root {
+    font-size: 15px; /* Down from default 16px - 93.75% (half the reduction) */
+  }
+  
+  /* Scale down only the game content, not floating elements */
+  .mobile-scale-content {
+    transform: scale(0.95);
+    transform-origin: top left;
+    width: 105.26%;
+  }
+  
+  /* Adjust viewport height to account for scaling */
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Even smaller screens get more aggressive scaling */
+@media (max-width: 400px) {
+  :root {
+    font-size: 14.5px; /* 90.625% (half the reduction) */
+  }
+  
+  .mobile-scale-content {
+    transform: scale(0.925);
+    transform-origin: top left;
+    width: 108.11%; /* Compensate for scale (100% / 0.925) */
+  }
+}
+
 /* Gamepad focus indicators - only show when gamepad/keyboard is active */
 body.gamepad-navigation-active [data-gamepad-focusable="true"]:focus {
   outline: 3px solid #00ff88 !important;

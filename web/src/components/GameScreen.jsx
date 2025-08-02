@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles/GameScreen.module.css';
 import GameHeader from './GameHeader.jsx';
 import CardDisplay from './CardDisplay.jsx';
@@ -11,6 +11,7 @@ import ResultsPanel from './ResultsPanel.jsx';
 import AceChoicePanel from './AceChoicePanel.jsx';
 import SecondChancePanel from './SecondChancePanel.jsx';
 import GameLog from './GameLog.jsx';
+import EmojiReactions from './EmojiReactions.jsx';
 
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
@@ -18,6 +19,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
 
 const GameScreen = ({ onReturnToLobby }) => {
+  // Track modal state to hide emoji reactions
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   // Get state and actions from context
   const { 
     gameState,
@@ -81,8 +85,11 @@ const GameScreen = ({ onReturnToLobby }) => {
 
   return (
     <div className={styles.gameContainer}>
-      <div className={styles.gameScreen}>
-        <GameHeader handleLeaveGame={handleLeaveGame} />
+      <div className={`${styles.gameScreen} mobile-scale-content`}>
+        <GameHeader 
+          handleLeaveGame={handleLeaveGame} 
+          onModalStateChange={setIsModalOpen}
+        />
         
         {error && (
           <div className={styles.errorContainer}>
@@ -133,6 +140,9 @@ const GameScreen = ({ onReturnToLobby }) => {
           </div>
         </div>
       </div>
+      
+      {/* Emoji reactions - positioned outside scaled content, hidden when modal is open */}
+      {!isModalOpen && <EmojiReactions />}
     </div>
   );
 };

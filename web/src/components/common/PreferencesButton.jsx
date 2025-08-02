@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GearIcon from '../icons/GearIcon';
 import PreferencesModal from '../PreferencesModal';
 import IconButton from './IconButton';
 
-const PreferencesButton = () => {
+const PreferencesButton = ({ onModalStateChange }) => {
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
 
   const openPreferences = () => {
@@ -13,6 +13,13 @@ const PreferencesButton = () => {
   const closePreferences = () => {
     setIsPreferencesOpen(false);
   };
+
+  // Notify parent when modal state changes
+  useEffect(() => {
+    if (onModalStateChange) {
+      onModalStateChange(isPreferencesOpen);
+    }
+  }, [isPreferencesOpen, onModalStateChange]);
 
   return (
     <>

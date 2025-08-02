@@ -1,7 +1,7 @@
 .toggleContainer {
   display: flex;
   justify-content: center;
-  margin: 5px 0;
+  margin: 5px 0 0 0;
   padding: 8px 12px;
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 8px;

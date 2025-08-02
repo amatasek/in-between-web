@@ -106,7 +106,8 @@ class GameService extends BaseService {
       const playerManagementService = this.getService('playerManagement');
       const connectionService = this.getService('connection');
       const broadcastService = this.getService('broadcast');
-      const gameTimingService = this.getService('gameTiming'); // Get timing service
+      const gameTimingService = this.getService('gameTiming');
+      const notificationService = this.getService('notification');
       
       console.log(`[GAME_SERVICE] ${isReconnection ? 'Reconnecting' : 'Joining'} game ${gameId} for user ${user.username} (${user.userId})`);
       
@@ -158,11 +159,13 @@ class GameService extends BaseService {
       // This will also clear any pending disconnection timeout
       connectionService.associateSocketWithGame(socket.id, gameId);
       
-      // Log whether this was a new join or a reconnection
+      // Send notifications for join/reconnect
       if (existingPlayer || isReconnection) {
         console.log(`[GAME_SERVICE] Player ${user.username} (${user.userId}) reconnected to game ${gameId}`);
+        notificationService.notifyRoom(gameId, 'Player Returned', `${user.username} is back!`, '👋', '#16a085');
       } else {
         console.log(`[GAME_SERVICE] Player ${user.username} (${user.userId}) joined game ${gameId}`);
+        notificationService.notifyRoom(gameId, 'Player Joined', `${user.username} joined the game`, '🎮', '#9b59b6', 4000, user.userId);
       }
       
       // Log the game state before sending
@@ -231,13 +234,17 @@ class GameService extends BaseService {
         return;
       }
       
-      await this.leaveGame(userId, gameId); // Call refactored function
+      // Process the game leave (refunds, notifications, etc.)
+      await this.leaveGame(userId, gameId);
+      
+      // Disassociate socket from the game room
+      connectionService.disassociateSocketFromGame(socket.id);
       
     } catch (error) {
       console.error(`[GAME_SERVICE] Error leaving game:`, error);
     }
   }
-  
+
   /**
    * Processes a player leaving a game (called by handleLeaveGame or cleanupDisconnectedPlayer)
    * Handles player removal, state updates, potential refunds, and game cleanup.
@@ -255,6 +262,7 @@ class GameService extends BaseService {
       const broadcastService = this.getService('broadcast');
       const gameTransactionService = this.getService('gameTransaction');
       const playerManagementService = this.getService('playerManagement');
+      const notificationService = this.getService('notification');
       
       let game = await gameStateService.getGame(gameId);
       if (!game || !game.players[userId]) {
@@ -272,6 +280,7 @@ class GameService extends BaseService {
       
       // Step 2: Remove player object using PlayerManagementService with userId
       game = playerManagementService.removePlayer(game, userId); // Use userId for removal
+      notificationService.notifyRoom(gameId, 'Player Left', `${player.name} left the game`, '👋', '#e74c3c');
 
       // Process refund if eligible
       if (needsRefund) {

@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-bottom: 0.5rem;
   box-sizing: border-box;
 }
 
@@ -13,12 +12,6 @@
   gap: 10px;
   width: 100%;
   max-width: 350px;
-}
-
-@media (max-width: 600px) {
-  .anteControlsWrapper {
-    margin-bottom: 0.75rem;
-  }
 }
 
 .buttonContainer {

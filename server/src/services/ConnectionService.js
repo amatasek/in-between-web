@@ -534,27 +534,29 @@ class ConnectionService extends BaseService {
     
     // Get the socket instance
     const socket = this.io.sockets.sockets.get(socketId);
-    if (socket && socket.user && socket.user.userId) {
-      const userId = socket.user.userId;
-      
-      // Clear any pending disconnection timeout for this user
-      if (this.disconnectionTimeouts.has(userId)) {
-        clearTimeout(this.disconnectionTimeouts.get(userId));
-        this.disconnectionTimeouts.delete(userId);
-        console.log(`[CONNECTION_SERVICE] Cleared disconnection timeout for player ${userId} when associating with game ${gameId}`);
-      }
-      
-      // Also remove from disconnected players map if present
-      if (this.disconnectedPlayers.has(userId)) {
-        this.disconnectedPlayers.delete(userId);
-        console.log(`[CONNECTION_SERVICE] Removed ${userId} from disconnected players map when associating with game ${gameId}`);
-      }
-      
+    if (socket) {
       // Join the socket to the game room
       socket.join(gameId);
-    } else if (socket) {
-      // Join the socket to the game room even if we don't have user info
-      socket.join(gameId);
+      console.log(`[CONNECTION_SERVICE] Socket ${socketId} joined room ${gameId}`);
+      
+      if (socket.user && socket.user.userId) {
+        const userId = socket.user.userId;
+        
+        // Clear any pending disconnection timeout for this user
+        if (this.disconnectionTimeouts.has(userId)) {
+          clearTimeout(this.disconnectionTimeouts.get(userId));
+          this.disconnectionTimeouts.delete(userId);
+          console.log(`[CONNECTION_SERVICE] Cleared disconnection timeout for player ${userId} when associating with game ${gameId}`);
+        }
+        
+        // Also remove from disconnected players map if present
+        if (this.disconnectedPlayers.has(userId)) {
+          this.disconnectedPlayers.delete(userId);
+          console.log(`[CONNECTION_SERVICE] Removed ${userId} from disconnected players map when associating with game ${gameId}`);
+        }
+      }
+    } else {
+      console.error(`[CONNECTION_SERVICE] Socket ${socketId} not found when trying to associate with game ${gameId}`);
     }
   }
 
@@ -599,6 +601,21 @@ class ConnectionService extends BaseService {
       }
     }
     return sockets;
+  }
+
+  /**
+   * Get the socket ID for a user
+   * @param {string} userId - The user ID
+   * @returns {string|null} The socket ID or null if not found
+   */
+  getUserSocketId(userId) {
+    // Search through all connected sockets to find the one for this user
+    for (const [socketId, socket] of this.io.sockets.sockets) {
+      if (socket.user && socket.user.userId === userId) {
+        return socketId;
+      }
+    }
+    return null;
   }
 
   /**

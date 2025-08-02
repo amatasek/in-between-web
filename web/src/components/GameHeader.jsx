@@ -22,7 +22,7 @@ const phaseDisplayMap = {
   results: { text: 'Round Results', icon: '🏆' }
 };
 
-const GameHeader = ({ handleLeaveGame }) => {
+const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
   const { gameState, gameId } = useGameContext();
   const { socket } = useSocket();
   const { user } = useAuth();
@@ -35,6 +35,8 @@ const GameHeader = ({ handleLeaveGame }) => {
   const [timeLeft, setTimeLeft] = useState(null);
   const [showGameSummary, setShowGameSummary] = useState(false);
   const [showStoreModal, setShowStoreModal] = useState(false);
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
 
   // Timer effect for phases
   useEffect(() => {
@@ -68,6 +70,14 @@ const GameHeader = ({ handleLeaveGame }) => {
       if (timer) clearInterval(timer);
     };
   }, [currentPhase, gameState?.waitingForAceDecision]);
+
+  // Notify parent when modal state changes
+  useEffect(() => {
+    const isModalOpen = showGameSummary || showStoreModal || isPreferencesOpen || isRulesOpen;
+    if (onModalStateChange) {
+      onModalStateChange(isModalOpen);
+    }
+  }, [showGameSummary, showStoreModal, isPreferencesOpen, isRulesOpen, onModalStateChange]);
   
   // Get the phase display information
   let phaseInfo = phaseDisplayMap[currentPhase] || { text: 'Unknown Phase', icon: '❓' };
@@ -161,9 +171,15 @@ const GameHeader = ({ handleLeaveGame }) => {
               Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
             </div>
             <div className={styles.controlsGroup}>
-              <PreferencesButton data-gamepad-focusable="true" />
+              <PreferencesButton 
+                onModalStateChange={setIsPreferencesOpen}
+                data-gamepad-focusable="true" 
+              />
               <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
-              <RulesButton data-gamepad-focusable="true" />
+              <RulesButton 
+                onModalStateChange={setIsRulesOpen}
+                data-gamepad-focusable="true" 
+              />
               <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
             </div>
           </div>
@@ -195,9 +211,15 @@ const GameHeader = ({ handleLeaveGame }) => {
                 Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
               </div>
               <div className={styles.mobileActions}>
-                <PreferencesButton data-gamepad-focusable="true" />
+                <PreferencesButton 
+                  onModalStateChange={setIsPreferencesOpen}
+                  data-gamepad-focusable="true" 
+                />
                 <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
-                <RulesButton data-gamepad-focusable="true" />
+                <RulesButton 
+                  onModalStateChange={setIsRulesOpen}
+                  data-gamepad-focusable="true" 
+                />
                 <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
               </div>
             </div>

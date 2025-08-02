@@ -20,6 +20,7 @@ const gameTransactionService = require('./services/GameTransactionService');
 const gameHistoryService = require('./services/GameHistoryService');
 const purchaseService = require('./services/PurchaseService');
 const botService = require('./services/BotService');
+const notificationService = require('./services/NotificationService');
 
 /**
  * Initialize all services and wire them together
@@ -41,7 +42,8 @@ function initializeServices() {
     .register('gameTransaction', gameTransactionService)
     .register('gameHistory', gameHistoryService)
     .register('purchase', purchaseService)
-    .register('bot', botService);
+    .register('bot', botService)
+    .register('notification', notificationService);
 
   // Wire up services (give each service access to others)
   serviceRegistry.wireServices();

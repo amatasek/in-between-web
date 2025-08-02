@@ -1,0 +1,140 @@
+.emojiReactions {
+  position: fixed;
+  bottom: 20px;
+  right: max(20px, calc((100vw - 800px) / 2 + 20px));
+  z-index: 9000;
+}
+
+.toggleButton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #444;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggleButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  border-color: #666;
+}
+
+.toggleButton:active {
+  transform: translateY(0);
+}
+
+.emojiPanel {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #444;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: slideInFromBottom 0.3s ease;
+  min-width: 280px;
+  max-width: 320px;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.emojiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.emojiButton {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #444;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2a2a2a 0%, #3d3d3d 100%);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.emojiButton:hover {
+  transform: scale(1.1);
+  border-color: var(--emoji-color, #666);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.emojiButton:active {
+  transform: scale(0.95);
+}
+
+.emojiButton:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--emoji-color, #666);
+  opacity: 0.1;
+  border-radius: 6px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .emojiReactions {
+    right: 15px;
+    bottom: 20px;
+  }
+  
+  .toggleButton {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .emojiPanel {
+    bottom: 60px;
+    right: 0;
+    min-width: 240px;
+    padding: 12px;
+  }
+  
+  .emojiGrid {
+    gap: 8px;
+  }
+  
+  .emojiButton {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+}
+
+/* Gamepad navigation focus styles */
+body.gamepad-navigation-active .toggleButton:focus,
+body.gamepad-navigation-active .emojiButton:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}

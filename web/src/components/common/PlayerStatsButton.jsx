@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BarChartIcon from '../icons/BarChartIcon';
 import PlayerStatsModal from '../PlayerStatsModal';
 import IconButton from './IconButton';
 
-const PlayerStatsButton = ({ ...props }) => {
+const PlayerStatsButton = ({ onModalStateChange, ...props }) => {
   const [isStatsOpen, setIsStatsOpen] = useState(false);
 
   const openStats = () => {
@@ -13,6 +13,13 @@ const PlayerStatsButton = ({ ...props }) => {
   const closeStats = () => {
     setIsStatsOpen(false);
   };
+
+  // Notify parent when modal state changes
+  useEffect(() => {
+    if (onModalStateChange) {
+      onModalStateChange(isStatsOpen);
+    }
+  }, [isStatsOpen, onModalStateChange]);
 
   return (
     <>

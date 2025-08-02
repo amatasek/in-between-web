@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styles from './CoinIcon.module.css';
 
 /**
@@ -16,6 +16,10 @@ const CoinIcon = ({ size = 'small', className = '' }) => {
   
   const pixelSize = sizeMap[size] || sizeMap.small;
   
+  // Generate unique IDs for gradients to prevent conflicts
+  const gradientId = useMemo(() => `goldGradient-${Math.random().toString(36).substr(2, 9)}`, []);
+  const shineId = useMemo(() => `goldShine-${Math.random().toString(36).substr(2, 9)}`, []);
+  
   return (
     <span className={`${styles.coinIcon} ${styles[size]} ${className}`}>
       <svg 
@@ -27,12 +31,12 @@ const CoinIcon = ({ size = 'small', className = '' }) => {
       >
         {/* Diamond shape with golden gradient */}
         <defs>
-          <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FFD700" />
             <stop offset="50%" stopColor="#FFA500" />
             <stop offset="100%" stopColor="#FF8C00" />
           </linearGradient>
-          <linearGradient id="goldShine" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={shineId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FFED4E" />
             <stop offset="100%" stopColor="#FFD700" />
           </linearGradient>
@@ -41,7 +45,7 @@ const CoinIcon = ({ size = 'small', className = '' }) => {
         {/* Main diamond shape */}
         <path 
           d="M12 2L22 12L12 22L2 12L12 2Z" 
-          fill="url(#goldGradient)"
+          fill={`url(#${gradientId})`}
           stroke="#D4AF37"
           strokeWidth="0.5"
         />
@@ -49,7 +53,7 @@ const CoinIcon = ({ size = 'small', className = '' }) => {
         {/* Inner shine effect */}
         <path 
           d="M12 5L18 12L12 18L6 12L12 5Z" 
-          fill="url(#goldShine)"
+          fill={`url(#${shineId})`}
           opacity="0.6"
         />
         
