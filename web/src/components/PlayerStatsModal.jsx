@@ -4,12 +4,13 @@ import baseModalStyles from './common/BaseModal.module.css';
 import BaseModal from './common/BaseModal';
 import GameSummaryModal from './GameSummaryModal';
 import CurrencyAmount from './common/CurrencyAmount';
+import Leaderboard from './Leaderboard';
 import styles from './styles/PlayerStatsModal.module.css';
 import { API_URL } from '../config';
 
 const PlayerStatsModal = ({ onClose }) => {
   const { token } = useAuth();
-  const [activeTab, setActiveTab] = useState('stats'); // 'stats' or 'history'
+  const [activeTab, setActiveTab] = useState('leaderboard'); // 'leaderboard', 'stats', or 'history'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [historyData, setHistoryData] = useState({ games: [], pagination: {} });
@@ -175,6 +176,13 @@ const PlayerStatsModal = ({ onClose }) => {
           {/* Tab Bar Navigation */}
           <div className={styles.tabsContainer}>
             <button 
+              className={`${styles.tabButton} ${activeTab === 'leaderboard' ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab('leaderboard')}
+              data-gamepad-focusable="true"
+            >
+              Leaderboard
+            </button>
+            <button 
               className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
               onClick={() => setActiveTab('stats')}
               data-gamepad-focusable="true"
@@ -189,6 +197,13 @@ const PlayerStatsModal = ({ onClose }) => {
               Game History
             </button>
           </div>
+
+          {/* Leaderboard Tab Content */}
+          {activeTab === 'leaderboard' && (
+            <div className={styles.tabContent}>
+              <Leaderboard />
+            </div>
+          )}
 
           {/* Lifetime Stats Tab Content */}
           {activeTab === 'stats' && (
