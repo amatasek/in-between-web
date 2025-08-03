@@ -19,8 +19,8 @@ const { initializeServices, initializeSocketIO, serviceRegistry } = require('./s
 const authRoutes = require('./routes/auth');
 const preferencesRoutes = require('./routes/preferences');
 const gamesRoutes = require('./routes/games');
-const statsRoutes = require('./routes/stats');
 const purchasesRoutes = require('./routes/purchases');
+const meRoutes = require('./routes/me');
 
 // Import service middleware
 const { injectServices } = require('./middleware/serviceMiddleware');
@@ -98,8 +98,8 @@ initializeServices();
 app.use('/auth', injectServices(['auth', 'database']), authRoutes);
 app.use('/preferences', injectServices(['auth', 'database']), preferencesRoutes);
 app.use('/games', injectServices(['game', 'gameHistory']), gamesRoutes);
-app.use('/stats', injectServices(['database', 'gameHistory']), statsRoutes);
 app.use('/purchases', injectServices(['purchase', 'database']), purchasesRoutes);
+app.use('/me', injectServices(['database', 'gameHistory', 'achievement']), meRoutes);
 
 // Use the filesPath from the already imported config
 const filesDir = config.filesPath;

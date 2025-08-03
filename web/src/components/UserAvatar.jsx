@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './styles/UserAvatar.module.css';
+
+// No more hardcoded mapping needed - selectedTitle is now the actual title string from server
 
 /**
  * UserAvatar component displays a user's profile image or their initials if no image is available.
@@ -11,17 +13,21 @@ import styles from './styles/UserAvatar.module.css';
  * @param {boolean} props.showName - Whether to display the username next to the avatar
  * @param {string} props.namePosition - Position of the username ('right', 'below')
  * @param {string} props.className - Additional CSS class for styling
+ * @param {boolean} props.showTitle - Whether to show the title
  */
 const UserAvatar = ({ 
   user, 
   size = 'medium', 
   showName = true, 
   namePosition = 'right',
-  className = ''
+  className = '',
+  showTitle = true
 }) => {
+  const [showPlayerCard, setShowPlayerCard] = useState(false);
+  
   if (!user) return null;
   
-  const { username, profileImg } = user;
+  const { username, profileImg, selectedTitle } = user;
   const initials = getInitials(username || 'Unknown');
   const sizeClass = styles[size] || styles.medium;
   const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
@@ -51,30 +57,72 @@ const UserAvatar = ({
   
   return (
     <div className={`${styles.userAvatarContainer} ${containerClass} ${className}`}>
-      <div className={`${styles.avatar} ${sizeClass}`}>
-        {formattedImageUrl ? (
-          <img 
-            src={formattedImageUrl} 
-            alt={`${username}'s avatar`} 
-            className={styles.avatarImage}
-            onError={(e) => {
-              console.error(`Failed to load profile image for ${username}:`, e);
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
-            }}
-          />
-        ) : null}
-        <div 
-          className={styles.initialsPlaceholder}
-          style={{ display: formattedImageUrl ? 'none' : 'flex' }}
-        >
-          {initials}
+      <div 
+        className={`${styles.avatar} ${sizeClass}`}
+        onMouseEnter={() => setShowPlayerCard(true)}
+        onMouseLeave={() => setShowPlayerCard(false)}
+      >
+        <div className={styles.avatarImageContainer}>
+          {formattedImageUrl ? (
+            <img 
+              src={formattedImageUrl} 
+              alt={`${username}'s avatar`} 
+              className={styles.avatarImage}
+              onError={(e) => {
+                console.error(`Failed to load profile image for ${username}:`, e);
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div 
+            className={styles.initialsPlaceholder}
+            style={{ display: formattedImageUrl ? 'none' : 'flex' }}
+          >
+            {initials}
+          </div>
         </div>
+
+        {/* Player Card */}
+        {showPlayerCard && (
+          <div className={styles.playerCard}>
+            <div className={styles.playerCardAvatar}>
+              {formattedImageUrl ? (
+                <img 
+                  src={formattedImageUrl} 
+                  alt={`${username}'s avatar`} 
+                  className={styles.playerCardImage}
+                />
+              ) : (
+                <div className={styles.playerCardInitials}>
+                  {initials}
+                </div>
+              )}
+            </div>
+            <div className={styles.playerCardInfo}>
+              <div className={styles.playerCardUsername}>
+                {username || 'Unknown'}
+              </div>
+              {selectedTitle && (
+                <div className={styles.playerCardTitle}>
+                  {selectedTitle}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
       
       {showName && (
-        <div className={styles.username}>
-          {username || 'Unknown'}
+        <div className={styles.userInfo}>
+          <div className={styles.username}>
+            {username || 'Unknown'}
+          </div>
+          {showTitle && selectedTitle && (
+            <div className={styles.userTitle}>
+              {selectedTitle}
+            </div>
+          )}
         </div>
       )}
     </div>

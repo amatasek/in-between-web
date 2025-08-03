@@ -73,47 +73,26 @@ class AuthService extends BaseService {
   }
 
   async login(username, password) {
-    console.log('[AUTH] Login attempt:', { username });
-    
     const databaseService = this.getDatabaseService();
     const user = await databaseService.getUserByUsername(username);
-    if (!user) {
-      console.log('[AUTH] User not found:', { username });
+    
+    if (!user || !user.password) {
       throw new Error('Invalid username or password');
     }
-
-    console.log('[AUTH] User found:', { 
-      username,
-      hasPassword: !!user.password
-    });
-
-    if (!user.password) {
-      console.log('[AUTH] No password set for user:', { username });
-      throw new Error('Invalid username or password');
-    }
-
-    // Password validation
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      console.log('[AUTH] Invalid password for user:', { username });
       throw new Error('Invalid username or password');
     }
     
-    // Reset user balance to STARTING_BALANCE on each login
-    const dbService = this.getDatabaseService();
-    await dbService.updateUser(user._id, { balance: STARTING_BALANCE });
-    console.log('[AUTH] Reset user balance to:', STARTING_BALANCE);
-    
-    // Get the updated user with the reset balance
-    const updatedUser = await dbService.getUserById(user._id);
+    // Reset balance and get updated user
+    await databaseService.updateUser(user._id, { balance: STARTING_BALANCE });
+    const updatedUser = await databaseService.getUserById(user._id);
     
     const token = await this.generateToken(updatedUser._id);
-    console.log('[AUTH] Login successful:', { 
-      username, 
-      userId: updatedUser._id,
-      balance: updatedUser.balance
-    });
+
+    // Process historical achievements (background, non-blocking)
+    this.processAchievementsAsync(updatedUser._id, updatedUser.username);
 
     return {
       user: { 
@@ -123,6 +102,17 @@ class AuthService extends BaseService {
       },
       token
     };
+  }
+
+  processAchievementsAsync(userId, username) {
+    setImmediate(async () => {
+      try {
+        const achievementService = this.getService('achievement');
+        await achievementService?.processHistoricalAchievements(userId, username);
+      } catch (error) {
+        // Silently fail - achievements are not critical for login
+      }
+    });
   }
 
   async generateToken(userId) {

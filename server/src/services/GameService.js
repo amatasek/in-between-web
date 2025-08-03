@@ -165,7 +165,7 @@ class GameService extends BaseService {
         notificationService.notifyRoom(gameId, 'Player Returned', `${user.username} is back!`, '👋', '#16a085');
       } else {
         console.log(`[GAME_SERVICE] Player ${user.username} (${user.userId}) joined game ${gameId}`);
-        notificationService.notifyRoom(gameId, 'Player Joined', `${user.username} joined the game`, '🎮', '#9b59b6', 4000, user.userId);
+        notificationService.notifyRoom(gameId, 'Player Joined', `${user.username} joined the game`, '👋', '#27ae60', 4000, user.userId);
       }
       
       // Log the game state before sending
@@ -280,7 +280,7 @@ class GameService extends BaseService {
       
       // Step 2: Remove player object using PlayerManagementService with userId
       game = playerManagementService.removePlayer(game, userId); // Use userId for removal
-      notificationService.notifyRoom(gameId, 'Player Left', `${player.name} left the game`, '👋', '#e74c3c');
+      notificationService.notifyRoom(gameId, 'Player Left', `${player.name} left the game`, '🚪', '#e74c3c');
 
       // Process refund if eligible
       if (needsRefund) {
@@ -637,7 +637,7 @@ class GameService extends BaseService {
         
         // We already recorded the transaction when the bet was placed, no need to record again
       }
-      
+
       // Store result (capture bet amount before reset)
       game.result = {
         playerId: game.currentPlayerId, // Use the currentPlayerId directly instead of player.id
@@ -655,6 +655,15 @@ class GameService extends BaseService {
       
       // GameTimingService will handle all the timing and state transitions
       await gameTimingService.handleResultsSequence(game);
+      
+      // Check for achievements (run in background)
+      const achievementService = this.getService('achievement');
+      if (achievementService && player.userId) {
+        setImmediate(() => {
+          achievementService.processGameAchievements(game, player.userId, player.name)
+            .catch(error => console.error('[GAME_SERVICE] Achievement detection error:', error));
+        });
+      }
       
       return game;
     } catch (error) {

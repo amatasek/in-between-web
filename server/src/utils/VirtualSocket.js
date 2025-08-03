@@ -16,6 +16,12 @@ class VirtualSocket extends EventEmitter {
     this.disconnected = false;
     this.eventHandlers = new Map();
     
+    // Add error handler to prevent unhandled error crashes
+    this.on('error', (error) => {
+      console.log(`[VIRTUAL_SOCKET] Bot ${username} received error:`, error.message);
+      // Bots just log errors and continue - no need to crash
+    });
+    
     setTimeout(() => this.emit('connect'), 10);
   }
   

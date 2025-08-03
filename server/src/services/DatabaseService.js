@@ -368,6 +368,49 @@ class DatabaseService {
     }
   }
 
+  /**
+   * Get user achievements by user ID
+   * @param {string} userId - User ID
+   * @returns {Array} Array of user achievements
+   */
+  async getUserAchievements(userId) {
+    try {
+      const result = await userDb.find({
+        selector: {
+          type: 'user_achievement',
+          userId: userId
+        }
+      });
+      
+      return result.docs;
+    } catch (error) {
+      console.error('[DB] Error getting user achievements:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Save a user achievement
+   * @param {Object} userAchievement - User achievement object
+   * @returns {Object} Saved achievement
+   */
+  async saveUserAchievement(userAchievement) {
+    try {
+      // Add required fields
+      const achievementDoc = {
+        _id: `user_achievement_${userAchievement.userId}_${userAchievement.achievementId}`,
+        type: 'user_achievement',
+        ...userAchievement
+      };
+      
+      const result = await userDb.put(achievementDoc);
+      return { ...achievementDoc, _rev: result.rev };
+    } catch (error) {
+      console.error('[DB] Error saving user achievement:', error);
+      throw error;
+    }
+  }
+
 }
 
 module.exports = new DatabaseService();

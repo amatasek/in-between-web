@@ -65,8 +65,8 @@ class PlayerManagementService extends BaseService {
       player.currentBet = 0;
     }
     
-    // Refresh balance from database
-    await this.refreshPlayerBalance(player, userId);
+    // Load player data from database
+    await this.loadPlayerData(player, userId);
     
     // Update socket mapping
     this.updateSocketMapping(game, oldSocketId, socketId, userId);
@@ -92,8 +92,8 @@ class PlayerManagementService extends BaseService {
     const player = new Player(userId, name, socketId);
     player.isConnected = true;
     
-    // Load balance from database
-    await this.refreshPlayerBalance(player, userId);
+    // Load player data from database
+    await this.loadPlayerData(player, userId);
     
     // Add to game
     game.players[userId] = player;
@@ -126,20 +126,33 @@ class PlayerManagementService extends BaseService {
   }
 
   /**
-   * Refresh player balance from database
+   * Load player data from database (balance and profile preferences)
+   * This inflates the player object with current database state
    */
-  async refreshPlayerBalance(player, userId) {
+  async loadPlayerData(player, userId) {
     const databaseService = this.getService('database');
     if (!databaseService) return;
     
     try {
-      const user = await databaseService.getUserById(userId);
-      const freshBalance = user?.balance || 0;
-      console.log(`[PLAYER_MANAGEMENT] Set balance for ${player.name}: ${freshBalance}`);
-      player.balance = freshBalance;
-      player.profileImg = user?.preferences?.profileImg || null;
+      const [user, preferences] = await Promise.all([
+        databaseService.getUserById(userId),
+        databaseService.getPreferences(userId)
+      ]);
+      
+      // Load balance
+      player.balance = user?.balance || 0;
+      
+      // Load profile data
+      player.profileImg = preferences?.profileImg || null;
+      
+      // Resolve selectedTitle ID to actual title string
+      const achievementService = this.getService('achievement');
+      const achievement = achievementService.getAchievement(preferences?.selectedTitle);
+      player.selectedTitle = achievement?.title || null;
+      
+      console.log(`[PLAYER_MANAGEMENT] Loaded data for ${player.name}: balance=${player.balance}`);
     } catch (error) {
-      console.error(`[PLAYER_MANAGEMENT] Error getting balance for ${player.name}:`, error);
+      console.error(`[PLAYER_MANAGEMENT] Error loading player data for ${player.name}:`, error);
       player.balance = 0;
     }
   }

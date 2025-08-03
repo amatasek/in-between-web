@@ -57,7 +57,7 @@ const PlayerStatsModal = ({ onClose }) => {
       setStatsError(null);
       
       try {
-        const response = await fetch(`${API_URL}/stats/me`, {
+        const response = await fetch(`${API_URL}/me/stats`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

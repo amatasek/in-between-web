@@ -4,6 +4,7 @@ import baseModalStyles from './common/BaseModal.module.css';
 import BaseModal from './common/BaseModal';
 import ToggleSwitch from './ToggleSwitch.jsx';
 import FileUpload from './FileUpload.jsx';
+import TitlesSelector from './TitlesSelector.jsx';
 
 const PreferencesModal = ({ onClose }) => {
   const { 
@@ -72,8 +73,17 @@ const PreferencesModal = ({ onClose }) => {
           />
         </div>
 
+        {/* Titles Selection */}
+        <div className={baseModalStyles.settingItem} style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+          <div className={baseModalStyles.settingDescription} style={{ marginRight: 0, marginBottom: '12px' }}>
+            <h4>Title</h4>
+            <p>Choose a title to display with your name. Unlock more by playing games!</p>
+          </div>
+          <TitlesSelector />
+        </div>
+
         {/* Two Second Pot GIF Setting */}
-        <div style={{ position: 'relative' }}>
+        {/* <div style={{ position: 'relative' }}>
           <div style={{
             position: 'absolute',
             top: '-12px',
@@ -104,7 +114,7 @@ const PreferencesModal = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Two Second Pot Sound Setting */}
+        Two Second Pot Sound Setting
         <div style={{ position: 'relative' }}>
           <div style={{
             position: 'absolute',
@@ -134,7 +144,7 @@ const PreferencesModal = ({ onClose }) => {
               previewType="audio"
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </BaseModal>
   );

@@ -14,16 +14,28 @@ export const useToast = () => {
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
+  const [toastQueue, setToastQueue] = useState([]);
+  const [lastToastTime, setLastToastTime] = useState(0);
   const { socket } = useSocket();
 
   const addToast = useCallback((title, message, emoji = 'ℹ', color = '#3498db', duration = 4000) => {
     const id = Date.now() + Math.random();
     const newToast = { id, title, message, emoji, color, duration };
     
-    setToasts(prev => [...prev, newToast]);
+    const now = Date.now();
+    const timeSinceLastToast = now - lastToastTime;
+    
+    if (timeSinceLastToast >= 300) {
+      // Show immediately if enough time has passed
+      setToasts(prev => [...prev, newToast]);
+      setLastToastTime(now);
+    } else {
+      // Queue the toast for later
+      setToastQueue(prev => [...prev, newToast]);
+    }
     
     return id;
-  }, []);
+  }, [lastToastTime]);
 
   const removeToast = useCallback((id) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
@@ -53,6 +65,20 @@ export const ToastProvider = ({ children }) => {
   const showMoneyEvent = useCallback((title, message, duration) => {
     return addToast(title, message, '💰', '#16a085', duration);
   }, [addToast]);
+
+  // Process queued toasts with debouncing
+  useEffect(() => {
+    if (toastQueue.length === 0) return;
+
+    const timer = setTimeout(() => {
+      const nextToast = toastQueue[0];
+      setToastQueue(prev => prev.slice(1));
+      setToasts(prev => [...prev, nextToast]);
+      setLastToastTime(Date.now());
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [toastQueue, toasts]); // Trigger when queue changes or when toasts change
 
   // Socket event listeners for toast notifications
   useEffect(() => {

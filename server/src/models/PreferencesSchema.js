@@ -14,6 +14,7 @@ const DEFAULT_PREFERENCES = {
   
   // Customization preferences
   profileImg: null,    // User's profile image URL
+  selectedTitle: null, // User's selected achievement title
   
   // Special effects preferences (coming soon)
   twoSecondPotGif: null,  // GIF to play when slamming the POT button

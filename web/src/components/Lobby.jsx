@@ -182,7 +182,8 @@ const Lobby = () => {
                    <UserAvatar 
                      user={{ 
                        username: user?.username || 'Player', 
-                       profileImg: preferences?.profileImg 
+                       profileImg: user?.profileImg || preferences?.profileImg,
+                       selectedTitle: user?.selectedTitle
                      }} 
                      size="medium" 
                      showName={true} 

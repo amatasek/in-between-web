@@ -51,7 +51,8 @@ export const PreferencesProvider = ({ children }) => {
     autoAnte: false,
     muted: false,
     twoSecondPotGif: null,
-    twoSecondPotMp3: null
+    twoSecondPotMp3: null,
+    selectedTitle: null
   });
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -186,6 +187,11 @@ export const PreferencesProvider = ({ children }) => {
   const toggleMute = async () => {
     const newValue = !preferences.muted;
     return await updatePreference('muted', newValue);
+  };
+
+  // Update selected title
+  const updateSelectedTitle = async (titleId) => {
+    return await updatePreference('selectedTitle', titleId);
   };
 
   // Upload file for two-second-pot-gif preference
@@ -359,6 +365,7 @@ export const PreferencesProvider = ({ children }) => {
         updatePreference, 
         toggleAutoAnte,
         toggleMute,
+        updateSelectedTitle,
         uploadTwoSecondPotGif,
         uploadTwoSecondPotMp3,
         uploadProfileImg,

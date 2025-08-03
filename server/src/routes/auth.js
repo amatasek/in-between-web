@@ -75,19 +75,28 @@ router.get('/me', authenticateToken, async (req, res) => {
   try {
     const databaseService = req.services.database;
     console.log('[AUTH] Fetching user data from database');
-    const user = await databaseService.getUserById(req.userId);
+    const [user, preferences] = await Promise.all([
+      databaseService.getUserById(req.userId),
+      databaseService.getPreferences(req.userId)
+    ]);
     
     if (!user) {
       console.log('[AUTH] User not found in database:', req.userId);
       return res.status(404).json({ message: 'User not found' });
     }
     
+    // Resolve selectedTitle ID to actual title string
+    const achievementService = require('../services/AchievementService');
+    const achievement = achievementService.getAchievement(preferences?.selectedTitle);
+    
     console.log('[AUTH] User data found, returning response');
     res.json({
       user: {
         id: user._id,
         username: user.username,
-        balance: user.balance || 0
+        balance: user.balance || 0,
+        profileImg: preferences?.profileImg || null,
+        selectedTitle: achievement?.title || null
       }
     });
   } catch (error) {

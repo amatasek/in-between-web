@@ -88,7 +88,15 @@ class NotificationService {
    * @param {number} duration - How long to show the notification (ms)
    */
   notifyPlayer(userId, title, message, emoji = 'ℹ', color = '#3498db', duration = 4000) {
-    if (!this.connectionService) return;
+    if (!this.connectionService) {
+      this.connectionService = this.serviceRegistry?.get('connection');
+      if (!this.connectionService) return;
+    }
+    
+    // Ensure io instance is available
+    if (!this.io && this.connectionService) {
+      this.io = this.connectionService.io;
+    }
     
     const socketId = this.connectionService.getUserSocketId(userId);
     if (socketId && this.io) {
