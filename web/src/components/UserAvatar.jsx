@@ -110,7 +110,7 @@ const UserAvatar = ({
               )}
               {xp !== undefined && (
                 <div className={styles.playerCardXP}>
-                  {xp} XP
+                  {xp.toLocaleString()} XP
                 </div>
               )}
             </div>

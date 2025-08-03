@@ -22,7 +22,7 @@ const CurrencyAmount = ({ amount, size, background, customClass }) => {
   return (
     <span className={containerClasses}>
       <CoinIcon size={size} />
-      <span>{amount}</span>
+      <span>{amount.toLocaleString()}</span>
     </span>
   );
 };
