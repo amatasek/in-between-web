@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CurrencyAmount from './common/CurrencyAmount';
+import UserAvatar from './UserAvatar';
 import styles from './styles/Leaderboard.module.css';
 import { API_URL } from '../config';
 
@@ -86,21 +87,17 @@ const Leaderboard = () => {
               </div>
               
               <div className={styles.playerCell}>
-                <div className={styles.playerInfo}>
-                  {player.profileImg && (
-                    <img 
-                      src={player.profileImg} 
-                      alt="Profile" 
-                      className={styles.profileImage}
-                    />
-                  )}
-                  <div className={styles.playerDetails}>
-                    <div className={styles.username}>{player.username}</div>
-                    {player.selectedTitle && (
-                      <div className={styles.playerTitle}>{player.selectedTitle}</div>
-                    )}
-                  </div>
-                </div>
+                <UserAvatar 
+                  user={{
+                    username: player.username,
+                    profileImg: player.profileImg,
+                    selectedTitle: player.selectedTitle
+                  }}
+                  size="small"
+                  showName={true}
+                  showTitle={true}
+                  namePosition="right"
+                />
               </div>
               
               <div className={styles.statsCell}>

@@ -20,11 +20,19 @@ router.get('/', async (req, res) => {
       ? new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
       : null;
 
-    // Get all users
+    // Get all users and dedupe early
     const usersResult = await databaseService.userDb.allDocs({ include_docs: true });
+    const seenUserIds = new Set();
     const users = usersResult.rows
       .filter(row => row.doc && row.doc.type === 'user')
-      .map(row => row.doc);
+      .map(row => row.doc)
+      .filter(user => {
+        if (seenUserIds.has(user._id)) {
+          return false;
+        }
+        seenUserIds.add(user._id);
+        return true;
+      });
 
     // Batch get all user preferences first
     const preferencesPromises = users.map(user => 
@@ -106,7 +114,7 @@ router.get('/', async (req, res) => {
       leaderboardData.push(...batchResults);
     }
 
-    // Filter out nulls and sort by totalProfit
+    // Filter out nulls and sort by totalProfit (no need to dedupe again)
     const sortedLeaderboard = leaderboardData
       .filter(entry => entry !== null)
       .sort((a, b) => b.totalProfit - a.totalProfit)
