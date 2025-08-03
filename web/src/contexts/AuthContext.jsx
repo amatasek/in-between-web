@@ -196,13 +196,13 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{ user, token, login, logout, refreshUserData, loading }}>
       {children}
-      {showWelcomePopup && user && (
+      {/* {showWelcomePopup && user && (
         <WelcomePopup 
           username={user.username} 
           balance={user.balance} 
           onClose={handleCloseWelcomePopup} 
         />
-      )}
+      )} */}
     </AuthContext.Provider>
   );
 };
