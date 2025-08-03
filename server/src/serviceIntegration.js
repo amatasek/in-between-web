@@ -52,12 +52,6 @@ function initializeServices() {
   // Wire up services (give each service access to others)
   serviceRegistry.wireServices();
   
-  // Calculate historical XP for existing players with 0 XP
-  setImmediate(() => {
-    xpService.calculateHistoricalXP()
-      .catch(error => console.error('[SERVICE_INTEGRATION] Error calculating historical XP:', error));
-  });
-  
   console.log('[SERVICE_INTEGRATION] All services bootstrapped');
   
   return serviceRegistry;
