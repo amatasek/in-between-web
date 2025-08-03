@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles/Toast.module.css';
 
 const Toast = ({ 
@@ -10,10 +10,14 @@ const Toast = ({
   onClose, 
   position 
 }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
-        onClose();
+        setIsVisible(false);
+        // Wait for fade animation to complete before removing
+        setTimeout(onClose, 300);
       }, duration);
       
       return () => clearTimeout(timer);
@@ -25,7 +29,7 @@ const Toast = ({
 
   return (
     <div 
-      className={`${styles.toast} ${isEmojiReaction ? styles.emojiReaction : ''}`}
+      className={`${styles.toast} ${isEmojiReaction && isVisible ? styles.emojiReaction : ''} ${!isVisible ? styles.slideOut : ''}`}
       style={{ 
         top: '20px', 
         zIndex: 10000 + position,
