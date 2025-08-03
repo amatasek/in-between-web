@@ -27,7 +27,7 @@ const UserAvatar = ({
   
   if (!user) return null;
   
-  const { username, profileImg, selectedTitle } = user;
+  const { username, profileImg, selectedTitle, xp } = user;
   const initials = getInitials(username || 'Unknown');
   const sizeClass = styles[size] || styles.medium;
   const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
@@ -106,6 +106,11 @@ const UserAvatar = ({
               {selectedTitle && (
                 <div className={styles.playerCardTitle}>
                   {selectedTitle}
+                </div>
+              )}
+              {xp !== undefined && (
+                <div className={styles.playerCardXP}>
+                  {xp} XP
                 </div>
               )}
             </div>

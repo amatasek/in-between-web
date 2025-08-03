@@ -12,6 +12,7 @@ class Player {
     this.socketId = socketId; // Current socket ID - can change on refresh
     this.name = name;
     this.balance = 0;
+    this.xp = 0;
     this.isReady = false;
     this.isConnected = true;
     this.disconnected = false;
@@ -42,6 +43,7 @@ class Player {
       userId: this.userId,
       name: this.name,
       balance: this.balance,
+      xp: this.xp,
       isReady: this.isReady,
       isConnected: this.isConnected,
       disconnected: this.disconnected,

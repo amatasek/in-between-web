@@ -95,6 +95,7 @@ router.get('/me', authenticateToken, async (req, res) => {
         id: user._id,
         username: user.username,
         balance: user.balance || 0,
+        xp: user.xp || 0,
         profileImg: preferences?.profileImg || null,
         selectedTitle: achievement?.title || null
       }

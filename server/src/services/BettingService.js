@@ -45,8 +45,9 @@ class BettingService extends BaseService {
       // Place bet
       if (!player.placeBet(amount)) return game;
       
-      // Process the bet transaction through the central transaction service
       const gameTransactionService = this.getService('gameTransaction');
+      const xpService = this.getService('xp');
+      
       try {
         // Update player balance, record transaction, and update pot
         // The pot is automatically updated by the transaction service
@@ -58,6 +59,8 @@ class BettingService extends BaseService {
         );
         
         gameLog(game, `${player.name} bets ${amount} coins`);
+        
+        xpService.awardXP(player.userId, amount);
         
         return game;
       } catch (error) {

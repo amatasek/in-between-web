@@ -22,6 +22,7 @@ const purchaseService = require('./services/PurchaseService');
 const botService = require('./services/BotService');
 const notificationService = require('./services/NotificationService');
 const achievementService = require('./services/AchievementService');
+const xpService = require('./services/XPService');
 
 /**
  * Initialize all services and wire them together
@@ -45,10 +46,17 @@ function initializeServices() {
     .register('purchase', purchaseService)
     .register('bot', botService)
     .register('notification', notificationService)
-    .register('achievement', achievementService);
+    .register('achievement', achievementService)
+    .register('xp', xpService);
 
   // Wire up services (give each service access to others)
   serviceRegistry.wireServices();
+  
+  // Calculate historical XP for existing players with 0 XP
+  setImmediate(() => {
+    xpService.calculateHistoricalXP()
+      .catch(error => console.error('[SERVICE_INTEGRATION] Error calculating historical XP:', error));
+  });
   
   console.log('[SERVICE_INTEGRATION] All services bootstrapped');
   

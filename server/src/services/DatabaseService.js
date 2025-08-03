@@ -67,6 +67,12 @@ purchaseDb.createIndex({
 }).catch(console.error);
 
 class DatabaseService {
+  constructor() {
+    this.userDb = userDb;
+    this.gameDb = gameDb;
+    this.purchaseDb = purchaseDb;
+  }
+
   // User operations
   async createUser({ username, hashedPassword }) {
     console.log('[DB] Creating user:', { username });
@@ -84,6 +90,7 @@ class DatabaseService {
         username,
         password: hashedPassword,
         balance: STARTING_BALANCE, // Starting balance from constants
+        xp: 0, // Starting XP
         transactions: [], // Track balance changes
         preferences: DEFAULT_PREFERENCES, // Use default preferences from schema
         createdAt: new Date().toISOString()
@@ -266,6 +273,27 @@ class DatabaseService {
   async getBalance(userId) {
     const user = await this.getUserById(userId);
     return user ? user.balance : 0;
+  }
+
+  async updateXPBulk(userIds, amount) {
+    try {
+      const updates = await Promise.all(
+        userIds.map(async (userId) => {
+          const user = await this.getUserById(userId);
+          if (!user) return null;
+          
+          const newXP = (user.xp || 0) + amount;
+          user.xp = newXP;
+          
+          return this.updateUser(user._id, { xp: newXP });
+        })
+      );
+      
+      return updates.filter(u => u !== null);
+    } catch (error) {
+      console.error('[DB] Error updating XP in bulk:', error);
+      throw error;
+    }
   }
 
   // Game operations

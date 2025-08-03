@@ -78,7 +78,8 @@ const PlayerList = () => {
                   user={{ 
                     username: player.name, 
                     profileImg: player.profileImg,
-                    selectedTitle: player.selectedTitle
+                    selectedTitle: player.selectedTitle,
+                    xp: player.xp
                   }} 
                   size="small" 
                   showName={false}

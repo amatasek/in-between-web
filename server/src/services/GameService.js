@@ -570,6 +570,7 @@ class GameService extends BaseService {
     try {
       let winnings = 0;
       const gameTransactionService = this.getService('gameTransaction');
+      const xpService = this.getService('xp');
       
       if (isWin) {
         // Regular win (1:1)
@@ -586,6 +587,8 @@ class GameService extends BaseService {
           );
           
           gameLog(game, `${player.name} wins ${winnings / 2} coins`);
+          
+          xpService.awardXP(player.userId, winnings / 2);
         } catch (error) {
           gameLog(game, `Error processing win for ${player.name}: ${error.message}`);
         }
@@ -685,6 +688,7 @@ class GameService extends BaseService {
     const broadcastService = this.getService('broadcast');
     const databaseService = this.getService('database');
     const gameTimingService = this.getService('gameTiming');
+    const xpService = this.getService('xp');
     
     // Check if the pot is empty before proceeding
     if (game.pot === 0) {
@@ -695,6 +699,8 @@ class GameService extends BaseService {
       Object.values(game.players).forEach(player => {
         player.isReady = false;
       });
+
+      xpService.awardXPBulk(game.antedPlayersForRound.map(p => p.userId), 1);
       
       // Clear the round-specific ante tracking
       game.antedPlayersForRound = [];

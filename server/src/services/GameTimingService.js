@@ -413,7 +413,6 @@ class GameTimingService extends BaseService {
         return;
       }
       // Pass the fresh game state to handleRoundCompletion
-      // gameService.handleRoundCompletion is expected to handle its own state saving.
       await gameService.handleRoundCompletion(freshGame);
     }, GAME_CONSTANTS.TIMERS.RESULTS_DURATION);
     

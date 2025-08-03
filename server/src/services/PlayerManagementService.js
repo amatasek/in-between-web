@@ -139,8 +139,9 @@ class PlayerManagementService extends BaseService {
         databaseService.getPreferences(userId)
       ]);
       
-      // Load balance
+      // Load balance and XP
       player.balance = user?.balance || 0;
+      player.xp = user?.xp || 0;
       
       // Load profile data
       player.profileImg = preferences?.profileImg || null;
