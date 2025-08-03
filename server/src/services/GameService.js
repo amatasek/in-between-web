@@ -162,7 +162,7 @@ class GameService extends BaseService {
       // Send notifications for join/reconnect
       if (existingPlayer || isReconnection) {
         console.log(`[GAME_SERVICE] Player ${user.username} (${user.userId}) reconnected to game ${gameId}`);
-        notificationService.notifyRoom(gameId, `${user.username} returned`, '', '👋', '#16a085', 3000);
+        notificationService.notifyRoom(gameId, `${user.username} returned`, '', '👋', '#16a085', 3000, user.userId);
       } else {
         console.log(`[GAME_SERVICE] Player ${user.username} (${user.userId}) joined game ${gameId}`);
         notificationService.notifyRoom(gameId, `${user.username} joined`, '', '👋', '#27ae60', 3000, user.userId);
@@ -280,7 +280,7 @@ class GameService extends BaseService {
       
       // Step 2: Remove player object using PlayerManagementService with userId
       game = playerManagementService.removePlayer(game, userId); // Use userId for removal
-      notificationService.notifyRoom(gameId, `${player.name} left`, '', '🚪', '#e74c3c', 3000);
+      notificationService.notifyRoom(gameId, `${player.name} left`, '', '🚪', '#e74c3c', 3000, userId);
 
       // Process refund if eligible
       if (needsRefund) {
