@@ -19,7 +19,7 @@ const authService = require('./services/AuthService');
 const gameTransactionService = require('./services/GameTransactionService');
 const gameHistoryService = require('./services/GameHistoryService');
 const purchaseService = require('./services/PurchaseService');
-const botService = require('./services/BotService');
+// const botService = require('./services/BotService');
 const notificationService = require('./services/NotificationService');
 const achievementService = require('./services/AchievementService');
 const xpService = require('./services/XPService');
@@ -44,7 +44,7 @@ function initializeServices() {
     .register('gameTransaction', gameTransactionService)
     .register('gameHistory', gameHistoryService)
     .register('purchase', purchaseService)
-    .register('bot', botService)
+    // .register('bot', botService)
     .register('notification', notificationService)
     .register('achievement', achievementService)
     .register('xp', xpService);
