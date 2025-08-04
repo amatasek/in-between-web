@@ -142,11 +142,8 @@ const GameStats = ({ gameData }) => {
       }
     });
 
-    // Calculate profit/loss by player
-    const playerProfits = {};
-    Object.entries(playerTransactions).forEach(([playerId, txs]) => {
-      playerProfits[playerId] = txs.reduce((sum, tx) => sum + tx.amount, 0);
-    });
+    // Use server-side calculated totals
+    const playerProfits = gameData.totals || {};
 
     // Find biggest winner and loser
     let biggestWinnerId = null;

@@ -51,23 +51,8 @@ const GameSummaryModal = ({ onClose, gameData }) => {
     }
   });
 
-  // Calculate player totals directly from flat transaction array
-  const playerTotals = useMemo(() => {
-    const totals = {};
-    
-    // Group transactions by player ID and sum up amounts
-    transactions.forEach(tx => {
-      if (!tx.playerId) return;
-      
-      if (!totals[tx.playerId]) {
-        totals[tx.playerId] = 0;
-      }
-      
-      totals[tx.playerId] += tx.amount;
-    });
-    
-    return totals;
-  }, [transactions]);
+  // Use server-side calculated totals (active games have totals, historical games have it at top level)
+  const playerTotals = gameData.totals || {};
   
   // Calculate settle-up payments
   const settleUpPayments = useMemo(() => {

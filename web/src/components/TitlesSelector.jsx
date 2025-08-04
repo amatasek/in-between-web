@@ -37,9 +37,9 @@ const TitlesSelector = () => {
     }
   };
 
-  const handleTitleSelect = async (titleId) => {
+  const handleTitleSelect = async (titleString) => {
     try {
-      await updateSelectedTitle(titleId);
+      await updateSelectedTitle(titleString);
     } catch (err) {
       setError('Failed to update title');
     }
@@ -98,8 +98,8 @@ const TitlesSelector = () => {
         {/* Unlocked titles */}
         {titles.map(title => (
           <div 
-            key={title.id}
-            onClick={() => handleTitleSelect(title.id)}
+            key={title.title}
+            onClick={() => handleTitleSelect(title.title)}
             style={{
               display: 'inline-block',
               width: '130px',
@@ -108,8 +108,8 @@ const TitlesSelector = () => {
               borderRadius: '6px',
               cursor: 'pointer',
               textAlign: 'center',
-              backgroundColor: preferences.selectedTitle === title.id ? 'rgba(100, 169, 255, 0.3)' : 'rgba(255, 255, 255, 0.08)',
-              border: preferences.selectedTitle === title.id ? '2px solid #64a9ff' : '2px solid rgba(255, 255, 255, 0.15)',
+              backgroundColor: preferences.selectedTitle === title.title ? 'rgba(100, 169, 255, 0.3)' : 'rgba(255, 255, 255, 0.08)',
+              border: preferences.selectedTitle === title.title ? '2px solid #64a9ff' : '2px solid rgba(255, 255, 255, 0.15)',
               verticalAlign: 'top',
               whiteSpace: 'normal'
             }}

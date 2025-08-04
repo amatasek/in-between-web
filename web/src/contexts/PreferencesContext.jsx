@@ -189,9 +189,9 @@ export const PreferencesProvider = ({ children }) => {
     return await updatePreference('muted', newValue);
   };
 
-  // Update selected title
-  const updateSelectedTitle = async (titleId) => {
-    return await updatePreference('selectedTitle', titleId);
+  // Update selected title (expects title string, not ID)
+  const updateSelectedTitle = async (titleString) => {
+    return await updatePreference('selectedTitle', titleString);
   };
 
   // Upload file for two-second-pot-gif preference

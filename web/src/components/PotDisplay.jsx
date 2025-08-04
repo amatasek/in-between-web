@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './styles/PotDisplay.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import CurrencyAmount from './common/CurrencyAmount';
-import { ICONS } from '../constants/UIConstants';
+import { ICONS } from '../constants';
 
 const PotDisplay = () => {
   const { gameState } = useGameContext();

@@ -161,10 +161,10 @@ const PlayerStatsModal = ({ onClose }) => {
 
   const handleGameClick = (gameId) => {
     // Find the selected game in our existing data
-    const selectedGame = historyData.games.find(game => game._id === gameId);
+    const selectedGame = historyData.games.find(game => game.id === gameId);
     if (selectedGame) {
-      // Just pass the gameData object which already has the correct structure
-      setSelectedGameData(selectedGame.gameData);
+      // Historical games now have the same structure as active games
+      setSelectedGameData(selectedGame);
       setShowGameSummary(true);
     }
   };
@@ -268,16 +268,16 @@ const PlayerStatsModal = ({ onClose }) => {
                     </div>
                     
                     {historyData.games.map((game) => (
-                      <div key={game._id} className={styles.historyRow}>
+                      <div key={game.id} className={styles.historyRow}>
                         <div className={styles.gameNameCell}>
                           <span 
                             className={styles.gameNameLink} 
-                            onClick={() => handleGameClick(game._id)}
+                            onClick={() => handleGameClick(game.id)}
                             tabIndex="0"
                             role="button"
                             data-gamepad-focusable="true"
                           >
-                            #{game._id}
+                            #{game.id}
                           </span>
                         </div>
                         <div className={styles.playerCountCell}>{game.totalPlayerCount}</div>

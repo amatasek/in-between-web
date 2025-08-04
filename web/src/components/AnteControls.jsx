@@ -4,7 +4,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
 import CurrencyAmount from './common/CurrencyAmount';
-import { ICONS } from '../constants/UIConstants';
+import { ICONS } from '../constants';
 import AutoAnteToggle from './AutoAnteToggle.jsx';
 
 

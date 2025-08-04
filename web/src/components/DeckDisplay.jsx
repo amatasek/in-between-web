@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles/DeckDisplay.module.css';
 import { useGameContext } from '../contexts/GameContext';
-import { ICONS } from '../constants/UIConstants';
+import { ICONS } from '../constants';
 
 const DeckDisplay = () => {
   const { gameState } = useGameContext();

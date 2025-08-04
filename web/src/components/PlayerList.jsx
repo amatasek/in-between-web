@@ -4,7 +4,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import CurrencyAmount from './common/CurrencyAmount';
 import UserAvatar from './UserAvatar.jsx';
-import { ICONS } from '../constants/UIConstants';
+import { ICONS } from '../constants';
 
 const PlayerList = () => {
   const { gameState } = useGameContext();
@@ -21,24 +21,8 @@ const PlayerList = () => {
   const { players, currentPlayerId, dealerId, gameTransactions = [] } = gameState;
   const currentUserId = socket?.auth?.userId;
   
-  // Calculate player totals from game transactions (same logic as GameSummaryModal)
-  const playerTotals = useMemo(() => {
-    const totals = {};
-    const transactions = Array.isArray(gameTransactions) ? gameTransactions : [];
-    
-    // Group transactions by player ID and sum up amounts
-    transactions.forEach(tx => {
-      if (!tx.playerId) return;
-      
-      if (!totals[tx.playerId]) {
-        totals[tx.playerId] = 0;
-      }
-      
-      totals[tx.playerId] += tx.amount;
-    });
-    
-    return totals;
-  }, [gameTransactions]);
+  // Use server-side calculated totals
+  const playerTotals = gameState.totals || {};
   if (!players || Object.keys(players).length === 0) {
     return (
       <div className={styles.emptyPlayerList}>
@@ -78,7 +62,7 @@ const PlayerList = () => {
                   user={{ 
                     username: player.name, 
                     profileImg: player.profileImg,
-                    selectedTitle: player.selectedTitle,
+                    title: player.title,
                     xp: player.xp
                   }} 
                   size="small" 

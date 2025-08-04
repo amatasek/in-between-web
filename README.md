@@ -1,34 +1,70 @@
-# In Between Card Game
+# In-Between Web Client
 
-**Play now at [in-between.live](https://in-between.live)**
+Open source React UI for the In-Between card game.
 
-## Stack
-- Frontend: React/Next.js
-- Backend: Node.js + Express + Socket.io
-- Database: CouchDB (with nano client)
-- Authentication: Custom JWT-based auth
+## Overview
 
-## First Time Setup
-```bash
-# Install dependencies for web client
-cd web && npm install
+This repository contains the web client for In-Between, a real-time multiplayer card game. The UI is built with React and Vite, featuring a modern, responsive design with real-time updates via Socket.IO.
 
-# Install dependencies for server
-cd ../server && npm install
-```
+## Tech Stack
 
-## Development
-```bash
-# Start the server (in one terminal)
-cd server && npm start
-
-# Start the web client (in another terminal)
-cd web && npm run dev
-```
+- **Framework**: React 18 with Vite
+- **Styling**: CSS Modules
+- **Real-time**: Socket.IO client
+- **Routing**: React Router
+- **State Management**: React Context API
 
 ## Features
-- Real-time multiplayer card game
-- User authentication system
-- Persistent game state
-- Modern, responsive UI
-- WebSocket-based communication
+
+- 🎮 Real-time multiplayer gameplay
+- 🎨 Modern, responsive UI design
+- 🔐 JWT-based authentication
+- 🎵 Interactive sound effects
+- 📱 Mobile-friendly interface
+- ⚡ WebSocket communication
+- 🎯 Gamepad support
+- 💰 In-game currency system
+
+## Project Structure
+
+```
+web/
+├── src/
+│   ├── components/     # React components
+│   ├── contexts/       # React Context providers
+│   ├── styles/         # Component styles (CSS Modules)
+│   ├── services/       # API and service layers
+│   ├── hooks/          # Custom React hooks
+│   └── constants/      # UI constants
+├── public/             # Static assets
+└── vite.config.js      # Vite configuration
+```
+
+## Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## Configuration
+
+The client expects a backend API at `http://localhost:3001` during development. Update `src/config.js` to point to your backend server.
+
+## Backend API
+
+This UI requires a compatible backend server implementing the In-Between game logic and Socket.IO events. The backend should provide:
+- Authentication endpoints (`/auth/*`)
+- Game management (`/games/*`)
+- User preferences (`/preferences/*`)
+- WebSocket events for real-time gameplay
+
+## Contributing
+
+Contributions are welcome! Please raise an issue or submit a pull request.

@@ -183,7 +183,7 @@ const Lobby = () => {
                      user={{ 
                        username: user?.username || 'Player', 
                        profileImg: user?.profileImg || preferences?.profileImg,
-                       selectedTitle: user?.selectedTitle,
+                       title: user?.title,
                        xp: user?.xp
                      }} 
                      size="medium" 

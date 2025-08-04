@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './styles/UserAvatar.module.css';
 
-// No more hardcoded mapping needed - selectedTitle is now the actual title string from server
+// No more hardcoded mapping needed - title is now the actual title string from server
 
 /**
  * UserAvatar component displays a user's profile image or their initials if no image is available.
@@ -27,7 +27,7 @@ const UserAvatar = ({
   
   if (!user) return null;
   
-  const { username, profileImg, selectedTitle, xp } = user;
+  const { username, profileImg, title, xp } = user;
   const initials = getInitials(username || 'Unknown');
   const sizeClass = styles[size] || styles.medium;
   const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
@@ -103,9 +103,9 @@ const UserAvatar = ({
               <div className={styles.playerCardUsername}>
                 {username || 'Unknown'}
               </div>
-              {selectedTitle && (
+              {title && (
                 <div className={styles.playerCardTitle}>
-                  {selectedTitle}
+                  {title}
                 </div>
               )}
               {xp !== undefined && (
@@ -123,9 +123,9 @@ const UserAvatar = ({
           <div className={styles.username}>
             {username || 'Unknown'}
           </div>
-          {showTitle && selectedTitle && (
+          {showTitle && title && (
             <div className={styles.userTitle}>
-              {selectedTitle}
+              {title}
             </div>
           )}
         </div>
