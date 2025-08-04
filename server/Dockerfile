@@ -1,12 +1,17 @@
 FROM node:18
 
-# Install CouchDB and supervisor
+# Install supervisor and dependencies
 RUN apt-get update && apt-get install -y \
-    curl supervisor gnupg \
-    && curl -L https://couchdb.apache.org/repo/keys.asc | apt-key add - \
-    && echo "deb https://apache.jfrog.io/artifactory/couchdb-deb/ focal main" | tee /etc/apt/sources.list.d/couchdb.list \
-    && apt-get update && apt-get install -y couchdb \
+    supervisor \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install CouchDB from official binary
+RUN curl -L https://archive.apache.org/dist/couchdb/binary/linux/2.3.1/apache-couchdb-2.3.1.tar.gz -o couchdb.tar.gz \
+    && tar -xzf couchdb.tar.gz -C /opt \
+    && rm couchdb.tar.gz \
+    && useradd -r -d /opt/couchdb couchdb \
+    && chown -R couchdb:couchdb /opt/couchdb
 
 # Copy supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
