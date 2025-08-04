@@ -1,5 +1,4 @@
-const PouchDB = require('pouchdb');
-PouchDB.plugin(require('pouchdb-find'));
+const nano = require('nano');
 const { STARTING_BALANCE } = require('../../../shared/constants/GameConstants');
 const { DEFAULT_PREFERENCES, ensureCompletePreferences, isValidPreferenceKey } = require('../models/PreferencesSchema');
 
@@ -9,10 +8,11 @@ const config = require('../config');
 // Connect to CouchDB
 console.log(`[DB] Connecting to CouchDB at: ${config.couchdbUrl.replace(/\/\/.*@/, '//***:***@')}`);
 
-const userDb = new PouchDB(`${config.couchdbUrl}/users`);
-const gameDb = new PouchDB(`${config.couchdbUrl}/games`);
-const purchaseDb = new PouchDB(`${config.couchdbUrl}/purchases`);
-const gameHistoryDb = new PouchDB(`${config.couchdbUrl}/game-history`);
+const couch = nano(config.couchdbUrl);
+const userDb = couch.db.use('users');
+const gameDb = couch.db.use('games');
+const purchaseDb = couch.db.use('purchases');
+const gameHistoryDb = couch.db.use('game-history');
 
 // Test connections
 Promise.all([
@@ -67,7 +67,7 @@ class DatabaseService {
       };
 
       console.log('[DB] Attempting to save user:', { _id: user._id });
-      const result = await userDb.put(user);
+      const result = await userDb.insert(user);
       console.log('[DB] User saved successfully:', result);
       
       user._rev = result.rev; // Add the revision ID
@@ -94,7 +94,7 @@ class DatabaseService {
     try {
       return await userDb.get(userId);
     } catch (error) {
-      if (error.name === 'not_found') {
+      if (error.statusCode === 404) {
         return null;
       }
       throw error;
@@ -114,7 +114,7 @@ class DatabaseService {
       _rev: user._rev
     };
 
-    return userDb.put(updatedUser);
+    return userDb.insert(updatedUser);
   }
   
   async updatePreference(userId, key, value) {
@@ -182,9 +182,8 @@ class DatabaseService {
     
     try {
       // Get all users in a single batch operation
-      const result = await userDb.allDocs({
-        keys: userIds,
-        include_docs: true
+      const result = await userDb.fetch({
+        keys: userIds
       });
       
       // Process results and extract preferences
@@ -273,7 +272,7 @@ class DatabaseService {
       return null;
     }
 
-    // Create a plain object copy of the game for PouchDB
+    // Create a plain object copy of the game for CouchDB
     const gameDoc = {
       _id: game.id
     };
@@ -299,14 +298,14 @@ class DatabaseService {
     }
 
     console.log(`[DATABASE_SERVICE] Saving game ${game.id} to database`);
-    return gameDb.put(gameDoc);
+    return gameDb.insert(gameDoc);
   }
 
   async getGame(gameId) {
     try {
       return await gameDb.get(gameId);
     } catch (error) {
-      if (error.name === 'not_found') {
+      if (error.statusCode === 404) {
         return null;
       }
       throw error;
@@ -316,9 +315,9 @@ class DatabaseService {
   async deleteGame(gameId) {
     try {
       const game = await gameDb.get(gameId);
-      return gameDb.remove(game);
+      return gameDb.destroy(game._id, game._rev);
     } catch (error) {
-      if (error.name === 'not_found') {
+      if (error.statusCode === 404) {
         return null;
       }
       throw error;
@@ -326,7 +325,7 @@ class DatabaseService {
   }
 
   async getAllGames() {
-    const result = await gameDb.allDocs({
+    const result = await gameDb.list({
       include_docs: true
     });
     return result.rows.map(row => row.doc);
@@ -336,7 +335,7 @@ class DatabaseService {
   async createPurchase(purchaseData) {
     console.log('[DB] Creating purchase record:', { id: purchaseData.id, userId: purchaseData.userId });
     try {
-      const result = await purchaseDb.put(purchaseData);
+      const result = await purchaseDb.insert(purchaseData);
       console.log('[DB] Purchase record saved successfully:', result);
       return result;
     } catch (error) {
@@ -401,7 +400,7 @@ class DatabaseService {
         ...userAchievement
       };
       
-      const result = await userDb.put(achievementDoc);
+      const result = await userDb.insert(achievementDoc);
       return { ...achievementDoc, _rev: result.rev };
     } catch (error) {
       console.error('[DB] Error saving user achievement:', error);

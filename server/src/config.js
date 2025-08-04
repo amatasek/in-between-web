@@ -10,12 +10,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 // Set up paths based on environment
 const dataPath = isProduction ? '/var/data' : path.join(__dirname, '../../data');
-const dbPath = isProduction ? path.join(dataPath, 'db') : path.join(__dirname, '../../db');
 const filesPath = path.join(dataPath, 'files');
 
 console.log(`[CONFIG] Environment: ${isProduction ? 'Production' : 'Development'}`);
 console.log(`[CONFIG] Data path: ${dataPath}`);
-console.log(`[CONFIG] Database path: ${dbPath}`);
 console.log(`[CONFIG] Files path: ${filesPath}`);
 
 /**
@@ -34,12 +32,7 @@ function ensureDirectoryExists(dirPath, dirType) {
 try {
   // Create main directories
   ensureDirectoryExists(dataPath, 'data');
-  ensureDirectoryExists(dbPath, 'database');
   ensureDirectoryExists(filesPath, 'files');
-  
-  // Create database subdirectories
-  ensureDirectoryExists(path.join(dbPath, 'users'), 'users database');
-  ensureDirectoryExists(path.join(dbPath, 'games'), 'games database');
   
   // Create file subdirectories
   ensureDirectoryExists(path.join(filesPath, 'images'), 'images');
@@ -61,7 +54,6 @@ const config = {
   port: process.env.PORT || 10000,
   jwtSecret: process.env.JWT_SECRET || 'development-jwt-secret',
   dataPath,
-  dbPath,
   filesPath,
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   logLevel: isProduction ? 'info' : 'debug',

@@ -30,7 +30,7 @@ class Purchase {
     this.purchasedAt = data.purchasedAt || new Date().toISOString();
     this.metadata = data.metadata || {};
     
-    // PouchDB document fields
+    // CouchDB document fields
     this._id = data._id || `purchase_${this.id}`;
     this._rev = data._rev;
     
@@ -57,7 +57,7 @@ class Purchase {
       status: this.status,
       purchasedAt: this.purchasedAt,
       metadata: this.metadata,
-      type: 'purchase' // Document type for PouchDB queries
+      type: 'purchase' // Document type for CouchDB queries
     };
   }
   

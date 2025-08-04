@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
       : null;
 
     // Get all users and dedupe early
-    const usersResult = await databaseService.userDb.allDocs({ include_docs: true });
+    const usersResult = await databaseService.userDb.list({ include_docs: true });
     const seenUserIds = new Set();
     const users = usersResult.rows
       .filter(row => row.doc && row.doc.type === 'user')

@@ -52,7 +52,7 @@ class GameHistoryService extends BaseService {
       // Get transaction log data for timestamps and player information
       const transactionData = this.extractDataFromTransactions(game);
       
-      // Create a plain object copy of the game for PouchDB
+      // Create a plain object copy of the game for CouchDB
       const gameHistoryDoc = {
         _id: game.id,
         gameData: this.prepareGameDataForArchive(game),
@@ -64,7 +64,7 @@ class GameHistoryService extends BaseService {
         roundCount: game.round
       };
 
-      return await this.gameHistoryDb.put(gameHistoryDoc);
+      return await this.gameHistoryDb.insert(gameHistoryDoc);
     } catch (error) {
       console.error(`[GAME_HISTORY_SERVICE] Error archiving game ${game.id}:`, error);
       return null;
@@ -215,7 +215,7 @@ class GameHistoryService extends BaseService {
       console.log(`[GAME_HISTORY_SERVICE] Retrieving historical games for player: ${playerName}`);
       
       // Get all games from the database with pagination
-      const result = await this.gameHistoryDb.allDocs({
+      const result = await this.gameHistoryDb.list({
         include_docs: true,
       });
       

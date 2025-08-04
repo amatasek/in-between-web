@@ -5,7 +5,7 @@
 ## Stack
 - Frontend: React/Next.js
 - Backend: Node.js + Express + Socket.io
-- Database: PouchDB
+- Database: CouchDB (with nano client)
 - Authentication: Custom JWT-based auth
 
 ## First Time Setup

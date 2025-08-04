@@ -54,7 +54,8 @@ The web client uses React Context for state management:
 - `GamePhases.js` - Game state constants
 
 ### Database
-- **PouchDB** (NoSQL document store) for all data persistence
+- **CouchDB** (NoSQL document store) for all data persistence
+- **nano** client library for CouchDB connections
 - `DatabaseService` handles all database operations
 - Models in `/server/src/models/` define data schemas
 
