@@ -1,15 +1,4 @@
-const PouchDB = require('pouchdb');
-const path = require('path');
-const fs = require('fs');
 const BaseService = require('./BaseService');
-const config = require('../config');
-
-// Ensure the database directory exists
-const historyDbPath = path.resolve(config.dbPath, 'game-history');
-if (!fs.existsSync(historyDbPath)) {
-  console.log(`[DB] Creating game history database directory: ${historyDbPath}`);
-  fs.mkdirSync(historyDbPath, { recursive: true });
-}
 
 /**
  * GameHistoryService - Manages the storage of completed games for historical analysis
@@ -17,31 +6,13 @@ if (!fs.existsSync(historyDbPath)) {
 class GameHistoryService extends BaseService {
   constructor() {
     super();
-    this.initializeDatabase();
   }
 
   /**
-   * Initialize the game history database
+   * Get the game history database from DatabaseService
    */
-  initializeDatabase() {
-    try {
-      // Create a new PouchDB instance
-      this.gameHistoryDb = new PouchDB(historyDbPath);
-      console.log('[GAME_HISTORY_SERVICE] Successfully initialized database at:', historyDbPath);
-
-      // Test database connection
-      this.gameHistoryDb.info()
-        .then(info => {
-          console.log('[GAME_HISTORY_SERVICE] Database info:', info);
-        })
-        .catch(error => {
-          console.error('[GAME_HISTORY_SERVICE] Database connection error:', error);
-          // Try to recreate database if there's an error
-          this.gameHistoryDb = new PouchDB(historyDbPath);
-        });
-    } catch (error) {
-      console.error('[GAME_HISTORY_SERVICE] Failed to initialize database:', error);
-    }
+  get gameHistoryDb() {
+    return this.getService('database').gameHistoryDb;
   }
 
   /**
