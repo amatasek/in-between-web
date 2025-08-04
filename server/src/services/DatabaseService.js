@@ -492,10 +492,11 @@ async function autoMigrateIfNeeded() {
         continue;
       }
       
-      // Check if CouchDB already has data
-      const remoteInfo = await dbConfig.db.info();
-      if (remoteInfo.doc_count > 0) {
-        console.log(`[DB] ${dbConfig.name} already has ${remoteInfo.doc_count} documents, skipping migration`);
+      // Check if CouchDB already has user data (ignore design docs)
+      const remoteDocs = await dbConfig.db.allDocs();
+      const userDocs = remoteDocs.rows.filter(row => !row.id.startsWith('_design/'));
+      if (userDocs.length > 0) {
+        console.log(`[DB] ${dbConfig.name} already has ${userDocs.length} user documents, skipping migration`);
         continue;
       }
       
