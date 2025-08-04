@@ -41,7 +41,6 @@ class BotService extends BaseService {
 
   async createReadyBot() {
     const username = this.getRandomBotName();
-    const userId = `user_${username}`;
     
     const databaseService = this.getService('database');
     const existingUser = await databaseService.getUserByUsername(username);
@@ -49,19 +48,19 @@ class BotService extends BaseService {
       throw new Error(`Bot user ${username} already exists`);
     }
     
-    await databaseService.createUser({ 
+    const user = await databaseService.createUser({ 
       username: username, 
       hashedPassword: 'bot_placeholder_password' 
     });
 
     const authService = this.getService('auth');
-    const token = authService.generateToken(userId, username);
+    const token = await authService.generateToken(user._id);
 
     return {
-      id: userId,
+      id: user._id,
       username: username,
       token: token,
-      balance: 2000,
+      balance: user.balance || 2000,
       decisionEngine: new BotDecisionEngine(),
       createdAt: Date.now()
     };

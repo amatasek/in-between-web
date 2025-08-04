@@ -65,7 +65,8 @@ const config = {
   filesPath,
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   logLevel: isProduction ? 'info' : 'debug',
-  isProduction
+  isProduction,
+  couchdbUrl: process.env.COUCHDB_URL || 'http://admin:devpassword@localhost:5984'
 };
 
 module.exports = config;

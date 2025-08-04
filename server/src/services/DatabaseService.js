@@ -8,54 +8,84 @@ const { DEFAULT_PREFERENCES, ensureCompletePreferences, isValidPreferenceKey } =
 // Import config
 const config = require('../config');
 
-// Ensure the database directory exists
-try {
-  if (!fs.existsSync(config.dbPath)) {
-    console.log(`[DB] Creating database directory: ${config.dbPath}`);
-    fs.mkdirSync(config.dbPath, { recursive: true });
-  }
+// Determine if we should use CouchDB or local files
+const USE_COUCHDB = !!config.couchdbUrl && config.couchdbUrl !== 'false';
+
+let userDb, gameDb, purchaseDb;
+
+if (USE_COUCHDB) {
+  // Use CouchDB
+  console.log(`[DB] Connecting to CouchDB at: ${config.couchdbUrl.replace(/\/\/.*@/, '//***:***@')}`);
   
-  // Test write access to the directory
-  const testFile = path.join(config.dbPath, '.db-write-test');
-  fs.writeFileSync(testFile, 'test');
-  fs.unlinkSync(testFile);
-  console.log(`[DB] Successfully verified write access to: ${config.dbPath}`);
-} catch (error) {
-  console.error(`[DB] Error with database directory ${config.dbPath}:`, error.message);
-  throw new Error(`Cannot access database directory: ${error.message}`);
+  userDb = new PouchDB(`${config.couchdbUrl}/users`);
+  gameDb = new PouchDB(`${config.couchdbUrl}/games`);
+  purchaseDb = new PouchDB(`${config.couchdbUrl}/purchases`);
+  
+  // Test connections and auto-migrate if needed
+  Promise.all([
+    userDb.info(),
+    gameDb.info(),
+    purchaseDb.info()
+  ]).then(() => {
+    console.log('[DB] Successfully connected to all CouchDB databases');
+    // Check if migration is needed
+    autoMigrateIfNeeded();
+  }).catch(error => {
+    console.error('[DB] Failed to connect to CouchDB:', error.message);
+  });
+  
+} else {
+  // Use local file-based PouchDB (original code)
+  
+  // Ensure the database directory exists
+  try {
+    if (!fs.existsSync(config.dbPath)) {
+      console.log(`[DB] Creating database directory: ${config.dbPath}`);
+      fs.mkdirSync(config.dbPath, { recursive: true });
+    }
+    
+    // Test write access to the directory
+    const testFile = path.join(config.dbPath, '.db-write-test');
+    fs.writeFileSync(testFile, 'test');
+    fs.unlinkSync(testFile);
+    console.log(`[DB] Successfully verified write access to: ${config.dbPath}`);
+  } catch (error) {
+    console.error(`[DB] Error with database directory ${config.dbPath}:`, error.message);
+    throw new Error(`Cannot access database directory: ${error.message}`);
+  }
+
+  console.log(`[DB] Using database path: ${config.dbPath}`);
+
+  // Use absolute paths for PouchDB to avoid path resolution issues
+  const userDbPath = path.resolve(config.dbPath, 'users');
+  const gameDbPath = path.resolve(config.dbPath, 'games');
+  const purchaseDbPath = path.resolve(config.dbPath, 'purchases');
+
+  console.log(`[DB] User database path: ${userDbPath}`);
+  console.log(`[DB] Game database path: ${gameDbPath}`);
+  console.log(`[DB] Purchase database path: ${purchaseDbPath}`);
+
+  // Ensure the specific database directories exist
+  if (!fs.existsSync(userDbPath)) {
+    console.log(`[DB] Creating users database directory: ${userDbPath}`);
+    fs.mkdirSync(userDbPath, { recursive: true });
+  }
+
+  if (!fs.existsSync(gameDbPath)) {
+    console.log(`[DB] Creating games database directory: ${gameDbPath}`);
+    fs.mkdirSync(gameDbPath, { recursive: true });
+  }
+
+  if (!fs.existsSync(purchaseDbPath)) {
+    console.log(`[DB] Creating purchases database directory: ${purchaseDbPath}`);
+    fs.mkdirSync(purchaseDbPath, { recursive: true });
+  }
+
+  // Database instances with configured path
+  userDb = new PouchDB(userDbPath);
+  gameDb = new PouchDB(gameDbPath);
+  purchaseDb = new PouchDB(purchaseDbPath);
 }
-
-console.log(`[DB] Using database path: ${config.dbPath}`);
-
-// Use absolute paths for PouchDB to avoid path resolution issues
-const userDbPath = path.resolve(config.dbPath, 'users');
-const gameDbPath = path.resolve(config.dbPath, 'games');
-const purchaseDbPath = path.resolve(config.dbPath, 'purchases');
-
-console.log(`[DB] User database path: ${userDbPath}`);
-console.log(`[DB] Game database path: ${gameDbPath}`);
-console.log(`[DB] Purchase database path: ${purchaseDbPath}`);
-
-// Ensure the specific database directories exist
-if (!fs.existsSync(userDbPath)) {
-  console.log(`[DB] Creating users database directory: ${userDbPath}`);
-  fs.mkdirSync(userDbPath, { recursive: true });
-}
-
-if (!fs.existsSync(gameDbPath)) {
-  console.log(`[DB] Creating games database directory: ${gameDbPath}`);
-  fs.mkdirSync(gameDbPath, { recursive: true });
-}
-
-if (!fs.existsSync(purchaseDbPath)) {
-  console.log(`[DB] Creating purchases database directory: ${purchaseDbPath}`);
-  fs.mkdirSync(purchaseDbPath, { recursive: true });
-}
-
-// Database instances with configured path
-const userDb = new PouchDB(userDbPath);
-const gameDb = new PouchDB(gameDbPath);
-const purchaseDb = new PouchDB(purchaseDbPath);
 
 // Create indexes for efficient querying
 userDb.createIndex({
@@ -439,6 +469,69 @@ class DatabaseService {
     }
   }
 
+}
+
+// Auto-migration function
+async function autoMigrateIfNeeded() {
+  if (!USE_COUCHDB) return;
+  
+  console.log('[DB] Checking if migration is needed...');
+  
+  const DATABASES = [
+    { name: 'users', path: path.resolve(config.dbPath, 'users'), db: userDb },
+    { name: 'games', path: path.resolve(config.dbPath, 'games'), db: gameDb },
+    { name: 'purchases', path: path.resolve(config.dbPath, 'purchases'), db: purchaseDb },
+    { name: 'game-history', path: path.join(config.dbPath, 'game-history'), db: new PouchDB(`${config.couchdbUrl}/game-history`) }
+  ];
+  
+  for (const dbConfig of DATABASES) {
+    try {
+      // Check if local PouchDB files exist
+      if (!fs.existsSync(dbConfig.path)) {
+        console.log(`[DB] No local files found for ${dbConfig.name}, skipping`);
+        continue;
+      }
+      
+      // Check if CouchDB already has data
+      const remoteInfo = await dbConfig.db.info();
+      if (remoteInfo.doc_count > 0) {
+        console.log(`[DB] ${dbConfig.name} already has ${remoteInfo.doc_count} documents, skipping migration`);
+        continue;
+      }
+      
+      console.log(`[DB] Starting migration for ${dbConfig.name}...`);
+      
+      // Connect to local PouchDB
+      const localDb = new PouchDB(dbConfig.path);
+      const localInfo = await localDb.info();
+      
+      if (localInfo.doc_count === 0) {
+        console.log(`[DB] ${dbConfig.name} is empty locally, skipping`);
+        continue;
+      }
+      
+      console.log(`[DB] Migrating ${localInfo.doc_count} documents from ${dbConfig.name}...`);
+      
+      // Get all documents
+      const allDocs = await localDb.allDocs({ include_docs: true });
+      const docsToInsert = allDocs.rows.map(row => {
+        const doc = { ...row.doc };
+        delete doc._rev; // Remove revision field
+        return doc;
+      });
+      
+      // Bulk insert
+      const result = await dbConfig.db.bulkDocs(docsToInsert);
+      const successful = result.filter(doc => !doc.error);
+      
+      console.log(`[DB] ✅ Migrated ${successful.length} documents to ${dbConfig.name}`);
+      
+    } catch (error) {
+      console.error(`[DB] ❌ Migration failed for ${dbConfig.name}:`, error.message);
+    }
+  }
+  
+  console.log('[DB] Auto-migration complete!');
 }
 
 module.exports = new DatabaseService();

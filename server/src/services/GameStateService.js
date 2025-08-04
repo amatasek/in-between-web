@@ -16,13 +16,10 @@ class GameStateService extends BaseService {
   async init() {
     if (this.initialized) return;
     
-    console.log('[GAME_STATE_SERVICE] Initializing GameStateService');
-    
     // Load existing games from the database
     await this.loadGamesFromDatabase();
     
     this.initialized = true;
-    console.log('[GAME_STATE_SERVICE] Initialization complete');
   }
   
 
