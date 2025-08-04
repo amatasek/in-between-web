@@ -5,7 +5,7 @@ services:
     image: couchdb:3.3
     environment:
       - COUCHDB_USER=admin
-      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD:-devpassword}
+      - COUCHDB_PASSWORD=devpassword
     ports:
       - "5984:5984"
     volumes:
