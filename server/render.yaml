@@ -1,19 +1,14 @@
 services:
   - type: web
     name: in-between-api
-    env: node
-    buildCommand: npm install
-    startCommand: node server.js
+    env: docker
+    dockerfilePath: ./Dockerfile
+    buildCommand: docker-compose up -d couchdb && npm install
+    startCommand: docker-compose up -d couchdb && npm start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: JWT_SECRET
-        sync: false
-      - key: CORS_ORIGIN
-        value: "https://in-between.live,https://amatasek.github.io"
-      - key: DATA_PATH
-        value: /var/data
-    disk:
-      name: data
-      mountPath: /var/data
-      sizeGB: 4
+      - key: COUCHDB_PASSWORD
+        generateValue: true
+      - key: COUCHDB_URL
+        value: http://admin:${COUCHDB_PASSWORD}@localhost:5984
