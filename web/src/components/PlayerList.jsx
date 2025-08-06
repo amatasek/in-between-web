@@ -1,14 +1,26 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useContext } from 'react';
 import styles from './styles/PlayerList.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import CurrencyAmount from './common/CurrencyAmount';
 import UserAvatar from './UserAvatar.jsx';
 import { ICONS } from '../constants';
+import UserDataContext from '../contexts/UserDataContext';
 
 const PlayerList = () => {
   const { gameState } = useGameContext();
   const { socket } = useSocket();
+  const userDataContext = useContext(UserDataContext);
+  
+  // Prefetch user data for all players when game state changes
+  useEffect(() => {
+    if (gameState?.players && userDataContext) {
+      const userIds = Object.values(gameState.players).map(player => player.userId).filter(Boolean);
+      if (userIds.length > 0) {
+        userDataContext.prefetchUsers(userIds);
+      }
+    }
+  }, [gameState?.players, userDataContext]);
   
   if (!gameState || !gameState.players) {
     return (
@@ -59,12 +71,7 @@ const PlayerList = () => {
               >
               <div className={styles.playerInfo}>
                 <UserAvatar 
-                  user={{ 
-                    username: player.name, 
-                    profileImg: player.profileImg,
-                    title: player.title,
-                    xp: player.xp
-                  }} 
+                  userId={player.userId}
                   size="small" 
                   showName={false}
                 />

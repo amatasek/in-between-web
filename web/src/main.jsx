@@ -9,14 +9,17 @@ import './styles/variables.css';
 import { SocketProvider } from './contexts/SocketContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { PreferencesProvider } from './contexts/PreferencesContext';
+import { UserDataProvider } from './contexts/UserDataContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
       <SocketProvider>
-        <PreferencesProvider>
-          <App />
-        </PreferencesProvider>
+        <UserDataProvider>
+          <PreferencesProvider>
+            <App />
+          </PreferencesProvider>
+        </UserDataProvider>
       </SocketProvider>
     </AuthProvider>
   </React.StrictMode>

@@ -25,7 +25,7 @@ export const ToastProvider = ({ children }) => {
     const now = Date.now();
     const timeSinceLastToast = now - lastToastTime;
     
-    if (timeSinceLastToast >= 300) {
+    if (timeSinceLastToast >= 600) {
       // Show immediately if enough time has passed
       setToasts(prev => [...prev, newToast]);
       setLastToastTime(now);
@@ -75,7 +75,7 @@ export const ToastProvider = ({ children }) => {
       setToastQueue(prev => prev.slice(1));
       setToasts(prev => [...prev, nextToast]);
       setLastToastTime(Date.now());
-    }, 300);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [toastQueue, toasts]); // Trigger when queue changes or when toasts change

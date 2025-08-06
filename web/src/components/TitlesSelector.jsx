@@ -76,6 +76,7 @@ const TitlesSelector = () => {
           style={{
             display: 'inline-block',
             width: '120px',
+            height: '36px',
             padding: '8px',
             margin: '0 8px 0 0',
             borderRadius: '6px',
@@ -84,7 +85,10 @@ const TitlesSelector = () => {
             backgroundColor: !preferences.selectedTitle ? 'rgba(100, 169, 255, 0.3)' : 'rgba(255, 255, 255, 0.08)',
             border: !preferences.selectedTitle ? '2px solid #64a9ff' : '2px solid rgba(255, 255, 255, 0.15)',
             verticalAlign: 'top',
-            whiteSpace: 'normal'
+            whiteSpace: 'normal',
+            display: 'inline-flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
           }}
         >
           <div style={{ fontWeight: 'bold', color: '#bcdcff', fontSize: '13px' }}>
@@ -101,8 +105,11 @@ const TitlesSelector = () => {
             key={title.title}
             onClick={() => handleTitleSelect(title.title)}
             style={{
-              display: 'inline-block',
+              display: 'inline-flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
               width: '130px',
+              height: '36px',
               padding: '8px',
               margin: '0 8px 0 0',
               borderRadius: '6px',

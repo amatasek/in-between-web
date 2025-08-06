@@ -15,6 +15,8 @@ import PreferencesButton from './common/PreferencesButton.jsx';
 import PlayerStatsButton from './common/PlayerStatsButton.jsx';
 import StoreButton from './StoreButton.jsx';
 import UserAvatar from './UserAvatar.jsx';
+import ProgressInfo from './ProgressInfo.jsx';
+import { useUserData } from '../contexts/UserDataContext';
 import soundService from '../services/SoundService';
 import GameSettingsModal from './GameSettingsModal.jsx';
 import StoreModal from './StoreModal.jsx';
@@ -24,6 +26,7 @@ import RulesButton from './common/RulesButton';
 const Lobby = () => {
   const { gameList, loading: lobbyLoading, error: lobbyError } = useLobby(); // Assuming lobby context handles its own loading
   const { user, logout, loading: authLoading, refreshUserData } = useAuth();
+  const userData = useUserData(user?.id);
   const { socket, isConnected, loading: socketLoading } = useSocket();
   const { preferences } = usePreferences();
   
@@ -178,23 +181,19 @@ const Lobby = () => {
                {error ? (
                  <div className={styles.error}>{error}</div>
                ) : (
-                 <div className={styles.welcomeText}>
+                 <div className={styles.avatarContainer}>
                    <UserAvatar 
-                     user={{ 
-                       username: user?.username || 'Player', 
-                       profileImg: user?.profileImg || preferences?.profileImg,
-                       title: user?.title,
-                       xp: user?.xp
-                     }} 
+                     userId={user?.id}
                      size="medium" 
                      showName={true} 
                      namePosition="right"
                    />
                  </div>
                )}
-               <div className={styles.balanceDisplay}>
-                 Balance: <CurrencyAmount amount={Number(user?.balance) || 0} size="medium" />
-               </div>
+               <ProgressInfo 
+                 userId={user?.id}
+                 balance={user?.balance}
+               />
                <div className={styles.headerButtons}>
                  <button 
                    className={styles.logoutButton}

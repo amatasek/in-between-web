@@ -1,0 +1,143 @@
+.progressInfoContainer {
+  display: flex;
+  flex: 2;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.balanceSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: start;
+  margin-left: 4px;
+  margin-bottom: 4px;
+}
+
+.balanceLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ecf0f1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.xpSection {
+  width: 100%;
+}
+
+.xpBarContainer {
+  width: 100%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.xpOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.xpLevel {
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  font-size: 0.85rem;
+}
+
+.xpNext {
+  font-weight: 600;
+  color: #ecf0f1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-size: 0.8rem;
+}
+
+.xpBar {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  position: relative;
+  min-width: 2px;
+  z-index: 1;
+}
+
+.xpBar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  animation: shimmer 5s infinite;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+@keyframes shimmer {
+  0% { 
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.xpNext {
+  font-weight: 600;
+  color: #95a5a6;
+  min-width: 60px;
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .progressInfoContainer {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .progressInfoContainer {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.25rem 0;
+    align-self: flex-start;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+  }
+
+  
+  .balanceLabel {
+    font-size: 0.9rem;
+  }
+  
+  .xpSection {
+    font-size: 0.8rem;
+  }
+}

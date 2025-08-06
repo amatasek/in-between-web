@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import styles from './styles/UserAvatar.module.css';
-
-// No more hardcoded mapping needed - title is now the actual title string from server
+import { useUserData } from '../contexts/UserDataContext';
 
 /**
  * UserAvatar component displays a user's profile image or their initials if no image is available.
- * It can be used in various contexts like the lobby, player list, results screen, etc.
+ * Uses centralized UserData system for consistent user information across the app.
  * 
  * @param {Object} props - Component props
- * @param {Object} props.user - User object containing username and profileImg
+ * @param {string} props.userId - User ID to fetch data for
  * @param {string} props.size - Size of the avatar ('small', 'medium', 'large')
  * @param {boolean} props.showName - Whether to display the username next to the avatar
  * @param {string} props.namePosition - Position of the username ('right', 'below')
@@ -16,7 +15,7 @@ import styles from './styles/UserAvatar.module.css';
  * @param {boolean} props.showTitle - Whether to show the title
  */
 const UserAvatar = ({ 
-  user, 
+  userId,
   size = 'medium', 
   showName = true, 
   namePosition = 'right',
@@ -24,10 +23,11 @@ const UserAvatar = ({
   showTitle = true
 }) => {
   const [showPlayerCard, setShowPlayerCard] = useState(false);
+  const user = useUserData(userId);
   
-  if (!user) return null;
+  if (!userId || !user) return null;
   
-  const { username, profileImg, title, xp } = user;
+  const { username, profileImg, title, xp, level } = user;
   const initials = getInitials(username || 'Unknown');
   const sizeClass = styles[size] || styles.medium;
   const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
@@ -108,9 +108,9 @@ const UserAvatar = ({
                   {title}
                 </div>
               )}
-              {xp !== undefined && (
-                <div className={styles.playerCardXP}>
-                  {xp.toLocaleString()} XP
+              {level !== undefined && xp !== undefined && (
+                <div className={styles.playerCardLevelXP}>
+                  Level {level} <span className={styles.separator}>•</span> <span className={styles.xpValue}>{formatXP(xp)} XP</span>
                 </div>
               )}
             </div>
@@ -144,6 +144,17 @@ const getInitials = (name) => {
     .join('')
     .toUpperCase()
     .substring(0, 2);
+};
+
+// Helper function to format XP with abbreviations
+const formatXP = (xp) => {
+  if (xp >= 1000000) {
+    return (xp / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  }
+  if (xp >= 1000) {
+    return (xp / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  }
+  return xp.toString();
 };
 
 export default UserAvatar;

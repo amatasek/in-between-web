@@ -202,3 +202,19 @@
   margin-top: 4px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
+.playerCardLevelXP {
+  font-size: 13px;
+  font-weight: 500;
+  color: #f39c12;
+  margin-top: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.separator {
+  color: white;
+}
+
+.xpValue {
+  color: #ffd700;
+}

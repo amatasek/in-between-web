@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import CurrencyAmount from './common/CurrencyAmount';
 import UserAvatar from './UserAvatar';
 import styles from './styles/Leaderboard.module.css';
 import { API_URL } from '../config';
+import UserDataContext from '../contexts/UserDataContext';
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [duration, setDuration] = useState('all');
+  const userDataContext = useContext(UserDataContext);
 
   useEffect(() => {
     fetchLeaderboard();
@@ -27,6 +29,12 @@ const Leaderboard = () => {
       
       const data = await response.json();
       setLeaderboard(data.leaderboard || []);
+      
+      // Prefetch all user data for better performance
+      if (userDataContext && data.leaderboard) {
+        const userIds = data.leaderboard.map(player => player.userId);
+        userDataContext.prefetchUsers(userIds);
+      }
     } catch (err) {
       console.error('Error fetching leaderboard:', err);
       setError(err.message);
@@ -88,12 +96,7 @@ const Leaderboard = () => {
               
               <div className={styles.playerCell}>
                 <UserAvatar 
-                  user={{
-                    username: player.username,
-                    profileImg: player.profileImg,
-                    title: player.title,
-                    xp: player.xp
-                  }}
+                  userId={player.userId}
                   size="small"
                   showName={true}
                   showTitle={true}
