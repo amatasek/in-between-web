@@ -1,16 +1,23 @@
 import React from 'react';
 
-const BarChartIcon = ({ style }) => {
+/**
+ * Bar chart icon component for stats button
+ * @param {Object} props - Component props
+ * @param {string} props.color - Color of the icon (default: 'currentColor')
+ * @param {number} props.size - Size of the icon in pixels (default: 24)
+ */
+const BarChartIcon = ({ color = 'currentColor', size = 24 }) => {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
+      width={size}
+      height={size}
       viewBox="0 0 24 24" 
       fill="none" 
-      stroke="currentColor" 
+      stroke={color} 
       strokeWidth="2" 
       strokeLinecap="round" 
       strokeLinejoin="round"
-      style={style}
     >
       <line x1="18" y1="20" x2="18" y2="10"></line>
       <line x1="12" y1="20" x2="12" y2="4"></line>

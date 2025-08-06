@@ -76,8 +76,6 @@
   border-color: rgba(243, 156, 18, 0.9);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(241, 196, 15, 0.35);
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.18);
 }
 
 

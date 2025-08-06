@@ -25,7 +25,7 @@ const PlayerStatsButton = ({ onModalStateChange, ...props }) => {
     <>
       <IconButton
         onClick={openStats}
-        icon={<BarChartIcon style={{ color: '#fff', width: 20, height: 20 }} />}
+        icon={<BarChartIcon color="white" size={20} />}
         aria-label="Open Player Stats"
         variant="stats"
         title="Player Stats"

@@ -63,8 +63,8 @@
 
 .xpNext {
   font-weight: 600;
-  color: #ecf0f1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  color: #bdc3c7;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.6);
   font-size: 0.8rem;
 }
 
@@ -105,13 +105,6 @@
   }
 }
 
-.xpNext {
-  font-weight: 600;
-  color: #95a5a6;
-  min-width: 60px;
-  text-align: right;
-  font-size: 0.8rem;
-}
 
 /* Mobile responsive */
 @media (max-width: 600px) {

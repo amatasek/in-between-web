@@ -8,6 +8,7 @@ import CurrencyAmount from './common/CurrencyAmount';
 import GameSummaryModal from './GameSummaryModal.jsx';
 import StoreModal from './StoreModal.jsx';
 import RulesButton from './common/RulesButton';
+import PlayerStatsButton from './common/PlayerStatsButton';
 import PreferencesButton from './common/PreferencesButton';
 import StoreButton from './StoreButton';
 import LeaveButton from './common/LeaveButton';
@@ -35,6 +36,7 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
   const [showStoreModal, setShowStoreModal] = useState(false);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isRulesOpen, setIsRulesOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
 
   // Timer effect for phases
   useEffect(() => {
@@ -71,11 +73,11 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
 
   // Notify parent when modal state changes
   useEffect(() => {
-    const isModalOpen = showGameSummary || showStoreModal || isPreferencesOpen || isRulesOpen;
+    const isModalOpen = showGameSummary || showStoreModal || isPreferencesOpen || isRulesOpen || isStatsOpen;
     if (onModalStateChange) {
       onModalStateChange(isModalOpen);
     }
-  }, [showGameSummary, showStoreModal, isPreferencesOpen, isRulesOpen, onModalStateChange]);
+  }, [showGameSummary, showStoreModal, isPreferencesOpen, isRulesOpen, isStatsOpen, onModalStateChange]);
   
   // Get the phase display information
   let phaseInfo = phaseDisplayMap[currentPhase] || { text: 'Unknown Phase', icon: '❓' };
@@ -173,11 +175,15 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
                 onModalStateChange={setIsPreferencesOpen}
                 data-gamepad-focusable="true" 
               />
-              <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
               <RulesButton 
                 onModalStateChange={setIsRulesOpen}
                 data-gamepad-focusable="true" 
               />
+              <PlayerStatsButton 
+                onModalStateChange={setIsStatsOpen}
+                data-gamepad-focusable="true" 
+              />
+              <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
               <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
             </div>
           </div>
@@ -213,11 +219,15 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
                   onModalStateChange={setIsPreferencesOpen}
                   data-gamepad-focusable="true" 
                 />
-                <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
                 <RulesButton 
                   onModalStateChange={setIsRulesOpen}
                   data-gamepad-focusable="true" 
                 />
+                <PlayerStatsButton 
+                  onModalStateChange={setIsStatsOpen}
+                  data-gamepad-focusable="true" 
+                />
+                <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
                 <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
               </div>
             </div>
