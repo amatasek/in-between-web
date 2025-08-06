@@ -91,7 +91,8 @@ const Leaderboard = () => {
                   user={{
                     username: player.username,
                     profileImg: player.profileImg,
-                    title: player.title
+                    title: player.title,
+                    xp: player.xp
                   }}
                   size="small"
                   showName={true}
