@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './styles/UserAvatar.module.css';
 import { useUserData } from '../contexts/UserDataContext';
 
@@ -25,7 +25,29 @@ const UserAvatar = ({
   const [showPlayerCard, setShowPlayerCard] = useState(false);
   const user = useUserData(userId);
   
-  if (!userId || !user) return null;
+  if (!userId) return null;
+  
+  // Show loading state while user data loads
+  if (!user) {
+    const sizeClass = styles[size] || styles.medium;
+    const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
+    
+    return (
+      <div className={`${styles.userAvatarContainer} ${containerClass} ${className}`}>
+        <div className={`${styles.avatar} ${sizeClass} ${styles.loading}`}>
+          <div className={styles.avatarLoader}></div>
+        </div>
+        {showName && (
+          <div className={styles.userInfo}>
+            <div className={styles.skeletonUsername}></div>
+            {showTitle && (
+              <div className={styles.skeletonTitle}></div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
   
   const { username, profileImg, title, xp, level } = user;
   const initials = getInitials(username || 'Unknown');
