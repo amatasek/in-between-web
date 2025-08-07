@@ -1,5 +1,40 @@
 /* Global styles for the In-Between card game */
 
+/* Import CSS variables */
+@import './variables.css';
+
+/* 
+ * Apple-style Typography System
+ * Consistent text fonts across all platforms
+ */
+
+/* Base typography styles - Apple-style fonts */
+* {
+  font-family: var(--font-family-system);
+  -webkit-font-smoothing: var(--webkit-font-smoothing);
+  -moz-osx-font-smoothing: var(--moz-osx-font-smoothing);
+  font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Specific font families for different content types */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+p, span, div, button, input, textarea {
+  font-family: var(--font-family-text);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+code, pre {
+  font-family: var(--font-family-mono);
+}
+
 /* 
  * Gamepad Navigation Styles
  * Provides visual feedback for controller/keyboard navigation
@@ -17,10 +52,6 @@ html.loading * {
 
 /* Mobile Scaling - Scale down UI on small screens */
 @media (max-width: 600px) {
-  :root {
-    font-size: 15px; /* Down from default 16px - 93.75% (half the reduction) */
-  }
-  
   /* Scale down only the game content, not floating elements */
   .mobile-scale-content {
     transform: scale(0.95);
@@ -39,10 +70,6 @@ html.loading * {
 
 /* Even smaller screens get more aggressive scaling */
 @media (max-width: 400px) {
-  :root {
-    font-size: 14.5px; /* 90.625% (half the reduction) */
-  }
-  
   .mobile-scale-content {
     transform: scale(0.925);
     transform-origin: top left;

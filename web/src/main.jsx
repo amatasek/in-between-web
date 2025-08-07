@@ -4,6 +4,7 @@ import App from './App';
 
 // Import global styles
 import './styles/variables.css';
+import './styles/global.css';
 
 // Import our context providers
 import { SocketProvider } from './contexts/SocketContext';
