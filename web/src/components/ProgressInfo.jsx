@@ -26,8 +26,7 @@ const ProgressInfo = ({ userId, balance }) => {
             <div 
               className={styles.xpBar}
               style={{ 
-                width: userData.level >= 100 ? '100%' : 
-                  `${Math.min(100, Math.max(0, (userData.xp / (userData.xp + userData.xpToNextLevel)) * 100))}%`
+                width: userData.level >= 100 ? '100%' : `${userData.percentToNextLevel || 0}%`
               }}
             />
             <div className={styles.xpOverlay}>
