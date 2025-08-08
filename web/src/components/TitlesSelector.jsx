@@ -86,9 +86,8 @@ const TitlesSelector = () => {
             border: !preferences.selectedTitle ? '2px solid #64a9ff' : '2px solid rgba(255, 255, 255, 0.15)',
             verticalAlign: 'top',
             whiteSpace: 'normal',
-            display: 'inline-flex',
             flexDirection: 'column',
-            justifyContent: 'center'
+            justifyContent: 'center',
           }}
         >
           <div style={{ fontWeight: 'bold', color: '#bcdcff', fontSize: '13px' }}>
