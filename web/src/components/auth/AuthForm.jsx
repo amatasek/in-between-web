@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Typography,
-  Paper,
   Alert,
   useMediaQuery,
 } from '@mui/material';
@@ -29,10 +28,11 @@ const AuthForm = ({ onSubmit, mode }) => {
   };
 
   return (
-    <Paper className={styles.authForm} elevation={0}>
-      <Typography variant="h5" component="h2" gutterBottom sx={{ color: 'var(--info)', fontWeight: 600 }}>
+    <div className={`card ${styles.authForm}`}>
+      <h2 style={{ color: 'white', fontWeight: 600, textAlign: 'center', marginTop: 0 }}>
         {mode === 'login' ? 'Welcome Back' : 'Create Account'}
-      </Typography>
+      </h2>
+      <div className="divider" style={{ marginBottom: '1.5rem' }}></div>
       
       {error && (
         <Alert severity="error" sx={{ mb: 2, backgroundColor: 'rgba(231, 76, 60, 0.2)', color: 'var(--text-primary)' }}>
@@ -149,7 +149,7 @@ const AuthForm = ({ onSubmit, mode }) => {
           {mode === 'login' ? 'Sign In' : 'Create Account'}
         </Button>
       </form>
-    </Paper>
+    </div>
   );
 };
 

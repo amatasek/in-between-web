@@ -11,17 +11,17 @@ const DeckDisplay = () => {
   // Get the deck size and deck count from the game state
   const { deckSize = 0, deckCount = 1 } = gameState;
   
-  // Calculate the visual thickness of the deck based on remaining cards
-  const getThicknessClass = () => {
-    if (deckSize >= 40) return styles.deckThick;
-    if (deckSize >= 25) return styles.deckMedium;
-    if (deckSize >= 10) return styles.deckThin;
-    return styles.deckVeryThin;
-  };
-  
   return (
-    <div className={styles.deckDisplayContainer}>
-      <div className={`${styles.deckVisual} ${getThicknessClass()}`}>
+    <div className="card" style={{ 
+      width: '150px', 
+      padding: '0.75rem 1rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '0.5rem',
+      border: '2px solid var(--info)'
+    }}>
+      <div className={styles.deckVisual}>
         <div className={styles.deckIcon}>{ICONS.DECK}</div>
       </div>
       <div className={styles.deckInfo}>

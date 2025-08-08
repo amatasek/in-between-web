@@ -1,16 +1,5 @@
 .gameContainer {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 2rem;
-  box-sizing: border-box;
-  background-color: #1a2a3a;
-  background-image: linear-gradient(to bottom right, #1a2a3a, #2c3e50);
-  min-height: 100vh;
 }
 
 .gameScreen {
@@ -26,11 +15,6 @@
 
 /* Responsive adjustments for mobile */
 @media (max-width: 600px) {
-  .gameContainer {
-    padding: 0.5rem;
-    min-height: 100vh;
-  }
-  
   .gameScreen {
     padding: 0;
     gap: 0.75rem; /* Reduce spacing between elements */
@@ -38,11 +22,6 @@
 }
 
 @media (max-width: 400px) {
-  .gameContainer {
-    padding: 0.5rem;
-    min-height: 100vh;
-  }
-  
   .gameScreen {
     padding: 0;
     gap: 0.5rem; /* Even tighter spacing */
@@ -54,7 +33,7 @@
   justify-content: center;
   align-items: center;
   height: 300px;
-  color: #ecf0f1;
+  color: var(--text-primary);
   font-size: 1.5rem;
 }
 
@@ -138,41 +117,4 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.imBackButton {
-  padding: var(--button-padding-lg);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: var(--button-transition);
-  width: auto; 
-  display: inline-flex; 
-  justify-content: center;
-  align-items: center;
-  letter-spacing: 0.5px;
-  text-transform: none;
-  box-shadow: var(--button-shadow);
-  margin: 20px; 
-
-  background: linear-gradient(to right, var(--info), var(--success));
-  color: white;
-  position: relative;
-  overflow: hidden;
-}
-
-.imBackButton:hover:not(:disabled),
-.imBackButton:focus:not(:disabled) { 
-  background: linear-gradient(to right, var(--info-dark), var(--success-dark));
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-
-.imBackButton:disabled {
-  background: var(--gradient-neutral);
-  cursor: not-allowed;
-  transform: none;
-  opacity: 0.7;
-  box-shadow: var(--shadow-sm);
-}
 

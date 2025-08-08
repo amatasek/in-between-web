@@ -48,7 +48,7 @@ body.modal-open {
 
 /* Prevent flash of auth screen on page load when user is already logged in */
 html.loading {
-  background-color: #1a1a2e;
+  background-color: var(--bg-loading);
 }
 
 html.loading * {
@@ -67,26 +67,26 @@ html.loading * {
 
 /* Gamepad focus indicators - only show when gamepad/keyboard is active */
 body.gamepad-navigation-active [data-gamepad-focusable="true"]:focus {
-  outline: 3px solid #00ff88 !important;
+  outline: 3px solid var(--color-focus) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
-  border-radius: 8px !important;
+  box-shadow: 0 0 0 2px var(--color-focus-shadow) !important;
+  border-radius: var(--radius-md) !important;
   position: relative !important;
   z-index: 100 !important;
 }
 
 /* Material-UI specific focus styling for inputs */
 body.gamepad-navigation-active .MuiOutlinedInput-root input[data-gamepad-focusable="true"]:focus {
-  outline: 3px solid #00ff88 !important;
+  outline: 3px solid var(--color-focus) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  box-shadow: 0 0 0 2px var(--color-focus-shadow) !important;
 }
 
 /* Make sure the outline is visible above Material-UI styles */
 body.gamepad-navigation-active .MuiTextField-root [data-gamepad-focusable="true"]:focus {
-  outline: 3px solid #00ff88 !important;
+  outline: 3px solid var(--color-focus) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  box-shadow: 0 0 0 2px var(--color-focus-shadow) !important;
   z-index: 1000 !important;
 }
 
@@ -103,10 +103,10 @@ body:not(.gamepad-navigation-active) [data-gamepad-focusable="true"]:focus {
 
 /* Scrollable container focus styling */
 body.gamepad-navigation-active [data-gamepad-scrollable="true"]:focus {
-  outline: 3px solid #00ff88 !important;
+  outline: 3px solid var(--color-focus) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
-  border-radius: 8px !important;
+  box-shadow: 0 0 0 2px var(--color-focus-shadow) !important;
+  border-radius: var(--radius-md) !important;
   position: relative !important;
   z-index: 100 !important;
 }
@@ -115,4 +115,228 @@ body.gamepad-navigation-active [data-gamepad-scrollable="true"]:focus {
 body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* 
+ * Screen Layout Styles
+ * Base styles for main app screens
+ */
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: var(--spacing-xl);
+  box-sizing: border-box;
+  background-color: var(--bg-primary);
+  background-image: linear-gradient(to bottom right, var(--bg-primary), var(--bg-secondary));
+  min-height: 100vh;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+  .screen {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 400px) {
+  .screen {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* 
+ * Card Component Styles
+ * Reusable card design for consistent UI elements
+ */
+.card {
+  background-color: var(--bg-card);
+  background-image: linear-gradient(to bottom right, var(--bg-card), var(--bg-card-dark));
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--color-border-light);
+  transition: var(--button-transition);
+  box-sizing: border-box;
+}
+
+/* Responsive card adjustments */
+@media (max-width: 600px) {
+  .card {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .card {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+  }
+}
+
+/* 
+ * Panel Component Styles
+ * Reusable panel design for highlighted sections within cards
+ */
+.panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  padding: var(--spacing-md);
+  background: linear-gradient(120deg, var(--bg-panel-start), var(--bg-panel-end));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Responsive panel adjustments */
+@media (max-width: 400px) {
+  .panel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding-bottom: 0.8rem;
+  }
+}
+
+/* Panel Alt variant - dark glass style */
+.panel-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem var(--spacing-md);
+  background: linear-gradient(135deg, var(--color-glass-dark), var(--color-glass-light));
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border-light);
+  box-sizing: border-box;
+}
+
+/* Responsive panel-alt adjustments */
+@media (max-width: 600px) {
+  .panel-alt {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .panel-alt {
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+  }
+}
+
+/* 
+ * Divider Component Styles
+ * Horizontal divider for separating sections
+ */
+.divider {
+  height: 2px;
+  width: 100%;
+  margin: var(--spacing-lg) 0;
+  background: linear-gradient(to right, var(--color-divider-start), var(--color-divider-middle), var(--color-divider-end));
+  border-radius: 1px;
+}
+
+/* 
+ * Button Component Styles
+ * Reusable button designs for consistent UI
+ */
+
+/* Base button styles */
+.btn {
+  padding: var(--button-padding-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--button-transition);
+  width: 100%;
+  box-shadow: var(--button-shadow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 0.5px;
+  text-transform: none;
+}
+
+.btn:disabled {
+  background: var(--gradient-neutral);
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Primary button - green gradient (create, submit, etc.) */
+.btn-primary {
+  background: linear-gradient(to right, var(--btn-primary-start), var(--btn-primary-end));
+  color: white;
+  position: relative;
+  overflow: hidden;
+  border: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(to right, var(--btn-primary-hover-start), var(--btn-primary-hover-end));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  border: none;
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--button-shadow);
+}
+
+/* Secondary button - neutral gray (cancel, secondary actions) */
+.btn-secondary {
+  background: linear-gradient(to bottom, var(--btn-secondary-start), var(--btn-secondary-end));
+  color: var(--text-light);
+  border: 1px solid var(--color-border-light);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(to bottom, var(--btn-secondary-hover-start), var(--btn-secondary-hover-end));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-lighter);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Tertiary button - blue gradient (betting, non-critical actions) */
+.btn-tertiary {
+  background: linear-gradient(to right, var(--btn-tertiary-start), var(--btn-tertiary-end));
+  color: white;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+}
+
+.btn-tertiary:hover:not(:disabled) {
+  background: linear-gradient(to right, var(--btn-tertiary-hover-start), var(--btn-tertiary-hover-end));
+  box-shadow: 0 3px 8px var(--btn-tertiary-shadow);
+  transform: translateY(-1px);
+  border: 1px solid var(--color-border-lighter);
+}
+
+.btn-tertiary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }

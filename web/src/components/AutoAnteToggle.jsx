@@ -41,7 +41,7 @@ const AutoAnteToggle = () => {
   }
   
   return (
-    <div className={styles.toggleContainer}>
+    <div className="panel-alt" style={{ padding: '0.5rem 0.75rem', gap: '0', marginTop: '5px', maxWidth: 'fit-content' }}>
       <label className={styles.toggleLabel}>
         <input
           type="checkbox"

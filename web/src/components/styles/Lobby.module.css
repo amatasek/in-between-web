@@ -1,51 +1,7 @@
-.lobbyContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 2rem;
-  box-sizing: border-box;
-  background-color: #1a2a3a;
-  background-image: linear-gradient(to bottom right, #1a2a3a, #2c3e50);
-  min-height: 100vh;
-}
-
-/* Responsive adjustments for mobile */
-@media (max-width: 600px) {
-  .lobbyContainer {
-    padding: 1rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .lobbyContainer {
-    padding: 0.5rem;
-  }
-}
-
-/* Logo container styles moved to GameHeader.module.css */
-
-/* Game title styles moved to GameHeader.module.css */
-
-/* Responsive font sizes */
-@media (max-width: 600px) {
-  .gameTitle {
-    font-size: 2.5rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .gameTitle {
-    font-size: 2rem;
-  }
-}
-
 .liveTag {
   font-size: 0.9rem;
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--text-error);
+  color: var(--text-white);
   padding: 3px 8px;
   border-radius: 12px;
   font-weight: bold;
@@ -69,49 +25,7 @@
   }
 }
 
-/* Game subtitle styles moved to GameHeader.module.css */
-
-
-
-
-
-
-
-/* Removed unused join section styles */
-
-
-
-
-
-
-
-
 /* Game List Styles */
-.gameListContainer {
-  width: 100%;
-  max-width: 600px;
-  background-color: #152534;
-  background-image: linear-gradient(to bottom right, #152534, #1c2a3a);
-  padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  min-height: 200px;
-  box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: var(--button-transition);
-}
-
-@media (max-width: 400px) {
-  .gameListContainer {
-    padding: 1rem;
-    border-radius: 8px;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-}
-
 .gameListTitle {
   font-size: 1.4rem;
   color: var(--text-light);
@@ -168,7 +82,7 @@
 
 /* Search Icon styling (ensure InputAdornment is used correctly) */
 .searchIcon {
-  color: #3498db; 
+  color: var(--text-info); 
   /* Ensure proper spacing if needed, InputAdornment might handle it */
 }
 
@@ -237,8 +151,8 @@
 
 .disconnectedBadge {
   font-size: 0.8rem;
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--text-error);
+  color: var(--text-white);
   padding: 3px 8px;
   border-radius: 12px;
   font-weight: bold;
@@ -249,8 +163,8 @@
 
 .inGameBadge {
   font-size: 0.8rem;
-  background-color: #2ecc71;
-  color: white;
+  background-color: var(--text-success);
+  color: var(--text-white);
   padding: 3px 8px;
   border-radius: 12px;
   font-weight: bold;
@@ -267,7 +181,7 @@
 
 .joinGameButton {
   background-color: var(--primary);
-  color: white;
+  color: var(--text-white);
   border: none;
   border-radius: var(--radius-sm);
   padding: 0.5rem 1rem;
@@ -277,7 +191,7 @@
 }
 
 .reconnectButton {
-  background-color: #e74c3c;
+  background-color: var(--text-error);
   box-shadow: 0 2px 4px rgba(231, 76, 60, 0.4);
 }
 
@@ -288,7 +202,7 @@
 }
 
 .continueButton {
-  background-color: #2ecc71;
+  background-color: var(--text-success);
   box-shadow: 0 2px 4px rgba(46, 204, 113, 0.4);
 }
 
@@ -341,7 +255,7 @@
 
 .emptyStateHint {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-subtle);
   margin: 0.5rem 0;
 }
 
@@ -349,11 +263,17 @@
   display: inline-flex; /* Use flex for alignment */
   align-items: center; /* Vertically center icon and text */
   background-color: rgba(255, 255, 255, 0.15); /* Subtle background */
-  color: rgba(255, 255, 255, 0.8); /* Slightly dimmed text */
+  color: var(--text-bright); /* Slightly dimmed text */
   padding: 0.2em 0.6em;
   border-radius: 1em; /* Make it pill-shaped */
   font-size: 0.75em;
   margin-left: 0.75em;
   vertical-align: middle; /* Align pill with text */
   white-space: nowrap; /* Prevent wrapping */
+}
+
+.gameActionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }

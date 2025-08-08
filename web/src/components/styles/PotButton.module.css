@@ -165,11 +165,11 @@
   font-family: 'Orbitron', sans-serif;
   font-size: 1.1rem;
   font-weight: 900;
-  color: #2c3e50;
+  color: var(--text-dark);
   letter-spacing: 1px;
   /* Create dramatic 3D text effect */
   text-shadow: 
-    0 1px 0 #fff,
+    0 1px 0 var(--text-white),
     0 2px 0 #f8f8f8,
     0 3px 0 #eee,
     0 4px 0 rgba(0, 0, 0, 0.1),
@@ -314,14 +314,14 @@
 
 @keyframes textPulse {
   0% { text-shadow: 
-    0 1px 0 #fff,
+    0 1px 0 var(--text-white),
     0 2px 0 #f8f8f8,
     0 3px 0 #eee,
     0 4px 0 #ddd,
     0 5px 0 rgba(0, 0, 0, 0.1),
     0 6px 10px rgba(0, 0, 0, 0.2); }
   100% { text-shadow: 
-    0 1px 0 #fff,
+    0 1px 0 var(--text-white),
     0 2px 0 #f8f8f8,
     0 3px 0 #eee,
     0 4px 0 #ddd,
@@ -331,14 +331,14 @@
 
 @keyframes textPulseFast {
   0% { text-shadow: 
-    0 1px 0 #fff,
+    0 1px 0 var(--text-white),
     0 2px 0 #f8f8f8,
     0 3px 0 #eee,
     0 4px 0 #ddd,
     0 5px 0 rgba(0, 0, 0, 0.1),
     0 6px 10px rgba(0, 0, 0, 0.2); }
   100% { text-shadow: 
-    0 1px 0 #fff,
+    0 1px 0 var(--text-white),
     0 2px 0 #f8f8f8,
     0 3px 0 #eee,
     0 4px 0 #ddd,

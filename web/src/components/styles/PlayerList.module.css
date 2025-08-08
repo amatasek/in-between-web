@@ -14,7 +14,7 @@
 
 .playersTitle {
   font-size: 1.1rem;
-  color: #ecf0f1;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   border-bottom: 1px solid #34495e;
   padding-bottom: 0.25rem;
@@ -38,41 +38,38 @@
 .playersList {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
+  position: relative;
+  isolation: isolate;
 }
 
 .playerItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--gradient-primary);
-  padding: var(--spacing-sm) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: var(--spacing-xs);
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
-/* Responsive adjustments for mobile */
-@media (max-width: 600px) {
-  .playerItem {
-    padding: 0.45rem 0.6rem;
-    font-size: 0.95rem;
+.playerItem:has([class*="avatar"]:hover) {
+  z-index: 1000;
+}
+
+
+
+.currentPlayerGlow {
+  animation: subtlePulse 2s infinite;
+  box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
+}
+
+@keyframes subtlePulse {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
   }
-}
-
-@media (max-width: 400px) {
-  .playerItem {
-    padding: 0.4rem 0.5rem;
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
+  50% {
+    box-shadow: 0 0 12px rgba(52, 152, 219, 0.6);
   }
-}
-
-.currentPlayer {
-  background: var(--gradient-info);
-  animation: pulse 2s infinite;
-  box-shadow: var(--shadow-md), 0 0 10px rgba(52, 152, 219, 0.3);
 }
 
 .currentUser {
@@ -86,10 +83,6 @@
   flex: 1;
 }
 
-.playerName {
-  font-weight: bold;
-  color: #ecf0f1;
-}
 
 .playerStatus {
   margin-left: 0.25rem;
@@ -119,7 +112,7 @@
 }
 
 .playerBalance {
-  color: #f1c40f;
+  color: var(--text-warning);
   font-weight: bold;
   position: relative;
 }
@@ -137,7 +130,7 @@
     transform: scale(1);
   }
   50% {
-    color: #2ecc71;
+    color: var(--text-success);
     transform: scale(1.3);
   }
   100% {
@@ -150,7 +143,7 @@
     transform: scale(1);
   }
   50% {
-    color: #e74c3c;
+    color: var(--text-error);
     transform: scale(1.3);
   }
   100% {
@@ -166,15 +159,15 @@
 }
 
 .ready {
-  background-color: var(--success);
+  background-color: var(--color-ready);
 }
 
 .notReady {
-  background-color: var(--neutral-light); /* Or a suitable grey */
+  background-color: #95a5a6; /* Fixed grey */
 }
 
 .sittingOut {
-  background-color: var(--secondary);
+  background-color: var(--color-danger);
 }
 
 @keyframes flash {

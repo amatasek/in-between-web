@@ -91,7 +91,7 @@
 .activeShift {
   background: var(--accent-color);
   border-color: var(--accent-color);
-  color: white;
+  color: var(--text-white);
 }
 
 .activeShift:hover {

@@ -11,7 +11,8 @@ import RulesButton from './common/RulesButton';
 import PlayerStatsButton from './common/PlayerStatsButton';
 import PreferencesButton from './common/PreferencesButton';
 import StoreButton from './StoreButton';
-import LeaveButton from './common/LeaveButton';
+import IconButton from './common/IconButton';
+import ExitIcon from './icons/ExitIcon';
 
 // Phase display mapping with icons and friendly names
 const phaseDisplayMap = {
@@ -124,7 +125,7 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
   return (
     <div className={styles.headerContainer}>
       {/* Desktop layout - single row with 3 cells */}
-      <div className={styles.desktopLayout}>
+      <div className={`panel ${styles.desktopLayout}`}>
         {/* Left: Logo and game ID */}
         <div className={styles.headerLeft}>
           <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
@@ -170,8 +171,11 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
         {/* Right: Balance and buttons */}
         <div className={styles.headerRight}>
           <div className={styles.controlsStack}>
-            <div className={styles.balanceDisplay}>
-              Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
+            <div className="panel-alt" style={{ padding: '0.2rem 0.4rem', margin: '0 0 0.2rem 0', gap: '0.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#ecf0f1' }}>
+                <span>Balance:</span>
+                <CurrencyAmount amount={Number(playerBalance)} size="small" />
+              </div>
             </div>
             <div className={styles.controlsGroup}>
               <PreferencesButton 
@@ -187,10 +191,13 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
                 data-gamepad-focusable="true" 
               />
               <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
-              <LeaveButton 
-                onClick={handleLeaveGame} 
+              <IconButton
+                icon={<ExitIcon color="white" size={20} />}
+                title="Leave Game"
+                onClick={handleLeaveGame}
+                variant="danger"
                 disabled={isPlayerReady}
-                data-gamepad-focusable="true" 
+                data-gamepad-focusable="true"
               />
             </div>
           </div>
@@ -198,7 +205,7 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
       </div>
       
       {/* Mobile layout - two rows */}
-      <div className={styles.mobileLayout}>
+      <div className={`panel ${styles.mobileLayout}`}>
         {/* Top row: Logo/ID, Balance/Buttons */}
         <div className={styles.mobileTopRow}>
           <div className={styles.headerLeft}>
@@ -218,8 +225,11 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
           
           <div className={styles.mobileRight}>
             <div className={styles.mobileControlsStack}>
-              <div className={styles.balanceDisplay}>
-                Balance: <CurrencyAmount amount={Number(playerBalance)} size="small" />
+              <div className="panel-alt" style={{ padding: '0.15rem 0.35rem', margin: '0 0 0.2rem 0', gap: '0.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#ecf0f1' }}>
+                  <span>Balance:</span>
+                  <CurrencyAmount amount={Number(playerBalance)} size="small" />
+                </div>
               </div>
               <div className={styles.mobileActions}>
                 <PreferencesButton 
@@ -235,11 +245,14 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
                   data-gamepad-focusable="true" 
                 />
                 <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
-                <LeaveButton 
-                onClick={handleLeaveGame} 
-                disabled={isPlayerReady}
-                data-gamepad-focusable="true" 
-              />
+                <IconButton
+                  icon={<ExitIcon color="white" size={20} />}
+                  title="Leave Game"
+                  onClick={handleLeaveGame}
+                  variant="danger"
+                  disabled={isPlayerReady}
+                  data-gamepad-focusable="true"
+                />
               </div>
             </div>
           </div>

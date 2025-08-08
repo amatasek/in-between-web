@@ -22,7 +22,7 @@
   padding: 12px 24px;
   font-size: 1rem;
   font-weight: 600;
-  color: #666;
+  color: var(--text-gray);
   cursor: pointer;
   position: relative;
   transition: color 0.3s;
@@ -30,11 +30,11 @@
 }
 
 .tabButton:hover {
-  color: #3498db;
+  color: var(--text-info);
 }
 
 .activeTab {
-  color: #3498db;
+  color: var(--text-info);
 }
 
 .activeTab::after {
@@ -44,7 +44,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #3498db;
+  background-color: var(--text-info);
   transition: width 0.3s;
 }
 
@@ -106,14 +106,14 @@
 }
 
 .statLabel {
-  color: #666;
+  color: var(--text-gray);
   font-size: 0.85rem;
   margin-bottom: 3px;
   font-weight: 600;
 }
 
 .statValue {
-  color: #2c3e50;
+  color: var(--text-dark);
   font-size: 1.1rem;
   font-weight: 700;
   display: flex;
@@ -121,7 +121,7 @@
 }
 
 .statSuffix {
-  color: #666;
+  color: var(--text-gray);
   font-size: 0.9rem;
   font-weight: 400;
   margin-left: 4px;
@@ -169,12 +169,15 @@
 .tableHeader {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 2fr;
-  background: linear-gradient(to right, #2c3e50, #34495e);
-  color: white;
-  font-weight: bold;
-  padding: 12px 10px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  background: var(--bg-card-dark);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 10px;
+  border-bottom: 2px solid var(--color-border-light);
+  font-size: 0.9rem;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
+  opacity: 0.9;
 }
 
 .gameNameHeader, .playerCountHeader, .roundsHeader, .endDateHeader {
@@ -225,7 +228,7 @@
 }
 
 .gameNameLink {
-  color: #3498db;
+  color: var(--text-info);
   cursor: pointer;
   text-decoration: none;
   position: relative;
@@ -233,7 +236,7 @@
 }
 
 .gameNameLink:hover {
-  color: #2980b9;
+  color: var(--text-info);
 }
 
 .gameNameLink:after {
@@ -244,7 +247,7 @@
   height: 1px;
   bottom: 0;
   left: 0;
-  background-color: #2980b9;
+  background-color: var(--text-info);
   transform-origin: bottom right;
   transition: transform 0.25s ease-out;
 }
@@ -261,7 +264,7 @@
 .gameName {
   font-weight: bold;
   word-break: break-word;
-  color: #2980b9;
+  color: var(--text-info);
   font-size: 1.05em;
   display: flex;
   align-items: center;
@@ -292,7 +295,7 @@
 
 .endDate {
   text-align: right;
-  color: #7f8c8d;
+  color: var(--text-muted);
   font-size: 0.9em;
   display: flex;
   align-items: center;
@@ -312,7 +315,7 @@
 
 .pageButton {
   background: transparent;
-  color: #7f8c8d;
+  color: var(--text-muted);
   border: none;
   width: 30px;
   height: 30px;
@@ -327,17 +330,17 @@
 
 .pageButton:hover:not(:disabled) {
   background: rgba(52, 152, 219, 0.1);
-  color: #3498db;
+  color: var(--text-info);
 }
 
 .pageButton:disabled {
-  color: #bdc3c7;
+  color: var(--text-secondary);
   cursor: not-allowed;
   opacity: 0.5;
 }
 
 .pageInfo {
-  color: #7f8c8d;
+  color: var(--text-muted);
   font-size: 0.9em;
   text-align: center;
   display: flex;
@@ -360,19 +363,19 @@
 .emptyMessage {
   text-align: center;
   padding: 25px;
-  color: #7f8c8d;
+  color: var(--text-muted);
   font-style: italic;
   background-color: rgba(236, 240, 241, 0.5);
   border-radius: 8px;
   margin-bottom: 15px;
-  border: 1px dashed #bdc3c7;
+  border: 1px dashed var(--text-secondary);
   font-size: 1.05em;
 }
 
 .loadingMessage {
   text-align: center;
   padding: 20px;
-  color: #3498db;
+  color: var(--text-info);
   font-weight: 600;
   display: flex;
   flex-direction: column;

@@ -42,7 +42,7 @@ const AceChoicePanel = () => {
     if (!isCurrentPlayersTurn) return null;
     
     return (
-      <div className={styles.aceChoiceControls}>
+      <div className="panel-alt" style={{ width: '100%', marginBottom: '0.5rem', alignItems: 'center' }}>
         <p className={styles.aceChoiceText}>
           You've been dealt an Ace! Choose whether it should be high or low.
           <span className={styles.countdown}> ({countdown}s)</span>
@@ -50,19 +50,19 @@ const AceChoicePanel = () => {
         
         <div className={styles.aceChoiceButtons}>
           <button 
-            className={`${styles.aceChoiceButton} ${styles.aceHighButton}`}
-            onClick={() => handleAceChoice(false)}
+            className="btn btn-primary"
+            onClick={() => handleAceChoice(true)}
             data-gamepad-focusable="true"
             autoFocus
           >
-            <span className={styles.buttonContent}>ACE HIGH <ArrowIcon direction="up" color="white" size={20} /></span>
+            <span className={styles.buttonContent}>ACE LOW <ArrowIcon direction="down" color="white" size={20} /></span>
           </button>
           <button 
-            className={`${styles.aceChoiceButton} ${styles.aceLowButton}`}
-            onClick={() => handleAceChoice(true)}
+            className="btn btn-tertiary"
+            onClick={() => handleAceChoice(false)}
             data-gamepad-focusable="true"
           >
-            <span className={styles.buttonContent}>ACE LOW <ArrowIcon direction="down" color="white" size={20} /></span>
+            <span className={styles.buttonContent}>ACE HIGH <ArrowIcon direction="up" color="white" size={20} /></span>
           </button>
         </div>
       </div>
@@ -73,7 +73,7 @@ const AceChoicePanel = () => {
     if (isCurrentPlayersTurn) return null;
     
     return (
-      <div className={styles.waitingMessage}>
+      <div className="panel-alt" style={{ width: '100%', marginBottom: '0.5rem' }}>
         <p className={styles.waitingText}>
           {currentPlayerName} is choosing whether their Ace is high or low...
         </p>

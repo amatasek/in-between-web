@@ -15,52 +15,27 @@
   }
 }
 
-.secondChanceControls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 0.5rem;
-  background-color: rgba(44, 62, 80, 0.9);
-  border-radius: 12px;
-  padding: 1.25rem;
-  min-height: 60px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
 
 .secondChanceText {
   font-size: 18px;
   margin-bottom: 1rem;
-  color: #ffffff;
+  color: var(--text-white);
   text-align: center;
   font-weight: 600;
   letter-spacing: 0.3px;
 }
 
-.waitingMessage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 0.5rem;
-  background-color: rgba(44, 62, 80, 0.8);
-  border-radius: 8px;
-  padding: 1rem;
-  min-height: 60px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
 
 .waitingText {
   font-size: 16px;
-  color: #ecf0f1;
+  color: var(--text-primary);
   text-align: center;
   font-weight: 500;
 }
 
 .countdown {
   font-weight: bold;
-  color: #ff6b6b;
+  color: var(--text-error);
   animation: pulse 1s infinite;
   margin-left: 4px;
 }

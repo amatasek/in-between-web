@@ -10,19 +10,16 @@ function GameCard({ game, onJoin, userId }) {
   const isUserDisconnected = game.disconnectedPlayers?.some(player => player.userId === userId);
   const isUserInGame = game.allPlayers?.some(player => player.userId === userId && !player.disconnected);
 
-  // Determine button text and class
+  // Determine button text
   let buttonText = 'Join';
-  let buttonClass = styles.joinGameButton; // Base class from original
   if (isUserDisconnected) {
     buttonText = 'Reconnect';
-    buttonClass += ` ${styles.reconnectButton}`;
   } else if (isUserInGame) {
     buttonText = 'Continue';
-    buttonClass += ` ${styles.continueButton}`;
   }
 
   // Determine card container class
-  let cardClass = styles.gameListItem; // Use original outer class
+  let cardClass = 'panel'; // Use global panel class
   if (isUserDisconnected) {
     cardClass += ` ${styles.userDisconnectedGame}`;
   } else if (isUserInGame) {
@@ -30,9 +27,17 @@ function GameCard({ game, onJoin, userId }) {
   }
 
   return (
-    <div className={cardClass}> {/* Use gameListItem + conditional */}
+    <div className={cardClass} style={{ 
+      marginBottom: '0.75rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexWrap: 'nowrap',
+      fontSize: '1rem',
+      padding: '0.75rem 1rem'
+    }}> {/* Use panel + conditional */}
       {/* Replicate original info structure */}
-      <div className={styles.gameListInfo}>
+      <div className={styles.gameListInfo} style={{ flex: 1 }}>
         <div className={styles.gameListId}> {/* Div for ID/Name + Badges */}
           {gameDisplayName}
           {game.settings?.isPrivate && (
@@ -54,7 +59,14 @@ function GameCard({ game, onJoin, userId }) {
       </div>
       {/* Button as sibling to gameListInfo */}
       <button 
-        className={buttonClass} // Use joinGameButton + conditional
+        className="btn btn-primary"
+        style={{ 
+          padding: '0.4rem 1rem',
+          fontSize: '0.9rem',
+          minWidth: '80px',
+          maxWidth: '100px',
+          flexShrink: 0
+        }}
         onClick={() => onJoin(game.id)}
         disabled={!userId}
         data-gamepad-focusable="true"

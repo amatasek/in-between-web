@@ -1,28 +1,7 @@
 .authPage {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: var(--spacing-lg);
-  background-color: #1a2a3a;
-  background-image: linear-gradient(to bottom right, #1a2a3a, #2c3e50);
   color: var(--text-primary);
-  box-sizing: border-box;
-  width: 100%;
   overflow-x: hidden;
-}
-
-@media (max-width: 600px) {
-  .authPage {
-    padding: var(--spacing-md);
-  }
-}
-
-@media (max-width: 400px) {
-  .authPage {
-    padding: var(--spacing-sm) 0;
-  }
 }
 
 /* Title styles moved to GameHeader.module.css */
@@ -78,7 +57,7 @@
 .liveTag {
   font-size: 0.9rem;
   background-color: var(--secondary);
-  color: white;
+  color: var(--text-white);
   padding: 3px 8px;
   border-radius: var(--radius-pill);
   font-weight: bold;

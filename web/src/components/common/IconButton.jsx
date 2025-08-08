@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './styles/IconButton.module.css';
+import styles from './IconButton.module.css';
 
 /**
  * A reusable icon button component with standardized styling

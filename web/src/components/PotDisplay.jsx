@@ -12,7 +12,15 @@ const PotDisplay = () => {
   const { pot, round = 1 } = gameState;
   
   return (
-    <div className={styles.potDisplayContainer}>
+    <div className="card" style={{ 
+      width: '150px', 
+      padding: '0.75rem 1rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '0.5rem',
+      border: '2px solid #f1c40f' 
+    }}>
       <div className={styles.potIconWrapper}>
         <span className={styles.potIcon}>{ICONS.POT}</span>
       </div>

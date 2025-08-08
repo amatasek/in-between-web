@@ -84,7 +84,7 @@ const GameScreen = ({ onReturnToLobby }) => {
 
 
   return (
-    <div className={styles.gameContainer}>
+    <div className={`screen ${styles.gameContainer}`}>
       <div className={`${styles.gameScreen} mobile-scale-content`}>
         <GameHeader 
           handleLeaveGame={handleLeaveGame} 
@@ -108,7 +108,7 @@ const GameScreen = ({ onReturnToLobby }) => {
         {/* Primary check: Is the current player sitting out? */}
         {currentPlayer?.isSittingOut ? (
           // If sitting out, always show the 'I'm Back!' button regardless of phase
-          <button onClick={handleImBackClick} className={styles.imBackButton} data-gamepad-focusable="true" autoFocus> 
+          <button onClick={handleImBackClick} className="btn btn-primary" style={{ maxWidth: '300px' }} data-gamepad-focusable="true" autoFocus> 
             I'm Back!
           </button>
         ) : (

@@ -14,7 +14,7 @@ const ProgressInfo = ({ userId, balance }) => {
   const userData = useUserData(userId);
 
   return (
-    <div className={styles.progressInfoContainer}>
+    <div className="panel-alt" style={{ width: '100%', flex: 2 }}>
       <div className={styles.balanceSection}>
         <span className={styles.balanceLabel}>Balance:</span>
         <CurrencyAmount amount={Number(balance) || 0} size="medium" />

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import ToggleSwitch from './ToggleSwitch.jsx';
-import playerPanelStyles from './styles/PlayerPanel.module.css';
 import BaseModal from './common/BaseModal';
 import baseModalStyles from './common/BaseModal.module.css';
 import GamepadInput from './GamepadInput';
@@ -136,7 +135,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           <button
             type="button"
             onClick={onClose}
-            className={`${playerPanelStyles.actionButton} ${playerPanelStyles.cancelButton || ''}`}
+            className="btn btn-secondary"
             data-gamepad-focusable="true"
           >
             Cancel
@@ -144,7 +143,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           <button
             type="submit"
             form="gameSettingsForm"
-            className={`${playerPanelStyles.actionButton} ${playerPanelStyles.createButton}`}
+            className="btn btn-primary"
             disabled={Object.keys(errors).length > 0}
             data-gamepad-focusable="true"
           >

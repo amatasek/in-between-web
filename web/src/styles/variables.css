@@ -33,6 +33,57 @@
   --text-primary: #ecf0f1;
   --text-secondary: #bdc3c7;
   --text-dark: #2c3e50;
+  --text-light: #ecf0f1; /* Alias for consistency */
+  --text-muted: #7f8c8d;
+  --text-white: #ffffff;
+  --text-gray: #666666;
+  --text-error: #e74c3c;
+  --text-success: #2ecc71;
+  --text-warning: #f1c40f;
+  --text-info: #3498db;
+  --text-faded: rgba(255, 255, 255, 0.6);
+  --text-subtle: rgba(255, 255, 255, 0.7);
+  --text-bright: rgba(255, 255, 255, 0.9);
+  
+  /* Background Colors */
+  --bg-primary: #1a2a3a;
+  --bg-secondary: #2c3e50;
+  --bg-card: #152534;
+  --bg-card-dark: #1c2a3a;
+  --bg-panel-start: #1e2a38;
+  --bg-panel-end: #2980b9;
+  --bg-loading: #1a1a2e;
+  
+  /* Special Colors */
+  --color-focus: #00ff88;
+  --color-focus-shadow: rgba(0, 255, 136, 0.3);
+  --color-border-light: rgba(255, 255, 255, 0.1);
+  --color-border-lighter: rgba(255, 255, 255, 0.15);
+  --color-glass-dark: rgba(0, 0, 0, 0.3);
+  --color-glass-light: rgba(0, 0, 0, 0.1);
+  --color-divider-start: rgba(52, 152, 219, 0.2);
+  --color-divider-middle: rgba(52, 152, 219, 0.8);
+  --color-divider-end: rgba(52, 152, 219, 0.2);
+  
+  /* Fixed Semantic Colors - Never change with themes */
+  --color-ready: #2ecc71; /* Green for ready/online status */
+  --color-danger: #e74c3c; /* Red for sit out/leave/logout */
+  --color-currency: #f1c40f; /* Yellow/gold for currency */
+  
+  /* Button Specific Colors */
+  --btn-primary-start: #3498db;
+  --btn-primary-end: #27ae60;
+  --btn-primary-hover-start: #3fa9e5;
+  --btn-primary-hover-end: #2ecc71;
+  --btn-secondary-start: rgba(52, 73, 94, 0.9);
+  --btn-secondary-end: rgba(44, 62, 80, 0.9);
+  --btn-secondary-hover-start: rgba(52, 73, 94, 1);
+  --btn-secondary-hover-end: rgba(44, 62, 80, 1);
+  --btn-tertiary-start: #3498db;
+  --btn-tertiary-end: #2980b9;
+  --btn-tertiary-hover-start: #5faee3;
+  --btn-tertiary-hover-end: #3498db;
+  --btn-tertiary-shadow: rgba(52, 152, 219, 0.3);
   
   /* Shadow System */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);

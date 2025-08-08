@@ -1,83 +1,13 @@
-.deckDisplayContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--gradient-primary);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  margin-bottom: var(--spacing-sm);
-  width: 150px;
-  border: 2px solid #3498db;
-  box-sizing: border-box;
-}
-
-@media (max-width: 600px) {
-  .deckDisplayContainer {
-    width: 140px;
-    padding: 0.4rem 0.8rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .deckDisplayContainer {
-    width: 130px;
-    padding: 0.3rem 0.6rem;
-  }
-}
 
 .deckVisual {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 0.75rem;
-  position: relative;
 }
 
 .deckIcon {
   font-size: 1.6rem;
-  filter: drop-shadow(0 0 3px rgba(52, 152, 219, 0.5));
-  position: relative;
-  z-index: 2;
-}
-
-/* Deck thickness visualization */
-.deckThick::before,
-.deckMedium::before,
-.deckThin::before,
-.deckVeryThin::before {
-  content: '';
-  position: absolute;
-  left: 0.2rem;
-  top: 0.2rem;
-  width: 1.4rem;
-  height: 1.8rem;
-  background: rgba(52, 152, 219, 0.3);
-  border-radius: 0.2rem;
-  z-index: 1;
-  transform: rotate(-5deg);
-}
-
-.deckThick::before {
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2),
-              0 0 0 4px rgba(52, 152, 219, 0.15),
-              0 0 0 6px rgba(52, 152, 219, 0.1),
-              0 0 0 8px rgba(52, 152, 219, 0.05);
-}
-
-.deckMedium::before {
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2),
-              0 0 0 4px rgba(52, 152, 219, 0.15),
-              0 0 0 6px rgba(52, 152, 219, 0.05);
-}
-
-.deckThin::before {
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2),
-              0 0 0 4px rgba(52, 152, 219, 0.1);
-}
-
-.deckVeryThin::before {
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
 }
 
 @media (max-width: 600px) {
@@ -102,7 +32,7 @@
   margin: 0;
   padding: 0;
   font-size: 0.9rem;
-  color: #3498db;
+  color: var(--text-info);
   font-weight: bold;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -113,8 +43,8 @@
 .deckCount {
   font-size: 1.3rem;
   font-weight: bold;
-  color: #3498db;
-  text-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+  color: var(--text-info);
+  /* removed text shadow */
 }
 
 .deckCounter {

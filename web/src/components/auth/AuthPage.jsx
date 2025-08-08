@@ -82,7 +82,7 @@ const AuthPage = () => {
   };
 
   return (
-    <Box className={styles.authPage}>
+    <Box className={`screen ${styles.authPage}`}>
       <AppHeader />
       
       <Box className={styles.formContainer}>

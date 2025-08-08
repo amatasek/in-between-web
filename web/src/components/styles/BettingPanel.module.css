@@ -28,7 +28,7 @@
 .betText {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #ecf0f1;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   text-align: center;
 }
@@ -59,122 +59,44 @@
 
 .betButtons {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 0.8rem;
+  align-items: center;
+  gap: 0.5rem;
   width: 100%;
 }
 
 @media (max-width: 400px) {
   .betButtons {
-    gap: 0.6rem;
+    gap: 0.3rem;
   }
 }
 
-.betButton {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--gradient-info);
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 80px;
-  text-align: center;
-  box-shadow: var(--shadow-md);
-}
-
-@media (max-width: 400px) {
-  .betButton {
-    padding: 0.8rem 0;
-    min-width: 70px;
-    width: 30%;
-    font-size: 1.1rem;
-  }
-}
-
-.betButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--info-light) 0%, var(--info) 100%);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.betButton:disabled {
-  background: var(--gradient-neutral);
-  cursor: not-allowed;
-  opacity: 0.7;
-  box-shadow: var(--shadow-sm);
-}
-
-.disabledButton {
-  background-color: #95a5a6 !important;
-  cursor: not-allowed;
-  opacity: 0.7;
-  transform: none !important;
-}
-
-.extremeButton {
-  flex: 1;
-  padding: 0.8rem 1rem;
-  font-size: 1.1rem;
-}
-
-@media (max-width: 400px) {
-  .extremeButton {
-    padding: 0.9rem 0.5rem;
-    font-size: 1rem;
-    border-radius: 8px;
-  }
-}
-
-.passButton {
-  background: var(--gradient-neutral);
-}
-
-.passButton:hover {
-  background: linear-gradient(135deg, var(--neutral) 0%, var(--neutral-dark) 80%);
-}
 
 
 
 .customBetContainer {
   display: flex;
-  width: 100%;
-  max-width: 200px;
-  gap: 0.5rem;
+  max-width: 160px;
+  gap: 0.25rem;
 }
 
 @media (max-width: 400px) {
   .customBetContainer {
-    max-width: 100%;
-    margin-top: 0.5rem;
+    max-width: 140px;
   }
 }
 
 .customBetInput {
   flex: 1;
-  padding: 0.7rem;
-  border: 2px solid #3498db;
+  padding: 0.65rem 0.5rem;
+  border: 2px solid var(--text-info);
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   background-color: #34495e;
-  color: white;
+  color: var(--text-white);
   outline: none;
+  min-width: 80px;
 }
 
-.customBetButton {
-  padding: 0.7rem 1rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.customBetButton:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
 

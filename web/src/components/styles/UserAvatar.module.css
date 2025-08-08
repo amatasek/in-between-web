@@ -17,7 +17,7 @@
   position: relative;
   border-radius: 50%;
   overflow: visible; /* Changed to show player card */
-  background-color: #2c3e50;
+  background-color: var(--text-dark);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -53,7 +53,7 @@
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
-  background-color: #2c3e50;
+  background-color: var(--text-dark);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,9 +75,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--text-white);
   font-weight: bold;
-  background-color: #3498db;
+  background-color: var(--text-info);
 }
 
 .userInfo {
@@ -88,13 +88,13 @@
 
 .username {
   font-weight: 500;
-  color: #ecf0f1;
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
 .userTitle {
   font-size: 0.75em;
-  color: #3498db;
+  color: var(--text-info);
   font-weight: 600;
   line-height: 1;
   margin-top: 2px;
@@ -116,13 +116,14 @@
   top: 50%;
   left: -10px;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
-  border: 2px solid #34495e;
-  border-radius: 12px;
+  background-color: var(--bg-card);
+  background-image: linear-gradient(to bottom right, var(--bg-card), var(--bg-card-dark));
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
   padding: 16px;
   min-width: 250px;
   min-height: 120px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-xl);
   z-index: 10001;
   animation: cardAppear 0.2s ease-out;
   backdrop-filter: blur(8px);
@@ -153,21 +154,21 @@
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #60a5fa;
+  border: 3px solid var(--btn-tertiary-start);
 }
 
 .playerCardInitials {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: #3498db;
+  background-color: var(--text-info);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--text-white);
   font-weight: bold;
   font-size: 24px;
-  border: 3px solid #60a5fa;
+  border: 3px solid var(--btn-tertiary-start);
 }
 
 .playerCardInfo {
@@ -182,7 +183,7 @@
 .playerCardUsername {
   font-size: 18px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-white);
   margin-bottom: 4px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -190,7 +191,7 @@
 .playerCardTitle {
   font-size: 14px;
   font-weight: 600;
-  color: #3498db;
+  color: var(--text-info);
   line-height: 1;
   margin-top: 4px;
 }
@@ -198,7 +199,7 @@
 .playerCardXP {
   font-size: 13px;
   font-weight: 500;
-  color: #ffd700;
+  color: var(--color-currency);
   margin-top: 4px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -206,17 +207,17 @@
 .playerCardLevelXP {
   font-size: 13px;
   font-weight: 500;
-  color: #f39c12;
+  color: var(--color-currency);
   margin-top: 4px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .separator {
-  color: white;
+  color: var(--text-white);
 }
 
 .xpValue {
-  color: #ffd700;
+  color: var(--color-currency);
 }
 
 /* Loading states */
@@ -230,7 +231,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--text-subtle) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmerOverlay 1.5s ease-in-out infinite;
 }

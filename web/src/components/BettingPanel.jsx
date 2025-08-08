@@ -74,7 +74,8 @@ const BettingPanel = () => {
         {/* Extreme options row */}
         <div className={styles.extremeOptionsRow}>
           <button
-            className={`${styles.betButton} ${styles.extremeButton} ${styles.passButton}`}
+            className="btn btn-secondary"
+            style={{ flex: 1 }}
             onClick={() => placeBet(0)}
             data-gamepad-focusable="true"
             autoFocus
@@ -98,7 +99,8 @@ const BettingPanel = () => {
             return (
               <button
                 key={amount}
-                className={`${styles.betButton} ${disabled ? styles.disabledButton : ''}`}
+                className="btn btn-tertiary"
+                style={{ minWidth: '40px', padding: '0.65rem 0.4rem', fontSize: '0.95rem' }}
                 onClick={() => placeBet(amount)}
                 disabled={disabled}
                 data-gamepad-focusable="true"
@@ -120,7 +122,8 @@ const BettingPanel = () => {
               onKeyPress={handleKeyPress}
             />
             <button
-              className={styles.customBetButton}
+              className="btn btn-primary"
+              style={{ minWidth: '40px', padding: '0.65rem 0.4rem', fontSize: '0.95rem' }}
               onClick={handleCustomBetSubmit}
               disabled={!customBet}
               data-gamepad-focusable="true"

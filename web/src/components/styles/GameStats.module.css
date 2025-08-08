@@ -1,6 +1,6 @@
 /* Stats Content Styles */
 .noDataMessage {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-faded);
   font-style: italic;
   text-align: center;
   padding: 15px 0;
@@ -38,14 +38,14 @@
 }
 
 .statLabel {
-  color: #666;
+  color: var(--text-gray);
   font-size: 0.85rem;
   margin-bottom: 3px;
   font-weight: 600;
 }
 
 .statValue {
-  color: #2c3e50;
+  color: var(--text-dark);
   font-size: 1.1rem;
   font-weight: 700;
   display: flex;
@@ -53,7 +53,7 @@
 }
 
 .statSuffix {
-  color: #666;
+  color: var(--text-gray);
   font-size: 0.9rem;
   font-weight: 400;
   margin-left: 4px;

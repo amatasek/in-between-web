@@ -51,7 +51,7 @@ const SecondChancePanel = () => {
     if (!isCurrentPlayer) return null;
     
     return (
-      <div className={styles.secondChanceControls}>
+      <div className="panel-alt" style={{ width: '100%', marginBottom: '0.5rem', alignItems: 'center' }}>
         <p className={styles.secondChanceText}>
           Would you like to ante up again for a second chance?
           <span className={styles.countdown}> ({countdown}s)</span>
@@ -59,7 +59,7 @@ const SecondChancePanel = () => {
         
         <div className={styles.secondChanceButtons}>
           <button
-            className={`${styles.secondChanceButton} ${styles.anteAgainButton}`}
+            className="btn btn-primary"
             onClick={() => handleSecondChance(true)}
             data-gamepad-focusable="true"
             autoFocus
@@ -73,7 +73,7 @@ const SecondChancePanel = () => {
             )}
           </button>
           <button
-            className={`${styles.secondChanceButton} ${styles.passButton}`}
+            className="btn btn-secondary"
             onClick={() => handleSecondChance(false)}
             data-gamepad-focusable="true"
           >
@@ -88,7 +88,7 @@ const SecondChancePanel = () => {
     if (isCurrentPlayer) return null;
     
     return (
-      <div className={styles.waitingMessage}>
+      <div className="panel-alt" style={{ width: '100%', marginBottom: '0.5rem' }}>
           <p className={styles.waitingText}>
             {currentPlayer?.name} is deciding whether to take a second chance.
           </p>

@@ -1,21 +1,12 @@
 .headerContainer {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: linear-gradient(120deg, #2c3e50, #3498db);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--spacing-lg);
-  box-shadow: var(--shadow-lg);
-  box-sizing: border-box;
+  margin-bottom: var(--spacing-md);
   width: 100%;
-  position: relative;
-  overflow: hidden; /* Prevent content from overflowing */
 }
 
 /* Desktop Layout */
 .desktopLayout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
+  margin-bottom: 0;
 }
 
 /* Mobile Layout */
@@ -30,8 +21,8 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 2px 5px;
-  box-sizing: border-box;
+  padding: 0;
+  margin-bottom: 0.5rem;
 }
 
 
@@ -97,7 +88,7 @@
 
 .gameTitle {
   font-size: 1.5rem;
-  color: #ecf0f1;
+  color: var(--text-primary);
   margin: 0;
   font-weight: bold;
   white-space: nowrap;
@@ -106,8 +97,8 @@
 }
 
 .liveTag {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--text-error);
+  color: var(--text-white);
   font-size: 0.7rem;
   padding: 0.15rem 0.4rem;
   border-radius: 10px;
@@ -159,14 +150,14 @@
 
 .gameIdText {
   font-size: 0.9rem;
-  color: #95a5a6;
+  color: var(--text-muted);
   margin: 0.2rem 0 0 0;
   white-space: nowrap;
 }
 
 .gameIdLink {
   cursor: pointer;
-  color: #3498db;
+  color: var(--text-info);
   font-weight: 500;
   text-decoration: underline;
   transition: color 0.2s ease;
@@ -174,26 +165,13 @@
 }
 
 .gameIdLink:hover {
-  color: #2ecc71;
+  color: var(--text-success);
 }
 
 .gameIdLink:active {
   color: #1abc9c;
 }
 
-.balanceDisplay {
-  font-size: 0.8rem;
-  color: #ecf0f1;
-  margin: 0 0 0.3rem 0;
-  white-space: nowrap;
-  font-weight: 600;
-  padding: 0.15rem 0.35rem;
-  background: rgba(52, 152, 219, 0.2);
-  border-radius: 8px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(52, 152, 219, 0.3);
-  text-align: center;
-}
 
 /* Ensure the game ID text container has proper spacing and alignment */
 .gameIdText {
@@ -386,7 +364,7 @@
 
 /* Phase-specific styles */
 .gamePhase[data-phase='dealing'] {
-  background-color: #3498db;
+  background-color: var(--text-info);
   animation: dealPulse 1s infinite;
 }
 
@@ -413,12 +391,12 @@
 }
 
 .gamePhase[data-phase='results'] {
-  background-color: #2ecc71;
+  background-color: var(--text-success);
   animation: resultPulse 2s infinite;
 }
 
 .gamePhase[data-phase='results'] .timerProgress {
-  background-color: #27ae60;
+  background-color: var(--text-success);
 }
 
 /* Phase animations */

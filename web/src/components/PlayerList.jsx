@@ -64,23 +64,28 @@ const PlayerList = () => {
               <div 
                 key={playerId} 
                 className={`
+                  ${isCurrentPlayer ? 'panel' : 'panel-alt'}
                   ${styles.playerItem}
-                  ${isCurrentPlayer ? styles.currentPlayer : ''}
+                  ${isCurrentPlayer ? styles.currentPlayerGlow : ''}
                   ${isCurrentUser ? styles.currentUser : ''}
                 `}
+                style={{
+                  padding: '0.35rem 0.75rem',
+                  gap: '0.5rem',
+                  flexDirection: 'row',
+                  fontSize: '0.9rem'
+                }}
               >
               <div className={styles.playerInfo}>
                 <UserAvatar 
                   userId={player.userId}
                   size="small" 
-                  showName={false}
+                  showName={true}
+                  namePosition="right"
                 />
-                <span className={styles.playerName}>
-                  {player.name}
-                  <span className={styles.playerStatus}>
-                    {isDealer && ` ${ICONS.DEALER}`}
-                    {player.disconnected && <span className={styles.disconnectedIndicator} title="Player disconnected">⚠️ Disconnected</span>}
-                  </span>
+                <span className={styles.playerStatus}>
+                  {isDealer && ` ${ICONS.DEALER}`}
+                  {player.disconnected && <span className={styles.disconnectedIndicator} title="Player disconnected">⚠️ Disconnected</span>}
                 </span>
               </div>
               <div className={styles.playerBalanceContainer}>

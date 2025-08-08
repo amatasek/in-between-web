@@ -11,21 +11,20 @@ import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
 import PlayerPanel from './PlayerPanel.jsx';
 import GameCard from './GameCard';
-import { useUserData } from '../contexts/UserDataContext';
+import GameSettingsModal from './GameSettingsModal.jsx';
 import soundService from '../services/SoundService';
 
 const Lobby = () => {
-  const { gameList, loading: lobbyLoading } = useLobby();
+  const { gameList } = useLobby();
   const { user, logout } = useAuth();
-  const userData = useUserData(user?.id);
-  const { isConnected } = useSocket();
+  const { socket, isConnected } = useSocket();
   
   // Initialize gamepad navigation
-  const { isGamepadConnected } = useGamepadNavigation(true);
+  useGamepadNavigation(true);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
 
-  const isMobile = useMediaQuery('(max-width:600px)');
   const isSmallMobile = useMediaQuery('(max-width:400px)');
   
   const userId = user?.username ? `user_${user.username}` : null;
@@ -55,6 +54,38 @@ const Lobby = () => {
     setSearchQuery(e.target.value);
   };
   
+  const createGameWithSettings = (settings) => {
+    if (!user?.id || !isConnected) {
+      return;
+    }
+
+    const handleGameCreated = (data) => {
+      socket.off('gameCreated', handleGameCreated);
+      if (data?.game?.id) {
+        navigate(`/${data.game.id}`);
+      }
+    };
+
+    socket.on('gameCreated', handleGameCreated);
+    
+    if (settings) {
+      socket.emit('createGame', { settings });
+    } else {
+      socket.emit('createGame');
+    }
+  };
+
+  const handleCreateGame = () => createGameWithSettings({ numberOfBots: 5 });
+
+  const handleCreateCustomGame = () => {
+    setShowGameSettingsModal(true);
+  };
+
+  const handleSubmitCustomSettings = (settings) => {
+    setShowGameSettingsModal(false);
+    createGameWithSettings(settings);
+  };
+  
   const filteredGameList = useMemo(() => {
     if (!gameList) return [];
     
@@ -82,15 +113,39 @@ const Lobby = () => {
   }, [gameList, searchQuery, userId]); // Dependency on userId ensures resorting if user changes
   
    return (
-     <div className={styles.lobbyContainer}>
+     <div className="screen">
        <AppHeader />
        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
          <OnlinePlayerCount />
        </div>       
-       <PlayerPanel />
+
+       <div className="card" style={{ width: '100%', maxWidth: '600px', marginBottom: '2rem' }}>
+         <PlayerPanel />
+         <div className="divider"></div>
+         <div className={styles.gameActionsSection}>
+           <button 
+             className="btn btn-primary"
+             onClick={handleCreateGame}
+             disabled={!user?.username}
+             data-gamepad-focusable="true"
+           >
+             Create Quick Game
+           </button>
+           <button
+             className="btn btn-primary"
+             onClick={handleCreateCustomGame}
+             disabled={!user?.username}
+             data-gamepad-focusable="true"
+           >
+             Create Custom Game
+           </button>
+         </div>
+       </div>
        
-       {/* Game List Section - Always shown */}
-       <div className={styles.gameListContainer}>
+       <div 
+         className="card" 
+         style={{width: '100%', maxWidth: '600px', minHeight: '200px'}}
+       >
          <h2 className={styles.gameListTitle}>Available Games</h2>
          
          {/* Search bar for filtering games */}
@@ -126,7 +181,15 @@ const Lobby = () => {
              ))}
            </div>
          ) : (
-           <div className={styles.emptyGameList}>
+           <div className="panel-alt" style={{ 
+             textAlign: 'center', 
+             padding: '2rem',
+             minHeight: '150px',
+             display: 'flex',
+             flexDirection: 'column',
+             alignItems: 'center',
+             justifyContent: 'center'
+           }}>
              <div className={styles.emptyStateIcon}>🃏</div>
              <p className={styles.emptyStateMessage}>
                {searchQuery.trim() ? 'No matching games found' : 'No games in progress'}
@@ -139,6 +202,13 @@ const Lobby = () => {
            </div>
          )}
        </div>
+       
+       {showGameSettingsModal && (
+         <GameSettingsModal
+           onSubmit={handleSubmitCustomSettings}
+           onClose={() => setShowGameSettingsModal(false)}
+         />
+       )}
      </div>
    );
  };

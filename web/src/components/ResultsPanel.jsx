@@ -73,10 +73,17 @@ const ResultsPanel = () => {
     }
   };
 
-  return (
-    <div className={styles.resultsPanel}>
-      {/* Card display section removed - cards are now visible in the game board */}
+  const panelClasses = result.outcome === 'tie' 
+    ? `panel-alt ${styles.tiePanel}` 
+    : 'panel-alt';
 
+  return (
+    <div className={panelClasses} style={{ 
+      maxWidth: '500px', 
+      margin: '1rem auto',
+      width: '90%',
+      animation: 'fadeIn 0.5s ease-out'
+    }}>
       <div className={styles.resultContent}>
         {renderOutcome()}
         

@@ -5,14 +5,13 @@ import BaseModal from './common/BaseModal';
 import ToggleSwitch from './ToggleSwitch.jsx';
 import FileUpload from './FileUpload.jsx';
 import TitlesSelector from './TitlesSelector.jsx';
+import ThemeSelector from './ThemeSelector.jsx';
 
 const PreferencesModal = ({ onClose }) => {
   const { 
     preferences, 
     toggleAutoAnte,
     toggleMute,
-    uploadTwoSecondPotGif, 
-    uploadTwoSecondPotMp3, 
     uploadProfileImg,
     loading 
   } = usePreferences();
@@ -82,69 +81,16 @@ const PreferencesModal = ({ onClose }) => {
           <TitlesSelector />
         </div>
 
-        {/* Two Second Pot GIF Setting */}
-        {/* <div style={{ position: 'relative' }}>
-          <div style={{
-            position: 'absolute',
-            top: '-12px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: '#FFD700',
-            color: '#333',
-            padding: '2px 10px',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-            fontSize: '14px',
-            zIndex: 2
-          }}>
-            COMING SOON
+        {/* Theme Selection */}
+        <div className={baseModalStyles.settingItem} style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+          <div className={baseModalStyles.settingDescription} style={{ marginRight: 0, marginBottom: '12px' }}>
+            <h4>Theme</h4>
+            <p>Choose a color theme for the game interface</p>
           </div>
-          <div className={baseModalStyles.settingItem} style={{ border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px', marginTop: '12px' }}>
-            <div className={baseModalStyles.settingDescription}>
-              <h4>Two Second POT GIF</h4>
-              <p>Upload a GIF to play when you slam the POT button</p>
-            </div>
-            <FileUpload
-              onUpload={uploadTwoSecondPotGif}
-              currentFileUrl={preferences.twoSecondPotGif}
-              acceptedFileTypes="image/gif"
-              label="GIF"
-              previewType="image"
-            />
-          </div>
+          <ThemeSelector />
         </div>
 
-        Two Second Pot Sound Setting
-        <div style={{ position: 'relative' }}>
-          <div style={{
-            position: 'absolute',
-            top: '-12px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: '#FFD700',
-            color: '#333',
-            padding: '2px 10px',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-            fontSize: '14px',
-            zIndex: 2
-          }}>
-            COMING SOON
-          </div>
-          <div className={baseModalStyles.settingItem} style={{ border: '2px dashed #FFD700', padding: '15px', borderRadius: '8px', marginTop: '12px' }}>
-            <div className={baseModalStyles.settingDescription}>
-              <h4>Two Second POT Sound</h4>
-              <p>Upload a sound to play when you slam the POT button</p>
-            </div>
-            <FileUpload
-              onUpload={uploadTwoSecondPotMp3}
-              currentFileUrl={preferences.twoSecondPotMp3}
-              acceptedFileTypes="audio/mpeg,audio/wav"
-              label="Sound"
-              previewType="audio"
-            />
-          </div>
-        </div> */}
+      
       </div>
     </BaseModal>
   );
