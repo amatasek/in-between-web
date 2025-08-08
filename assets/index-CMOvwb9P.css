@@ -1,0 +1,1034 @@
+._loadingScreen_16l5s_1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--primary-dark);
+}
+
+._loadingContainer_16l5s_10 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+._spinner_16l5s_21 {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--accent);
+  animation: _spin_16l5s_21 1s ease-in-out infinite;
+}
+
+._message_16l5s_31 {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  margin: 0;
+  text-align: center;
+}
+
+@keyframes _spin_16l5s_21 {
+  to {
+    transform: rotate(360deg);
+  }
+}
+._overlay_j8a1u_1 {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  animation: _fadeIn_j8a1u_1 0.2s;
+}
+
+@keyframes _fadeIn_j8a1u_1 {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+._modal_j8a1u_17 {
+  background-color: #1a2a3a;
+  background-image: linear-gradient(to bottom right, #1a2a3a, #2c3e50);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  max-width: 95vw;
+  min-width: 320px;
+  max-height: 90vh;
+  width: 100%;
+  padding: 0 0 16px 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  animation: _modalPop_j8a1u_1 0.2s;
+}
+
+@keyframes _modalPop_j8a1u_1 {
+  from { transform: scale(0.96); opacity: 0.7; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+._header_j8a1u_38 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px 10px 32px;
+  border-bottom: 1px solid #223344;
+  background: transparent;
+  border-radius: 16px 16px 0 0;
+}
+
+._header_j8a1u_38 h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+._closeButton_j8a1u_55 {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+._closeButton_j8a1u_55:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+._sectionHeader_j8a1u_74 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid rgba(100, 169, 255, 0.18);
+  border-radius: 0;
+  background: none;
+  text-shadow: none;
+  box-shadow: none;
+  padding-left: 10px;
+  padding-top: 4px;
+}
+
+._settingItem_j8a1u_90 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+._settingItem_j8a1u_90:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+._settingControls_j8a1u_106 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 150px;
+}
+
+._primaryButton_j8a1u_113 {
+  background: linear-gradient(90deg, #3498db 0%, #64a9ff 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.07rem;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 32px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(100,169,255,0.12);
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s;
+  outline: none;
+  letter-spacing: 0.04em;
+  display: inline-block;
+}
+
+._primaryButton_j8a1u_113:hover, ._primaryButton_j8a1u_113:focus {
+  background: linear-gradient(90deg, #2176bd 0%, #4c8edb 100%);
+  box-shadow: 0 4px 16px rgba(100,169,255,0.18);
+}
+
+._settingDescription_j8a1u_135 {
+  color: #a0b9d6;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+  flex: 1;
+  min-width: 0;
+  margin-right: 1rem;
+}
+
+._settingDescription_j8a1u_135 h4 {
+  color: #bcdcff;
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+}
+
+._settingDescription_j8a1u_135 p {
+  color: #a0b9d6;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+._textInput_j8a1u_157 {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #eaf6ff;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+._textInput_j8a1u_157:focus {
+  outline: none;
+  border-color: #64a9ff;
+  box-shadow: 0 0 0 2px rgba(100, 169, 255, 0.2);
+}
+
+._inputError_j8a1u_175 {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 1px #e74c3c;
+}
+
+._errorMessage_j8a1u_180 {
+  color: #e74c3c;
+  font-size: 0.75rem;
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+._content_j8a1u_190 {
+  padding: 18px 32px 0 32px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
+}
+
+._content_j8a1u_190::-webkit-scrollbar {
+  width: 8px;
+}
+
+._content_j8a1u_190::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+._content_j8a1u_190::-webkit-scrollbar-thumb {
+  background: rgba(100, 169, 255, 0.3);
+  border-radius: 4px;
+}
+
+._content_j8a1u_190::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 169, 255, 0.5);
+}
+
+@media (max-width: 600px) {
+  ._settingItem_j8a1u_90 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  ._settingDescription_j8a1u_135 {
+    margin-bottom: 15px;
+  }
+
+  ._settingControls_j8a1u_106 {
+    align-items: flex-start;
+  }
+}
+
+
+
+._footer_j8a1u_233 {
+  padding: 14px 32px 0 32px;
+  border-top: 1px solid #223344;
+  background: transparent;
+  border-radius: 0 0 16px 16px;
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  ._modal_j8a1u_17 {
+    min-width: 0;
+    width: 98vw;
+    padding: 0 0 12px 0;
+  }
+  ._header_j8a1u_38, ._content_j8a1u_190, ._footer_j8a1u_233 {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+/* Virtual Keyboard Modal Styles */
+._keyboardModal_7mp5j_2 {
+  max-width: 600px;
+  width: 90vw;
+}
+
+._inputDisplay_7mp5j_7 {
+  padding: 16px 16px 8px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+._tempInput_7mp5j_13 {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 16px;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+}
+
+._tempInput_7mp5j_13::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+}
+
+._keyboardGrid_7mp5j_31 {
+  padding: 16px;
+}
+
+._keyRow_7mp5j_35 {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+._keyRow_7mp5j_35:last-child {
+  margin-bottom: 0;
+}
+
+._key_7mp5j_2 {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 8px;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  flex: 1;
+  max-width: 48px;
+}
+
+._key_7mp5j_2:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
+._key_7mp5j_2:active {
+  transform: translateY(0);
+  background: var(--bg-active);
+}
+
+._specialKey_7mp5j_77 {
+  background: var(--bg-secondary);
+  font-size: 14px;
+}
+
+._specialKey_7mp5j_77:hover {
+  background: var(--bg-secondary-hover);
+}
+
+._spaceKey_7mp5j_86 {
+  flex: 3;
+  max-width: none;
+}
+
+._activeShift_7mp5j_91 {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+}
+
+._activeShift_7mp5j_91:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Gamepad navigation focus styling */
+body.gamepad-navigation-active ._key_7mp5j_2:focus {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+  background: var(--bg-hover);
+  border-color: var(--accent-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  ._keyboardOverlay_7mp5j_112 {
+    padding: 10px;
+  }
+  
+  ._keyboard_7mp5j_2 {
+    max-width: 100%;
+  }
+  
+  ._key_7mp5j_2 {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 8px 6px;
+    font-size: 14px;
+  }
+  
+  ._keyboardGrid_7mp5j_31 {
+    padding: 12px;
+  }
+  
+  ._keyRow_7mp5j_35 {
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  ._key_7mp5j_2 {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 6px 4px;
+    font-size: 12px;
+  }
+  
+  ._keyboardGrid_7mp5j_31 {
+    padding: 8px;
+  }
+  
+  ._keyRow_7mp5j_35 {
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+}
+
+/* Number pad specific styles */
+._keyboard_7mp5j_2[data-type="number"] ._keyRow_7mp5j_35 {
+  justify-content: center;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+._keyboard_7mp5j_2[data-type="number"] ._key_7mp5j_2 {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  font-size: 18px;
+}
+
+@media (max-width: 480px) {
+  ._keyboard_7mp5j_2[data-type="number"] ._key_7mp5j_2 {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+}._toast_1yqi6_1 {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 300px;
+  max-width: 500px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10000;
+  transition: all 0.3s ease;
+  animation: _slideInFromTop_1yqi6_1 0.3s ease;
+  border: 2px solid;
+  color: white;
+}
+
+@keyframes _slideInFromTop_1yqi6_1 {
+  from {
+    transform: translateX(-50%) translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+._slideOut_1yqi6_31 {
+  animation: _slideOutToTop_1yqi6_1 0.3s ease forwards;
+}
+
+@keyframes _slideOutToTop_1yqi6_1 {
+  from {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-50%) translateY(-100%);
+    opacity: 0;
+  }
+}
+
+._iconWrapper_1yqi6_46 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+._icon_1yqi6_46 {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+._emojiIcon_1yqi6_61 {
+  font-size: 28px;
+  animation: _pulse_1yqi6_1 2s infinite;
+}
+
+@keyframes _pulse_1yqi6_1 {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+._content_1yqi6_75 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+._title_1yqi6_82 {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+._message_1yqi6_89 {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+._emojiMessage_1yqi6_97 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+._playerName_1yqi6_104 {
+  color: white;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+._reactionText_1yqi6_110 {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+  font-style: italic;
+}
+
+._emojiReaction_1yqi6_116 {
+  animation: _slideInWithBounce_1yqi6_1 0.5s ease;
+}
+
+@keyframes _slideInWithBounce_1yqi6_1 {
+  0% {
+    transform: translateX(-50%) translateY(-100%) scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(-50%) translateY(5%) scale(1.05);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+._closeButton_1yqi6_134 {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: all 0.2s;
+  border-radius: 50%;
+}
+
+._closeButton_1yqi6_134:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  ._toast_1yqi6_1 {
+    left: 10px;
+    right: 10px;
+    transform: translateX(0);
+    min-width: unset;
+    max-width: unset;
+  }
+  
+  
+  ._emojiIcon_1yqi6_61 {
+    font-size: 24px;
+  }
+  
+  @keyframes _slideInFromTop_1yqi6_1 {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes _slideInWithBounce_1yqi6_1 {
+    0% {
+      transform: translateY(-100%) scale(0.8);
+      opacity: 0;
+    }
+    60% {
+      transform: translateY(5%) scale(1.05);
+    }
+    100% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes _slideOutToTop_1yqi6_1 {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+}/* Global styles for the In-Between card game */
+
+/* Import CSS variables */
+
+:root {
+  /* Primary Colors */
+  --primary-dark: #1a1a2e;
+  --primary: #2c3e50;
+  --primary-light: #34495e;
+  
+  /* Secondary Colors */
+  --secondary-dark: #c0392b;
+  --secondary: #e74c3c;
+  --secondary-light: #f06060;
+  
+  /* Accent Colors */
+  --accent-dark: #d4ac0d;
+  --accent: #f1c40f;
+  --accent-light: #f7dc6f;
+  
+  /* Success Colors */
+  --success-dark: #27ae60;
+  --success: #2ecc71;
+  --success-light: #58d68d;
+  
+  /* Info Colors */
+  --info-dark: #2980b9;
+  --info: #3498db;
+  --info-light: #5dade2;
+  
+  /* Neutral Colors */
+  --neutral-dark: #7f8c8d;
+  --neutral: #95a5a6;
+  --neutral-light: #bdc3c7;
+  
+  /* Text Colors */
+  --text-primary: #ecf0f1;
+  --text-secondary: #bdc3c7;
+  --text-dark: #2c3e50;
+  
+  /* Shadow System */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.25);
+  
+  /* Gradient System */
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  --gradient-success: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+  --gradient-info: linear-gradient(135deg, var(--info) 0%, var(--info-dark) 100%);
+  --gradient-neutral: linear-gradient(135deg, var(--neutral) 0%, var(--neutral-dark) 100%);
+  
+  /* Button Styles */
+  --button-padding-sm: 0.4rem 0.8rem;
+  --button-padding-md: 0.6rem 1.2rem;
+  --button-padding-lg: 0.8rem 1.5rem;
+  --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --button-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  --button-transition: all 0.2s ease;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Typography System - Apple-style fonts */
+  --font-family-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Segoe UI', 'Segoe UI Display', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', 'Segoe UI Text', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  
+  /* Font Weights - Apple-style */
+  --font-weight-thin: 100;
+  --font-weight-ultralight: 200;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 800;
+  --font-weight-black: 900;
+  
+  /* Font Sizes - Apple-style scale */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  /* Line Heights - Apple-style */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  
+  /* Font Smoothing (Apple-style) */
+  --font-smoothing: antialiased;
+  --webkit-font-smoothing: antialiased;
+  --moz-osx-font-smoothing: grayscale;
+}
+
+/* 
+ * Apple-style Typography System
+ * Consistent text fonts across all platforms
+ */
+
+/* Base typography styles - Apple-style fonts */
+
+* {
+  font-family: var(--font-family-system);
+  -webkit-font-smoothing: var(--webkit-font-smoothing);
+  -moz-osx-font-smoothing: var(--moz-osx-font-smoothing);
+  font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Specific font families for different content types */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+p, span, div, button, input, textarea {
+  font-family: var(--font-family-text);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+code, pre {
+  font-family: var(--font-family-mono);
+}
+
+/* Modal open state - prevent body scroll */
+
+body.modal-open {
+  overflow: hidden;
+}
+
+/* 
+ * Gamepad Navigation Styles
+ * Provides visual feedback for controller/keyboard navigation
+ * Only active when gamepad-navigation-active class is present on body
+ */
+
+/* Prevent flash of auth screen on page load when user is already logged in */
+
+html.loading {
+  background-color: #1a1a2e;
+}
+
+html.loading * {
+  visibility: hidden;
+}
+
+/* Mobile - No scaling, just responsive sizing */
+
+@media (max-width: 600px) {
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Gamepad focus indicators - only show when gamepad/keyboard is active */
+
+body.gamepad-navigation-active [data-gamepad-focusable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  border-radius: 8px !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Material-UI specific focus styling for inputs */
+
+body.gamepad-navigation-active .MuiOutlinedInput-root input[data-gamepad-focusable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+}
+
+/* Make sure the outline is visible above Material-UI styles */
+
+body.gamepad-navigation-active .MuiTextField-root [data-gamepad-focusable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  z-index: 1000 !important;
+}
+
+/* Ensure focus is visible for buttons and inputs */
+
+[data-gamepad-focusable="true"] {
+  transition: outline 0.2s ease, box-shadow 0.2s ease, border-radius 0.2s ease;
+}
+
+/* Hide default focus outline when gamepad navigation is not active */
+
+body:not(.gamepad-navigation-active) [data-gamepad-focusable="true"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Scrollable container focus styling */
+
+body.gamepad-navigation-active [data-gamepad-scrollable="true"]:focus {
+  outline: 3px solid #00ff88 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3) !important;
+  border-radius: 8px !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Hide scrollable outline when gamepad navigation is not active */
+
+body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+:root {
+  /* Primary Colors */
+  --primary-dark: #1a1a2e;
+  --primary: #2c3e50;
+  --primary-light: #34495e;
+  
+  /* Secondary Colors */
+  --secondary-dark: #c0392b;
+  --secondary: #e74c3c;
+  --secondary-light: #f06060;
+  
+  /* Accent Colors */
+  --accent-dark: #d4ac0d;
+  --accent: #f1c40f;
+  --accent-light: #f7dc6f;
+  
+  /* Success Colors */
+  --success-dark: #27ae60;
+  --success: #2ecc71;
+  --success-light: #58d68d;
+  
+  /* Info Colors */
+  --info-dark: #2980b9;
+  --info: #3498db;
+  --info-light: #5dade2;
+  
+  /* Neutral Colors */
+  --neutral-dark: #7f8c8d;
+  --neutral: #95a5a6;
+  --neutral-light: #bdc3c7;
+  
+  /* Text Colors */
+  --text-primary: #ecf0f1;
+  --text-secondary: #bdc3c7;
+  --text-dark: #2c3e50;
+  
+  /* Shadow System */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.25);
+  
+  /* Gradient System */
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  --gradient-success: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+  --gradient-info: linear-gradient(135deg, var(--info) 0%, var(--info-dark) 100%);
+  --gradient-neutral: linear-gradient(135deg, var(--neutral) 0%, var(--neutral-dark) 100%);
+  
+  /* Button Styles */
+  --button-padding-sm: 0.4rem 0.8rem;
+  --button-padding-md: 0.6rem 1.2rem;
+  --button-padding-lg: 0.8rem 1.5rem;
+  --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --button-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  --button-transition: all 0.2s ease;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Typography System - Apple-style fonts */
+  --font-family-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Segoe UI', 'Segoe UI Display', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', 'Segoe UI Text', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  
+  /* Font Weights - Apple-style */
+  --font-weight-thin: 100;
+  --font-weight-ultralight: 200;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 800;
+  --font-weight-black: 900;
+  
+  /* Font Sizes - Apple-style scale */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  /* Line Heights - Apple-style */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  
+  /* Font Smoothing (Apple-style) */
+  --font-smoothing: antialiased;
+  --webkit-font-smoothing: antialiased;
+  --moz-osx-font-smoothing: grayscale;
+}
