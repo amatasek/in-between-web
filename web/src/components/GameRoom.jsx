@@ -109,6 +109,29 @@ const GameRoom = () => {
 
   const GameRoomContent = () => {
     const { gameState } = useGameContext(); 
+    const { socket } = useSocket();
+    
+    // Add beforeunload listener to warn users who are ready (in an active hand)
+    useEffect(() => {
+      const handleBeforeUnload = (e) => {
+        const currentUserId = socket?.auth?.userId;
+        const currentPlayer = currentUserId && gameState?.players ? gameState.players[currentUserId] : null;
+        const isPlayerReady = currentPlayer?.isReady || false;
+        
+        // Only show warning if player is ready (has ante'd and is in the hand)
+        if (isPlayerReady) {
+          e.preventDefault();
+          e.returnValue = 'You have money in the pot! Are you sure you want to leave?';
+          return e.returnValue;
+        }
+      };
+      
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }, [gameState, socket]);
 
     return (
       <>

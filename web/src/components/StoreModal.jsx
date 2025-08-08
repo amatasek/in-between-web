@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BaseModal from './common/BaseModal';
 import baseModalStyles from './common/BaseModal.module.css';
-import styles from './styles/PlayerStatsModal.module.css';
+import styles from './styles/StoreModal.module.css';
 import storeService from '../services/StoreService';
 
 const StoreModal = ({ onClose }) => {

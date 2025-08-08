@@ -15,13 +15,7 @@ const GameRulesModal = ({ onClose }) => {
       onClose={onClose}
       style={{ maxWidth: 600 }}
     >
-      <div 
-        className={`${baseModalStyles.content} ${baseModalStyles.scrollableContent}`} 
-        style={{ maxHeight: '60vh', padding: '0' }}
-        data-gamepad-scrollable="true"
-        tabIndex="0"
-      >
-        <div style={{ marginBottom: 22 }}>
+      <div style={{ marginBottom: 22 }}>
           <div className={baseModalStyles.sectionHeader}>Objective</div>
           <div className={baseModalStyles.settingDescription}>
             The goal is to bet on whether the third card will have a value that falls "in between" the first two cards.
@@ -71,7 +65,6 @@ const GameRulesModal = ({ onClose }) => {
             </ul>
           </div>
         </div>
-      </div>
     </BaseModal>
   );
 };

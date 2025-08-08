@@ -37,9 +37,6 @@
   .cardsRow {
     gap: 0.6rem;
   }
-  .cardSection {
-    padding: 0.75rem;
-  }
 }
 
 @media (max-width: 400px) {
@@ -49,9 +46,6 @@
   }
   .cardsRow {
     gap: 0.5rem;
-  }
-  .cardSection {
-    padding: 0.6rem;
   }
 }
 
@@ -142,6 +136,31 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+/* Responsive card center size */
+@media (max-width: 600px) {
+  .cardCenter {
+    font-size: 2.2rem;
+  }
+  .cardValue {
+    font-size: 1.2rem;
+  }
+  .cardSuit {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .cardCenter {
+    font-size: 1.8rem;
+  }
+  .cardValue {
+    font-size: 1rem;
+  }
+  .cardSuit {
+    font-size: 1rem;
+  }
 }
 
 .aceCard {
@@ -241,48 +260,3 @@
   }
 }
 
-/* Removed unused cardRevealText styles */
-
-.deckInfo {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #95a5a6;
-}
-
-.deckCount {
-  background-color: #34495e;
-  padding: 0.3rem 0.7rem;
-  border-radius: 4px;
-  color: white;
-}
-
-/* Dealer rotation notification styles */
-.dealerRotationAlert {
-  background-color: rgba(243, 156, 18, 0.2);
-  border: 1px solid #f39c12;
-  border-radius: 8px;
-  padding: 0.8rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  animation: pulse 2s infinite;
-}
-
-.dealerIcon {
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-  display: inline-block;
-  animation: spin 2s infinite linear;
-}
-
-.dealerRotationText {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #f39c12;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Duplicate animation definition removed */

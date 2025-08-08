@@ -27,12 +27,12 @@
 /* Responsive adjustments for mobile */
 @media (max-width: 600px) {
   .gameContainer {
-    padding: 0.75rem;
-    min-height: calc(100vh / 0.9); /* Adjust for scale transform */
+    padding: 0.5rem;
+    min-height: 100vh;
   }
   
   .gameScreen {
-    padding: 0.25rem;
+    padding: 0;
     gap: 0.75rem; /* Reduce spacing between elements */
   }
 }
@@ -40,15 +40,16 @@
 @media (max-width: 400px) {
   .gameContainer {
     padding: 0.5rem;
-    min-height: calc(100vh / 0.85); /* Adjust for scale transform */
+    min-height: 100vh;
   }
   
   .gameScreen {
+    padding: 0;
     gap: 0.5rem; /* Even tighter spacing */
   }
 }
 
-.loading {
+.loadingContainer {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,71 +121,6 @@
   }
 }
 
-.resultsContainer {
-  background-image: linear-gradient(120deg, #2c3e50, #34495e);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  margin: 1rem 0;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.5s ease-out;
-}
-
-.resultContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.resultText {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin: 0 0 0.5rem 0;
-  text-align: center;
-}
-
-.winText {
-  color: #2ecc71;
-  text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
-}
-
-.tieText {
-  color: #f39c12;
-  text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
-}
-
-.loseText {
-  color: #e74c3c;
-  text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
-}
-
-.winningsText {
-  color: #f1c40f;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0.5rem 0 1rem 0;
-}
-
-.countdownContainer {
-  width: 100%;
-  margin-top: 1rem;
-}
-
-.countdownText {
-  color: #ecf0f1;
-  font-size: 1rem;
-  margin: 0 0 0.5rem 0;
-}
-
-.countdownBar {
-  height: 8px;
-  background-color: #3498db;
-  border-radius: 4px;
-  transition: width 1s linear;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.7);
-}
 
 @keyframes pulse {
   0% { transform: scale(1); }
@@ -240,9 +176,3 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* GamePhase Indicator */
-.gamePhase {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}

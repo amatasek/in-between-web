@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
+import BaseModal from './common/BaseModal';
 import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 import TransactionDownloadButton from './common/TransactionDownloadButton';
@@ -11,20 +11,15 @@ import GameStats from './GameStats';
  */
 const GameSummaryModal = ({ onClose, gameData }) => {
   if (!gameData) {
-    const loadingContent = (
-      <div className={styles.modalOverlay}>
-        <div className={styles.modalContent}>
-          <div className={styles.modalHeader}>
-            <h2>Game Summary</h2>
-            <button className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
-          </div>
-          <div className={styles.settingsContainer}>
-            <div className={styles.loadingMessage}>Loading game data...</div>
-          </div>
-        </div>
-      </div>
+    return (
+      <BaseModal
+        title="Game Summary"
+        onClose={onClose}
+        style={{ maxWidth: 800 }}
+      >
+        <div className={styles.loadingMessage}>Loading game data...</div>
+      </BaseModal>
     );
-    return createPortal(loadingContent, document.body);
   }
 
   // Extract data from gameData with clean access now that structure is consistent
@@ -154,18 +149,14 @@ const GameSummaryModal = ({ onClose, gameData }) => {
   // Track the active tab - start with 'totals' tab
   const [activeTab, setActiveTab] = useState('totals');
 
-  const modalContent = (
-    <div className={styles.modalOverlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={styles.modalContent}>
-        <div className={styles.modalHeader}>
-          <h2>Game Summary ({gameId})</h2>
-          <div className={styles.headerButtons}>
-            <TransactionDownloadButton gameState={gameData} />
-            <button className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
-          </div>
-        </div>
-        
-        <div className={styles.settingsContainer}>
+  return (
+    <BaseModal
+      title={`Game Summary (${gameId})`}
+      onClose={onClose}
+      headerButtons={<TransactionDownloadButton gameState={gameData} />}
+      style={{ maxWidth: 800 }}
+    >
+      <div className={styles.settingsContainer}>
           {/* Tab Bar Navigation */}
           <div className={styles.tabsContainer}>
             <button 
@@ -242,13 +233,9 @@ const GameSummaryModal = ({ onClose, gameData }) => {
               )}
             </div>
           )}
-        </div>
       </div>
-    </div>
+    </BaseModal>
   );
-
-  // Render modal using portal to document.body to avoid transform context issues
-  return createPortal(modalContent, document.body);
 };
 
 export default GameSummaryModal;

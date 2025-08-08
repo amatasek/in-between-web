@@ -1,8 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     // SWC is much faster than Babel
@@ -11,43 +9,30 @@ export default defineConfig({
   // Path aliases for cleaner imports
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      'components': path.resolve(__dirname, './src/components'),
-      'contexts': path.resolve(__dirname, './src/contexts'),
-      'services': path.resolve(__dirname, './src/services'),
-      'styles': path.resolve(__dirname, './src/styles')
-    },
-    // Automatically resolve these extensions
-    extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json']
+      '@': '/src'
+    }
   },
-  // Development server configuration
+  
   server: {
     port: 3000,
-    // Hot Module Replacement
-    hmr: true,
-    // Proxy API requests to your backend server
     proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-        secure: false,
-      },
+      '/api': 'http://localhost:3001',
       '/socket.io': {
         target: 'http://localhost:3001',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
+        ws: true
       }
     }
   },
   // Build configuration
   build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    // Generate source maps for better debugging
-    sourcemap: true,
-    // Minify output for production
+    target: 'esnext',
     minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
     // Split chunks for better caching
     rollupOptions: {
       output: {
@@ -56,10 +41,12 @@ export default defineConfig({
           ui: ['@mui/material', '@emotion/react', '@emotion/styled'],
         }
       }
-    }
+    },
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 1000
   },
   // Optimize dependencies
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'socket.io-client']
+    include: ['react', 'react-dom', 'react-router-dom', 'socket.io-client', '@mui/material']
   }
 });

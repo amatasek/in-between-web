@@ -27,7 +27,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
 }
 
-/* Danger variant (red) */
+/* Danger variant (red) - for exit/leave */
 .danger {
   background: linear-gradient(to bottom, rgba(231, 76, 60, 0.9), rgba(192, 57, 43, 0.9));
   border-color: rgba(192, 57, 43, 0.7);
@@ -42,33 +42,21 @@
 
 /* Preferences variant (blue) */
 .preferences {
-  background: #2196f3;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 2px 10px rgba(33, 150, 243, 0.12);
-  padding: 6px;
-  min-width: 32px;
-  min-height: 32px;
-  font-size: 18px;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(to bottom, rgba(52, 152, 219, 0.9), rgba(41, 128, 185, 0.9));
+  border-color: rgba(41, 128, 185, 0.7);
 }
 
 .preferences:hover {
-  background: #1769aa;
+  background: linear-gradient(to bottom, rgba(52, 152, 219, 1), rgba(41, 128, 185, 1));
+  border-color: rgba(41, 128, 185, 0.9);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
 }
 
 /* Stats variant (gold) */
 .stats {
   background: linear-gradient(to bottom, rgba(241, 196, 15, 0.9), rgba(243, 156, 18, 0.9));
   border-color: rgba(243, 156, 18, 0.7);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(241, 196, 15, 0.2);
 }
 
 .stats:hover {
@@ -78,38 +66,36 @@
   box-shadow: 0 4px 8px rgba(241, 196, 15, 0.35);
 }
 
-
-
-/* Success variant (green) */
-.success {
+/* Store variant (green) */
+.store {
   background: linear-gradient(to bottom, rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.9));
   border-color: rgba(39, 174, 96, 0.7);
 }
 
-.success:hover {
+.store:hover {
   background: linear-gradient(to bottom, rgba(46, 204, 113, 1), rgba(39, 174, 96, 1));
   border-color: rgba(39, 174, 96, 0.9);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-}
-
-/* Store variant (vibrant green for purchases) */
-.store {
-  background: linear-gradient(to bottom, rgba(34, 197, 94, 0.9), rgba(21, 128, 61, 0.9));
-  border-color: rgba(21, 128, 61, 0.7);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(34, 197, 94, 0.2);
-}
-
-.store:hover {
-  background: linear-gradient(to bottom, rgba(34, 197, 94, 1), rgba(21, 128, 61, 1));
-  border-color: rgba(21, 128, 61, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(34, 197, 94, 0.35);
+  box-shadow: 0 4px 8px rgba(46, 204, 113, 0.35);
 }
 
 /* Active state for all buttons */
-.iconButton:active {
+.iconButton:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Disabled state for all buttons */
+.iconButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: linear-gradient(to bottom, rgba(127, 140, 141, 0.5), rgba(95, 106, 107, 0.5));
+  border-color: rgba(95, 106, 107, 0.3);
+  transform: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.iconButton:disabled:hover {
+  transform: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }

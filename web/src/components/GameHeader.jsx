@@ -31,6 +31,9 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
   const currentPlayer = currentUserId && gameState?.players ? gameState.players[currentUserId] : null;
   const playerBalance = currentPlayer?.balance ?? user?.balance ?? 0;
   const currentPhase = gameState?.phase || 'waiting';
+  
+  // Check if user is ready (committed to current hand)
+  const isPlayerReady = currentPlayer?.isReady || false;
   const [timeLeft, setTimeLeft] = useState(null);
   const [showGameSummary, setShowGameSummary] = useState(false);
   const [showStoreModal, setShowStoreModal] = useState(false);
@@ -184,7 +187,11 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
                 data-gamepad-focusable="true" 
               />
               <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
-              <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
+              <LeaveButton 
+                onClick={handleLeaveGame} 
+                disabled={isPlayerReady}
+                data-gamepad-focusable="true" 
+              />
             </div>
           </div>
         </div>
@@ -228,7 +235,11 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
                   data-gamepad-focusable="true" 
                 />
                 <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
-                <LeaveButton onClick={handleLeaveGame} data-gamepad-focusable="true" />
+                <LeaveButton 
+                onClick={handleLeaveGame} 
+                disabled={isPlayerReady}
+                data-gamepad-focusable="true" 
+              />
               </div>
             </div>
           </div>

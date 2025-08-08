@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './BaseModal.module.css';
 
+// Track number of open modals globally
+let openModalCount = 0;
+
 // BaseModal: Shared modal structure for all app modals
-export default function BaseModal({ title, onClose, children, footer, className = '', overlayStyle, ...props }) {
+export default function BaseModal({ title, onClose, children, footer, headerButtons, className = '', overlayStyle, ...props }) {
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (++openModalCount === 1) document.body.classList.add('modal-open');
+    return () => { if (--openModalCount === 0) document.body.classList.remove('modal-open'); };
+  }, []);
+  
   const modalContent = (
     <div className={styles.overlay} style={overlayStyle} onClick={onClose}>
       <div
@@ -14,15 +23,18 @@ export default function BaseModal({ title, onClose, children, footer, className 
         {title && (
           <div className={styles.header}>
             <h2>{title}</h2>
-            <button
-              className={styles.closeButton}
-              onClick={onClose}
-              aria-label="Close"
-              type="button"
-              data-gamepad-focusable="true"
-            >
-              ×
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              {headerButtons}
+              <button
+                className={styles.closeButton}
+                onClick={onClose}
+                aria-label="Close"
+                type="button"
+                data-gamepad-focusable="true"
+              >
+                ×
+              </button>
+            </div>
           </div>
         )}
         <div className={styles.content}>{children}</div>

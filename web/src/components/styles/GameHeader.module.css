@@ -50,46 +50,6 @@
   gap: 4px; /* Reduced spacing between buttons */
 }
 
-/* Icon button style for mobile view */
-.iconButton {
-  padding: 6px;
-  min-width: 34px;
-  min-height: 34px;
-  font-size: 18px;
-  border-radius: 50%;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(to bottom, rgba(189, 195, 199, 0.9), rgba(127, 140, 141, 0.9));
-  border: 2px solid rgba(127, 140, 141, 0.7);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.iconButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-  background: linear-gradient(to bottom, rgba(189, 195, 199, 1), rgba(127, 140, 141, 1));
-  border-color: rgba(149, 165, 166, 0.9);
-}
-
-.iconButton:active {
-  transform: scale(0.97);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* Exit button specific styling */
-.exitButton {
-  background: linear-gradient(to bottom, rgba(231, 76, 60, 0.9), rgba(192, 57, 43, 0.9));
-  border: 2px solid rgba(192, 57, 43, 0.7);
-}
-
-.exitButton:hover {
-  background: linear-gradient(to bottom, rgba(231, 76, 60, 1), rgba(192, 57, 43, 1));
-  border-color: rgba(192, 57, 43, 0.9);
-}
 
 .mobileBottomRow {
   display: flex;
@@ -261,11 +221,6 @@
   align-items: center;
 }
 
-.buttonGroup {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
 
 @media (max-width: 768px) {
   /* Switch layouts on mobile */
@@ -292,11 +247,6 @@
     max-width: none;
   }
   
-  .iconButton {
-    padding: 6px;
-    min-width: 36px;
-    min-height: 36px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -316,21 +266,11 @@
     font-size: 0.65rem;
   }
   
-  .leaveButton {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.75rem;
-  }
   
   .mobileActions {
     gap: 3px;
   }
   
-  .iconButton {
-    padding: 4px;
-    min-width: 30px;
-    min-height: 30px;
-    font-size: 16px;
-  }
 }
 
 .gamePhase {
@@ -437,37 +377,12 @@
     font-size: 0.7rem;
   }
   
-  .leaveButton {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.75rem;
-  }
   
   .controlsGroup {
     gap: 4px;
   }
 }
 
-.leaveButton {
-  padding: 0.6rem 1.2rem;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  margin-left: 1.5rem;
-  flex: 1;
-  max-width: 120px;
-  white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.leaveButton:hover {
-  background-color: #c0392b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
 
 /* Phase-specific styles */
 .gamePhase[data-phase='dealing'] {
@@ -560,17 +475,6 @@
   z-index: 1;
 }
 
-/* Phase-specific styles */
-.phaseWaiting {
-  background-color: #34495e;
-  border-left: 4px solid #3498db;
-}
-
-.phaseDealing {
-  background-color: #2980b9;
-  border-left: 4px solid #3498db;
-  animation: dealPulse 1.2s infinite;
-}
 
 /* New betting phase styles - one for your turn (pulsing) and one for waiting (static) */
 .phaseBettingYourTurn {
@@ -586,98 +490,7 @@
   /* No animation when it's not your turn */
 }
 
-.phaseRevealing {
-  background-color: #8e44ad;
-  border-left: 4px solid #9b59b6;
-}
 
-/* CARD_REVEAL_DELAY is 2000ms (2s) */
-.phaseRevealing {
-  position: relative;
-  overflow: hidden;
-}
-
-.phaseRevealing::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background: rgba(142, 68, 173, 0.3);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.phaseRevealing::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  background: rgba(142, 68, 173, 0.5);
-  animation: timerDrain 2000ms linear forwards; /* Exactly matches CARD_REVEAL_DELAY */
-  z-index: 0;
-  pointer-events: none;
-  transform-origin: right;
-}
-
-/* RESULTS_DURATION is 5000ms (5s) */
-.phaseResults {
-  background-color: #27ae60;
-  border-left: 4px solid #2ecc71;
-  position: relative;
-  overflow: hidden;
-}
-
-.phaseResults::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background: rgba(39, 174, 96, 0.3);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.phaseResults::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  background: rgba(39, 174, 96, 0.5);
-  animation: timerDrain 5000ms linear forwards; /* Exactly matches RESULTS_DURATION */
-  z-index: 0;
-  pointer-events: none;
-  transform-origin: right;
-}
-
-.leaveButton {
-  padding: 0.6rem 1.2rem;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  margin-left: 1.5rem;
-  flex: 1;
-  max-width: 120px;
-  white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.leaveButton:hover {
-  background-color: #c0392b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
 
 /* Animations for game phases */
 @keyframes pulse {

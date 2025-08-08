@@ -213,114 +213,7 @@
   background: rgba(100, 169, 255, 0.5);
 }
 
-/* Scrollable content area with custom scrollbar styling */
-.scrollableContent {
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
-}
-
-.scrollableContent::-webkit-scrollbar {
-  width: 8px;
-}
-
-.scrollableContent::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-.scrollableContent::-webkit-scrollbar-thumb {
-  background: rgba(100, 169, 255, 0.3);
-  border-radius: 4px;
-}
-
-.scrollableContent::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 169, 255, 0.5);
-}
-
-/* Shared settings panel styles for all modals */
-.modal-settings-container {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  background: #f7f8fa;
-  border-radius: 0 0 14px 14px;
-  padding: 12px 0 0 0;
-}
-
-.modal-setting-item {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 10px 0 0 0;
-  background: none;
-}
-
-.modal-setting-description {
-  flex: 1 1 60%;
-  min-width: 0;
-  color: #222;
-}
-
-.modal-setting-description h4 {
-  margin: 0 0 2px 0;
-  color: #1a2233;
-  font-weight: 600;
-  font-size: 1.08rem;
-}
-
-.modal-setting-description p {
-  margin: 0;
-  color: #5c6470;
-  font-size: 0.97rem;
-}
-
-.modal-setting-controls {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  min-width: 140px;
-  gap: 8px;
-}
-
-.modal-text-input {
-  font-size: 1rem;
-  padding: 7px 12px;
-  border: 1px solid #ddd;
-  border-radius: 7px;
-  outline: none;
-  width: 160px;
-  background: #fff;
-  color: #1a2233;
-  transition: border 0.15s, box-shadow 0.15s;
-}
-.modal-text-input:focus {
-  border: 1.5px solid #4677f5;
-  box-shadow: 0 0 0 2px #e6edfb;
-}
-.modal-input-error {
-  border: 1.5px solid #e74c3c;
-  background: #fff7f6;
-}
-
-.modal-error-message {
-  color: #e74c3c;
-  font-size: 0.94rem;
-  margin-top: 2px;
-  align-self: flex-end;
-}
-
 @media (max-width: 600px) {
-  .modal-settings-container {
-    gap: 16px;
-  }
-  .modal-setting-controls {
-    min-width: 0;
-    width: 100%;
-    align-items: stretch;
-  }
   .settingItem {
     flex-direction: column;
     align-items: flex-start;
@@ -332,10 +225,6 @@
 
   .settingControls {
     align-items: flex-start;
-  }
-  .modal-text-input {
-    width: 100%;
-    min-width: 0;
   }
 }
 

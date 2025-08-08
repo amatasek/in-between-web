@@ -35,6 +35,11 @@ code, pre {
   font-family: var(--font-family-mono);
 }
 
+/* Modal open state - prevent body scroll */
+body.modal-open {
+  overflow: hidden;
+}
+
 /* 
  * Gamepad Navigation Styles
  * Provides visual feedback for controller/keyboard navigation
@@ -50,30 +55,13 @@ html.loading * {
   visibility: hidden;
 }
 
-/* Mobile Scaling - Scale down UI on small screens */
+/* Mobile - No scaling, just responsive sizing */
 @media (max-width: 600px) {
-  /* Scale down only the game content, not floating elements */
-  .mobile-scale-content {
-    transform: scale(0.95);
-    transform-origin: top left;
-    width: 105.26%;
-  }
-  
-  /* Adjust viewport height to account for scaling */
   body {
     min-height: 100vh;
     overflow-x: hidden;
     margin: 0;
     padding: 0;
-  }
-}
-
-/* Even smaller screens get more aggressive scaling */
-@media (max-width: 400px) {
-  .mobile-scale-content {
-    transform: scale(0.925);
-    transform-origin: top left;
-    width: 108.11%; /* Compensate for scale (100% / 0.925) */
   }
 }
 
