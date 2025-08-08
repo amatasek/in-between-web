@@ -1,10 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import AuthPage from './components/auth/AuthPage';
-import Lobby from './components/Lobby';
-import GameRoom from './components/GameRoom';
 import { LoadingScreen } from './components/common/LoadingScreen';
 import { useAuth } from './contexts/AuthContext';
 import { LobbyProvider } from './contexts/LobbyContext';
+
+// Lazy load routes for code splitting
+const AuthPage = lazy(() => import('./components/auth/AuthPage'));
+const Lobby = lazy(() => import('./components/Lobby'));
+const GameRoom = lazy(() => import('./components/GameRoom'));
 
 // Auth protection wrapper component
 const ProtectedRoute = ({ children }) => {
@@ -28,18 +31,30 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <LobbyProvider>
-          <Lobby />
+          <Suspense fallback={<LoadingScreen message="Loading..." />}>
+            <Lobby />
+          </Suspense>
         </LobbyProvider>
       </ProtectedRoute>
     ),
   },
   {
     path: '/auth',
-    element: <AuthPage />,
+    element: (
+      <Suspense fallback={<LoadingScreen message="Loading..." />}>
+        <AuthPage />
+      </Suspense>
+    ),
   },
   {
     path: '/:gameId',
-    element: <ProtectedRoute><GameRoom /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<LoadingScreen message="Loading..." />}>
+          <GameRoom />
+        </Suspense>
+      </ProtectedRoute>
+    ),
   },
   {
     path: '*',

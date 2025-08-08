@@ -1,19 +1,12 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    // The React plugin handles JSX transformation and provides React-specific optimizations
-    react({
-      // Use the automatic JSX runtime - no need to import React in every file
-      jsxRuntime: 'automatic',
-      // Configure babel for react-native-web support
-      babel: {
-        plugins: ['babel-plugin-react-native-web']
-      }
-    })
+    // SWC is much faster than Babel
+    react()
   ],
   // Path aliases for cleaner imports
   resolve: {
