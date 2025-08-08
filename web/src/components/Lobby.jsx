@@ -1,140 +1,53 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
-import { usePreferences } from '../contexts/PreferencesContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
 import { useMediaQuery, InputAdornment } from '@mui/material';
 import GamepadTextField from './GamepadTextField';
 import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
-import CurrencyAmount from './common/CurrencyAmount';
-import PreferencesButton from './common/PreferencesButton.jsx';
-import PlayerStatsButton from './common/PlayerStatsButton.jsx';
-import StoreButton from './StoreButton.jsx';
-import UserAvatar from './UserAvatar.jsx';
-import ProgressInfo from './ProgressInfo.jsx';
+import PlayerPanel from './PlayerPanel.jsx';
+import GameCard from './GameCard';
 import { useUserData } from '../contexts/UserDataContext';
 import soundService from '../services/SoundService';
-import GameSettingsModal from './GameSettingsModal.jsx';
-import StoreModal from './StoreModal.jsx';
-import GameCard from './GameCard'; // Import the new GameCard component
-import RulesButton from './common/RulesButton';
 
 const Lobby = () => {
-  const { gameList, loading: lobbyLoading, error: lobbyError } = useLobby(); // Assuming lobby context handles its own loading
-  const { user, logout, loading: authLoading, refreshUserData } = useAuth();
+  const { gameList, loading: lobbyLoading } = useLobby();
+  const { user, logout } = useAuth();
   const userData = useUserData(user?.id);
-  const { socket, isConnected, loading: socketLoading } = useSocket();
-  const { preferences } = usePreferences();
+  const { isConnected } = useSocket();
   
   // Initialize gamepad navigation
   const { isGamepadConnected } = useGamepadNavigation(true);
-  const navigate = useNavigate(); // Get navigate function
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [error, setError] = useState(null); // Local error state for lobby actions
 
   const isMobile = useMediaQuery('(max-width:600px)');
   const isSmallMobile = useMediaQuery('(max-width:400px)');
   
   const userId = user?.username ? `user_${user.username}` : null;
 
-  // Modal state for custom game creation and store
-  const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
-  const [showStoreModal, setShowStoreModal] = useState(false);
-
-  // Refresh user data (including balance) on lobby mount/reconnect
-  useEffect(() => {
-    // Effect runs on mount and when isConnected changes.
-    // We just need to ensure refreshUserData is available from the context.
-    if (refreshUserData) {
-      refreshUserData();
-    }
-  }, [isConnected, refreshUserData]);
-
   useEffect(() => {
     if (!user) {
-      setError('Please log in to continue');
       return;
     }
 
     if (!user.username || !user.id) {
       console.error('[Lobby] Invalid user data received:', user);
-      setError('Invalid user data');
       logout(); // Clear invalid session
       return;
     }
-
-    if (!isConnected) {
-      setError('Not connected to server. Attempting to reconnect...');
-    } else {
-      setError(null);
-    }
-  }, [user, logout, isConnected]);
-  
-  // Shared game creation logic
-  const createGameWithSettings = (settings) => {
-    if (!user?.id) {
-      setError('Please log in to create a game');
-      return;
-    }
-    if (!isConnected) {
-      setError('Not connected to server');
-      return;
-    }
-    setError(null);
-
-    const creationTimeout = setTimeout(() => {
-      setError('Game creation timed out. Please try again.');
-    }, 5000);
-
-    const handleGameCreated = (data) => {
-      clearTimeout(creationTimeout);
-      socket.off('gameCreated', handleGameCreated);
-      if (data?.game?.id) {
-        navigate(`/${data.game.id}`);
-      } else {
-        setError('Failed to create or join game. Invalid response.');
-      }
-    };
-
-    socket.on('gameCreated', handleGameCreated);
-    
-    if (settings) {
-      socket.emit('createGame', { settings });
-    } else {
-      socket.emit('createGame');
-    }
-  };
-
-  const handleCreateGame = () => createGameWithSettings({ numberOfBots: 5 });
-
-  // Handler for custom game creation
-  const handleCreateCustomGame = () => {
-    setShowGameSettingsModal(true);
-  };
-
-  // Handler for submitting custom settings modal
-  const handleSubmitCustomSettings = (settings) => {
-    setShowGameSettingsModal(false);
-    createGameWithSettings(settings);
-  };
+  }, [user, logout]);
   
   const handleJoinGame = (gameId) => {
-    if (!isConnected) {
-      setError('Not connected to server.');
-      return;
-    }
-    if (!user) {
-      setError('Please log in to join a game.');
+    if (!isConnected || !user) {
       return;
     }
 
-    setError(null);
     soundService.play('ui.click'); // Play join sound
-
     navigate(`/${gameId}`);
   };
   
@@ -171,91 +84,10 @@ const Lobby = () => {
    return (
      <div className={styles.lobbyContainer}>
        <AppHeader />
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
-        <OnlinePlayerCount />
-      </div>       
-       <div className={styles.formContainer}>
-         <div className={styles.formSection}>
-           <div className={styles.welcomeMessage}>
-             <div className={styles.welcomeHeader}>
-               {error ? (
-                 <div className={styles.error}>{error}</div>
-               ) : (
-                 <div className={styles.avatarContainer}>
-                   <UserAvatar 
-                     userId={user?.id}
-                     size="medium" 
-                     showName={true} 
-                     namePosition="right"
-                   />
-                 </div>
-               )}
-               <ProgressInfo 
-                 userId={user?.id}
-                 balance={user?.balance}
-               />
-               <div className={styles.headerButtons}>
-                 <button 
-                   className={styles.logoutButton}
-                   onClick={logout}
-                   data-gamepad-focusable="true"
-                 >
-                   <span className={styles.buttonText}>Logout</span>
-                 </button>
-                 <RulesButton data-gamepad-focusable="true" />
-                 <PlayerStatsButton data-gamepad-focusable="true" />
-                 <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
-                 <PreferencesButton data-gamepad-focusable="true" />
-               </div>
-             </div>
-           </div>
-           
-           <div className={styles.gradientDivider}></div>
-           
-           <div className={styles.buttonGroup}>
-             <button 
-               className={`${styles.actionButton} ${styles.createButton}`}
-               onClick={handleCreateGame}
-               disabled={!user?.username}
-               data-gamepad-focusable="true"
-             >
-               Create Quick Game
-             </button>
-             <button
-               className={`${styles.actionButton} ${styles.createButton}`}
-               style={{ marginTop: 8 }}
-               onClick={handleCreateCustomGame}
-               disabled={!user?.username}
-               data-gamepad-focusable="true"
-             >
-               Create Custom Game
-             </button>
-           </div>
-           {showGameSettingsModal && (
-             <GameSettingsModal
-               onSubmit={handleSubmitCustomSettings}
-               onClose={() => setShowGameSettingsModal(false)}
-             />
-           )}
-           {showStoreModal && (
-             <StoreModal
-               onClose={() => {
-                 setShowStoreModal(false);
-                 // Refresh user data to update balance after purchase
-                 if (refreshUserData) {
-                   refreshUserData();
-                 }
-               }}
-             />
-           )}
-         </div>
-         
-         {error && (
-           <div className={styles.errorMessage}>
-             {error}
-           </div>
-         )}
-       </div>
+       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
+         <OnlinePlayerCount />
+       </div>       
+       <PlayerPanel />
        
        {/* Game List Section - Always shown */}
        <div className={styles.gameListContainer}>
