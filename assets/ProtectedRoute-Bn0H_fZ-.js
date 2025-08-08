@@ -1,0 +1,1 @@
+import{j as s,N as t}from"./react-BvmXde1c.js";import{u as e,L as o}from"./index-D53AMkV8.js";import"./vendor-Lk38keV2.js";import"./socket-DSjtHFVa.js";const r=({children:r})=>{const{user:a,loading:i}=e();return i?s.jsx(o,{message:"Checking authentication..."}):a?r:s.jsx(t,{to:"/auth",replace:!0})};export{r as default};
