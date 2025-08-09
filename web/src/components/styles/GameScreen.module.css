@@ -74,29 +74,10 @@
   gap: 1rem;
 }
 
-.playerListContainer {
-  flex: 1;
-  min-width: 0; /* Prevents flex items from overflowing */
-}
-
-.gameLogContainer {
-  flex: 1;
-  min-width: 0; /* Prevents flex items from overflowing */
-}
-
-/* Responsive layout for mobile */
-@media (max-width: 768px) {
+/* Responsive layout for mobile - switch to column at 600px */
+@media (max-width: 600px) {
   .gameBottomSection {
     flex-direction: column;
-  }
-  
-  .playerListContainer {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-  
-  .gameLogContainer {
-    width: 100%;
   }
 }
 

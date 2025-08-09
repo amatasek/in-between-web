@@ -182,7 +182,14 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+
+.panel:has([class*="avatar"]:hover) {
+  z-index: 1000;
+  overflow: visible;
 }
 
 /* Responsive panel adjustments */
@@ -206,6 +213,13 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
   backdrop-filter: blur(10px);
   border: 1px solid var(--color-border-light);
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+.panel-alt:has([class*="avatar"]:hover) {
+  z-index: 1000;
 }
 
 /* Responsive panel-alt adjustments */

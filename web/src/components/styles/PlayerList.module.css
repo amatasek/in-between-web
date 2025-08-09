@@ -1,11 +1,19 @@
 .playersContainer {
   margin-top: 0.75rem;
   width: 100%;
-  max-width: 600px;
   box-sizing: border-box;
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
 }
 
 /* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .playersContainer {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
 @media (max-width: 600px) {
   .playersContainer {
     padding: 0 0.5rem;
@@ -15,8 +23,10 @@
 .playersTitle {
   font-size: 1.1rem;
   color: var(--text-primary);
+  margin: 0;
   margin-bottom: 0.5rem;
-  border-bottom: 1px solid #34495e;
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, var(--btn-primary-start), var(--btn-primary-end)) 1;
   padding-bottom: 0.25rem;
 }
 
@@ -41,19 +51,6 @@
   gap: 0.25rem;
   position: relative;
   isolation: isolate;
-}
-
-.playerItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-}
-
-.playerItem:has([class*="avatar"]:hover) {
-  z-index: 1000;
 }
 
 

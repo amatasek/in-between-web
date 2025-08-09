@@ -4,7 +4,8 @@ import { useGameContext } from '../contexts/GameContext';
 
 const GameLog = () => {
   const { gameState } = useGameContext();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
   
   if (!gameState || !gameState.gameLog) return null;
   
@@ -17,38 +18,53 @@ const GameLog = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
   
-  // Toggle expanded state
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
+  // Toggle collapsed state - also resets visible count
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+    if (isCollapsed) {
+      setVisibleCount(10); // Reset to initial 10 when opening
+    }
+  };
+  
+  // Show more entries
+  const showMore = () => {
+    setVisibleCount(prevCount => prevCount + 10);
   };
   
   // Determine how many entries to show
-  const displayEntries = isExpanded ? logEntries : logEntries.slice(0, 10);
+  const displayEntries = isCollapsed ? [] : logEntries.slice(0, visibleCount);
   
   return (
     <div className={styles.gameLogContainer}>
-      <div className={styles.gameLogHeader} onClick={toggleExpanded}>
-        <h3>Game Log</h3>
-        <span className={styles.expandIcon}>{isExpanded ? '▲' : '▼'}</span>
-      </div>
+      <h3 className={styles.gameLogHeader} onClick={toggleCollapse}>
+        Game Log
+        <span className={styles.expandIcon}>
+          {isCollapsed ? '▶' : '▼'}
+        </span>
+      </h3>
       
-      <div className={`${styles.gameLogEntries} ${isExpanded ? styles.expanded : ''}`}>
-        {displayEntries.length === 0 ? (
-          <div className={styles.emptyLog}>No game events yet</div>
-        ) : (
-          displayEntries.map((entry, index) => (
-            <div key={index} className={styles.logEntry}>
-              <span className={styles.logTime}>{formatTime(entry.timestamp)}</span>
-              <span className={styles.logMessage}>{entry.message}</span>
+      {!isCollapsed && (
+        <>
+          <div className={styles.gameLogEntries}>
+            {logEntries.length === 0 ? (
+              <div className={styles.emptyLog}>No game events yet</div>
+            ) : (
+              displayEntries.map((entry, index) => (
+                <div key={index} className={styles.logEntry}>
+                  <span className={styles.logTime}>{formatTime(entry.timestamp)}</span>
+                  <span className={styles.logMessage}>{entry.message}</span>
+                </div>
+              ))
+            )}
+          </div>
+          
+          {logEntries.length > visibleCount && (
+            <div className={styles.showMoreButton} onClick={showMore}>
+              Show {Math.min(10, logEntries.length - visibleCount)} more 
+              {logEntries.length - visibleCount > 10 && ` (${logEntries.length - visibleCount} remaining)`}
             </div>
-          ))
-        )}
-      </div>
-      
-      {!isExpanded && logEntries.length > 5 && (
-        <div className={styles.showMoreButton} onClick={toggleExpanded}>
-          Show {logEntries.length - 5} more entries
-        </div>
+          )}
+        </>
       )}
     </div>
   );

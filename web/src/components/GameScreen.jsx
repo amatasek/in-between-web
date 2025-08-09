@@ -132,12 +132,8 @@ const GameScreen = ({ onReturnToLobby }) => {
         )}
         
         <div className={styles.gameBottomSection}>
-          <div className={styles.playerListContainer}>
-            <PlayerList />
-          </div>
-          <div className={styles.gameLogContainer}>
-            <GameLog />
-          </div>
+          <PlayerList />
+          <GameLog />
         </div>
       </div>
       

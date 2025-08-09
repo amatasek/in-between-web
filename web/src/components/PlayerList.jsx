@@ -65,7 +65,6 @@ const PlayerList = () => {
                 key={playerId} 
                 className={`
                   ${isCurrentPlayer ? 'panel' : 'panel-alt'}
-                  ${styles.playerItem}
                   ${isCurrentPlayer ? styles.currentPlayerGlow : ''}
                   ${isCurrentUser ? styles.currentUser : ''}
                 `}
@@ -73,7 +72,9 @@ const PlayerList = () => {
                   padding: '0.35rem 0.75rem',
                   gap: '0.5rem',
                   flexDirection: 'row',
-                  fontSize: '0.9rem'
+                  fontSize: '0.9rem',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
                 }}
               >
               <div className={styles.playerInfo}>
