@@ -76,7 +76,8 @@ const ThemeSelector = () => {
           style={{
             display: 'inline-flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
+            alignItems: 'center',
             width: '130px',
             height: '50px',
             padding: '8px',

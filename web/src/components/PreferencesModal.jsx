@@ -73,7 +73,7 @@ const PreferencesModal = ({ onClose }) => {
         </div>
 
         {/* Titles Selection */}
-        <div className={baseModalStyles.settingItem} style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+        <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
           <div className={baseModalStyles.settingDescription} style={{ marginRight: 0, marginBottom: '12px' }}>
             <h4>Title</h4>
             <p>Choose a title to display with your name. Unlock more by playing games!</p>
@@ -82,7 +82,7 @@ const PreferencesModal = ({ onClose }) => {
         </div>
 
         {/* Theme Selection */}
-        <div className={baseModalStyles.settingItem} style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+        <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
           <div className={baseModalStyles.settingDescription} style={{ marginRight: 0, marginBottom: '12px' }}>
             <h4>Theme</h4>
             <p>Choose a color theme for the game interface</p>

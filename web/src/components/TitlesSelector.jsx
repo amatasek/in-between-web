@@ -74,7 +74,7 @@ const TitlesSelector = () => {
         <div
           onClick={() => handleTitleSelect('')}
           style={{
-            display: 'inline-block',
+            display: 'inline-flex',
             width: '120px',
             height: '36px',
             padding: '8px',
@@ -88,6 +88,7 @@ const TitlesSelector = () => {
             whiteSpace: 'normal',
             flexDirection: 'column',
             justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
           <div style={{ fontWeight: 'bold', color: '#bcdcff', fontSize: '13px' }}>
@@ -107,6 +108,7 @@ const TitlesSelector = () => {
               display: 'inline-flex',
               flexDirection: 'column',
               justifyContent: 'center',
+              alignItems: 'center',
               width: '130px',
               height: '36px',
               padding: '8px',
