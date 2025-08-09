@@ -22,11 +22,10 @@
 
 .playersTitle {
   font-size: 1.1rem;
-  color: var(--text-primary);
+  color: var(--accent2);
   margin: 0;
   margin-bottom: 0.5rem;
-  border-bottom: 2px solid;
-  border-image: linear-gradient(90deg, var(--btn-primary-start), var(--btn-primary-end)) 1;
+  border-bottom: 2px solid var(--accent2);
   padding-bottom: 0.25rem;
 }
 
@@ -70,7 +69,7 @@
 }
 
 .currentUser {
-  border-left: 4px solid var(--success);
+  border-left: 4px solid var(--accent3);
 }
 
 .playerInfo {

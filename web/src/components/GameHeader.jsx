@@ -172,7 +172,7 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
         <div className={styles.headerRight}>
           <div className={styles.controlsStack}>
             <div className="panel-alt" style={{ padding: '0.2rem 0.4rem', margin: '0 0 0.2rem 0', gap: '0.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#ecf0f1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                 <span>Balance:</span>
                 <CurrencyAmount amount={Number(playerBalance)} size="small" />
               </div>

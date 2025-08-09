@@ -19,7 +19,7 @@ const DeckDisplay = () => {
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: '0.5rem',
-      border: '2px solid var(--info)'
+      border: '2px solid var(--accent2)'
     }}>
       <div className={styles.deckVisual}>
         <div className={styles.deckIcon}>{ICONS.DECK}</div>

@@ -13,8 +13,9 @@
   z-index: 10000;
   transition: all 0.3s ease;
   animation: slideInFromTop 0.3s ease;
-  border: 2px solid;
-  color: var(--text-white);
+  border: 2px solid var(--accent2);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-dark) 100%);
+  color: var(--text-primary);
 }
 
 @keyframes slideInFromTop {
@@ -80,7 +81,7 @@
 }
 
 .title {
-  color: var(--text-white);
+  color: var(--accent2);
   font-size: 14px;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -102,7 +103,7 @@
 }
 
 .playerName {
-  color: var(--text-white);
+  color: var(--accent3);
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }

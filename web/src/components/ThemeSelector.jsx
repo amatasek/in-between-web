@@ -12,9 +12,9 @@ const themes = [
   {
     id: 'light',
     name: 'Light Mode',
-    description: 'Clean light theme',
-    primary: '#e8f4f8',
-    accent: '#3498db'
+    description: 'Professional theme',
+    primary: '#f8f9fa',
+    accent: '#ffc107'
   },
   {
     id: 'dark',
@@ -24,18 +24,25 @@ const themes = [
     accent: '#2980b9'
   },
   {
-    id: 'emerald',
-    name: 'Emerald',
-    description: 'Green gaming theme',
-    primary: '#0f2818',
-    accent: '#27ae60'
+    id: 'packers',
+    name: 'Packers',
+    description: 'Go Pack Go!',
+    primary: '#203731',
+    accent: '#FFB612'
   },
   {
     id: 'sunset',
     name: 'Sunset',
-    description: 'Warm orange theme',
-    primary: '#2d1810',
-    accent: '#e67e22'
+    description: 'Romantic twilight',
+    primary: '#0c1929',
+    accent: '#ff6b6b'
+  },
+  {
+    id: 'miami-vice',
+    name: 'Miami Vice',
+    description: 'Neon pink & cyan',
+    primary: '#1a0f2e',
+    accent: '#00d2d3'
   },
   {
     id: 'purple',

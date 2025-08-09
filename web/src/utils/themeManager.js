@@ -63,6 +63,8 @@ const themes = {
     '--color-divider-end': 'rgba(52, 152, 219, 0.2)',
     '--accent': '#f1c40f',
     '--accent-dark': '#d4ac0d',
+    '--accent2': '#3498db',
+    '--accent3': '#00ff88',
     '--secondary': '#e74c3c',
     '--secondary-dark': '#c0392b',
     
@@ -78,83 +80,85 @@ const themes = {
     '--color-glass-light': 'rgba(0, 0, 0, 0.1)'
   },
   light: {
-    // Backgrounds - Cotton candy dreams
-    '--bg-primary': '#fef0ff',
-    '--bg-secondary': '#fff0f8',
-    '--bg-card': '#ffffff', /* Pure white cards */
-    '--bg-card-dark': '#f8f9ff', /* Very subtle blue tint */
-    '--bg-panel-start': '#e8f4ff', /* Soft sky blue */
-    '--bg-panel-end': '#ffe0f0', /* Light pink */
-    '--bg-loading': '#fff5fb',
+    // Backgrounds - Clean professional whites and grays
+    '--bg-primary': '#f8f9fa',
+    '--bg-secondary': '#e9ecef',
+    '--bg-card': '#ffffff',
+    '--bg-card-dark': '#f1f3f5',
+    '--bg-panel-start': '#dee2e6',
+    '--bg-panel-end': '#ced4da',
+    '--bg-loading': '#e9ecef',
     
-    // Text colors - Deep ocean blues and purples
-    '--text-primary': '#2e3f7f',
-    '--text-secondary': '#7b68ee',
-    '--text-dark': '#1a237e',
-    '--text-light': '#2e3f7f',
-    '--text-muted': '#9c88ff',
-    '--text-white': '#2e3f7f',
-    '--text-gray': '#8e7fff',
-    '--text-error': '#ff79a8',
-    '--text-success': '#4cd964',
-    '--text-warning': '#ff9500',
-    '--text-info': '#5ac8fa',
-    '--text-faded': 'rgba(46, 63, 127, 0.5)',
-    '--text-subtle': 'rgba(46, 63, 127, 0.65)',
-    '--text-bright': 'rgba(46, 63, 127, 0.85)',
+    // Text colors - Professional dark grays and blues
+    '--text-primary': '#212529',
+    '--text-secondary': '#495057',
+    '--text-dark': '#212529',
+    '--text-light': '#343a40',
+    '--text-muted': '#6c757d',
+    '--text-white': '#212529',
+    '--text-gray': '#868e96',
+    '--text-error': '#dc3545',
+    '--text-success': '#28a745',
+    '--text-warning': '#ffc107',
+    '--text-info': '#17a2b8',
+    '--text-faded': 'rgba(33, 37, 41, 0.5)',
+    '--text-subtle': 'rgba(33, 37, 41, 0.65)',
+    '--text-bright': 'rgba(33, 37, 41, 0.85)',
     
-    // Info colors - Bright sky blues
-    '--info': '#5ac8fa',
-    '--info-dark': '#32ade6',
-    '--info-light': '#87ceeb',
+    // Info colors - Professional teal
+    '--info': '#17a2b8',
+    '--info-dark': '#138496',
+    '--info-light': '#20c997',
     
-    // Glass colors for panel-alt - subtle blue/pink
-    '--color-glass-dark': 'rgba(90, 200, 250, 0.08)',
-    '--color-glass-light': 'rgba(255, 121, 168, 0.08)',
+    // Glass colors for panel-alt - white with subtle borders
+    '--color-glass-dark': 'rgba(255, 255, 255, 0.95)',
+    '--color-glass-light': 'rgba(255, 255, 255, 0.9)',
     
-    // Success colors - Spring green
-    '--success': '#4cd964',
-    '--success-dark': '#3fc550',
-    '--success-light': '#76ff7a',
+    // Success colors - Professional green
+    '--success': '#28a745',
+    '--success-dark': '#218838',
+    '--success-light': '#38c757',
     
-    // Primary button (Pink to Orange sunset)
-    '--btn-primary-start': '#ff79a8',
-    '--btn-primary-end': '#ff9500',
-    '--btn-primary-hover-start': '#ff6fa3',
-    '--btn-primary-hover-end': '#ff8800',
+    // Primary button (Professional blue gradient)
+    '--btn-primary-start': '#007bff',
+    '--btn-primary-end': '#0056b3',
+    '--btn-primary-hover-start': '#0069d9',
+    '--btn-primary-hover-end': '#004085',
     
-    // Secondary button (Soft lavender)
-    '--btn-secondary-start': 'rgba(183, 153, 255, 0.3)',
-    '--btn-secondary-end': 'rgba(255, 179, 230, 0.3)',
-    '--btn-secondary-hover-start': 'rgba(183, 153, 255, 0.5)',
-    '--btn-secondary-hover-end': 'rgba(255, 179, 230, 0.5)',
+    // Secondary button (Subtle gray)
+    '--btn-secondary-start': 'rgba(108, 117, 125, 0.2)',
+    '--btn-secondary-end': 'rgba(73, 80, 87, 0.2)',
+    '--btn-secondary-hover-start': 'rgba(108, 117, 125, 0.3)',
+    '--btn-secondary-hover-end': 'rgba(73, 80, 87, 0.3)',
     
-    // Tertiary button (Electric blue)
-    '--btn-tertiary-start': '#5ac8fa',
-    '--btn-tertiary-end': '#007aff',
-    '--btn-tertiary-hover-start': '#32ade6',
-    '--btn-tertiary-hover-end': '#0051d5',
-    '--btn-tertiary-shadow': 'rgba(90, 200, 250, 0.3)',
+    // Tertiary button (Steel blue)
+    '--btn-tertiary-start': '#6c757d',
+    '--btn-tertiary-end': '#545b62',
+    '--btn-tertiary-hover-start': '#5a6268',
+    '--btn-tertiary-hover-end': '#454d55',
+    '--btn-tertiary-shadow': 'rgba(108, 117, 125, 0.3)',
     
     // Special colors
-    '--color-focus': '#ff79a8',
-    '--color-focus-shadow': 'rgba(255, 121, 168, 0.3)',
-    '--color-border-light': 'rgba(183, 153, 255, 0.2)',
-    '--color-border-lighter': 'rgba(183, 153, 255, 0.3)',
-    '--color-divider-start': 'rgba(255, 149, 0, 0.15)',
-    '--color-divider-middle': 'rgba(255, 149, 0, 0.5)',
-    '--color-divider-end': 'rgba(255, 149, 0, 0.15)',
-    '--accent': '#ff9500',
-    '--accent-dark': '#ff8800',
-    '--secondary': '#ff79a8',
-    '--secondary-dark': '#ff6fa3',
+    '--color-focus': '#007bff',
+    '--color-focus-shadow': 'rgba(0, 123, 255, 0.25)',
+    '--color-border-light': 'rgba(0, 0, 0, 0.125)',
+    '--color-border-lighter': 'rgba(0, 0, 0, 0.1)',
+    '--color-divider-start': 'rgba(0, 123, 255, 0.15)',
+    '--color-divider-middle': 'rgba(0, 123, 255, 0.5)',
+    '--color-divider-end': 'rgba(0, 123, 255, 0.15)',
+    '--accent': '#ffc107',
+    '--accent-dark': '#e0a800',
+    '--accent2': '#17a2b8',
+    '--accent3': '#28a745',
+    '--secondary': '#6c757d',
+    '--secondary-dark': '#545b62',
     
     // Input overrides for light theme
-    '--input-bg': 'rgba(255, 255, 255, 0.95)',
-    '--input-bg-hover': 'rgba(255, 255, 255, 0.98)',
+    '--input-bg': '#ffffff',
+    '--input-bg-hover': '#f8f9fa',
     '--input-bg-focus': '#ffffff',
-    '--input-text-color': '#2e3f7f',
-    '--input-border-color': 'rgba(183, 153, 255, 0.4)'
+    '--input-text-color': '#212529',
+    '--input-border-color': 'rgba(0, 0, 0, 0.15)'
   },
   dark: {
     // Backgrounds - deep greys that pop
@@ -221,6 +225,8 @@ const themes = {
     '--color-divider-end': 'rgba(41, 128, 185, 0.2)',
     '--accent': '#f39c12',
     '--accent-dark': '#d68910',
+    '--accent2': '#00ccff',
+    '--accent3': '#ff6b6b',
     '--secondary': '#c0392b',
     '--secondary-dark': '#a93226',
     
@@ -235,159 +241,250 @@ const themes = {
     '--color-glass-dark': 'rgba(41, 128, 185, 0.08)',
     '--color-glass-light': 'rgba(243, 156, 18, 0.08)'
   },
-  emerald: {
-    // Backgrounds
-    '--bg-primary': '#0f2818',
-    '--bg-secondary': '#1a3d2e',
-    '--bg-card': '#0d2016',
-    '--bg-card-dark': '#122a1f',
-    '--bg-panel-start': '#0f2818',
-    '--bg-panel-end': '#27ae60',
-    '--bg-loading': '#0a1f12',
+  'packers': {
+    // Backgrounds - Dark Packers green
+    '--bg-primary': '#0A1713',
+    '--bg-secondary': '#154734',
+    '--bg-card': '#0D1F1A',
+    '--bg-card-dark': '#122A1F',
+    '--bg-panel-start': '#154734',
+    '--bg-panel-end': '#203731',
+    '--bg-loading': '#061109',
     
-    // Text colors
-    '--text-primary': '#e8f5e9',
-    '--text-secondary': '#a5d6a7',
-    '--text-dark': '#1b5e20',
-    '--text-light': '#e8f5e9',
-    '--text-muted': '#81c784',
-    '--text-white': '#ffffff',
-    '--text-gray': '#689f38',
-    '--text-error': '#f44336',
-    '--text-success': '#4caf50',
-    '--text-warning': '#ffeb3b',
-    '--text-info': '#2ecc71',
-    '--text-faded': 'rgba(232, 245, 233, 0.6)',
-    '--text-subtle': 'rgba(232, 245, 233, 0.7)',
-    '--text-bright': 'rgba(232, 245, 233, 0.9)',
+    // Text colors - white and gold
+    '--text-primary': '#FFFFFF',
+    '--text-secondary': '#FFB612',
+    '--text-dark': '#FFB612',
+    '--text-light': '#FFFFFF',
+    '--text-muted': '#C9B896',
+    '--text-white': '#FFFFFF',
+    '--text-gray': '#B5A482',
+    '--text-error': '#FF6B6B',
+    '--text-success': '#FFB612',
+    '--text-warning': '#FFC42E',
+    '--text-info': '#5BCEFA',
+    '--text-faded': 'rgba(255, 255, 255, 0.6)',
+    '--text-subtle': 'rgba(255, 255, 255, 0.7)',
+    '--text-bright': 'rgba(255, 255, 255, 0.9)',
     
-    // Info colors (green theme)
-    '--info': '#27ae60',
-    '--info-dark': '#229954',
-    '--info-light': '#2ecc71',
+    // Info colors (navy blue accent)
+    '--info': '#003A70',
+    '--info-dark': '#002855',
+    '--info-light': '#1E4788',
     
-    // Success colors
-    '--success': '#2ecc71',
-    '--success-dark': '#27ae60',
-    '--success-light': '#58d68d',
+    // Success colors (Packers green)
+    '--success': '#203731',
+    '--success-dark': '#154734',
+    '--success-light': '#2F5645',
     
-    // Primary button (emerald theme: green to yellow accent)
-    '--btn-primary-start': '#27ae60',
-    '--btn-primary-end': '#f1c40f',
-    '--btn-primary-hover-start': '#2ecc71',
-    '--btn-primary-hover-end': '#f39c12',
+    // Primary button (Packers green to gold)
+    '--btn-primary-start': '#203731',
+    '--btn-primary-end': '#154734',
+    '--btn-primary-hover-start': '#2F5645',
+    '--btn-primary-hover-end': '#203731',
     
-    // Secondary button (dark green-gray)
-    '--btn-secondary-start': 'rgba(30, 52, 39, 0.9)',
-    '--btn-secondary-end': 'rgba(20, 35, 26, 0.9)',
-    '--btn-secondary-hover-start': 'rgba(39, 68, 51, 1)',
-    '--btn-secondary-hover-end': 'rgba(30, 52, 39, 1)',
+    // Secondary button (gold/yellow)
+    '--btn-secondary-start': '#FFB612',
+    '--btn-secondary-end': '#FFA300',
+    '--btn-secondary-hover-start': '#FFC42E',
+    '--btn-secondary-hover-end': '#FFB612',
     
-    // Tertiary button (green - matches emerald primary)
-    '--btn-tertiary-start': '#27ae60',
-    '--btn-tertiary-end': '#1e8449',
-    '--btn-tertiary-hover-start': '#2ecc71',
-    '--btn-tertiary-hover-end': '#27ae60',
-    '--btn-tertiary-shadow': 'rgba(39, 174, 96, 0.3)',
+    // Tertiary button (navy blue)
+    '--btn-tertiary-start': '#003A70',
+    '--btn-tertiary-end': '#002855',
+    '--btn-tertiary-hover-start': '#1E4788',
+    '--btn-tertiary-hover-end': '#003A70',
+    '--btn-tertiary-shadow': 'rgba(0, 58, 112, 0.3)',
     
-    // Special colors
-    '--color-focus': '#00ff88',
-    '--color-focus-shadow': 'rgba(0, 255, 136, 0.3)',
-    '--color-divider-start': 'rgba(39, 174, 96, 0.2)',
-    '--color-divider-middle': 'rgba(39, 174, 96, 0.8)',
-    '--color-divider-end': 'rgba(39, 174, 96, 0.2)',
-    '--accent': '#f1c40f',
-    '--accent-dark': '#d4ac0d',
-    '--secondary': '#e67e22',
-    '--secondary-dark': '#d35400',
+    // Special colors - beige and white accents
+    '--color-focus': '#FFB612',
+    '--color-focus-shadow': 'rgba(255, 182, 18, 0.3)',
+    '--color-divider-start': 'rgba(32, 55, 49, 0.2)',
+    '--color-divider-middle': 'rgba(255, 182, 18, 0.8)',
+    '--color-divider-end': 'rgba(32, 55, 49, 0.2)',
+    '--accent': '#FFB612',
+    '--accent-dark': '#FFA300',
+    '--accent2': '#C9B896',
+    '--accent3': '#003A70',
+    '--secondary': '#C9B896',
+    '--secondary-dark': '#B5A482',
     
-    // Input overrides for emerald theme
-    '--input-bg': 'rgba(15, 40, 24, 0.95)',
-    '--input-bg-hover': 'rgba(20, 50, 30, 0.98)',
-    '--input-bg-focus': 'rgba(25, 60, 35, 1)',
-    '--input-text-color': 'var(--text-primary)',
-    '--input-border-color': 'rgba(39, 174, 96, 0.3)',
+    // Input overrides for Packers theme
+    '--input-bg': 'rgba(21, 71, 52, 0.3)',
+    '--input-bg-hover': 'rgba(21, 71, 52, 0.4)',
+    '--input-bg-focus': 'rgba(21, 71, 52, 0.5)',
+    '--input-text-color': '#FFFFFF',
+    '--input-placeholder-color': 'rgba(255, 255, 255, 0.5)',
+    '--input-border-color': 'rgba(255, 182, 18, 0.4)',
+    '--input-border-hover': 'rgba(255, 182, 18, 0.6)',
+    '--input-border-focus': '#FFB612',
+    '--input-border-width': '2px',
+    '--input-padding': '12px 16px',
+    '--input-font-size': '16px',
+    '--input-line-height': '1.5',
+    '--input-shadow-focus': '0 0 0 3px rgba(255, 182, 18, 0.25)',
     
-    // Glass colors for panel-alt
-    '--color-glass-dark': 'rgba(39, 174, 96, 0.08)',
-    '--color-glass-light': 'rgba(241, 196, 15, 0.08)'
+    // Glass colors for panel-alt - green and gold
+    '--color-glass-dark': 'rgba(32, 55, 49, 0.08)',
+    '--color-glass-light': 'rgba(255, 182, 18, 0.05)'
   },
   sunset: {
-    // Backgrounds
-    '--bg-primary': '#2d1810',
-    '--bg-secondary': '#4a2c2a',
-    '--bg-card': '#231410',
-    '--bg-card-dark': '#2f1a17',
-    '--bg-panel-start': '#2d1810',
-    '--bg-panel-end': '#e67e22',
-    '--bg-loading': '#1a0f08',
+    // Backgrounds - deep midnight blue like twilight
+    '--bg-primary': '#0c1929',
+    '--bg-secondary': '#162544',
+    '--bg-card': '#0a1520',
+    '--bg-card-dark': '#111f35',
+    '--bg-panel-start': '#162544',
+    '--bg-panel-end': '#ff6b6b',
+    '--bg-loading': '#060d17',
     
-    // Text colors
-    '--text-primary': '#ffe5d9',
-    '--text-secondary': '#ffb5a1',
-    '--text-dark': '#5d2818',
-    '--text-light': '#ffe5d9',
-    '--text-muted': '#d4a574',
+    // Text colors - warm romantic tones
+    '--text-primary': '#ffd6a5',
+    '--text-secondary': '#ffb088',
+    '--text-dark': '#8b5a3c',
+    '--text-light': '#ffd6a5',
+    '--text-muted': '#daa49a',
     '--text-white': '#fff5f0',
-    '--text-gray': '#a67c52',
+    '--text-gray': '#c9a882',
     '--text-error': '#ff6b6b',
-    '--text-success': '#f39c12',
-    '--text-warning': '#ffeb3b',
-    '--text-info': '#ff9f43',
-    '--text-faded': 'rgba(255, 229, 217, 0.6)',
-    '--text-subtle': 'rgba(255, 229, 217, 0.7)',
-    '--text-bright': 'rgba(255, 229, 217, 0.9)',
+    '--text-success': '#ff9a76',
+    '--text-warning': '#ffc93c',
+    '--text-info': '#ff8e71',
+    '--text-faded': 'rgba(255, 214, 165, 0.6)',
+    '--text-subtle': 'rgba(255, 214, 165, 0.7)',
+    '--text-bright': 'rgba(255, 214, 165, 0.9)',
     
-    // Info colors
-    '--info': '#e67e22',
-    '--info-dark': '#d35400',
-    '--info-light': '#f39c12',
+    // Info colors - warm coral
+    '--info': '#ff8e71',
+    '--info-dark': '#ff7657',
+    '--info-light': '#ffa589',
     
-    // Success colors
-    '--success': '#f39c12',
-    '--success-dark': '#e67e22',
-    '--success-light': '#f5b041',
+    // Success colors - golden sunset
+    '--success': '#ff9a76',
+    '--success-dark': '#ff8561',
+    '--success-light': '#ffb088',
     
-    // Primary button (sunset theme: orange to yellow accent)
-    '--btn-primary-start': '#e67e22',
-    '--btn-primary-end': '#f1c40f',
-    '--btn-primary-hover-start': '#d35400',
-    '--btn-primary-hover-end': '#f39c12',
+    // Primary button (romantic sunset: deep red to orange)
+    '--btn-primary-start': '#c44569',
+    '--btn-primary-end': '#f8961e',
+    '--btn-primary-hover-start': '#d65577',
+    '--btn-primary-hover-end': '#f9a73e',
     
-    // Secondary button (warm gray)
-    '--btn-secondary-start': 'rgba(74, 44, 42, 0.9)',
-    '--btn-secondary-end': 'rgba(45, 24, 16, 0.9)',
-    '--btn-secondary-hover-start': 'rgba(87, 52, 49, 1)',
-    '--btn-secondary-hover-end': 'rgba(74, 44, 42, 1)',
+    // Secondary button (deep midnight blue)
+    '--btn-secondary-start': 'rgba(22, 37, 68, 0.9)',
+    '--btn-secondary-end': 'rgba(12, 25, 41, 0.9)',
+    '--btn-secondary-hover-start': 'rgba(28, 46, 78, 1)',
+    '--btn-secondary-hover-end': 'rgba(22, 37, 68, 1)',
     
-    // Tertiary button (orange - matches sunset primary)
-    '--btn-tertiary-start': '#e67e22',
-    '--btn-tertiary-end': '#ca6f1e',
-    '--btn-tertiary-hover-start': '#f39c12',
-    '--btn-tertiary-hover-end': '#e67e22',
-    '--btn-tertiary-shadow': 'rgba(230, 126, 34, 0.3)',
+    // Tertiary button (warm coral)
+    '--btn-tertiary-start': '#ff6b6b',
+    '--btn-tertiary-end': '#ee5a52',
+    '--btn-tertiary-hover-start': '#ff8080',
+    '--btn-tertiary-hover-end': '#ff6b6b',
+    '--btn-tertiary-shadow': 'rgba(255, 107, 107, 0.3)',
     
     // Special colors
-    '--color-focus': '#ff9944',
-    '--color-focus-shadow': 'rgba(255, 153, 68, 0.3)',
-    '--color-divider-start': 'rgba(230, 126, 34, 0.2)',
-    '--color-divider-middle': 'rgba(230, 126, 34, 0.8)',
-    '--color-divider-end': 'rgba(230, 126, 34, 0.2)',
-    '--accent': '#f1c40f',
-    '--accent-dark': '#d4ac0d',
-    '--secondary': '#c0392b',
-    '--secondary-dark': '#a93226',
+    '--color-focus': '#ff8e71',
+    '--color-focus-shadow': 'rgba(255, 142, 113, 0.3)',
+    '--color-divider-start': 'rgba(196, 69, 105, 0.2)',
+    '--color-divider-middle': 'rgba(248, 150, 30, 0.8)',
+    '--color-divider-end': 'rgba(196, 69, 105, 0.2)',
+    '--accent': '#f8961e',
+    '--accent-dark': '#f37121',
+    '--accent2': '#ff6b6b',
+    '--accent3': '#c44569',
+    '--secondary': '#ff6b6b',
+    '--secondary-dark': '#ee5a52',
     
-    // Input overrides for sunset theme
-    '--input-bg': 'rgba(45, 24, 16, 0.95)',
-    '--input-bg-hover': 'rgba(55, 30, 20, 0.98)',
-    '--input-bg-focus': 'rgba(65, 36, 24, 1)',
+    // Input overrides for romantic sunset theme
+    '--input-bg': 'rgba(12, 25, 41, 0.95)',
+    '--input-bg-hover': 'rgba(18, 35, 51, 0.98)',
+    '--input-bg-focus': 'rgba(22, 37, 68, 1)',
     '--input-text-color': 'var(--text-primary)',
-    '--input-border-color': 'rgba(230, 126, 34, 0.3)',
+    '--input-border-color': 'rgba(255, 142, 113, 0.3)',
     
-    // Glass colors for panel-alt
-    '--color-glass-dark': 'rgba(230, 126, 34, 0.08)',
-    '--color-glass-light': 'rgba(241, 196, 15, 0.08)'
+    // Glass colors for panel-alt - warm red and orange
+    '--color-glass-dark': 'rgba(196, 69, 105, 0.08)',
+    '--color-glass-light': 'rgba(248, 150, 30, 0.05)'
+  },
+  'miami-vice': {
+    // Backgrounds - deep purples and blues like dusk
+    '--bg-primary': '#1a0f2e',
+    '--bg-secondary': '#2d1844',
+    '--bg-card': '#160d28',
+    '--bg-card-dark': '#231432',
+    '--bg-panel-start': '#2d1844',
+    '--bg-panel-end': '#ff6b9d',
+    '--bg-loading': '#0f0820',
+    
+    // Text colors - warm sunset tones with cyan accents
+    '--text-primary': '#ffeaa7',
+    '--text-secondary': '#fab1a0',
+    '--text-dark': '#74526c',
+    '--text-light': '#ffeaa7',
+    '--text-muted': '#dfe6e9',
+    '--text-white': '#fff5f0',
+    '--text-gray': '#b2bec3',
+    '--text-error': '#ff7675',
+    '--text-success': '#fdcb6e',
+    '--text-warning': '#ffeb3b',
+    '--text-info': '#00d2d3',
+    '--text-faded': 'rgba(255, 234, 167, 0.6)',
+    '--text-subtle': 'rgba(255, 234, 167, 0.7)',
+    '--text-bright': 'rgba(255, 234, 167, 0.9)',
+    
+    // Info colors - neon cyan
+    '--info': '#00d2d3',
+    '--info-dark': '#00b8b8',
+    '--info-light': '#01e5e5',
+    
+    // Success colors - golden hour
+    '--success': '#fdcb6e',
+    '--success-dark': '#f9b747',
+    '--success-light': '#ffeaa7',
+    
+    // Primary button (Miami gradient: pink to cyan)
+    '--btn-primary-start': '#ff6b9d',
+    '--btn-primary-end': '#00d2d3',
+    '--btn-primary-hover-start': '#ee5a6f',
+    '--btn-primary-hover-end': '#01e5e5',
+    
+    // Secondary button (deep purple dusk)
+    '--btn-secondary-start': 'rgba(45, 24, 68, 0.9)',
+    '--btn-secondary-end': 'rgba(26, 15, 46, 0.9)',
+    '--btn-secondary-hover-start': 'rgba(55, 34, 78, 1)',
+    '--btn-secondary-hover-end': 'rgba(45, 24, 68, 1)',
+    
+    // Tertiary button (neon cyan)
+    '--btn-tertiary-start': '#00d2d3',
+    '--btn-tertiary-end': '#00b8b8',
+    '--btn-tertiary-hover-start': '#01e5e5',
+    '--btn-tertiary-hover-end': '#00d2d3',
+    '--btn-tertiary-shadow': 'rgba(0, 210, 211, 0.3)',
+    
+    // Special colors
+    '--color-focus': '#00d2d3',
+    '--color-focus-shadow': 'rgba(0, 210, 211, 0.3)',
+    '--color-divider-start': 'rgba(255, 107, 157, 0.2)',
+    '--color-divider-middle': 'rgba(0, 210, 211, 0.8)',
+    '--color-divider-end': 'rgba(255, 107, 157, 0.2)',
+    '--accent': '#feca57',
+    '--accent-dark': '#f9b747',
+    '--accent2': '#00d2d3',
+    '--accent3': '#ff6b9d',
+    '--secondary': '#ff7979',
+    '--secondary-dark': '#ff6348',
+    
+    // Input overrides for Miami Vice theme
+    '--input-bg': 'rgba(26, 15, 46, 0.95)',
+    '--input-bg-hover': 'rgba(35, 20, 56, 0.98)',
+    '--input-bg-focus': 'rgba(45, 24, 68, 1)',
+    '--input-text-color': 'var(--text-primary)',
+    '--input-border-color': 'rgba(0, 210, 211, 0.3)',
+    
+    // Glass colors for panel-alt - pink and cyan
+    '--color-glass-dark': 'rgba(255, 107, 157, 0.08)',
+    '--color-glass-light': 'rgba(0, 210, 211, 0.05)'
   },
   purple: {
     // Backgrounds
@@ -452,6 +549,8 @@ const themes = {
     '--color-divider-end': 'rgba(142, 68, 173, 0.2)',
     '--accent': '#f1c40f',
     '--accent-dark': '#d4ac0d',
+    '--accent2': '#ab47bc',
+    '--accent3': '#ba68c8',
     '--secondary': '#e74c3c',
     '--secondary-dark': '#c0392b',
     

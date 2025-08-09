@@ -33,8 +33,7 @@ const Toast = ({
       style={{ 
         top: '20px', 
         zIndex: 10000 + position,
-        borderColor: color,
-        background: `linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)`
+        borderColor: color
       }}
     >
       <div 
