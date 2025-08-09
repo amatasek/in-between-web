@@ -64,16 +64,27 @@ const themes = {
     '--accent': '#f1c40f',
     '--accent-dark': '#d4ac0d',
     '--secondary': '#e74c3c',
-    '--secondary-dark': '#c0392b'
+    '--secondary-dark': '#c0392b',
+    
+    // Input overrides for default theme - deep blue
+    '--input-bg': 'rgba(10, 25, 47, 0.95)',
+    '--input-bg-hover': 'rgba(15, 35, 60, 0.98)',
+    '--input-bg-focus': 'rgba(20, 40, 70, 1)',
+    '--input-text-color': '#ecf0f1',
+    '--input-border-color': 'rgba(51, 65, 85, 0.7)',
+    
+    // Glass colors for panel-alt - dark glass like it's always been
+    '--color-glass-dark': 'rgba(0, 0, 0, 0.3)',
+    '--color-glass-light': 'rgba(0, 0, 0, 0.1)'
   },
   light: {
     // Backgrounds - Cotton candy dreams
     '--bg-primary': '#fef0ff',
     '--bg-secondary': '#fff0f8',
-    '--bg-card': '#ffffff',
-    '--bg-card-dark': '#ffe8f5',
-    '--bg-panel-start': '#e6f2ff',
-    '--bg-panel-end': '#ffb3e6',
+    '--bg-card': '#ffffff', /* Pure white cards */
+    '--bg-card-dark': '#f8f9ff', /* Very subtle blue tint */
+    '--bg-panel-start': '#e8f4ff', /* Soft sky blue */
+    '--bg-panel-end': '#ffe0f0', /* Light pink */
     '--bg-loading': '#fff5fb',
     
     // Text colors - Deep ocean blues and purples
@@ -96,6 +107,10 @@ const themes = {
     '--info': '#5ac8fa',
     '--info-dark': '#32ade6',
     '--info-light': '#87ceeb',
+    
+    // Glass colors for panel-alt - subtle blue/pink
+    '--color-glass-dark': 'rgba(90, 200, 250, 0.08)',
+    '--color-glass-light': 'rgba(255, 121, 168, 0.08)',
     
     // Success colors - Spring green
     '--success': '#4cd964',
@@ -132,7 +147,14 @@ const themes = {
     '--accent': '#ff9500',
     '--accent-dark': '#ff8800',
     '--secondary': '#ff79a8',
-    '--secondary-dark': '#ff6fa3'
+    '--secondary-dark': '#ff6fa3',
+    
+    // Input overrides for light theme
+    '--input-bg': 'rgba(255, 255, 255, 0.95)',
+    '--input-bg-hover': 'rgba(255, 255, 255, 0.98)',
+    '--input-bg-focus': '#ffffff',
+    '--input-text-color': '#2e3f7f',
+    '--input-border-color': 'rgba(183, 153, 255, 0.4)'
   },
   dark: {
     // Backgrounds - deep greys that pop
@@ -200,7 +222,18 @@ const themes = {
     '--accent': '#f39c12',
     '--accent-dark': '#d68910',
     '--secondary': '#c0392b',
-    '--secondary-dark': '#a93226'
+    '--secondary-dark': '#a93226',
+    
+    // Input overrides for dark theme
+    '--input-bg': 'rgba(255, 255, 255, 0.08)',
+    '--input-bg-hover': 'rgba(255, 255, 255, 0.1)',
+    '--input-bg-focus': 'rgba(255, 255, 255, 0.12)',
+    '--input-text-color': 'var(--text-primary)',
+    '--input-border-color': 'var(--color-border-light)',
+    
+    // Glass colors for panel-alt
+    '--color-glass-dark': 'rgba(41, 128, 185, 0.08)',
+    '--color-glass-light': 'rgba(243, 156, 18, 0.08)'
   },
   emerald: {
     // Backgrounds
@@ -266,7 +299,18 @@ const themes = {
     '--accent': '#f1c40f',
     '--accent-dark': '#d4ac0d',
     '--secondary': '#e67e22',
-    '--secondary-dark': '#d35400'
+    '--secondary-dark': '#d35400',
+    
+    // Input overrides for emerald theme
+    '--input-bg': 'rgba(15, 40, 24, 0.95)',
+    '--input-bg-hover': 'rgba(20, 50, 30, 0.98)',
+    '--input-bg-focus': 'rgba(25, 60, 35, 1)',
+    '--input-text-color': 'var(--text-primary)',
+    '--input-border-color': 'rgba(39, 174, 96, 0.3)',
+    
+    // Glass colors for panel-alt
+    '--color-glass-dark': 'rgba(39, 174, 96, 0.08)',
+    '--color-glass-light': 'rgba(241, 196, 15, 0.08)'
   },
   sunset: {
     // Backgrounds
@@ -332,7 +376,18 @@ const themes = {
     '--accent': '#f1c40f',
     '--accent-dark': '#d4ac0d',
     '--secondary': '#c0392b',
-    '--secondary-dark': '#a93226'
+    '--secondary-dark': '#a93226',
+    
+    // Input overrides for sunset theme
+    '--input-bg': 'rgba(45, 24, 16, 0.95)',
+    '--input-bg-hover': 'rgba(55, 30, 20, 0.98)',
+    '--input-bg-focus': 'rgba(65, 36, 24, 1)',
+    '--input-text-color': 'var(--text-primary)',
+    '--input-border-color': 'rgba(230, 126, 34, 0.3)',
+    
+    // Glass colors for panel-alt
+    '--color-glass-dark': 'rgba(230, 126, 34, 0.08)',
+    '--color-glass-light': 'rgba(241, 196, 15, 0.08)'
   },
   purple: {
     // Backgrounds
@@ -398,7 +453,18 @@ const themes = {
     '--accent': '#f1c40f',
     '--accent-dark': '#d4ac0d',
     '--secondary': '#e74c3c',
-    '--secondary-dark': '#c0392b'
+    '--secondary-dark': '#c0392b',
+    
+    // Input overrides for purple theme
+    '--input-bg': 'rgba(26, 26, 46, 0.95)',
+    '--input-bg-hover': 'rgba(35, 35, 55, 0.98)',
+    '--input-bg-focus': 'rgba(45, 45, 68, 1)',
+    '--input-text-color': 'var(--text-primary)',
+    '--input-border-color': 'rgba(142, 68, 173, 0.3)',
+    
+    // Glass colors for panel-alt
+    '--color-glass-dark': 'rgba(142, 68, 173, 0.08)',
+    '--color-glass-light': 'rgba(241, 196, 15, 0.08)'
   }
 };
 

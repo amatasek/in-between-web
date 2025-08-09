@@ -8,7 +8,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mui/material": "^7.0.1",
     "howler": "^2.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -46,7 +46,7 @@
 }
 
 .header h2 {
-  color: var(--text-white);
+  color: var(--text-primary);
   margin: 0;
   font-size: 1.4rem;
   font-weight: 600;
@@ -55,7 +55,7 @@
 .closeButton {
   background: none;
   border: none;
-  color: var(--text-white);
+  color: var(--text-primary);
   font-size: 1.8rem;
   cursor: pointer;
   width: 40px;
@@ -74,11 +74,11 @@
 .sectionHeader {
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--text-white);
+  color: var(--text-primary);
   letter-spacing: 0.02em;
   margin-bottom: 16px;
   padding-bottom: 6px;
-  border-bottom: 1.5px solid rgba(100, 169, 255, 0.18);
+  border-bottom: 1.5px solid var(--color-border-light);
   border-radius: 0;
   background: none;
   text-shadow: none;
@@ -92,15 +92,9 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 20px;
-  padding: 15px 20px;
-  background-color: rgba(255, 255, 255, 0.05);
+  padding: 15px 20px !important;
   border-radius: 8px;
-  transition: background-color 0.2s;
   position: relative;
-}
-
-.settingItem:hover {
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .settingControls {
@@ -111,15 +105,15 @@
 }
 
 .primaryButton {
-  background: linear-gradient(90deg, #3498db 0%, #64a9ff 100%);
-  color: var(--text-white);
+  background: linear-gradient(90deg, var(--btn-primary-start), var(--btn-primary-end));
+  color: white;
   font-weight: 700;
   font-size: 1.07rem;
   border: none;
   border-radius: 999px;
   padding: 12px 32px;
   margin: 0 auto;
-  box-shadow: 0 2px 8px rgba(100,169,255,0.12);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   transition: background 0.18s, box-shadow 0.18s;
   outline: none;
@@ -128,12 +122,12 @@
 }
 
 .primaryButton:hover, .primaryButton:focus {
-  background: linear-gradient(90deg, #2176bd 0%, #4c8edb 100%);
-  box-shadow: 0 4px 16px rgba(100,169,255,0.18);
+  background: linear-gradient(90deg, var(--btn-primary-hover-start), var(--btn-primary-hover-end));
+  box-shadow: var(--shadow-lg);
 }
 
 .settingDescription {
-  color: #a0b9d6;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   font-weight: 400;
   line-height: 1.5;
@@ -143,13 +137,13 @@
 }
 
 .settingDescription h4 {
-  color: #bcdcff;
+  color: var(--text-primary);
   margin: 0 0 5px 0;
   font-size: 1rem;
 }
 
 .settingDescription p {
-  color: #a0b9d6;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 0.9rem;
 }
@@ -157,10 +151,10 @@
 .textInput {
   width: 100%;
   padding: 0.6rem 0.8rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--text-faded);
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border-color);
   border-radius: 4px;
-  color: #eaf6ff;
+  color: var(--input-text-color);
   font-size: 0.9rem;
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
@@ -168,8 +162,8 @@
 
 .textInput:focus {
   outline: none;
-  border-color: #64a9ff;
-  box-shadow: 0 0 0 2px rgba(100, 169, 255, 0.2);
+  border-color: var(--input-border-focus);
+  box-shadow: var(--input-focus-shadow);
 }
 
 .inputError {

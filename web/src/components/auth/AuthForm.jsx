@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Typography,
-  Alert,
-  useMediaQuery,
-} from '@mui/material';
-import GamepadTextField from '../GamepadTextField';
+import React, { useState, useRef, useEffect } from 'react';
+import { useVirtualKeyboardContext } from '../../contexts/VirtualKeyboardContext';
 import styles from './AuthForm.module.css';
 
 const AuthForm = ({ onSubmit, mode }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const isMobile = useMediaQuery('(max-width:600px)');
-  const isSmallMobile = useMediaQuery('(max-width:400px)');
+  
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
+  const { enhanceInput } = useVirtualKeyboardContext();
+
+  // Enhance inputs for virtual keyboard
+  useEffect(() => {
+    let cleanupUsername;
+    let cleanupPassword;
+    
+    if (usernameRef.current) {
+      cleanupUsername = enhanceInput(usernameRef.current, 'text', 'Enter Username');
+    }
+    
+    if (passwordRef.current) {
+      cleanupPassword = enhanceInput(passwordRef.current, 'password', 'Enter Password');
+    }
+    
+    return () => {
+      if (cleanupUsername) cleanupUsername();
+      if (cleanupPassword) cleanupPassword();
+    };
+  }, [enhanceInput]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,119 +49,55 @@ const AuthForm = ({ onSubmit, mode }) => {
       <div className="divider" style={{ marginBottom: '1.5rem' }}></div>
       
       {error && (
-        <Alert severity="error" sx={{ mb: 2, backgroundColor: 'rgba(231, 76, 60, 0.2)', color: 'var(--text-primary)' }}>
+        <div className={styles.errorAlert}>
           {error}
-        </Alert>
+        </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        <GamepadTextField
-          title="Enter Username"
-          label="Username"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          size={isSmallMobile ? "small" : "medium"}
-          inputProps={{ minLength: 3 }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'var(--info-light)',
-              },
-              '&:hover fieldset': {
-                borderColor: 'var(--info)',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'var(--info)',
-              },
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            },
-            '& .MuiInputLabel-root': {
-              color: 'var(--info-light)',
-              fontSize: isSmallMobile ? '0.9rem' : '1rem',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: 'var(--text-dark)',
-              fontWeight: 500,
-              backgroundColor: 'rgba(255, 255, 255, 0.85)',
-              padding: isSmallMobile ? '12px 14px' : '16.5px 14px',
-            },
-            '& .MuiInputLabel-root.Mui-focused': {
-              color: 'var(--info)',
-            },
-            marginBottom: isSmallMobile ? '0.5rem' : '1rem',
-          }}
-        />
+        <div className="input-group">
+          <label htmlFor="username" className="input-label required">
+            Username
+          </label>
+          <input
+            ref={usernameRef}
+            id="username"
+            type="text"
+            className="no-validation"
+            placeholder="Enter your username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            minLength={3}
+            data-gamepad-focusable="true"
+          />
+        </div>
         
-        <GamepadTextField
-          title="Enter Password"
-          label="Password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          size={isSmallMobile ? "small" : "medium"}
-          inputProps={{ minLength: 6 }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'var(--info-light)',
-              },
-              '&:hover fieldset': {
-                borderColor: 'var(--info)',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'var(--info)',
-              },
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            },
-            '& .MuiInputLabel-root': {
-              color: 'var(--info-light)',
-              fontSize: isSmallMobile ? '0.9rem' : '1rem',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: 'var(--text-dark)',
-              fontWeight: 500,
-              backgroundColor: 'rgba(255, 255, 255, 0.85)',
-              padding: isSmallMobile ? '12px 14px' : '16.5px 14px',
-            },
-            '& .MuiInputLabel-root.Mui-focused': {
-              color: 'var(--info)',
-            },
-            marginBottom: isSmallMobile ? '0.5rem' : '1rem',
-          }}
-        />
+        <div className="input-group">
+          <label htmlFor="password" className="input-label required">
+            Password
+          </label>
+          <input
+            ref={passwordRef}
+            id="password"
+            type="password"
+            className="no-validation"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+            data-gamepad-focusable="true"
+          />
+        </div>
 
-        <Button
+        <button
           type="submit"
-          variant="contained"
-          fullWidth
-          size="large"
-          className={styles.submitButton}
+          className="btn btn-primary"
           data-gamepad-focusable="true"
-          sx={{
-            mt: isSmallMobile ? 2 : 3,
-            background: 'linear-gradient(to right, var(--info), var(--success))',
-            textTransform: 'none',
-            fontWeight: 'bold',
-            letterSpacing: '0.5px',
-            padding: isSmallMobile ? '10px' : '12px',
-            fontSize: isSmallMobile ? '0.9rem' : '1rem',
-            '&:hover': {
-              background: 'linear-gradient(to right, var(--info-dark), var(--success-dark))',
-              boxShadow: 'var(--shadow-lg)',
-              transform: 'translateY(-2px)'
-            }
-          }}
         >
           {mode === 'login' ? 'Sign In' : 'Create Account'}
-        </Button>
+        </button>
       </form>
     </div>
   );

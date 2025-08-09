@@ -75,20 +75,6 @@ body.gamepad-navigation-active [data-gamepad-focusable="true"]:focus {
   z-index: 100 !important;
 }
 
-/* Material-UI specific focus styling for inputs */
-body.gamepad-navigation-active .MuiOutlinedInput-root input[data-gamepad-focusable="true"]:focus {
-  outline: 3px solid var(--color-focus) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px var(--color-focus-shadow) !important;
-}
-
-/* Make sure the outline is visible above Material-UI styles */
-body.gamepad-navigation-active .MuiTextField-root [data-gamepad-focusable="true"]:focus {
-  outline: 3px solid var(--color-focus) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px var(--color-focus-shadow) !important;
-  z-index: 1000 !important;
-}
 
 /* Ensure focus is visible for buttons and inputs */
 [data-gamepad-focusable="true"] {
@@ -339,4 +325,307 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
 .btn-tertiary:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: var(--shadow-sm);
+}
+
+/* 
+ * Native Input Styles
+ * Sexy, functional HTML inputs with gamepad support
+ */
+
+/* Base input styles */
+.input, 
+input[type="text"], 
+input[type="password"], 
+input[type="email"], 
+input[type="number"], 
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--input-padding);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-text);
+  font-weight: 500;
+  line-height: var(--line-height-normal);
+  color: var(--input-text-color);
+  background-color: var(--input-bg);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Placeholder styling */
+.input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--input-placeholder-color);
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+/* Focus states */
+.input:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--input-border-focus);
+  background-color: var(--input-bg-focus);
+  box-shadow: var(--input-focus-shadow);
+  transform: translateY(-1px);
+}
+
+/* Hover states */
+.input:hover:not(:focus):not(:disabled),
+input:hover:not(:focus):not(:disabled),
+textarea:hover:not(:focus):not(:disabled),
+select:hover:not(:focus):not(:disabled) {
+  border-color: var(--input-border-hover);
+  background-color: var(--input-bg-hover);
+}
+
+/* Disabled states */
+.input:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--input-bg-disabled);
+  border-color: var(--color-border-light);
+}
+
+/* Invalid/Error states */
+.input.error,
+input.error,
+textarea.error,
+select.error,
+input:invalid:not(:placeholder-shown),
+textarea:invalid:not(:placeholder-shown) {
+  border-color: var(--input-border-error);
+  background-color: var(--input-bg-error);
+}
+
+.input.error:focus,
+input.error:focus,
+textarea.error:focus,
+select.error:focus,
+input:invalid:not(:placeholder-shown):focus,
+textarea:invalid:not(:placeholder-shown):focus {
+  border-color: var(--input-border-error);
+  box-shadow: var(--input-error-shadow);
+}
+
+/* Success/Valid states */
+.input.success,
+input.success,
+textarea.success,
+select.success,
+input:valid:not(:placeholder-shown):not(.no-validation),
+textarea:valid:not(:placeholder-shown):not(.no-validation) {
+  border-color: var(--input-border-success);
+  background-color: var(--input-bg-success);
+}
+
+/* Small size variant */
+.input-sm,
+input.small,
+textarea.small,
+select.small {
+  padding: var(--input-padding-sm);
+  font-size: var(--font-size-sm);
+}
+
+/* Large size variant */
+.input-lg,
+input.large,
+textarea.large,
+select.large {
+  padding: var(--input-padding-lg);
+  font-size: var(--font-size-lg);
+}
+
+/* Input wrapper for labels and icons */
+.input-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+
+.input-label.required::after {
+  content: " *";
+  color: var(--text-error);
+}
+
+/* Input with icon */
+.input-with-icon {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color 0.3s ease;
+  z-index: 1;
+  font-size: 1.1rem;
+  filter: none; /* Ensure no blur affects the icon */
+}
+
+.input-icon.left {
+  left: 14px;
+}
+
+.input-icon.right {
+  right: 14px;
+}
+
+.input-with-icon input {
+  padding-left: 44px;
+  position: relative;
+}
+
+.input-with-icon input.has-icon-right {
+  padding-right: 44px;
+}
+
+.input-with-icon input:focus ~ .input-icon {
+  color: var(--info);
+}
+
+/* Error message */
+.input-error-message {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-error);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Help text */
+.input-help-text {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Textarea specific */
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Select specific styling */
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+/* Remove spinner from number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Search input clear button */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+/* Responsive adjustments - just update CSS variables */
+@media (max-width: 600px) {
+  :root {
+    --input-padding: 12px 14px;
+    --input-padding-sm: 8px 10px;
+    --input-padding-lg: 16px 18px;
+  }
+}
+
+@media (max-width: 400px) {
+  :root {
+    --input-padding: 10px 12px;
+    --input-padding-sm: 8px 10px;
+    --input-padding-lg: 14px 16px;
+  }
+}
+
+/* Global Tab Bar Styles */
+.tabs-container {
+  display: flex;
+  border-bottom: 2px solid var(--text-primary);
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.tab-button {
+  background: transparent;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  outline: none;
+  margin: 0 4px;
+}
+
+.tab-button:hover {
+  transform: translateY(-2px);
+}
+
+.tab-button.active {
+  color: var(--info);
+  font-weight: 700;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--btn-primary-start), var(--btn-primary-end));
+  border-radius: 2px;
+}
+
+.tab-content {
+  width: 100%;
+  animation: fadeInTab 0.3s ease-in-out;
+}
+
+@keyframes fadeInTab {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

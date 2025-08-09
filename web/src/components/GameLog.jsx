@@ -23,7 +23,7 @@ const GameLog = () => {
   };
   
   // Determine how many entries to show
-  const displayEntries = isExpanded ? logEntries : logEntries.slice(0, 5);
+  const displayEntries = isExpanded ? logEntries : logEntries.slice(0, 10);
   
   return (
     <div className={styles.gameLogContainer}>

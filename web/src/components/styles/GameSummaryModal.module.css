@@ -2,51 +2,7 @@
   padding: 20px;
 }
 
-/* Tab Navigation Styles */
-.tabsContainer {
-  display: flex;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.tabButton {
-  background: none;
-  border: none;
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-subtle);
-  cursor: pointer;
-  position: relative;
-  transition: color 0.3s;
-  outline: none;
-}
-
-.tabButton:hover {
-  color: var(--text-info);
-}
-
-.activeTab {
-  color: var(--text-info);
-}
-
-.activeTab::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--text-info);
-  transition: width 0.3s;
-}
-
-.tabContent {
-  width: 100%;
-  animation: fadeIn 0.3s ease-in-out;
-  margin-bottom: 20px;
-}
+/* Tab styles moved to global.css */
 
 .totalsTable, .settleUpTable {
   display: flex;

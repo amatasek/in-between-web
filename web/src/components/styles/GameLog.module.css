@@ -49,7 +49,7 @@
 }
 
 .gameLogEntries {
-  max-height: 150px;
+  max-height: 280px;
   overflow-y: auto;
   transition: max-height 0.3s ease;
   flex: 1;
@@ -59,7 +59,7 @@
 }
 
 .gameLogEntries.expanded {
-  max-height: 400px;
+  max-height: 500px;
 }
 
 .logEntry {
@@ -128,10 +128,10 @@
   }
   
   .gameLogEntries {
-    max-height: 120px;
+    max-height: 200px;
   }
   
   .gameLogEntries.expanded {
-    max-height: 200px;
+    max-height: 350px;
   }
 }

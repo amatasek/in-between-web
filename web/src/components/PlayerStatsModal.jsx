@@ -174,23 +174,23 @@ const PlayerStatsModal = ({ onClose }) => {
       <BaseModal title="Player Stats" onClose={onClose} style={{ maxWidth: 800, height: '90ßvh' }}>
         <div className={baseModalStyles.settingsContainer}>
           {/* Tab Bar Navigation */}
-          <div className={styles.tabsContainer}>
+          <div className="tabs-container">
             <button 
-              className={`${styles.tabButton} ${activeTab === 'leaderboard' ? styles.activeTab : ''}`}
+              className={`tab-button ${activeTab === 'leaderboard' ? 'active' : ''}`}
               onClick={() => setActiveTab('leaderboard')}
               data-gamepad-focusable="true"
             >
               Leaderboard
             </button>
             <button 
-              className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
+              className={`tab-button ${activeTab === 'stats' ? 'active' : ''}`}
               onClick={() => setActiveTab('stats')}
               data-gamepad-focusable="true"
             >
               Lifetime Stats
             </button>
             <button 
-              className={`${styles.tabButton} ${activeTab === 'history' ? styles.activeTab : ''}`}
+              className={`tab-button ${activeTab === 'history' ? 'active' : ''}`}
               onClick={() => setActiveTab('history')}
               data-gamepad-focusable="true"
             >
@@ -200,14 +200,14 @@ const PlayerStatsModal = ({ onClose }) => {
 
           {/* Leaderboard Tab Content */}
           {activeTab === 'leaderboard' && (
-            <div className={styles.tabContent}>
+            <div className="tab-content">
               <Leaderboard />
             </div>
           )}
 
           {/* Lifetime Stats Tab Content */}
           {activeTab === 'stats' && (
-            <div className={styles.tabContent}>
+            <div className="tab-content">
               {statsLoading ? (
                 <div className={styles.loadingMessage}>
                   <div className={styles.loadingSpinner}></div>
@@ -226,7 +226,7 @@ const PlayerStatsModal = ({ onClose }) => {
                   tabIndex="0"
                 >
                   {lifetimeStats.map((stat, index) => (
-                    <div key={stat.key || `stat-${index}`} className={styles.statItem}>
+                    <div key={stat.key || `stat-${index}`} className={`panel-alt ${styles.statItem}`}>
                       <div className={styles.statLabel}>{stat.label}</div>
                       <div className={styles.statValue}>
                         {formatStatValue(stat.type, stat.value)}
@@ -241,7 +241,7 @@ const PlayerStatsModal = ({ onClose }) => {
 
           {/* Game History Tab Content */}
           {activeTab === 'history' && (
-            <div className={styles.tabContent}>
+            <div className="tab-content">
               {loading ? (
                 <div className={styles.loadingMessage}>
                   <div className={styles.loadingSpinner}></div>

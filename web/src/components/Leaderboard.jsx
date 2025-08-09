@@ -89,7 +89,7 @@ const Leaderboard = () => {
           tabIndex="0"
         >
           {leaderboard.map((player) => (
-            <div key={player.userId} className={styles.leaderboardRow}>
+            <div key={player.userId} className={`panel-alt ${styles.leaderboardRow}`}>
               <div className={styles.rankCell}>
                 <span className={styles.rank}>{getRankDisplay(player.rank)}</span>
               </div>

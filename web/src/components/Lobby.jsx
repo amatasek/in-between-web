@@ -5,8 +5,6 @@ import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
-import { useMediaQuery, InputAdornment } from '@mui/material';
-import GamepadTextField from './GamepadTextField';
 import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
 import PlayerPanel from './PlayerPanel.jsx';
@@ -24,8 +22,6 @@ const Lobby = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
-
-  const isSmallMobile = useMediaQuery('(max-width:400px)');
   
   const userId = user?.username ? `user_${user.username}` : null;
 
@@ -150,23 +146,17 @@ const Lobby = () => {
          
          {/* Search bar for filtering games */}
          <div className={styles.searchContainer}>
-           <GamepadTextField
-             title="Search Games"
-             placeholder="Search games by ID"
-             variant="outlined"
-             fullWidth
-             value={searchQuery}
-             onChange={handleSearchChange}
-             size={isSmallMobile ? "small" : "medium"}
-             type="text"
-             InputProps={{
-               startAdornment: (
-                 <InputAdornment position="start">
-                   <span className={styles.searchIcon}>🔍</span>
-                 </InputAdornment>
-               ),
-             }}
-           />
+           <div className="input-with-icon">
+             <span className="input-icon left">🔍</span>
+             <input
+               type="search"
+               className="no-validation"
+               placeholder="Search games by ID"
+               value={searchQuery}
+               onChange={handleSearchChange}
+               data-gamepad-focusable="true"
+             />
+           </div>
          </div>
          
          {filteredGameList && filteredGameList.length > 0 ? (

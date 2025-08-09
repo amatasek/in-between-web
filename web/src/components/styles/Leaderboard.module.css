@@ -14,30 +14,35 @@
 
 .durationSelector {
   display: flex;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.15));
+  border-radius: 10px;
   padding: 4px;
   gap: 4px;
+  border: 1px solid rgba(52, 152, 219, 0.2);
 }
 
 .durationButton {
   padding: 8px 16px;
   border: none;
   background: transparent;
-  color: var(--text-white);
-  border-radius: 6px;
+  color: var(--info);
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.2s ease;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .durationButton:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(52, 152, 219, 0.15);
+  color: var(--info-light);
 }
 
 .durationButton.active {
-  background: rgba(255, 255, 255, 0.2);
-  font-weight: 600;
+  background: linear-gradient(135deg, var(--btn-tertiary-start), var(--btn-tertiary-end));
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 2px 8px var(--btn-tertiary-shadow);
 }
 
 .loadingMessage, .errorMessage, .emptyMessage {
@@ -48,7 +53,7 @@
   gap: 1rem;
   padding: 2rem;
   text-align: center;
-  color: var(--text-white);
+  color: var(--text-secondary);
   opacity: 0.8;
 }
 
@@ -77,21 +82,21 @@
   flex-direction: column;
   gap: 8px;
   padding-right: 8px;
+  isolation: isolate;
 }
 
 .leaderboardRow {
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
   align-items: center;
   gap: 1rem;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background-color 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
-.leaderboardRow:hover {
-  background: rgba(255, 255, 255, 0.08);
+.leaderboardRow:has([class*="avatar"]:hover) {
+  z-index: 1000;
 }
 
 .rankCell {
@@ -102,7 +107,7 @@
 .rank {
   font-size: 1.2rem;
   font-weight: 600;
-  color: var(--text-white);
+  color: var(--text-primary);
 }
 
 .playerCell {

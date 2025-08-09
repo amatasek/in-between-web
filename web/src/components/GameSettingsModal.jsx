@@ -155,7 +155,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
       <form id="gameSettingsForm" onSubmit={handleSubmit}>
         <div className={baseModalStyles.settingsContainer}>
           {/* Custom Game Name Setting */}
-          <div className={baseModalStyles.settingItem}>
+          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
             <div className={baseModalStyles.settingDescription}>
               <h4>Custom Game Name</h4>
               <p>Set a custom name for your game lobby</p>
@@ -183,7 +183,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Private Game Setting */}
-          <div className={baseModalStyles.settingItem}>
+          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
             <div className={baseModalStyles.settingDescription}>
               <h4>Private Game</h4>
               <p>Only players with the password can join</p>
@@ -211,7 +211,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Number of Bots Setting */}
-          <div className={baseModalStyles.settingItem}>
+          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
             <div className={baseModalStyles.settingDescription}>
               <h4>Number of Bots</h4>
               <p>Add AI players to your game (0-16)</p>
@@ -231,7 +231,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Ace Choice Setting */}
-          <div className={baseModalStyles.settingItem}>
+          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
             <div className={baseModalStyles.settingDescription}>
               <h4>Enable Ace Choice</h4>
               <p>Allow players to choose high/low on Ace</p>
@@ -245,7 +245,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Second Chance Setting */}
-          <div className={baseModalStyles.settingItem}>
+          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
             <div className={baseModalStyles.settingDescription}>
               <h4>Enable Second Chance</h4>
               <p>Allow players to ante up for a second chance</p>

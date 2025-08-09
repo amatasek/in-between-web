@@ -72,9 +72,9 @@ const StoreModal = ({ onClose }) => {
   return (
     <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800, maxHeight: '80vh' }}>
       {/* Tab Navigation */}
-      <div className={styles.tabsContainer}>
+      <div className="tabs-container">
         <button
-          className={`${styles.tabButton} ${activeTab === 'coins' ? styles.activeTab : ''}`}
+          className={`tab-button ${activeTab === 'coins' ? 'active' : ''}`}
           onClick={() => setActiveTab('coins')}
           data-gamepad-focusable="true"
         >

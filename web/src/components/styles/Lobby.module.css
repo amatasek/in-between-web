@@ -75,16 +75,6 @@
   /* Note: Padding is controlled by the TextField's 'size' prop */
 }
 
-.searchContainer :global(input.MuiOutlinedInput-input::placeholder) {
-  color: rgba(52, 152, 219, 0.5);
-  opacity: 1;
-}
-
-/* Search Icon styling (ensure InputAdornment is used correctly) */
-.searchIcon {
-  color: var(--text-info); 
-  /* Ensure proper spacing if needed, InputAdornment might handle it */
-}
 
 .gameListWrapper {
   display: flex;

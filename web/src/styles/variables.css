@@ -70,6 +70,27 @@
   --color-danger: #e74c3c; /* Red for sit out/leave/logout */
   --color-currency: #f1c40f; /* Yellow/gold for currency */
   
+  /* Input Styles - Dynamic theming */
+  --input-bg: rgba(10, 25, 47, 0.95); /* Deep dark blue like midnight ocean */
+  --input-bg-hover: rgba(15, 35, 60, 0.98);
+  --input-bg-focus: rgba(20, 40, 70, 1);
+  --input-bg-disabled: rgba(128, 128, 128, 0.1);
+  --input-bg-error: rgba(231, 76, 60, 0.05);
+  --input-bg-success: rgba(46, 204, 113, 0.05);
+  --input-border-width: 2px;
+  --input-border-color: rgba(51, 65, 85, 0.7); /* Deep blue edge */
+  --input-border-hover: rgba(71, 85, 105, 0.9);
+  --input-border-focus: var(--info);
+  --input-border-error: var(--text-error);
+  --input-border-success: var(--text-success);
+  --input-text-color: var(--text-primary); /* Light text on dark bg */
+  --input-placeholder-color: rgba(148, 163, 184, 0.8); /* Muted moonlight */
+  --input-padding: 14px 16px;
+  --input-padding-sm: 10px 12px;
+  --input-padding-lg: 18px 20px;
+  --input-focus-shadow: 0 0 0 3px var(--color-focus-shadow);
+  --input-error-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+  
   /* Button Specific Colors */
   --btn-primary-start: #3498db;
   --btn-primary-end: #27ae60;

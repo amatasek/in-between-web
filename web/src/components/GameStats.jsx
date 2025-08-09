@@ -286,7 +286,7 @@ const GameStats = ({ gameData }) => {
       ) : (
         <div className={styles.statsGrid}>
           {gameStats.map((stat) => (
-            <div key={stat.key} className={styles.statItem}>
+            <div key={stat.key} className={`panel-alt ${styles.statItem}`}>
               <div className={styles.statLabel}>{stat.label}</div>
               <div className={styles.statValue}>
                 {formatStatValue(stat.type, stat.value)}

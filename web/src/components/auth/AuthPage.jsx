@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AuthForm from './AuthForm.jsx';
 import { useAuth } from '../../contexts/AuthContext';
@@ -82,39 +81,31 @@ const AuthPage = () => {
   };
 
   return (
-    <Box className={`screen ${styles.authPage}`}>
+    <div className={`screen ${styles.authPage}`}>
       <AppHeader />
       
-      <Box className={styles.formContainer}>
+      <div className={styles.formContainer}>
         {error && (
-          <Typography className={styles.error}>
+          <div className={styles.error}>
             {error}
-          </Typography>
+          </div>
         )}
         
         <AuthForm mode={mode} onSubmit={handleAuth} />
         
-        <Box textAlign="center" mt={3}>
-          <Button
-            color="primary"
+        <div className={styles.toggleContainer}>
+          <button
+            className={styles.toggleButton}
             onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
             data-gamepad-focusable="true"
-            sx={{
-              color: '#ecf0f1',
-              textTransform: 'none',
-              fontSize: '1rem',
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)'
-              }
-            }}
           >
             {mode === 'login' 
               ? "Don't have an account? Register" 
               : "Already have an account? Login"}
-          </Button>
-        </Box>
-      </Box>
-    </Box>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

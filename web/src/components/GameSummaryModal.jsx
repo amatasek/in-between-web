@@ -158,9 +158,9 @@ const GameSummaryModal = ({ onClose, gameData }) => {
     >
       <div className={styles.settingsContainer}>
           {/* Tab Bar Navigation */}
-          <div className={styles.tabsContainer}>
+          <div className="tabs-container">
             <button 
-              className={`${styles.tabButton} ${activeTab === 'totals' ? styles.activeTab : ''}`}
+              className={`tab-button ${activeTab === 'totals' ? 'active' : ''}`}
               onClick={() => setActiveTab('totals')}
               data-gamepad-focusable="true"
             >
@@ -168,7 +168,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
             </button>
             
             <button 
-              className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
+              className={`tab-button ${activeTab === 'stats' ? 'active' : ''}`}
               onClick={() => setActiveTab('stats')}
               data-gamepad-focusable="true"
             >
@@ -177,7 +177,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
             
             {showPayoutsTab && (
               <button 
-                className={`${styles.tabButton} ${activeTab === 'payouts' ? styles.activeTab : ''}`}
+                className={`tab-button ${activeTab === 'payouts' ? 'active' : ''}`}
                 onClick={() => setActiveTab('payouts')}
                 data-gamepad-focusable="true"
               >
@@ -188,7 +188,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
 
           {/* Totals Tab Content */}
           {activeTab === 'totals' && (
-            <div className={styles.tabContent}>
+            <div className="tab-content">
               {Object.keys(playerTotals).length === 0 ? (
                 <p className={styles.noDataMessage}>No transactions recorded yet.</p>
               ) : (
@@ -213,7 +213,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
 
           {/* Payouts Tab Content - Only shown for private games and when selected */}
           {activeTab === 'payouts' && showPayoutsTab && (
-            <div className={styles.tabContent}>
+            <div className="tab-content">
               {settleUpPayments.length === 0 ? (
                 <p className={styles.noDataMessage}>No payments needed or no transactions recorded yet.</p>
               ) : (

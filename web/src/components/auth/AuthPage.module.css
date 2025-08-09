@@ -92,3 +92,34 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.toggleContainer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.toggleButton {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+
+.toggleButton:hover {
+  opacity: 1;
+  color: var(--info);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+@media (max-width: 400px) {
+  .toggleButton {
+    font-size: 0.9rem;
+  }
+}

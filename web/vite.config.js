@@ -38,7 +38,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@mui/material', '@emotion/react', '@emotion/styled'],
+          socket: ['socket.io-client'],
+          audio: ['howler']
         }
       }
     },
@@ -47,6 +48,6 @@ export default defineConfig({
   },
   // Optimize dependencies
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'socket.io-client', '@mui/material']
+    include: ['react', 'react-dom', 'react-router-dom', 'socket.io-client', 'howler']
   }
 });
