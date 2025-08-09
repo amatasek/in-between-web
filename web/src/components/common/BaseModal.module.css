@@ -88,13 +88,15 @@
 }
 
 .settingItem {
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 20px;
   padding: 15px 20px !important;
   border-radius: 8px;
   position: relative;
+  gap: 1rem !important;
 }
 
 .settingControls {
@@ -209,7 +211,7 @@
 
 @media (max-width: 600px) {
   .settingItem {
-    flex-direction: column;
+    flex-direction: column !important;
     align-items: flex-start;
   }
   
