@@ -43,7 +43,7 @@ const AuthForm = ({ onSubmit, mode }) => {
 
   return (
     <div className={`card ${styles.authForm}`}>
-      <h2 style={{ color: 'white', fontWeight: 600, textAlign: 'center', marginTop: 0 }}>
+      <h2 style={{ color: 'var(--text-primary)', fontWeight: 600, textAlign: 'center', marginTop: 0 }}>
         {mode === 'login' ? 'Welcome Back' : 'Create Account'}
       </h2>
       <div className="divider" style={{ marginBottom: '1.5rem' }}></div>
