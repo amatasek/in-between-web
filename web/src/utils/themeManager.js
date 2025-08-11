@@ -93,26 +93,26 @@ const themes = {
     '--text-primary': '#212529',
     '--text-secondary': '#495057',
     '--text-dark': '#212529',
-    '--text-light': '#343a40',
+    '--text-light': '#212529',
     '--text-muted': '#6c757d',
-    '--text-white': '#212529',
-    '--text-gray': '#868e96',
+    '--text-white': '#ffffff',
+    '--text-gray': '#6c757d',
     '--text-error': '#dc3545',
     '--text-success': '#28a745',
     '--text-warning': '#ffc107',
     '--text-info': '#17a2b8',
-    '--text-faded': 'rgba(33, 37, 41, 0.5)',
-    '--text-subtle': 'rgba(33, 37, 41, 0.65)',
-    '--text-bright': 'rgba(33, 37, 41, 0.85)',
+    '--text-faded': 'rgba(33, 37, 41, 0.6)',
+    '--text-subtle': 'rgba(33, 37, 41, 0.75)',
+    '--text-bright': 'rgba(33, 37, 41, 0.9)',
     
     // Info colors - Professional teal
     '--info': '#17a2b8',
     '--info-dark': '#138496',
     '--info-light': '#20c997',
     
-    // Glass colors for panel-alt - white with subtle borders
-    '--color-glass-dark': 'rgba(255, 255, 255, 0.95)',
-    '--color-glass-light': 'rgba(255, 255, 255, 0.9)',
+    // Glass colors for panel-alt - subtle gray backgrounds
+    '--color-glass-dark': 'rgba(248, 249, 250, 1)',
+    '--color-glass-light': 'rgba(233, 236, 239, 0.8)',
     
     // Success colors - Professional green
     '--success': '#28a745',
@@ -141,8 +141,8 @@ const themes = {
     // Special colors
     '--color-focus': '#007bff',
     '--color-focus-shadow': 'rgba(0, 123, 255, 0.25)',
-    '--color-border-light': 'rgba(0, 0, 0, 0.125)',
-    '--color-border-lighter': 'rgba(0, 0, 0, 0.1)',
+    '--color-border-light': 'rgba(0, 0, 0, 0.175)',
+    '--color-border-lighter': 'rgba(0, 0, 0, 0.125)',
     '--color-divider-start': 'rgba(0, 123, 255, 0.15)',
     '--color-divider-middle': 'rgba(0, 123, 255, 0.5)',
     '--color-divider-end': 'rgba(0, 123, 255, 0.15)',
@@ -262,15 +262,15 @@ const themes = {
     '--text-error': '#FF6B6B',
     '--text-success': '#FFB612',
     '--text-warning': '#FFC42E',
-    '--text-info': '#5BCEFA',
+    '--text-info': '#FFFFFF',
     '--text-faded': 'rgba(255, 255, 255, 0.6)',
     '--text-subtle': 'rgba(255, 255, 255, 0.7)',
     '--text-bright': 'rgba(255, 255, 255, 0.9)',
     
-    // Info colors (navy blue accent)
-    '--info': '#003A70',
-    '--info-dark': '#002855',
-    '--info-light': '#1E4788',
+    // Info colors (white)
+    '--info': '#FFFFFF',
+    '--info-dark': '#F0F0F0',
+    '--info-light': '#FFFFFF',
     
     // Success colors (Packers green)
     '--success': '#203731',
@@ -289,12 +289,12 @@ const themes = {
     '--btn-secondary-hover-start': '#FFC42E',
     '--btn-secondary-hover-end': '#FFB612',
     
-    // Tertiary button (navy blue)
-    '--btn-tertiary-start': '#003A70',
-    '--btn-tertiary-end': '#002855',
-    '--btn-tertiary-hover-start': '#1E4788',
-    '--btn-tertiary-hover-end': '#003A70',
-    '--btn-tertiary-shadow': 'rgba(0, 58, 112, 0.3)',
+    // Tertiary button (gold/yellow)
+    '--btn-tertiary-start': '#FFB612',
+    '--btn-tertiary-end': '#FFA300',
+    '--btn-tertiary-hover-start': '#FFC42E',
+    '--btn-tertiary-hover-end': '#FFB612',
+    '--btn-tertiary-shadow': 'rgba(255, 182, 18, 0.3)',
     
     // Special colors - beige and white accents
     '--color-focus': '#FFB612',
@@ -305,7 +305,7 @@ const themes = {
     '--accent': '#FFB612',
     '--accent-dark': '#FFA300',
     '--accent2': '#C9B896',
-    '--accent3': '#003A70',
+    '--accent3': '#FFFFFF',
     '--secondary': '#C9B896',
     '--secondary-dark': '#B5A482',
     

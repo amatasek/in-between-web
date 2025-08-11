@@ -23,6 +23,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-primary);
 }
 
 p, span, div, button, input, textarea {

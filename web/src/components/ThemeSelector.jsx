@@ -74,12 +74,21 @@ const ThemeSelector = () => {
       overflowX: 'auto',
       overflowY: 'hidden',
       whiteSpace: 'nowrap',
-      paddingBottom: '8px'
+      paddingBottom: '8px',
+      padding: '6px'
     }}>
       {themes.map(theme => (
         <div 
           key={theme.id}
           onClick={() => handleThemeSelect(theme.id)}
+          tabIndex={0}
+          data-gamepad-focusable="true"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleThemeSelect(theme.id);
+            }
+          }}
           style={{
             display: 'inline-flex',
             flexDirection: 'column',
@@ -123,10 +132,10 @@ const ThemeSelector = () => {
             }} />
           </div>
           
-          <div style={{ fontWeight: 'bold', color: '#bcdcff', fontSize: '13px' }}>
+          <div style={{ fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '13px' }}>
             {theme.name}
           </div>
-          <div style={{ color: '#a0b9d6', fontSize: '10px', marginTop: '2px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '10px', marginTop: '2px' }}>
             {theme.description}
           </div>
         </div>

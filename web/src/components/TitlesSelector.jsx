@@ -55,7 +55,7 @@ const TitlesSelector = () => {
 
   if (titles.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '20px', color: '#a0b9d6' }}>
+      <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
         No titles unlocked yet. Play games to earn achievements!
       </div>
     );
@@ -68,11 +68,20 @@ const TitlesSelector = () => {
       overflowX: 'auto',
       overflowY: 'hidden',
       whiteSpace: 'nowrap',
-      paddingBottom: '8px'
+      paddingBottom: '8px',
+      padding: '6px'
     }}>
         {/* No Title option */}
         <div
           onClick={() => handleTitleSelect('')}
+          tabIndex={0}
+          data-gamepad-focusable="true"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleTitleSelect('');
+            }
+          }}
           style={{
             display: 'inline-flex',
             width: '120px',
@@ -91,10 +100,10 @@ const TitlesSelector = () => {
             alignItems: 'center',
           }}
         >
-          <div style={{ fontWeight: 'bold', color: '#bcdcff', fontSize: '13px' }}>
+          <div style={{ fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '13px' }}>
             No Title
           </div>
-          <div style={{ color: '#a0b9d6', fontSize: '10px', marginTop: '2px' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '10px', marginTop: '2px' }}>
             Display no title
           </div>
         </div>
@@ -104,6 +113,14 @@ const TitlesSelector = () => {
           <div 
             key={title.title}
             onClick={() => handleTitleSelect(title.title)}
+            tabIndex={0}
+            data-gamepad-focusable="true"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleTitleSelect(title.title);
+              }
+            }}
             style={{
               display: 'inline-flex',
               flexDirection: 'column',
@@ -122,10 +139,10 @@ const TitlesSelector = () => {
               whiteSpace: 'normal'
             }}
           >
-            <div style={{ fontWeight: 'bold', color: '#bcdcff', fontSize: '13px' }}>
+            <div style={{ fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '13px' }}>
               {title.title}
             </div>
-            <div style={{ color: '#a0b9d6', fontSize: '10px', marginTop: '2px' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: '10px', marginTop: '2px' }}>
               {title.description}
             </div>
           </div>
@@ -135,7 +152,7 @@ const TitlesSelector = () => {
         <div style={{ 
           textAlign: 'center', 
           padding: '16px', 
-          color: '#a0b9d6',
+          color: 'var(--text-muted)',
           backgroundColor: 'rgba(255, 255, 255, 0.05)',
           borderRadius: '6px',
           border: '1px solid rgba(255, 255, 255, 0.1)',

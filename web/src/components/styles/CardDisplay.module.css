@@ -15,7 +15,7 @@
 
 .card {
   width: 120px;
-  height: 168px;
+  height: 174px;
   border-radius: var(--radius-md);
   background-color: #ffffff;
   position: relative;
@@ -32,7 +32,7 @@
 @media (max-width: 600px) {
   .card {
     width: 90px;
-    height: 126px;
+    height: 131px;
   }
   .cardsRow {
     gap: 0.6rem;
@@ -41,8 +41,8 @@
 
 @media (max-width: 400px) {
   .card {
-    width: 82px;
-    height: 115px;
+    width: 80px;
+    height: 116px;
   }
   .cardsRow {
     gap: 0.5rem;
@@ -90,8 +90,9 @@
   height: 100%;
   border-radius: 10px;
   background-color: var(--btn-tertiary-end);
-  background-image: linear-gradient(30deg, var(--btn-tertiary-start) 25%, transparent 25%, transparent 50%, var(--btn-tertiary-start) 50%, var(--btn-tertiary-start) 75%, transparent 75%, transparent);
-  background-size: 20px 20px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .redCard {

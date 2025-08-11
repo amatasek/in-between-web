@@ -114,27 +114,33 @@ const StoreModal = ({ onClose }) => {
               {coinOfferings.map((offering) => (
                 <div
                   key={offering.id}
-                  className={baseModalStyles.settingItem}
+                  className="panel-alt"
                   style={{
+                    display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    textAlign: 'center',
                     padding: '1.5rem',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '12px',
                     minHeight: '280px'
                   }}
                 >
-                  {/* Product Image */}
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center',
-                    height: '80px',
-                    marginBottom: '1rem' 
+                  {/* Coin Amount Header */}
+                  <h3 style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#FFD700',
+                    margin: '0 0 1rem 0',
+                    textAlign: 'center'
                   }}>
-                    {offering.imageUrl && (
+                    {formatCoins(offering.coinAmount)} Coins
+                  </h3>
+                  
+                  {/* Product Image */}
+                  {offering.imageUrl && (
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      alignItems: 'center',
+                      marginBottom: '1rem' 
+                    }}>
                       <img
                         src={offering.imageUrl}
                         alt={offering.name}
@@ -147,52 +153,37 @@ const StoreModal = ({ onClose }) => {
                           e.target.style.display = 'none';
                         }}
                       />
-                    )}
-                  </div>
-                  
-                  {/* Product Info */}
-                  <div style={{ 
-                    flex: '1',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                    marginBottom: '1rem' 
-                  }}>
-                    <h3 style={{
-                      fontSize: '1.25rem',
-                      fontWeight: 'bold',
-                      color: '#FFD700',
-                      margin: '0 0 0.5rem 0',
-                      textAlign: 'center'
-                    }}>
-                      {formatCoins(offering.coinAmount)} Coins
-                    </h3>
-                    <p style={{
-                      color: '#a0b9d6',
-                      fontSize: '0.875rem',
-                      margin: '0 0 0.75rem 0',
-                      textAlign: 'center',
-                      lineHeight: '1.4'
-                    }}>
-                      {offering.description}
-                    </p>
-                    <div style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 'bold',
-                      color: '#bcdcff',
-                      textAlign: 'center'
-                    }}>
-                      {formatPrice(offering.priceUSD)}
                     </div>
+                  )}
+                  
+                  {/* Description */}
+                  <p style={{
+                    color: '#a0b9d6',
+                    fontSize: '0.875rem',
+                    margin: '0 0 1rem 0',
+                    textAlign: 'center',
+                    lineHeight: '1.4',
+                    flex: '1'
+                  }}>
+                    {offering.description}
+                  </p>
+                  
+                  {/* Price */}
+                  <div style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 'bold',
+                    color: '#bcdcff',
+                    textAlign: 'center',
+                    marginBottom: '1rem'
+                  }}>
+                    {formatPrice(offering.priceUSD)}
                   </div>
                   
                   {/* Purchase Button */}
                   <button
                     onClick={() => handlePurchase(offering.id)}
                     disabled={purchasing === offering.id}
-                    className={baseModalStyles.primaryButton}
+                    className="btn btn-primary"
                     style={{
                       width: '100%',
                       opacity: purchasing === offering.id ? 0.6 : 1,

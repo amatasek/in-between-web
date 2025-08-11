@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './styles/CardDisplay.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import ArrowIcon from './icons/ArrowIcon';
+import { getCurrentCardBackImage } from '../utils/cardBackManager';
 
 const CardDisplay = () => {
   const { gameState } = useGameContext();
+  const [cardBackImage, setCardBackImage] = useState(getCurrentCardBackImage());
+  
+  useEffect(() => {
+    // Listen for card back changes
+    const handleCardBackChange = () => {
+      setCardBackImage(getCurrentCardBackImage());
+    };
+    
+    window.addEventListener('cardbackchange', handleCardBackChange);
+    return () => window.removeEventListener('cardbackchange', handleCardBackChange);
+  }, []);
   
   if (!gameState) {
     return <div className={styles.loading}>Loading game state...</div>;
@@ -47,7 +59,10 @@ const CardDisplay = () => {
   const renderCard = (card, index) => {
     if (!card) return (
       <div key={`empty-${index}`} className={styles.card}>
-        <div className={styles.cardBack}></div>
+        <div 
+          className={styles.cardBack}
+          style={{ backgroundImage: `url(${cardBackImage})` }}
+        ></div>
       </div>
     );
     

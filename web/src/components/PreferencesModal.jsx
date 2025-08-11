@@ -6,6 +6,7 @@ import ToggleSwitch from './ToggleSwitch.jsx';
 import FileUpload from './FileUpload.jsx';
 import TitlesSelector from './TitlesSelector.jsx';
 import ThemeSelector from './ThemeSelector.jsx';
+import CardBackSelector from './CardBackSelector.jsx';
 
 const PreferencesModal = ({ onClose }) => {
   const { 
@@ -31,11 +32,8 @@ const PreferencesModal = ({ onClose }) => {
         <div className={baseModalStyles.sectionHeader}>Game Options</div>
 
         {/* Mute Setting */}
-        <div className={baseModalStyles.settingItem}>
-          <div className={baseModalStyles.settingDescription}>
-            <h4>Mute Sound</h4>
-            <p>Mute all game sound effects</p>
-          </div>
+        <div className={`panel-alt`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0 }}>Mute Sound</h4>
           <ToggleSwitch 
             isChecked={preferences.muted}
             onChange={toggleMute}
@@ -43,11 +41,8 @@ const PreferencesModal = ({ onClose }) => {
         </div>
 
         {/* Auto-Ante Setting */}
-        <div className={baseModalStyles.settingItem}>
-          <div className={baseModalStyles.settingDescription}>
-            <h4>Auto-Ante</h4>
-            <p>Automatically ante up when a new round begins</p>
-          </div>
+        <div className={`panel-alt`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0 }}>Auto-Ante</h4>
           <ToggleSwitch 
             isChecked={preferences.autoAnte}
             onChange={toggleAutoAnte}
@@ -58,11 +53,8 @@ const PreferencesModal = ({ onClose }) => {
         <div className={baseModalStyles.sectionHeader}>Customization Options</div>
 
         {/* Profile Image Setting */}
-        <div className={baseModalStyles.settingItem}>
-          <div className={baseModalStyles.settingDescription}>
-            <h4>Profile Image</h4>
-            <p>Upload a profile image to personalize your account</p>
-          </div>
+        <div className={`panel-alt`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0 }}>Profile Image</h4>
           <FileUpload
             onUpload={uploadProfileImg}
             currentFileUrl={preferences.profileImg}
@@ -74,20 +66,20 @@ const PreferencesModal = ({ onClose }) => {
 
         {/* Titles Selection */}
         <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
-          <div className={baseModalStyles.settingDescription} style={{ marginRight: 0, marginBottom: '12px' }}>
-            <h4>Title</h4>
-            <p>Choose a title to display with your name. Unlock more by playing games!</p>
-          </div>
+          <h4 style={{ margin: '0 0 12px 0' }}>Title</h4>
           <TitlesSelector />
         </div>
 
         {/* Theme Selection */}
         <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
-          <div className={baseModalStyles.settingDescription} style={{ marginRight: 0, marginBottom: '12px' }}>
-            <h4>Theme</h4>
-            <p>Choose a color theme for the game interface</p>
-          </div>
+          <h4 style={{ margin: '0 0 12px 0' }}>Theme</h4>
           <ThemeSelector />
+        </div>
+
+        {/* Card Back Selection */}
+        <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
+          <h4 style={{ margin: '0 0 12px 0' }}>Card Back</h4>
+          <CardBackSelector />
         </div>
 
       

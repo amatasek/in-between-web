@@ -224,7 +224,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 max="16"
                 value={settings.numberOfBots}
                 onChange={e => handleChange('numberOfBots', parseInt(e.target.value) || 0)}
-                className={`${baseModalStyles.textInput}${errors.numberOfBots ? ' ' + baseModalStyles.inputError : ''}`}
+                className={`${baseModalStyles.textInput} no-validation${errors.numberOfBots ? ' ' + baseModalStyles.inputError : ''}`}
               />
               {errors.numberOfBots && <span className="errorMessage">{errors.numberOfBots}</span>}
             </div>
