@@ -38,16 +38,7 @@ const TurnSummaryPanel = ({ summary }) => {
 
   return (
     <div 
-      className={`panel-alt ${getOutcomeClass(summary.action)}`}
-      style={{
-        padding: '0.35rem 0.75rem',
-        gap: '0.5rem',
-        flexDirection: 'row',
-        fontSize: '0.9rem',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '0.25rem'
-      }}
+      className={`panel-alt ${styles.turnPanel} ${getOutcomeClass(summary.action)}`}
     >
       <div className={styles.leftSection}>
         <div className={styles.cardsContainer}>

@@ -73,7 +73,8 @@ const PlayerList = () => {
                   flexDirection: 'row',
                   fontSize: '0.9rem',
                   alignItems: 'center',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  height: '40px'
                 }}
               >
               <div className={styles.playerInfo}>

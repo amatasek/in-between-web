@@ -1,3 +1,16 @@
+/* Override panel-alt defaults to match PlayerList exactly */
+.turnPanel {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 0.5rem !important;
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.9rem !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 0 !important;
+  height: 40px !important;
+}
+
 /* Left section containing cards and text */
 .leftSection {
   display: flex;
@@ -5,21 +18,25 @@
   gap: 0.5rem;
 }
 
-/* Outcome-based styling - using border-left like PlayerList current player glow */
+/* Outcome-based styling - full card background highlights */
 .win {
-  border-left: 3px solid var(--color-ready);
+  background: rgba(46, 204, 113, 0.1);  /* Green with opacity */
+  border: 1px solid rgba(46, 204, 113, 0.3);
 }
 
 .lose {
-  border-left: 3px solid var(--color-danger);
+  background: rgba(231, 76, 60, 0.1);   /* Red with opacity */
+  border: 1px solid rgba(231, 76, 60, 0.3);
 }
 
 .penalty {
-  border-left: 3px solid var(--color-currency);
+  background: rgba(241, 196, 15, 0.1);  /* Yellow with opacity */
+  border: 1px solid rgba(241, 196, 15, 0.3);
 }
 
 .pass {
-  border-left: 3px solid var(--color-border-lighter);
+  background: rgba(128, 128, 128, 0.05); /* Gray with opacity */
+  border: 1px solid rgba(128, 128, 128, 0.2);
 }
 
 /* Cards container */
@@ -32,15 +49,17 @@
 .playerName {
   color: var(--text-white);
   font-weight: bold;
-  font-size: 13px;
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 .action {
   color: var(--text-subtle);
-  font-size: 12px;
+  font-size: 0.9rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1;
 }
 
 .amount {
@@ -48,6 +67,9 @@
   background: rgba(0, 0, 0, 0.3);
   border-radius: 6px;
   padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .amount :global(*) {
