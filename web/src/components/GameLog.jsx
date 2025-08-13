@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styles from './styles/GameLog.module.css';
 import { useGameContext } from '../contexts/GameContext';
+import TurnSummaryPanel from './TurnSummaryPanel';
+import RoundDivider from './RoundDivider';
 
 const GameLog = () => {
   const { gameState } = useGameContext();
@@ -34,6 +36,37 @@ const GameLog = () => {
   // Determine how many entries to show
   const displayEntries = isCollapsed ? [] : logEntries.slice(0, visibleCount);
   
+  // Render a log entry (either simple message or rich turn summary)
+  const renderLogEntry = (entry, index) => {
+    // Check if it's a rich turn summary object
+    if (entry.type === 'turn') {
+      return <TurnSummaryPanel key={index} summary={entry} />;
+    }
+    
+    // Check if it's a round divider
+    if (entry.type === 'round_start') {
+      return <RoundDivider key={index} roundNumber={entry.roundNumber} />;
+    }
+    
+    // Check if it's a system message
+    if (entry.type === 'system' || entry.type === 'error') {
+      return (
+        <div key={index} className={`${styles.logEntry} ${styles.systemMessage}`}>
+          <span className={styles.logTime}>{formatTime(entry.timestamp)}</span>
+          <span className={styles.logMessage}>{entry.message}</span>
+        </div>
+      );
+    }
+    
+    // Default: legacy simple message format
+    return (
+      <div key={index} className={styles.logEntry}>
+        <span className={styles.logTime}>{formatTime(entry.timestamp)}</span>
+        <span className={styles.logMessage}>{entry.message}</span>
+      </div>
+    );
+  };
+  
   return (
     <div className={styles.gameLogContainer}>
       <h3 className={styles.gameLogHeader} onClick={toggleCollapse}>
@@ -49,12 +82,7 @@ const GameLog = () => {
             {logEntries.length === 0 ? (
               <div className={styles.emptyLog}>No game events yet</div>
             ) : (
-              displayEntries.map((entry, index) => (
-                <div key={index} className={styles.logEntry}>
-                  <span className={styles.logTime}>{formatTime(entry.timestamp)}</span>
-                  <span className={styles.logMessage}>{entry.message}</span>
-                </div>
-              ))
+              displayEntries.map(renderLogEntry)
             )}
           </div>
           

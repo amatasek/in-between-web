@@ -1,0 +1,101 @@
+/* Left section containing cards and text */
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Outcome-based styling - using border-left like PlayerList current player glow */
+.win {
+  border-left: 3px solid var(--color-ready);
+}
+
+.lose {
+  border-left: 3px solid var(--color-danger);
+}
+
+.penalty {
+  border-left: 3px solid var(--color-currency);
+}
+
+.pass {
+  border-left: 3px solid var(--color-border-lighter);
+}
+
+/* Cards container */
+.cardsContainer {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.playerName {
+  color: var(--text-white);
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.action {
+  color: var(--text-subtle);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.amount {
+  margin-left: auto;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.amount :global(*) {
+  color: var(--color-currency) !important;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+/* Cards container */
+.cardsContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Color overrides for specific outcomes */
+.turnPanel.win .action {
+  color: var(--color-ready);
+}
+
+.turnPanel.lose .action {
+  color: var(--color-danger);
+}
+
+.turnPanel.penalty .action {
+  color: var(--color-currency);
+}
+
+.turnPanel.pass .action {
+  color: var(--text-muted);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .turnPanel {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  
+  .playerName {
+    font-size: 12px;
+  }
+  
+  .action {
+    font-size: 11px;
+  }
+  
+  .amount :global(*) {
+    font-size: 10px;
+  }
+}

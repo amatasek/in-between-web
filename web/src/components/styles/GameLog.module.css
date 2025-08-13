@@ -98,6 +98,17 @@
   flex: 1;
 }
 
+.systemMessage {
+  border-left: 2px solid var(--accent2);
+  background: rgba(52, 152, 219, 0.05);
+  padding-left: 8px;
+}
+
+.systemMessage .logMessage {
+  color: var(--text-info);
+  font-style: italic;
+}
+
 .emptyLog {
   padding: 1rem;
   text-align: center;

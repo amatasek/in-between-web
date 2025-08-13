@@ -1,0 +1,46 @@
+/* Round divider for game log */
+.roundDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 12px 0;
+  opacity: 0.7;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent,
+    var(--color-border-light) 20%,
+    var(--accent2) 50%,
+    var(--color-border-light) 80%,
+    transparent
+  );
+}
+
+.roundLabel {
+  color: var(--accent2);
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  white-space: nowrap;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .roundDivider {
+    margin: 12px 0 8px 0;
+    gap: 8px;
+  }
+  
+  .roundLabel {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}
