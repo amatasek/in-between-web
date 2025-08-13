@@ -30,7 +30,7 @@ const TurnSummaryPanel = ({ summary }) => {
   };
 
   const getAmount = () => {
-    if (summary.winAmount) return summary.winAmount;
+    if (summary.winAmount) return summary.winAmount / 2;
     if (summary.lossAmount) return summary.lossAmount;
     if (summary.betAmount) return summary.betAmount;
     return 0;

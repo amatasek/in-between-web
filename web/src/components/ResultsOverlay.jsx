@@ -73,9 +73,9 @@ const ResultsOverlay = ({ result, players }) => {
     const emojiCount = Math.floor(8 + (lossIntensity * 22));
     
     // Different emoji sets based on loss amount
-    const mildLossEmojis = ['😢', '😔', '😕', '👎', '📉', '💔'];
-    const moderateLossEmojis = ['😭', '😩', '🤦', '💸', '📉', '😤', '😣'];
-    const severeLossEmojis = ['🤡', '💩', '😂', '🤣', '🗑️', '💀', '☠️', '🪦', '⚰️'];
+    const mildLossEmojis = ['😢', '😔', '😕', '👎', '📉', '💔', '🗑️', '🤦‍♂️'];
+    const moderateLossEmojis = ['😭', '😩', '🤦', '💸', '📉', '😤', '😣', '🗑️', '🤡', '💩', '🙈'];
+    const severeLossEmojis = ['🤡', '💩', '😂', '🤣', '🗑️', '💀', '☠️', '🪦', '⚰️', '🤪', '😵‍💫', '🙃', '🤮'];
     
     let lossEmojis;
     if (lossAmount < 50) {
