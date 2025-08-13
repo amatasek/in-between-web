@@ -17,8 +17,8 @@
 /* Make betting overlay more compact on desktop */
 @media (min-width: 769px) {
   .bettingOverlay {
-    padding: 4px 16px;
-    gap: 10px;
+    padding: 12px 24px;
+    gap: 16px;
   }
 }
 

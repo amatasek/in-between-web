@@ -10,6 +10,7 @@ import OnlinePlayerCount from './common/OnlinePlayerCount';
 import PlayerPanel from './PlayerPanel.jsx';
 import GameCard from './GameCard';
 import GameSettingsModal from './GameSettingsModal.jsx';
+import GamepadInput from './GamepadInput';
 import soundService from '../services/SoundService';
 
 const Lobby = () => {
@@ -148,13 +149,13 @@ const Lobby = () => {
          <div className={styles.searchContainer}>
            <div className="input-with-icon">
              <span className="input-icon left">🔍</span>
-             <input
+             <GamepadInput
+               title="Search Games"
                type="search"
                className="no-validation"
                placeholder="Search games by ID"
                value={searchQuery}
                onChange={handleSearchChange}
-               data-gamepad-focusable="true"
              />
            </div>
          </div>

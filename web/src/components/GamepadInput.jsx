@@ -11,10 +11,19 @@ const GamepadInput = ({
   ...props 
 }) => {
   const inputRef = useRef(null);
-  const { enhanceInput } = useVirtualKeyboardContext();
+  
+  // Safely get context - fallback to null if provider not available
+  let enhanceInput = null;
+  try {
+    const context = useVirtualKeyboardContext();
+    enhanceInput = context?.enhanceInput;
+  } catch (error) {
+    // Context not available - component will work as regular input
+    console.warn('VirtualKeyboardProvider not found - GamepadInput working as regular input');
+  }
   
   useEffect(() => {
-    if (inputRef.current) {
+    if (inputRef.current && enhanceInput) {
       const cleanup = enhanceInput(inputRef.current, type, title);
       return cleanup;
     }

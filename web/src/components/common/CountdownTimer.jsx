@@ -43,7 +43,7 @@ const CountdownTimer = ({ duration = 15, isActive = true }) => {
   // Calculate color based on time remaining (green -> yellow -> red)
   const getColor = () => {
     const percentRemaining = (timeLeft / duration) * 100;
-    if (percentRemaining > 66) return 'var(--success)'; // Green
+    if (percentRemaining > 66) return 'var(--color-ready)'; // Green
     if (percentRemaining > 33) return 'var(--accent)'; // Yellow/Gold
     return 'var(--secondary)'; // Red
   };

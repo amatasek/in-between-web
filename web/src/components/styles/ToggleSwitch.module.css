@@ -19,7 +19,7 @@
   display: inline-block;
   width: 50px;
   height: 26px;
-  background-color: #ccc;
+  background-color: var(--neutral-dark);
   transition: .4s;
   border-radius: 34px;
 }

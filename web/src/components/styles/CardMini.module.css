@@ -20,7 +20,7 @@
 }
 
 .cardMini.black {
-  color: var(--text-dark);
+  color: #000000;
 }
 
 .rank {

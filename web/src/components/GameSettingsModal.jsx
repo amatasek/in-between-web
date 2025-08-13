@@ -174,7 +174,6 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   className={`${baseModalStyles.textInput}${errors.customName ? ' ' + baseModalStyles.inputError : ''}`}
                   placeholder="Game Name"
                   maxLength={26}
-                  autoFocus
                   style={{ marginTop: 8 }}
                 />
               )}
@@ -196,13 +195,12 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
               {settings.isPrivate && (
                 <GamepadInput
                   title="Enter Game Password"
-                  type="password"
+                  type="text"
                   value={settings.password || ''}
                   onChange={e => handleChange('password', e.target.value)}
                   className={`${baseModalStyles.textInput}${errors.password ? ' ' + baseModalStyles.inputError : ''}`}
                   placeholder="Password"
                   maxLength={36}
-                  autoFocus={settings.isPrivate && !settings.useCustomName}
                   style={{ marginTop: 8 }}
                 />
               )}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles/EmojiReactions.module.css';
 import { useSocket } from '../contexts/SocketContext';
 import { useGameContext } from '../contexts/GameContext';
@@ -9,6 +9,7 @@ const EmojiReactions = () => {
   const { socket } = useSocket();
   const { gameState } = useGameContext();
   const { user } = useAuth();
+  const containerRef = useRef(null);
 
   // Available emojis for reactions - colors matched to emoji appearance
   const emojis = [
@@ -51,8 +52,27 @@ const EmojiReactions = () => {
     setIsOpen(!isOpen);
   };
 
+  // Close panel when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className={styles.emojiReactions}>
+    <div className={styles.emojiReactions} ref={containerRef}>
       {/* Toggle button */}
       <button
         className={styles.toggleButton}

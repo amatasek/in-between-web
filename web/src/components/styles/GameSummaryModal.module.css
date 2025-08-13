@@ -41,7 +41,7 @@
 }
 
 .negative {
-  color: var(--text-error);
+  color: var(--color-danger);
 }
 
 .paymentText {

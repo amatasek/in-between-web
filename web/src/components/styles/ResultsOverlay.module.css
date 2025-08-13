@@ -89,7 +89,7 @@
 
 /* Loss bar styling */
 .lossBar {
-  background: linear-gradient(120deg, var(--secondary-dark), var(--secondary));
+  background: var(--color-danger);
 }
 
 .lossAmount {
@@ -102,7 +102,7 @@
 
 /* Penalty bar styling */
 .penaltyBar {
-  background: linear-gradient(120deg, var(--secondary-dark), var(--secondary));
+  background: var(--color-danger);
 }
 
 .penaltyText {

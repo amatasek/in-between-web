@@ -6,6 +6,7 @@ import CurrencyAmount from './common/CurrencyAmount';
 import PotButton from './PotButton';
 import WaitingTimer from './common/WaitingTimer';
 import CountdownTimer from './common/CountdownTimer';
+import GamepadInput from './GamepadInput';
 import { ICONS, TIMERS } from '../constants';
 
 const BettingOverlay = ({ isCurrentPlayersTurn }) => {
@@ -110,7 +111,8 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
       ) : (
         /* Custom bet input - takes over entire overlay */
         <div className={styles.customInput}>
-          <input
+          <GamepadInput
+            title="Enter Custom Bet"
             type="number"
             value={customBet}
             onChange={(e) => setCustomBet(e.target.value)}
@@ -120,7 +122,6 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
             max={maxBet}
             autoFocus
             className={styles.betInput}
-            data-gamepad-focusable="true"
           />
           <button 
             onClick={handleCustomBet}
