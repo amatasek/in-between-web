@@ -1,0 +1,111 @@
+/* Container for rain effect */
+.rainContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Base falling item */
+.fallingItem {
+  position: absolute;
+  top: -200px; /* Start well above viewport */
+  animation: fall 2.5s ease-in infinite;
+}
+
+/* Emoji styling */
+.emoji {
+  font-size: 36px;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* Confetti piece */
+.confetti {
+  width: 10px;
+  height: 10px;
+  animation: confettiFall 3s ease-out infinite;
+}
+
+/* Main falling animation */
+@keyframes fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg) scale(0.8);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(calc(50vh + 100px)) rotate(180deg) scale(1.2);
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+    transform: translateY(calc(100vh + 200px)) rotate(360deg) scale(1);
+  }
+  100% {
+    transform: translateY(calc(100vh + 250px)) rotate(380deg) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Special confetti animation */
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(100vh + 250px)) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Coin-specific animation (slightly different physics) */
+.fallingItem:has(.coinIcon) {
+  animation: coinFall 2s ease-in infinite;
+}
+
+@keyframes coinFall {
+  0% {
+    transform: translateY(-100px) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(calc(40vh + 100px)) rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: translateY(calc(100vh + 250px)) rotate(360deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .emoji {
+    font-size: 28px;
+  }
+  
+  .confetti {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .emoji {
+    font-size: 24px;
+  }
+  
+  .confetti {
+    width: 6px;
+    height: 6px;
+  }
+}

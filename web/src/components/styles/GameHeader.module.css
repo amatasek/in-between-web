@@ -1,151 +1,62 @@
 .headerContainer {
+  width: 100%;
   margin-bottom: var(--spacing-md);
-  width: 100%;
 }
 
-/* Desktop Layout */
-.desktopLayout {
-  width: 100%;
-  margin-bottom: 0;
-}
-
-/* Mobile Layout */
-.mobileLayout {
-  display: none; /* Hidden by default, shown on mobile */
-  flex-direction: column;
-  width: 100%;
-}
-
-.mobileTopRow {
+/* Single row header - never wraps */
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: nowrap;
+  min-width: 0; /* Allow shrinking */
+  /* Panel styling without using .panel class */
+  padding: var(--spacing-sm);
+  background: linear-gradient(120deg, var(--bg-panel-start), var(--bg-panel-end));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
   width: 100%;
-  padding: 0;
-  margin-bottom: 0.5rem;
+  box-sizing: border-box;
 }
 
-
-
-/* Mobile right container */
-.mobileRight {
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-}
-
-/* Mobile actions container */
-.mobileActions {
-  display: flex;
-  align-items: center;
-  gap: 4px; /* Reduced spacing between buttons */
-}
-
-
-.mobileBottomRow {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-/* Base container styles are handled in the main declaration */
-
+/* Left section: Logo and game ID */
 .headerLeft {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0; /* Allow shrinking */
+  flex: 1 1 auto;
+  margin-left: var(--spacing-sm);
 }
-
-.headerRight {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.controlsGroup {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.controlsStack {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.mobileControlsStack {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-/* Header left spacing is handled in the mobile layout */
 
 .gameTitle {
   font-size: 1.5rem;
   color: var(--text-primary);
   margin: 0;
   font-weight: bold;
-  white-space: nowrap;
   display: flex;
   align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
 }
 
 .liveTag {
-  background-color: var(--text-error);
+  background-color: var(--secondary);
   color: var(--text-white);
   font-size: 0.7rem;
   padding: 0.15rem 0.4rem;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-weight: bold;
   display: inline-block;
-  margin-left: 0.3rem;
-  position: relative;
-  top: -4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-sm);
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
-  }
-}
-
-@media (max-width: 600px) {
-  .gameTitle {
-    font-size: 1.2rem;
-  }
-  
-  .liveTag {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.3rem;
-    margin-left: 0.2rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .gameTitle {
-    font-size: 1rem;
-  }
-  
-  .liveTag {
-    font-size: 0.5rem;
-    padding: 0.1rem 0.25rem;
-    margin-left: 0.15rem;
-    top: -2px;
-  }
+  0% { box-shadow: 0 0 0 0 var(--secondary); }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
 
 .gameIdText {
@@ -161,346 +72,160 @@
   font-weight: 500;
   text-decoration: underline;
   transition: color 0.2s ease;
-  display: inline;
 }
 
 .gameIdLink:hover {
-  color: var(--text-success);
+  color: var(--success);
 }
 
-.gameIdLink:active {
-  color: #1abc9c;
-}
-
-
-/* Ensure the game ID text container has proper spacing and alignment */
-.gameIdText {
-  margin: 0;
-  padding: 0;
-  text-align: left;
-}
-
-@media (max-width: 768px) {
-  .gameIdText {
-    margin: 4px 0;
-  }
-  
-  .gameIdLink {
-    font-size: 0.9rem;
-  }
-}
-
-/* Game ID text sizing is handled in the main media queries */
-
-.headerCenter {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-@media (max-width: 768px) {
-  /* Switch layouts on mobile */
-  .desktopLayout {
-    display: none;
-  }
-  
-  .mobileLayout {
-    display: flex;
-  }
-  
-  .headerContainer {
-    padding: var(--spacing-sm) var(--spacing-sm);
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .mobileTopRow {
-    margin-bottom: 8px;
-  }
-  
-  /* Ensure phase indicator is centered in mobile bottom row */
-  .mobileBottomRow .gamePhase {
-    width: 100%;
-    max-width: none;
-  }
-  
-}
-
-@media (max-width: 480px) {
-  .headerContainer {
-    padding: 0.4rem 0.6rem;
-  }
-  
-  .mobileTopRow {
-    margin-bottom: 6px;
-  }
-  
-  .gameTitle {
-    font-size: 0.9rem;
-  }
-  
-  .gameIdText {
-    font-size: 0.65rem;
-  }
-  
-  
-  .mobileActions {
-    gap: 3px;
-  }
-  
-}
-
-.gamePhase {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--radius-xl);
-  font-weight: bold;
-  text-align: center;
-  min-width: 180px;
-  color: var(--text-primary);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  transition: background-color 0.3s ease;
-}
-
-@media (max-width: 600px) {
-  .gamePhase {
-    padding: 0.6rem 1rem;
-    min-width: 150px;
-  }
-}
-
-@media (max-width: 400px) {
-  .gamePhase {
-    padding: 0.5rem 0.75rem;
-    min-width: 120px;
-    margin: 0.5rem 0;
-  }
-}
-
-.phaseIcon {
-  margin-right: 0.5rem;
-  font-size: 1.2rem;
-}
-
-.phaseText {
-  font-size: 1.1rem;
-}
-
-.timerBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  pointer-events: none;
-}
-
-.timerProgress {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.15);
-  transition: width 100ms linear;
-}
-
+/* Right section: Balance stacked above controls */
 .headerRight {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  z-index: 3;
   flex: 0 0 auto;
+}
+
+.controlsStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-xs);
+}
+
+.balanceDisplay {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-glass-dark);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border-light);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.balanceLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .controlsGroup {
   display: flex;
   align-items: center;
+  gap: var(--spacing-xs);
 }
 
+/* Responsive - just scale down, never wrap */
 @media (max-width: 768px) {
-  .headerRight {
-    gap: 5px;
+  .header {
+    padding: var(--spacing-xs);
+    gap: var(--spacing-sm);
+  }
+  
+  .gameTitle {
+    font-size: 1.2rem;
+  }
+  
+  .liveTag {
+    font-size: 0.6rem;
+    padding: var(--spacing-xs);
+  }
+  
+  .gameIdText {
+    font-size: 0.8rem;
+  }
+  
+  .balanceDisplay {
+    padding: calc(var(--spacing-xs) * 0.75) var(--spacing-xs);
+    font-size: 0.8rem;
+  }
+  
+  .controlsGroup {
+    gap: calc(var(--spacing-xs) * 0.8);
   }
 }
 
-/* These styles are now handled in the mobile layout media queries */
+@media (max-width: 600px) {
+  .header {
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
+  }
+  
+  .gameTitle {
+    font-size: 1rem;
+  }
+  
+  .liveTag {
+    font-size: 0.55rem;
+    padding: calc(var(--spacing-xs) * 0.6) calc(var(--spacing-xs) * 0.8);
+  }
+  
+  .gameIdText {
+    font-size: 0.75rem;
+  }
+  
+  .balanceDisplay {
+    font-size: 0.75rem;
+  }
+  
+  .controlsGroup {
+    gap: calc(var(--spacing-xs) * 0.6);
+  }
+}
 
 @media (max-width: 480px) {
-  .headerContainer {
-    padding: 0.4rem 0.6rem;
+  .header {
+    padding: calc(var(--spacing-xs) * 0.8);
   }
   
   .gameTitle {
     font-size: 0.9rem;
   }
   
+  .liveTag {
+    font-size: 0.5rem;
+    padding: calc(var(--spacing-xs) * 0.5) calc(var(--spacing-xs) * 0.7);
+  }
+  
+  .gameIdText {
+    font-size: 0.7rem;
+  }
+  
+  .balanceDisplay {
+    font-size: 0.7rem;
+    padding: calc(var(--spacing-xs) * 0.5) calc(var(--spacing-xs) * 0.8);
+  }
+  
+  .balanceLabel {
+    font-size: 0.7rem;
+  }
+  
+  .controlsGroup {
+    gap: calc(var(--spacing-xs) * 0.4);
+  }
+  
+  .controlsStack {
+    gap: calc(var(--spacing-xs) * 0.4);
+  }
+}
+
+@media (max-width: 400px) {
+  .gameTitle {
+    font-size: 0.8rem;
+  }
+  
+  .liveTag {
+    font-size: 0.45rem;
+    padding: calc(var(--spacing-xs) * 0.4) calc(var(--spacing-xs) * 0.5);
+  }
+  
   .gameIdText {
     font-size: 0.65rem;
   }
   
-  .gamePhase {
-    padding: 0.4rem 0.6rem;
-    min-width: 0;
-    width: auto;
-    max-width: 150px;
+  .balanceDisplay {
+    font-size: 0.65rem;
   }
-  
-  .phaseText {
-    font-size: 0.7rem;
-  }
-  
-  
-  .controlsGroup {
-    gap: 4px;
-  }
-}
-
-
-/* Phase-specific styles */
-.gamePhase[data-phase='dealing'] {
-  background-color: var(--text-info);
-  animation: dealPulse 1s infinite;
-}
-
-.gamePhase[data-phase='dealing'] .timerProgress {
-  background-color: #2980b9;
-}
-
-.gamePhase[data-phase='betting'] {
-  background-color: #e67e22;
-  animation: betPulse 2s infinite;
-}
-
-.gamePhase[data-phase='betting'] .timerProgress {
-  background-color: #d35400;
-}
-
-.gamePhase[data-phase='revealing'] {
-  background-color: #9b59b6;
-  animation: revealFade 1s infinite;
-}
-
-.gamePhase[data-phase='revealing'] .timerProgress {
-  background-color: #8e44ad;
-}
-
-.gamePhase[data-phase='results'] {
-  background-color: var(--text-success);
-  animation: resultPulse 2s infinite;
-}
-
-.gamePhase[data-phase='results'] .timerProgress {
-  background-color: var(--text-success);
-}
-
-/* Phase animations */
-@keyframes dealPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
-}
-
-@keyframes betPulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.8; }
-  100% { opacity: 1; }
-}
-
-@keyframes revealFade {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(1.2); }
-  100% { filter: brightness(1); }
-}
-
-@keyframes resultPulse {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(1.2); }
-  100% { filter: brightness(1); }
-}
-
-.gamePhase {
-  text-align: center;
-  min-width: 180px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  height: 2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.phaseIcon {
-  font-size: 1.2rem;
-  margin-right: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 1;
-}
-
-.phaseText {
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 1;
-}
-
-
-/* New betting phase styles - one for your turn (pulsing) and one for waiting (static) */
-.phaseBettingYourTurn {
-  background-color: #f39c12;
-  border-left: 4px solid #e67e22;
-  animation: pulse 1.5s infinite;
-  font-weight: 700;
-}
-
-.phaseBettingWaiting {
-  background-color: #f39c12;
-  border-left: 4px solid #e67e22;
-  /* No animation when it's not your turn */
-}
-
-
-
-/* Animations for game phases */
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.9; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes dealPulse {
-  0% { transform: translateY(0); }
-  25% { transform: translateY(-2px); }
-  50% { transform: translateY(0); }
-  75% { transform: translateY(2px); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes reveal {
-  0% { opacity: 1; }
-  25% { opacity: 0.8; }
-  50% { opacity: 1; }
-  75% { opacity: 0.8; }
-  100% { opacity: 1; }
-}
-
-@keyframes sparkle {
-  0% { box-shadow: 0 0 5px rgba(46, 204, 113, 0.5); }
-  50% { box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); }
-  100% { box-shadow: 0 0 5px rgba(46, 204, 113, 0.5); }
-}
-
-/* Timer animation that visually shows time remaining */
-@keyframes timerDrain {
-  0% { transform: scaleX(1); }
-  100% { transform: scaleX(0); }
 }

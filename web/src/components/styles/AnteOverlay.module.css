@@ -1,0 +1,364 @@
+/* Ante overlay container */
+.anteOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 100;
+}
+
+/* Ante status box */
+.anteStatus {
+  /* Styled with panel-game class */
+  padding: 16px 24px;
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--accent);
+  min-width: 280px;
+}
+
+/* Status header */
+.statusHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.statusTitle {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.anteCount {
+  color: var(--text-subtle);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Progress bar */
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: var(--color-border-light);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--success), var(--success-light));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px var(--color-focus-shadow);
+}
+
+/* Waiting list */
+.waitingList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.waitingPlayer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-faded);
+  font-size: 13px;
+}
+
+.playerDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-dark);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.playerName {
+  color: var(--text-subtle);
+}
+
+/* Ante container */
+.anteContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Ante button */
+.anteButton {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.anteButton:hover {
+  transform: translateY(-4px);
+}
+
+.anteButton:active {
+  transform: translateY(-2px);
+}
+
+/* Ante chip */
+.anteChip {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--success), var(--success-dark));
+  border: 4px solid var(--success-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 
+    var(--shadow-lg),
+    inset 0 2px 4px rgba(255,255,255,0.2);
+  z-index: 2;
+}
+
+.anteChip::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 3px dashed rgba(255,255,255,0.3);
+  animation: chipRotate 10s linear infinite;
+}
+
+.anteText {
+  color: var(--text-white);
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Chip shadow */
+.chipShadow {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 20px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.4), transparent);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Ante hint */
+.anteHint {
+  color: var(--text-faded);
+  font-size: 12px;
+  text-align: center;
+  animation: hintFade 2s ease-in-out infinite;
+}
+
+/* Waiting message */
+.waitingMessage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: rgba(76,175,80,0.2);
+  border: 2px solid rgba(76,175,80,0.4);
+  border-radius: var(--radius-xl);
+  /* Additional styling handled by panel-game */
+}
+
+.checkmark {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--success);
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  animation: checkmarkPop 0.5s ease-out;
+}
+
+.waitingText {
+  color: var(--text-subtle);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Spectating message */
+.spectatingMessage {
+  padding: 10px 20px;
+  background: rgba(0,0,0,0.6);
+  border-radius: var(--radius-xl);
+  /* Additional styling handled by panel-game */
+}
+
+.spectatingText {
+  color: var(--text-faded);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* Animations */
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes chipRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hintFade {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .anteStatus {
+    min-width: 240px;
+    padding: 14px 20px;
+  }
+  
+  .anteChip {
+    width: 85px;
+    height: 85px;
+  }
+  
+  .chipShadow {
+    width: 70px;
+    height: 18px;
+  }
+  
+  .statusTitle {
+    font-size: 11px;
+  }
+  
+  .anteCount {
+    font-size: 13px;
+  }
+  
+  .waitingPlayer {
+    font-size: 12px;
+  }
+  
+  .anteText {
+    font-size: 13px;
+  }
+  
+  .anteHint {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .anteOverlay {
+    gap: 16px;
+  }
+  
+  .anteStatus {
+    min-width: 200px;
+    padding: 12px 16px;
+    border-radius: var(--radius-lg);
+  }
+  
+  .statusHeader {
+    margin-bottom: 10px;
+  }
+  
+  .statusTitle {
+    font-size: 10px;
+  }
+  
+  .anteCount {
+    font-size: 12px;
+  }
+  
+  .progressBar {
+    height: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .anteChip {
+    width: 75px;
+    height: 75px;
+    border-width: 3px;
+  }
+  
+  .anteChip::before {
+    inset: 5px;
+    border-width: 2px;
+  }
+  
+  .chipShadow {
+    width: 60px;
+    height: 15px;
+  }
+  
+  .anteText {
+    font-size: 12px;
+  }
+  
+  .waitingMessage {
+    padding: 10px 16px;
+  }
+  
+  .checkmark {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+  }
+  
+  .waitingText {
+    font-size: 13px;
+  }
+  
+  .anteHint {
+    font-size: 10px;
+  }
+}

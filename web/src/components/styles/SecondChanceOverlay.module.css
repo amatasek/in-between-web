@@ -1,0 +1,423 @@
+/* Second chance overlay - bridges between matching cards */
+.secondChanceOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Bridge between cards */
+.bridge {
+  position: relative;
+  width: 260px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.bridgeLine {
+  position: absolute;
+  top: 0;
+  left: -120px;
+  right: -120px;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent,
+    var(--color-focus-shadow) 20%,
+    var(--accent) 50%,
+    var(--color-focus-shadow) 80%,
+    transparent
+  );
+  animation: bridgePulse 2s ease-in-out infinite;
+}
+
+.bridgeLine::before,
+.bridgeLine::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent), transparent);
+  animation: sparkle 1s ease-in-out infinite alternate;
+}
+
+.bridgeLine::before {
+  left: -10px;
+}
+
+.bridgeLine::after {
+  right: -10px;
+}
+
+/* Match badge */
+.matchBadge {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  padding: 6px 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px var(--color-focus-shadow);
+  animation: matchBounce 1s ease-in-out infinite;
+}
+
+.matchText {
+  color: var(--text-dark);
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Choice container */
+.choiceContainer {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+/* Timer */
+.timer {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Styled with panel-game class */
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  color: var(--text-white);
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Choice buttons */
+.buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.choiceButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  /* Styled with panel-game class */
+  color: var(--text-white);
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+}
+
+.choiceButton:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.choiceButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ante button */
+.anteButton {
+  background: linear-gradient(135deg, var(--success), var(--success-dark));
+  border-color: var(--success);
+}
+
+.anteButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--success-light), var(--success));
+  border-color: var(--success-light);
+  box-shadow: 0 6px 20px var(--color-focus-shadow);
+}
+
+/* Pass button */
+.passButton {
+  background: linear-gradient(135deg, var(--neutral-dark), var(--primary-light));
+  border-color: var(--neutral-dark);
+}
+
+.passButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--neutral), var(--neutral-dark));
+  border-color: var(--neutral);
+}
+
+/* Button elements */
+.buttonIcon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.buttonText {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.buttonAmount {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* Waiting container */
+.waitingContainer {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.waitingMessage {
+  /* Styled with panel-game class */
+  padding: 8px 20px;
+  border-radius: var(--radius-xl);
+  color: var(--text-bright);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Animations */
+@keyframes bridgePulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.05);
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes matchBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+/* Bottom position styles */
+.secondChanceBottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+}
+
+/* Timer container - consistent positioning */
+.timerContainer {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.bottomButtonContainer {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 12px;
+}
+
+.choicePrompt {
+  color: var(--text-white);
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+.bottomChoiceButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid var(--text-bright);
+  border-radius: var(--radius-xl);
+  /* Styled with panel-game class */
+  color: var(--text-white);
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+}
+
+.bottomChoiceButton:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.bottomChoiceButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.anteButtonBottom {
+  background: linear-gradient(135deg, var(--success-dark), var(--color-glass-light));
+}
+
+.anteButtonBottom:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--success), var(--success-dark));
+  border-color: var(--success);
+}
+
+.passButtonBottom {
+  background: linear-gradient(135deg, var(--neutral-dark), var(--color-glass-light));
+}
+
+.passButtonBottom:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--neutral), var(--neutral-dark));
+  border-color: var(--neutral);
+}
+
+.buttonIcon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.timerBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  /* Styled with panel-game class */
+  border: 2px solid var(--accent);
+  color: var(--text-white);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.waitingMessageBottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  /* Styled with panel-game class */
+  color: var(--text-subtle);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .bridge {
+    width: 200px;
+  }
+  
+  .bridgeLine {
+    left: -90px;
+    right: -90px;
+  }
+  
+  .matchBadge {
+    padding: 5px 12px;
+  }
+  
+  .matchText {
+    font-size: 12px;
+  }
+  
+  .choiceButton {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  
+  .buttonIcon {
+    font-size: 16px;
+  }
+  
+  .buttonText {
+    font-size: 11px;
+  }
+  
+  .timer {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bridge {
+    width: 160px;
+  }
+  
+  .bridgeLine {
+    left: -70px;
+    right: -70px;
+    height: 2px;
+  }
+  
+  .matchBadge {
+    padding: 4px 10px;
+    top: -18px;
+  }
+  
+  .matchText {
+    font-size: 11px;
+  }
+  
+  .buttons {
+    gap: 12px;
+  }
+  
+  .choiceButton {
+    padding: 7px 12px;
+    font-size: 11px;
+    gap: 6px;
+  }
+  
+  .buttonIcon {
+    font-size: 14px;
+  }
+  
+  .buttonText {
+    font-size: 10px;
+  }
+  
+  .buttonAmount {
+    font-size: 10px;
+  }
+  
+  .waitingMessage {
+    font-size: 12px;
+    padding: 6px 16px;
+  }
+}

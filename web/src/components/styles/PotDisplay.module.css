@@ -1,71 +1,41 @@
-
-.potIconWrapper {
-  display: flex;
+/* Simple text pot display for poker table */
+.potDisplay {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  margin-right: 0.75rem;
-  font-size: 1.6rem;
-}
-
-@media (max-width: 600px) {
-  .potIconWrapper {
-    margin-right: 0.5rem;
-    font-size: 1.4rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .potIconWrapper {
-    margin-right: 0.4rem;
-    font-size: 1.2rem;
-  }
-}
-
-.potIcon {
-  filter: drop-shadow(0 0 3px rgba(241, 196, 15, 0.5));
-}
-
-.potInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-white);
+  font-weight: bold;
+  text-shadow: 
+    0 2px 4px rgba(0,0,0,0.8),
+    0 0 20px rgba(0,0,0,0.5);
 }
 
 .potLabel {
-  margin: 0;
-  padding: 0;
-  font-size: 0.9rem;
-  color: var(--text-warning);
+  font-size: 18px;
+  color: var(--text-white);
   font-weight: bold;
-  letter-spacing: 0.5px;
   text-transform: uppercase;
-  display: flex;
-  align-items: center;
+  letter-spacing: 2px;
+  opacity: 0.8;
 }
 
-.potAmount {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: var(--text-warning);
-  text-shadow: 0 0 5px rgba(241, 196, 15, 0.3);
-}
-
-.potCounter {
-  font-size: 0.75rem;
-  opacity: 0.7;
-  font-weight: normal;
-  margin-left: 0.5rem;
-  position: relative;
-}
-
-@media (max-width: 600px) {
-  .potAmount {
-    font-size: 1.2rem;
+/* Responsive design */
+@media (max-width: 768px) {
+  .potDisplay {
+    gap: 8px;
+  }
+  
+  .potLabel {
+    font-size: 12px;
   }
 }
 
-@media (max-width: 400px) {
-  .potAmount {
-    font-size: 1.1rem;
+@media (max-width: 480px) {
+  .potDisplay {
+    gap: 6px;
+  }
+  
+  .potLabel {
+    letter-spacing: 1.5px;
   }
 }

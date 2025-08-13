@@ -39,9 +39,7 @@ const formatPreferencesData = (data) => {
   
   return {
     ...data,
-    profileImg: formatImageUrl(data.profileImg),
-    twoSecondPotGif: formatImageUrl(data.twoSecondPotGif),
-    twoSecondPotMp3: data.twoSecondPotMp3 // Audio files don't need the same formatting
+    profileImg: formatImageUrl(data.profileImg)
   };
 };
 
@@ -50,8 +48,6 @@ export const PreferencesProvider = ({ children }) => {
     profileImg: null,
     autoAnte: false,
     muted: false,
-    twoSecondPotGif: null,
-    twoSecondPotMp3: null,
     selectedTitle: null
   });
   const [loading, setLoading] = useState(true);
@@ -194,112 +190,6 @@ export const PreferencesProvider = ({ children }) => {
     return await updatePreference('selectedTitle', titleString);
   };
 
-  // Upload file for two-second-pot-gif preference
-  const uploadTwoSecondPotGif = async (file) => {
-    if (!file) {
-      console.error('[Preferences] No file provided for GIF upload');
-      return false;
-    }
-    
-    
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      // Get API URL from environment or use localhost as fallback
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        console.error('[Preferences] No token available');
-        return false;
-      }
-      
-      
-      const response = await fetch(`${API_URL}/preferences/twoSecondPotGif`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-      
-      const responseText = await response.text();
-      
-      if (!response.ok) {
-        throw new Error(`Failed to upload GIF file: ${responseText}`);
-      }
-      
-      // Parse the response text as JSON
-      const data = responseText ? JSON.parse(responseText) : {};
-      
-      // Format the file URL for consistency
-      const formattedUrl = formatImageUrl(data.fileUrl);
-      
-      // Update preferences with the formatted file URL
-      setPreferences(prev => ({
-        ...prev,
-        twoSecondPotGif: formattedUrl
-      }));
-      
-      return true;
-    } catch (error) {
-      console.error('[Preferences] Error uploading GIF:', error);
-      return false;
-    }
-  };
-
-  // Upload file for two-second-pot-mp3 preference
-  const uploadTwoSecondPotMp3 = async (file) => {
-    if (!file) {
-      console.error('[Preferences] No file provided for MP3 upload');
-      return false;
-    }
-    
-    
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      // Get API URL from environment or use localhost as fallback
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        console.error('[Preferences] No token available');
-        return false;
-      }
-      
-      
-      const response = await fetch(`${API_URL}/preferences/twoSecondPotMp3`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-      
-      const responseText = await response.text();
-      
-      if (!response.ok) {
-        throw new Error(`Failed to upload MP3 file: ${responseText}`);
-      }
-      
-      // Parse the response text as JSON
-      const data = responseText ? JSON.parse(responseText) : {};
-      
-      // Update preferences with the file URL
-      setPreferences(prev => ({
-        ...prev,
-        twoSecondPotMp3: data.fileUrl
-      }));
-      
-      return true;
-    } catch (error) {
-      console.error('[Preferences] Error uploading MP3:', error);
-      return false;
-    }
-  };
   
   // Upload file for profile image preference
   const uploadProfileImg = async (file) => {
@@ -366,8 +256,6 @@ export const PreferencesProvider = ({ children }) => {
         toggleAutoAnte,
         toggleMute,
         updateSelectedTitle,
-        uploadTwoSecondPotGif,
-        uploadTwoSecondPotMp3,
         uploadProfileImg,
         loading 
       }}

@@ -1,0 +1,86 @@
+/* Waiting timer component */
+.waitingTimer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 20px;
+  /* Styled similarly to panel-game */
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 250px;
+  box-shadow: var(--shadow-lg);
+  width: 75%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+/* Timer content */
+.timerContent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.playerName {
+  color: var(--text-white);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.action {
+  color: var(--text-subtle);
+  font-size: 14px;
+}
+
+/* Timer bar */
+.timerBar {
+  width: 100%;
+  height: 4px;
+  background: var(--color-border-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.timerProgress {
+  height: 100%;
+  background: linear-gradient(90deg, var(--info), var(--info-light));
+  border-radius: 2px;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px var(--info);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .waitingTimer {
+    min-width: 200px;
+    padding: 10px 16px;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .playerName,
+  .action {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .waitingTimer {
+    min-width: 180px;
+    padding: 8px 14px;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .playerName,
+  .action {
+    font-size: 12px;
+  }
+  
+  .timerBar {
+    height: 3px;
+  }
+}

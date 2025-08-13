@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './styles/GameScreen.module.css';
 import GameHeader from './GameHeader.jsx';
-import CardDisplay from './CardDisplay.jsx';
-import BettingPanel from './BettingPanel.jsx';
+import Table from './Table.jsx';
 import PlayerList from './PlayerList.jsx';
-import PotDisplay from './PotDisplay.jsx';
-import DeckDisplay from './DeckDisplay.jsx';
-import AnteControls from './AnteControls.jsx';
-import ResultsPanel from './ResultsPanel.jsx';
-import AceChoicePanel from './AceChoicePanel.jsx';
-import SecondChancePanel from './SecondChancePanel.jsx';
 import GameLog from './GameLog.jsx';
 import EmojiReactions from './EmojiReactions.jsx';
 
@@ -73,14 +66,6 @@ const GameScreen = ({ onReturnToLobby }) => {
   const currentUserId = user?.id; // Use user.id (adjust if property name is different e.g., user.userId)
   const currentPlayer = gameState.players && currentUserId ? gameState.players[currentUserId] : null;
 
-  // Handler for the 'I'm Back' button
-  const handleImBackClick = () => {
-    if (socket && gameState.id) {
-      socket.emit('imBack', { gameId: gameState.id });
-    } else {
-      console.error("Cannot emit 'imBack': socket or gameId missing.");
-    }
-  };
 
 
   return (
@@ -97,39 +82,10 @@ const GameScreen = ({ onReturnToLobby }) => {
           </div>
         )}
         
-        <div className={styles.gameInfoWrapper}>
-          <DeckDisplay />
-          <PotDisplay />
+        {/* Game table with integrated controls */}
+        <div className={styles.tableWrapper}>
+          <Table />
         </div>
-        
-        {/* Always show the CardDisplay component */}
-        <CardDisplay />
-        
-        {/* Primary check: Is the current player sitting out? */}
-        {currentPlayer?.isSittingOut ? (
-          // If sitting out, always show the 'I'm Back!' button regardless of phase
-          <button onClick={handleImBackClick} className="btn btn-primary" style={{ maxWidth: '300px' }} data-gamepad-focusable="true" autoFocus> 
-            I'm Back!
-          </button>
-        ) : (
-          // If not sitting out, render controls based on the game phase
-          phase === 'waiting' ? (
-            /* Show ante controls during waiting phase */
-            <AnteControls />
-          ) : phase === 'results' ? (
-            /* Show the results panel during results phase */
-            <ResultsPanel />
-          ) : gameState.waitingForAceDecision ? (
-            /* Show the Ace choice panel when first card is an Ace */
-            <AceChoicePanel />
-          ) : gameState.waitingForSecondChance ? (
-            /* Show the Second Chance panel when matching cards are dealt */
-            <SecondChancePanel />
-          ) : phase === 'betting' ? (
-            /* Show the betting panel only during betting phase */
-            <BettingPanel />
-          ) : null
-        )}
         
         <div className={styles.gameBottomSection}>
           <PlayerList />

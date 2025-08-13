@@ -1,382 +1,208 @@
+/* Ante Controls - Clean overlay style matching betting/choice overlays */
+
 .anteControlsWrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .controlsContainer {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: row !important;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 350px;
+  gap: 15px;
+  padding: 12px 20px;
+  /* Styled with panel-game class */
+  position: relative;
 }
 
-.buttonContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  width: 100%;
-}
+/* Button row container - removed as no longer needed */
 
-.autoAnteContainer {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 5px;
-}
-
-.anteButton, .backOutButton {
+/* Base button styles - matching betting chips */
+.anteButton, .backOutButton, .sitOutHalfWidth {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  padding: var(--spacing-md) var(--spacing-md);
-  border-radius: var(--radius-lg);
-  width: 160px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
-  height: 52px; /* Fixed height to prevent bouncing */
-  box-sizing: border-box;
-  /* Add 3D effect */
-  transform: translateY(0);
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
-}
-
-@media (max-width: 600px) {
-  .anteButton, .backOutButton {
-    width: 150px;
-    padding: 0.7rem 0.8rem;
-    height: 50px; /* Fixed height for medium screens */
-  }
-}
-
-@media (max-width: 400px) {
-  .anteButton, .backOutButton {
-    width: 140px;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.9rem;
-    height: 48px; /* Fixed height for small screens */
-  }
-}
-
-/* Common button effects */
-.anteButton::before, .backOutButton::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border-radius: 10px;
-  z-index: -2;
-}
-
-/* Button background */
-.anteButton::after, .backOutButton::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-primary);
-  border-radius: var(--radius-lg);
-  z-index: -1;
-}
-
-/* Ante button specific styling */
-.anteButton::before {
-  background: radial-gradient(ellipse at center, rgba(46, 204, 113, 0.8) 0%, rgba(46, 204, 113, 0.4) 50%, rgba(46, 204, 113, 0) 70%);
-  filter: blur(4px);
-  opacity: 0.8;
-  animation: pulseGlowGreen 1.5s infinite alternate;
-}
-
-.anteButton {
-  border: 2px solid var(--success);
-  box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
-}
-
-.anteButton .shimmerBorder {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #27ae60 0%, #2ecc71 20%, #58d68d 40%, #27ae60 60%, #2ecc71 80%, #27ae60 100%);
-  background-size: 300% 300%;
-  border-radius: 10px;
-  z-index: -1;
-  animation: shimmerGreenBorder 3s infinite linear;
+  transition: all 0.3s ease;
+  font-weight: bold;
   box-shadow: 
-    inset 0 0 6px var(--text-faded),
-    inset 0 0 10px rgba(46, 204, 113, 0.4),
-    0 0 8px rgba(39, 174, 96, 0.5);
+    var(--shadow-md),
+    inset 0 2px 4px var(--color-border-lighter);
 }
 
-/* Add background glow effect for ante button */
-.anteButton::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 30%, 
-    rgba(46, 204, 113, 0.4) 0%, 
-    rgba(46, 204, 113, 0.2) 30%, 
-    rgba(46, 204, 113, 0.1) 60%,
-    rgba(46, 204, 113, 0) 70%);
-  border-radius: 8px;
-  z-index: -1;
-  animation: pulseGlowGreen 2s infinite alternate;
+/* Ante button - ready/green theme */
+.anteButton {
+  background: linear-gradient(145deg, var(--color-ready), var(--success-dark));
+  border: 3px solid var(--success-dark);
+  color: var(--text-white);
 }
 
 .anteButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 
+    var(--shadow-lg),
+    inset 0 2px 4px var(--color-border-lighter),
+    0 0 20px var(--color-focus-shadow);
 }
 
 .anteButton:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .anteButton:disabled {
-  opacity: 0.5;
+  background: linear-gradient(145deg, var(--neutral-dark), var(--primary-dark));
+  border-color: var(--primary-light);
+  opacity: 0.6;
   cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
 }
 
-.anteButton:disabled .shimmerBorder {
-  animation: none;
-}
-
-.anteButton:disabled::before {
-  animation: none;
-}
-
-/* Back out button specific styling */
-.backOutButton::before {
-  background: radial-gradient(ellipse at center, rgba(231, 76, 60, 0.8) 0%, rgba(231, 76, 60, 0.4) 50%, rgba(231, 76, 60, 0) 70%);
-  filter: blur(4px);
-  opacity: 0.8;
-  animation: pulseGlowRed 1.5s infinite alternate;
-}
-
+/* Back out button - danger/red theme */
 .backOutButton {
-  border: 2px solid var(--secondary);
-  box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
-}
-
-.backOutButton .shimmerBorder {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #c0392b 0%, #e74c3c 20%, #f06060 40%, #c0392b 60%, #e74c3c 80%, #c0392b 100%);
-  background-size: 300% 300%;
-  border-radius: 10px;
-  z-index: -1;
-  animation: shimmerRedBorder 3s infinite linear;
-  box-shadow: 
-    inset 0 0 6px var(--text-faded),
-    inset 0 0 10px rgba(231, 76, 60, 0.4),
-    0 0 8px rgba(192, 57, 43, 0.5);
-}
-
-/* Add background glow effect for back out button */
-.backOutButton::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 30%, 
-    rgba(231, 76, 60, 0.4) 0%, 
-    rgba(231, 76, 60, 0.2) 30%, 
-    rgba(231, 76, 60, 0.1) 60%,
-    rgba(231, 76, 60, 0) 70%);
-  border-radius: 8px;
-  z-index: -1;
-  animation: pulseGlowRed 2s infinite alternate;
+  background: linear-gradient(145deg, var(--color-danger), var(--secondary-dark));
+  border: 3px solid var(--secondary-dark);
+  color: var(--text-white);
 }
 
 .backOutButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 
+    var(--shadow-lg),
+    inset 0 2px 4px var(--color-border-lighter),
+    0 0 20px var(--color-focus-shadow);
 }
 
 .backOutButton:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px) scale(1.05);
 }
 
-.anteIcon, .backOutIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1rem;
-  font-size: 1.5rem;
-}
-
-.anteIcon {
-  color: var(--text-white);
-  filter: drop-shadow(0 0 3px rgba(46, 204, 113, 0.5));
-}
-
-.backOutIcon {
-  color: var(--text-white);
-  filter: drop-shadow(0 0 3px rgba(231, 76, 60, 0.5));
-  margin-right: 0.5rem;
-}
-
-.buttonInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.buttonLabel {
-  margin: 0;
-  padding: 0;
-  font-size: 0.9rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.anteButton .buttonLabel {
-  color: var(--text-white);
-}
-
-.backOutButton .buttonLabel {
-  color: var(--text-white);
-}
-
-.buttonAmount {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.anteButton .buttonAmount {
-  color: var(--text-white);
-  text-shadow: 0 0 5px rgba(46, 204, 113, 0.3);
-}
-
-.backOutButton .buttonAmount {
-  color: var(--text-white);
-  text-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
-}
-
-.notEnoughChipsText {
-  color: var(--secondary);
-  font-size: 0.9rem;
-  margin-top: var(--spacing-md);
-  background-color: rgba(231, 76, 60, 0.1);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-sm);
-  text-align: center;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Container to hold buttons in a row */
-.buttonContainerRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center; /* Align buttons vertically */
-  justify-content: center; /* Center the group of buttons */
-  width: 100%; /* Ensure it takes available width */
-  gap: 12px;
-}
-
-/* New style for the half-width Sit Out button */
+/* Sit out button - danger/red theme like back out */
 .sitOutHalfWidth {
-  width: 60px; /* Adjust as needed, aiming for half of .anteButton */
-  min-width: 50px;
-  max-width: 70px;
-  padding-left: var(--spacing-xs); /* Reduced padding */
-  padding-right: var(--spacing-xs);
-  justify-content: center; /* Center label since icon is removed */
+  background: linear-gradient(145deg, var(--color-danger), var(--secondary-dark));
+  border: 3px solid var(--secondary-dark);
+}
+
+.sitOutHalfWidth:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 
+    var(--shadow-lg),
+    inset 0 2px 4px var(--color-border-lighter),
+    0 0 15px var(--color-focus-shadow);
 }
 
 .sitOutHalfWidth:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none; /* Override any hover/active transforms */
-  box-shadow: none; /* Override any hover/active shadows */
 }
 
-.sitOutHalfWidth .buttonInfo {
-  margin-left: 0; /* Remove margin since icon is gone */
-  flex-grow: 1; /* Allow info to take space */
-  justify-content: center; /* Center content within buttonInfo */
+/* Shimmer border effect (subtle) */
+.shimmerBorder {
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    var(--color-border-light) 50%, 
+    transparent 70%
+  );
+  animation: shimmerRotate 3s linear infinite;
+  pointer-events: none;
 }
 
-.sitOutHalfWidth .buttonLabel {
-  /* Adjust font-size if needed */
-  font-size: 0.8rem; /* Slightly smaller font for smaller button */
+/* Icons removed - no longer needed */
+
+.buttonInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.buttonLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 800;
+  text-shadow: var(--shadow-sm);
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.buttonAmount {
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: var(--shadow-sm);
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Not enough chips message */
+.notEnoughChipsText {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--error);
+  font-size: 11px;
+  padding: 4px 10px;
+  background: var(--color-glass-light);
+  border-radius: var(--radius-lg);
   text-align: center;
+  white-space: nowrap;
 }
 
-/* Adjustments for smaller screens */
-@media (max-width: 600px) {
-  .sitOutHalfWidth {
-    width: 40px;
-    min-width: 35px;
-    padding: 0.5rem 0.1rem;
+/* Auto-ante container - removed as no longer needed */
+
+/* Animations */
+@keyframes shimmerRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .anteButton, .backOutButton, .sitOutHalfWidth {
+    width: 48px;
+    height: 48px;
   }
-  .sitOutHalfWidth .buttonLabel {
-    font-size: 0.7rem; /* Even smaller font */
+  
+  .buttonLabel {
+    font-size: 9px;
   }
+  
+  .buttonAmount {
+    font-size: 13px;
+  }
+  
 }
 
-/* Animation keyframes */
-@keyframes shimmerGreenBorder {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
-}
-
-@keyframes shimmerRedBorder {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
-}
-
-@keyframes pulseGlowGreen {
-  0% { opacity: 0.5; filter: blur(8px); }
-  100% { opacity: 0.9; filter: blur(12px); }
-}
-
-@keyframes pulseGlowRed {
-  0% { opacity: 0.5; filter: blur(8px); }
-  100% { opacity: 0.9; filter: blur(12px); }
-}
-
-@keyframes sweepReflectionGreen {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-@keyframes sweepReflectionRed {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-@keyframes pulseWholeButtonGreen {
-  0% { transform: scale(1); box-shadow: 0 0 15px rgba(46, 204, 113, 0.6); }
-  100% { transform: scale(1.03); box-shadow: 0 0 20px rgba(46, 204, 113, 0.8); }
-}
-
-@keyframes pulseBackgroundGreen {
-  0% { opacity: 0.5; transform: scale(0.98); }
-  100% { opacity: 0.8; transform: scale(1.02); }
+@media (max-width: 480px) {
+  .controlsContainer {
+    padding: 10px 15px;
+    gap: 8px;
+  }
+  
+  .anteButton, .backOutButton, .sitOutHalfWidth {
+    width: 42px;
+    height: 42px;
+  }
+  
+  .buttonLabel {
+    font-size: 8px;
+  }
+  
+  .buttonAmount {
+    font-size: 12px;
+  }
+  
 }

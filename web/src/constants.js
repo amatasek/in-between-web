@@ -67,10 +67,23 @@ export const GAME_CONSTANTS = {
  * 🎨 FRONTEND-ONLY: These are only used for UI display
  */
 export const ICONS = {
-  POT: '🍯',
-  DEALER: '🃏',
+  // Card Suits
+  HEARTS: '♥',
+  DIAMONDS: '♦',
+  CLUBS: '♣',
+  SPADES: '♠',
+  
+  // UI Actions
+  ARROW_RIGHT: '→',
+  ARROW_LEFT: '←',
+  ARROW_UP: '↑',
+  ARROW_DOWN: '↓',
+  ROTATE: '↻',
   CHECK: '✓',
-  DECK: '🃏'
+  CROSS: '✕',
+  
+  // Game Icons (keeping for GameHeader - not in our Table work)
+  DEALER: '🃏'
 };
 
 // Export specific commonly used constants for convenience

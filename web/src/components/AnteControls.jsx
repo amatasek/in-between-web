@@ -59,13 +59,14 @@ const AnteControls = () => {
   
   return (
     <div className={styles.anteControlsWrapper}>
-      <div className={styles.controlsContainer}>
-        {/* Main action button (Ante or Back Out) */}
-        <div className={styles.buttonContainerRow}>
-          {!isPlayerReady ? (
-            // Player is not ready - show Ante button and Sit Out button side by side
-            <div className={styles.buttonContainerRow}>
-              <button 
+      <div className={`panel-game ${styles.controlsContainer}`}>
+        {/* Main action buttons */}
+        {!isPlayerReady ? (
+          // Player is not ready - show Auto-Ante, Ante button and Sit Out button
+          <>
+            {/* Auto-Ante toggle - only show when ante is available */}
+            <AutoAnteToggle />
+            <button 
                 className={styles.anteButton}
                 onClick={playerReady}
                 disabled={!hasEnoughChips}
@@ -75,9 +76,8 @@ const AnteControls = () => {
               >
                 {/* Add shimmer border for glimmering effect */}
                 <div className={styles.shimmerBorder}></div>
-                <span className={styles.anteIcon}>{ICONS.CHECK}</span>
                 <div className={styles.buttonInfo}>
-                  <h3 className={styles.buttonLabel}>ANTE</h3>
+                  <span className={styles.buttonLabel}>ANTE</span>
                   <span className={styles.buttonAmount}><CurrencyAmount amount={anteAmount} /></span>
                 </div>
               </button>
@@ -99,18 +99,14 @@ const AnteControls = () => {
               >
                 <div className={styles.shimmerBorder}></div>
                 <div className={styles.buttonInfo}>
-                  <h3 className={styles.buttonLabel}>SIT OUT</h3>
+                  <span className={styles.buttonLabel}>SIT OUT</span>
                 </div>
               </button>
 
-              {!hasEnoughChips && (
-                <p className={styles.notEnoughChipsText}>Not enough coins (<CurrencyAmount amount={anteAmount} /> required)</p>
-              )}
-            </div>
-          ) : (
-            // Player is ready - show Back Out button
-            <div className={styles.buttonContainerRow}>
-              <button 
+          </>
+        ) : (
+          // Player is ready - show Back Out button
+          <button 
                 className={styles.backOutButton}
                 onClick={() => {
                   if (typeof playerUnready === 'function') {
@@ -124,19 +120,16 @@ const AnteControls = () => {
               >
                 {/* Add shimmer border for glimmering effect */}
                 <div className={styles.shimmerBorder}></div>
-                <span className={styles.backOutIcon}>✕</span>
                 <div className={styles.buttonInfo}>
-                  <h3 className={styles.buttonLabel}>BACK OUT</h3>
+                  <span className={styles.buttonLabel}>BACK OUT</span>
                 </div>
-              </button>
-            </div>
-          )}
-        </div>
+          </button>
+        )}
         
-        {/* Auto-Ante toggle - always shown */}
-        <div className={styles.autoAnteContainer}>
-          <AutoAnteToggle />
-        </div>
+        {/* Not enough chips message */}
+        {!isPlayerReady && !hasEnoughChips && (
+          <p className={styles.notEnoughChipsText}>Not enough coins</p>
+        )}
       </div>
     </div>
   );

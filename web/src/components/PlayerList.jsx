@@ -30,7 +30,7 @@ const PlayerList = () => {
     );
   }
   
-  const { players, currentPlayerId, dealerId, gameTransactions = [] } = gameState;
+  const { players, currentPlayerId, gameTransactions = [] } = gameState;
   const currentUserId = socket?.auth?.userId;
   
   // Use server-side calculated totals
@@ -57,7 +57,6 @@ const PlayerList = () => {
             const isCurrentPlayer = playerId === currentPlayerId;
             // Compare player.userId with currentUserId instead of comparing playerId with currentUserId
             const isCurrentUser = player.userId === currentUserId;
-            const isDealer = playerId === dealerId; // Use playerId instead of player.id
             const isDisconnected = player.disconnected === true;
             
             return (
@@ -85,7 +84,6 @@ const PlayerList = () => {
                   namePosition="right"
                 />
                 <span className={styles.playerStatus}>
-                  {isDealer && ` ${ICONS.DEALER}`}
                   {player.disconnected && <span className={styles.disconnectedIndicator} title="Player disconnected">⚠️ Disconnected</span>}
                 </span>
               </div>

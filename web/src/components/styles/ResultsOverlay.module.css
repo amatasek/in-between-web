@@ -1,0 +1,169 @@
+/* Result bar - bottom position like other overlays */
+.resultBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  animation: slideUp 0.5s ease-out;
+  width: 75%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.playerName {
+  color: var(--text-white);
+  font-weight: bold;
+}
+
+.resultText {
+  color: var(--text-white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Win bar styling */
+.winBar {
+  background: linear-gradient(120deg, var(--success-dark), var(--success));
+}
+
+.winAmount {
+  color: var(--text-white);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Loss bar styling */
+.lossBar {
+  background: linear-gradient(120deg, var(--secondary-dark), var(--secondary));
+}
+
+.lossAmount {
+  color: var(--text-white);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Penalty bar styling */
+.penaltyBar {
+  background: linear-gradient(120deg, var(--accent-dark), var(--accent));
+}
+
+.penaltyText {
+  color: var(--text-white);
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.penaltyAmount {
+  color: var(--text-white);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
+/* Animation container - covers the whole table */
+.animationContainer {
+  position: absolute;
+  inset: -100px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Caution tape container */
+.cautionTapeContainer {
+  position: absolute;
+  inset: -100px;
+  pointer-events: none;
+  z-index: 150;
+}
+
+/* Caution tape - positioned across the whole table */
+.cautionTape {
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  right: -10%;
+  width: 120%;
+  height: 35px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ffeb3b 0px,
+    #ffeb3b 20px,
+    #000 20px,
+    #000 40px
+  );
+  transform: rotate(-8deg);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--text-dark);
+  opacity: 0.9;
+  z-index: 200;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Second crossing tape */
+.cautionTape + .cautionTape {
+  top: 45%;
+  transform: rotate(8deg);
+  opacity: 0.9;
+}
+
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .resultBar {
+    font-size: 14px;
+    padding: 10px 20px;
+    gap: 10px;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .cautionTape {
+    font-size: 12px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .resultBar {
+    font-size: 11px;
+    padding: 6px 12px;
+    gap: 6px;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .penaltyText {
+    font-size: 10px;
+  }
+  
+  .cautionTape {
+    font-size: 10px;
+    height: 25px;
+  }
+}

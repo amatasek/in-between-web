@@ -10,7 +10,7 @@ import CoinIcon from './CoinIcon.jsx';
  * @param {string} props.background - Optional custom background style (e.g. 'dark', 'pill')
  * @param {string} props.customClass - Optional custom CSS class to apply
  */
-const CurrencyAmount = ({ amount, size, background, customClass }) => {
+const CurrencyAmount = ({ amount = 0, size, background, customClass }) => {
   // Determine which CSS classes to apply
   const containerClasses = [
     styles.currencyAmount,
@@ -19,10 +19,13 @@ const CurrencyAmount = ({ amount, size, background, customClass }) => {
     customClass || ''
   ].filter(Boolean).join(' ');
   
+  // Ensure amount is a valid number
+  const displayAmount = typeof amount === 'number' ? amount : 0;
+  
   return (
     <span className={containerClasses}>
       <CoinIcon size={size} />
-      <span>{amount.toLocaleString()}</span>
+      <span>{displayAmount.toLocaleString()}</span>
     </span>
   );
 };

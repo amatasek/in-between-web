@@ -9,7 +9,7 @@
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 0.5rem;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -67,6 +67,21 @@
 }
 
 /* Game bottom section layout */
+/* Table wrapper for sitting out state */
+.tableWrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Sitting out overlay */
+.sittingOutOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 300;
+}
+
 .gameBottomSection {
   display: flex;
   width: 100%;

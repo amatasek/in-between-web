@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './styles/CardDisplay.module.css';
 import { useGameContext } from '../contexts/GameContext';
-import ArrowIcon from './icons/ArrowIcon';
 import { getCurrentCardBackImage } from '../utils/cardBackManager';
+import { ICONS } from '../constants';
 
 const CardDisplay = () => {
   const { gameState } = useGameContext();
@@ -40,20 +40,20 @@ const CardDisplay = () => {
   
   // Map for handling both string names and direct symbols
   const suitSymbols = {
-    'hearts': '♥',
-    'diamonds': '♦',
-    'clubs': '♣',
-    'spades': '♠',
+    'hearts': ICONS.HEARTS,
+    'diamonds': ICONS.DIAMONDS,
+    'clubs': ICONS.CLUBS,
+    'spades': ICONS.SPADES,
     // Handle direct Unicode symbols as well
-    '♥': '♥',
-    '♦': '♦',
-    '♣': '♣',
-    '♠': '♠'
+    [ICONS.HEARTS]: ICONS.HEARTS,
+    [ICONS.DIAMONDS]: ICONS.DIAMONDS,
+    [ICONS.CLUBS]: ICONS.CLUBS,
+    [ICONS.SPADES]: ICONS.SPADES
   };
   
   // Helper to determine if a suit is red
   const isRedSuit = (suit) => {
-    return suit === '♥' || suit === '♦' || suit === 'hearts' || suit === 'diamonds';
+    return suit === ICONS.HEARTS || suit === ICONS.DIAMONDS || suit === 'hearts' || suit === 'diamonds';
   };
   
   const renderCard = (card, index) => {
@@ -78,9 +78,9 @@ const CardDisplay = () => {
         {isAce && !isMiddleCard && (
           <div className={`${styles.aceIndicator} ${isAceLow ? styles.aceLow : styles.aceHigh} ${isRed ? styles.redCard : styles.blackCard}`}>
             {isAceLow ? (
-              <span className={styles.indicatorContent}>LOW <ArrowIcon direction="down" color={isRed ? '#e74c3c' : '#2c3e50'} size={16} /></span>
+              <span className={styles.indicatorContent}>LOW {ICONS.ARROW_DOWN}</span>
             ) : (
-              <span className={styles.indicatorContent}>HIGH <ArrowIcon direction="up" color={isRed ? '#e74c3c' : '#2c3e50'} size={16} /></span>
+              <span className={styles.indicatorContent}>HIGH {ICONS.ARROW_UP}</span>
             )}
           </div>
         )}

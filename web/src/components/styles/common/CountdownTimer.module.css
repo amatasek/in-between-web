@@ -1,0 +1,70 @@
+/* Countdown Timer - Circular progress timer */
+
+.countdownTimer {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Styled with panel-game class - but keeping circular shape */
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 50%;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-md);
+}
+
+/* SVG progress ring */
+.progressRing {
+  position: absolute;
+  transform: rotate(-90deg);
+}
+
+/* Background circle (gray) */
+.progressRingBackground {
+  fill: none;
+  stroke: var(--color-border-light);
+}
+
+/* Progress circle (colored) */
+.progressRingCircle {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s linear, stroke 0.5s ease;
+  filter: drop-shadow(0 0 4px currentColor);
+  stroke-width: 3;
+}
+
+/* Time display */
+.timeDisplay {
+  position: relative;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-white);
+  text-shadow: var(--shadow-sm);
+  z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .countdownTimer {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .timeDisplay {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .countdownTimer {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .timeDisplay {
+    font-size: 12px;
+  }
+}
