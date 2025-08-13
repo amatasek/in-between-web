@@ -29,20 +29,37 @@
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
-  animation: slideUp 0.5s ease-out;
+  animation: slideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 75%;
   max-width: 450px;
   margin: 0 auto;
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
+  0% {
+    transform: translateY(60px) scale(0.8);
     opacity: 0;
+    filter: blur(3px);
   }
-  to {
-    transform: translateY(0);
+  20% {
+    opacity: 0.7;
+    filter: blur(1px);
+  }
+  60% {
+    transform: translateY(-8px) scale(1.05);
     opacity: 1;
+    filter: blur(0px);
+  }
+  80% {
+    transform: translateY(4px) scale(0.98);
+  }
+  95% {
+    transform: translateY(-2px) scale(1.01);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    filter: blur(0px);
   }
 }
 
@@ -59,7 +76,7 @@
 
 /* Win bar styling */
 .winBar {
-  background: linear-gradient(120deg, var(--success-dark), var(--success));
+  background: var(--color-ready);
 }
 
 .winAmount {
@@ -85,7 +102,7 @@
 
 /* Penalty bar styling */
 .penaltyBar {
-  background: linear-gradient(120deg, var(--accent-dark), var(--accent));
+  background: linear-gradient(120deg, var(--secondary-dark), var(--secondary));
 }
 
 .penaltyText {
@@ -122,15 +139,15 @@
 /* Caution tape - positioned across the whole table */
 .cautionTape {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 30px);
   left: -10%;
   right: -10%;
   width: 120%;
   height: 35px;
   background: repeating-linear-gradient(
     90deg,
-    #ffeb3b 0px,
-    #ffeb3b 20px,
+    #e74c3c 0px,
+    #e74c3c 20px,
     #000 20px,
     #000 40px
   );
@@ -140,7 +157,7 @@
   justify-content: space-around;
   font-weight: bold;
   font-size: 14px;
-  color: var(--text-dark);
+  color: var(--text-white);
   opacity: 0.9;
   z-index: 200;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
@@ -148,7 +165,7 @@
 
 /* Second crossing tape */
 .cautionTape + .cautionTape {
-  top: 50%;
+  top: calc(50% - 30px);
   left: -10%;
   right: -10%;
   transform: rotate(8deg);

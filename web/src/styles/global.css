@@ -170,10 +170,6 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
  */
 .panel {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
   font-size: 1.2rem;
   color: var(--text-primary);
   padding: var(--spacing-md);

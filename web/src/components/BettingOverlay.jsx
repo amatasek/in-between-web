@@ -32,8 +32,8 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   const spread = Math.abs(firstCard.numericValue - secondCard.numericValue) - 1;
   const maxBet = Math.min(potAmount, playerBalance);
   
-  // Preset bet amounts
-  const presetBets = [1, 5, 10, 25, 50].filter(amount => amount <= maxBet);
+  // Preset bet amounts - show only the highest 3 available
+  const presetBets = [1, 5, 10, 20, 50, 100].filter(amount => amount <= maxBet).slice(-3);
   
   const handleBet = (amount) => {
     if (amount > 0 && amount <= maxBet) {
@@ -55,54 +55,60 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   };
   
   return (
-    <div className={styles.bettingOverlay}>
+    <div className={`panel-game ${styles.bettingOverlay}`}>
       {/* Timer */}
       <div className={styles.timerContainer}>
         <CountdownTimer duration={30} isActive={true} />
       </div>
       
-      {/* Pass button */}
-      <button
-        className={`${styles.chip} ${styles.foldChip}`}
-        onClick={handleFold}
-        data-gamepad-focusable="true"
-      >
-        <span className={styles.chipLabel}>PASS</span>
-      </button>
-      
-      {/* Preset bet chips */}
-      {presetBets.map(amount => (
-        <button
-          key={amount}
-          className={`${styles.chip} ${styles.betChip}`}
-          onClick={() => handleBet(amount)}
-          data-gamepad-focusable="true"
-        >
-          <span className={styles.chipAmount}>${amount}</span>
-        </button>
-      ))}
-      
-      {/* POT button */}
-      {maxBet === potAmount && (
-        <div className={styles.potButtonWrapper}>
-          <PotButton 
-            onClick={() => handleBet(potAmount)}
-            disabled={false}
-            amount={potAmount}
-          />
-        </div>
-      )}
-      
-      {/* Custom bet */}
       {!showCustomInput ? (
-        <button
-          className={`${styles.chip} ${styles.customChip}`}
-          onClick={() => setShowCustomInput(true)}
-          data-gamepad-focusable="true"
-        >
-          <span className={styles.chipLabel}>CUSTOM</span>
-        </button>
+        <>
+          {/* Pass button */}
+          <button
+            className={`${styles.betButton} ${styles.passButton}`}
+            onClick={handleFold}
+            data-gamepad-focusable="true"
+            autoFocus
+          >
+            <span>PASS</span>
+          </button>
+          
+          {/* Preset bet buttons */}
+          {presetBets.map(amount => (
+            <button
+              key={amount}
+              className={`${styles.betButton} ${styles.amountButton}`}
+              onClick={() => handleBet(amount)}
+              data-gamepad-focusable="true"
+            >
+              <div className={styles.amountPill}>
+                <CurrencyAmount amount={amount} size="small" />
+              </div>
+            </button>
+          ))}
+          
+          {/* POT button */}
+          {maxBet === potAmount && (
+            <div className={styles.potButtonWrapper}>
+              <PotButton 
+                onClick={() => handleBet(potAmount)}
+                disabled={false}
+                amount={potAmount}
+              />
+            </div>
+          )}
+          
+          {/* Custom button */}
+          <button
+            className={`${styles.betButton} ${styles.customButton}`}
+            onClick={() => setShowCustomInput(true)}
+            data-gamepad-focusable="true"
+          >
+            <span>CUSTOM</span>
+          </button>
+        </>
       ) : (
+        /* Custom bet input - takes over entire overlay */
         <div className={styles.customInput}>
           <input
             type="number"
@@ -114,6 +120,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
             max={maxBet}
             autoFocus
             className={styles.betInput}
+            data-gamepad-focusable="true"
           />
           <button 
             onClick={handleCustomBet}

@@ -2,14 +2,12 @@
   display: inline-block;
   margin-right: 2px;
   position: relative;
-  top: -1px;
+  top: 1px;
   line-height: 0;
-  vertical-align: middle;
 }
 
 .coinIcon svg {
   display: block;
-  vertical-align: middle;
 }
 
 .small {

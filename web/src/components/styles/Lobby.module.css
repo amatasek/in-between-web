@@ -267,3 +267,13 @@
   flex-direction: column;
   gap: 1rem;
 }
+
+/* GameCard layout - row layout for game cards */
+.gameCard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+

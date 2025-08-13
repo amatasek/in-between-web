@@ -9,8 +9,9 @@
 /* Base falling item */
 .fallingItem {
   position: absolute;
-  top: -200px; /* Start well above viewport */
-  animation: fall var(--animation-duration, 3s) ease-in forwards;
+  top: -50px; /* Start just above viewport */
+  animation: fall var(--animation-duration, 3s) linear infinite;
+  will-change: transform;
 }
 
 /* Emoji styling */
@@ -18,67 +19,67 @@
   font-size: 36px;
   display: block;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  animation: sway var(--animation-duration, 3s) ease-in-out infinite;
 }
 
 /* Confetti piece */
 .confetti {
   width: 12px;
   height: 12px;
-  animation: confettiFall var(--animation-duration, 3s) ease-out forwards;
+  animation: confettiFall var(--animation-duration, 3s) linear infinite;
 }
 
 /* Main falling animation */
 @keyframes fall {
   0% {
-    transform: translateY(-100px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
+    transform: translateY(0px) rotate(0deg);
     opacity: 1;
   }
   100% {
-    transform: translateY(calc(100vh + 200px)) rotate(180deg);
-    opacity: 0;
+    transform: translateY(calc(100vh + 100px)) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+/* Subtle swaying for emojis */
+@keyframes sway {
+  0%, 100% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(10px);
   }
 }
 
 /* Special confetti animation */
 @keyframes confettiFall {
   0% {
-    transform: translateY(-100px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
+    transform: translateY(0px) rotate(0deg);
     opacity: 1;
   }
   100% {
-    transform: translateY(calc(100vh + 250px)) rotate(720deg);
-    opacity: 0;
+    transform: translateY(calc(100vh + 100px)) rotate(720deg);
+    opacity: 1;
   }
 }
 
 /* Coin-specific animation (slightly different physics) */
 .fallingItem:has(.coinIcon) {
-  animation: coinFall var(--animation-duration, 2.5s) ease-in forwards;
+  animation: coinFall var(--animation-duration, 2.5s) linear infinite;
 }
 
 @keyframes coinFall {
   0% {
-    transform: translateY(-100px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
+    transform: translateY(0px) rotate(0deg) scale(1);
     opacity: 1;
   }
-  90% {
+  50% {
+    transform: translateY(calc(50vh)) rotate(180deg) scale(1.1);
     opacity: 1;
   }
   100% {
-    transform: translateY(calc(100vh + 200px)) rotate(360deg);
-    opacity: 0;
+    transform: translateY(calc(100vh + 100px)) rotate(360deg) scale(1);
+    opacity: 1;
   }
 }
 

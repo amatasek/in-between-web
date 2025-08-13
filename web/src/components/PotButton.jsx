@@ -3,8 +3,8 @@ import styles from './styles/PotButton.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 
 /**
- * PotButton - A special betting chip for betting the entire pot
- * Styled to match other betting chips but with gold accents to stand out
+ * PotButton - A special betting button for betting the entire pot
+ * Styled to match other betting buttons but with dramatic golden styling to stand out
  * 
  * @param {Object} props - Component props
  * @param {number} props.amount - The pot amount to display
@@ -21,10 +21,11 @@ const PotButton = ({ amount, disabled, onClick, ...props }) => {
       data-gamepad-focusable="true"
       {...props}
     >
-      <span className={styles.potLabel}>POT</span>
-      <span className={styles.potAmount}>${amount}</span>
-      <div className={styles.innerRing} />
       <div className={styles.glowEffect} />
+      <span className={styles.potLabel}>POT</span>
+      <div className={styles.currencyPill}>
+        <CurrencyAmount amount={amount} size="small" />
+      </div>
     </button>
   );
 };

@@ -19,7 +19,7 @@ function GameCard({ game, onJoin, userId }) {
   }
 
   // Determine card container class
-  let cardClass = 'panel'; // Use global panel class
+  let cardClass = `panel ${styles.gameCard}`; // Use global panel class + gameCard layout
   if (isUserDisconnected) {
     cardClass += ` ${styles.userDisconnectedGame}`;
   } else if (isUserInGame) {
@@ -27,15 +27,7 @@ function GameCard({ game, onJoin, userId }) {
   }
 
   return (
-    <div className={cardClass} style={{ 
-      marginBottom: '0.75rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexWrap: 'nowrap',
-      fontSize: '1rem',
-      padding: '0.75rem 1rem'
-    }}> {/* Use panel + conditional */}
+    <div className={cardClass}> {/* Use panel + conditional */}
       {/* Replicate original info structure */}
       <div className={styles.gameListInfo} style={{ flex: 1 }}>
         <div className={styles.gameListId}> {/* Div for ID/Name + Badges */}

@@ -33,7 +33,7 @@ const WaitingTimer = ({
   const progress = ((duration - timeLeft) / duration) * 100;
   
   return (
-    <div className={styles.waitingTimer}>
+    <div className={`panel-game ${styles.waitingTimer}`}>
       <div className={styles.timerContent}>
         <span className={styles.playerName}>{playerName}</span>
         <span className={styles.action}>is {action}...</span>

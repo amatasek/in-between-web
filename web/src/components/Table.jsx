@@ -9,6 +9,7 @@ import AceChoiceOverlay from './AceChoiceOverlay';
 import BettingOverlay from './BettingOverlay';
 import SecondChanceOverlay from './SecondChanceOverlay';
 import ResultsOverlay from './ResultsOverlay';
+import RevealingOverlay from './RevealingOverlay';
 import AnteControls from './AnteControls';
 import ImBackButton from './ImBackButton';
 
@@ -96,6 +97,14 @@ const Table = () => {
             />
           )}
         </>
+      )}
+      
+      {/* Revealing overlay - show during revealing phase */}
+      {phase === 'revealing' && !isSittingOut && (
+        <RevealingOverlay 
+          playerName={players[currentPlayerId]?.name || 'Player'}
+          betAmount={players[currentPlayerId]?.currentBet || 0}
+        />
       )}
       
       {/* Results overlay fills entire table - show even when sitting out */}

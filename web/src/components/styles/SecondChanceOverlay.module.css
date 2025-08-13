@@ -137,12 +137,12 @@
 
 /* Ante button */
 .anteButton {
-  background: linear-gradient(135deg, var(--success), var(--success-dark));
-  border-color: var(--success);
+  background: linear-gradient(135deg, var(--color-ready), var(--success-dark));
+  border-color: var(--color-ready);
 }
 
 .anteButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--success-light), var(--success));
+  background: linear-gradient(135deg, var(--success-light), var(--color-ready));
   border-color: var(--success-light);
   box-shadow: 0 6px 20px var(--color-focus-shadow);
 }

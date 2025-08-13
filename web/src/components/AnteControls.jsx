@@ -58,7 +58,7 @@ const AnteControls = () => {
   // Player state and readiness is managed by the game context
   
   return (
-    <div className={styles.anteControls}>
+    <div className={`panel-game ${styles.anteControls}`}>
       {/* Main action buttons */}
       {!isPlayerReady ? (
           // Player is not ready - show Auto-Ante, Ante button and Sit Out button

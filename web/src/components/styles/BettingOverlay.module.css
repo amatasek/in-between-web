@@ -11,7 +11,6 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 30;
-  width: 90%;
   max-width: 600px;
 }
 
@@ -54,94 +53,84 @@
   font-weight: 500;
 }
 
-/* Chip base styles - matching AnteControls size */
-.chip {
-  position: relative;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* Bet button base styles */
+.betButton {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  box-shadow: 
-    var(--shadow-md),
-    inset 0 2px 4px var(--color-border-lighter);
-}
-
-.chip:hover:not(:disabled) {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 
-    var(--shadow-lg),
-    inset 0 2px 4px var(--color-border-lighter);
-}
-
-.chip:active {
-  transform: translateY(-1px) scale(1.02);
-}
-
-/* Pass chip - grey/neutral styling */
-.foldChip {
-  background: linear-gradient(145deg, var(--neutral-dark), var(--primary-dark));
-  color: var(--text-white);
-  border: 3px solid var(--primary-light);
-}
-
-.foldChip:hover {
-  background: linear-gradient(145deg, var(--neutral), var(--neutral-dark));
-  border-color: var(--neutral-dark);
-  box-shadow: 
-    var(--shadow-lg),
-    0 0 15px rgba(149,165,166,0.3);
-}
-
-/* Bet chips */
-.betChip {
-  background: linear-gradient(145deg, var(--info), var(--info-dark));
-  color: var(--text-white);
-  border: 3px solid var(--info-dark);
-  position: relative;
-}
-
-.betChip::before {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border-radius: 50%;
-  border: 2px dashed var(--color-border-lighter);
-}
-
-.betChip:hover {
-  background: linear-gradient(145deg, var(--info-light), var(--info));
-  border-color: var(--info-dark);
-}
-
-/* Custom chip */
-.customChip {
-  background: linear-gradient(145deg, var(--secondary), var(--secondary-dark));
-  color: var(--text-white);
-  border: 3px solid var(--secondary-dark);
-}
-
-.customChip:hover {
-  background: linear-gradient(145deg, var(--accent-light), var(--accent));
-  border-color: var(--accent-dark);
-}
-
-/* Chip labels */
-.chipLabel {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.chipAmount {
+  gap: 4px;
+  padding: 8px 16px;
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  min-width: 60px;
+  height: 40px;
+}
+
+.betButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.betButton:active {
+  transform: translateY(0);
+}
+
+/* Pass button - secondary styling */
+.passButton {
+  background: linear-gradient(145deg, var(--neutral-dark), var(--primary-dark));
+  border: 2px solid var(--primary-light);
+  color: var(--text-white);
+}
+
+.passButton:hover:not(:disabled) {
+  background: linear-gradient(145deg, var(--neutral), var(--neutral-dark));
+  border-color: var(--neutral-dark);
+}
+
+/* Amount buttons - tertiary styling */
+.amountButton {
+  background: linear-gradient(to right, var(--btn-tertiary-start), var(--btn-tertiary-end));
+  border: 2px solid var(--btn-tertiary-end);
+  color: var(--text-white);
+}
+
+.amountButton:hover:not(:disabled) {
+  background: linear-gradient(to right, var(--btn-tertiary-hover-start), var(--btn-tertiary-hover-end));
+  border-color: var(--btn-tertiary-hover-end);
+}
+
+/* Custom button - primary styling */
+.customButton {
+  background: linear-gradient(to right, var(--btn-primary-start), var(--btn-primary-end));
+  border: 2px solid var(--btn-primary-end);
+  color: var(--text-white);
+}
+
+.customButton:hover:not(:disabled) {
+  background: linear-gradient(to right, var(--btn-primary-hover-start), var(--btn-primary-hover-end));
+  border-color: var(--btn-primary-hover-end);
+}
+
+/* Small pill for amount display in suggested bet buttons */
+.amountPill {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 1px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.amountPill :global(*) {
+  color: #FFD700 !important;
+  font-weight: bold;
+  text-shadow: none;
 }
 
 /* POT button wrapper */
@@ -161,16 +150,18 @@
 }
 
 .betInput {
-  width: 70px;
-  padding: 6px 10px;
+  min-width: 100px;
+  height: 40px;
+  padding: 8px 16px;
   border: 2px solid var(--color-border-light);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-white);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: bold;
   text-align: center;
   outline: none;
+  box-sizing: border-box;
 }
 
 .betInput:focus {
@@ -180,39 +171,44 @@
 
 .confirmButton,
 .cancelButton {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  min-width: 60px;
+  height: 40px;
 }
 
 .confirmButton {
-  background: linear-gradient(145deg, var(--success), var(--success-dark));
+  background: linear-gradient(to right, var(--btn-primary-start), var(--btn-primary-end));
   color: var(--text-white);
+  border: none;
 }
 
 .confirmButton:hover {
-  transform: scale(1.05);
-  background: linear-gradient(145deg, var(--success-light), var(--success));
-  box-shadow: 0 0 10px rgba(46,204,113,0.3);
+  transform: translateY(-1px);
+  background: linear-gradient(to right, var(--btn-primary-hover-start), var(--btn-primary-hover-end));
+  box-shadow: var(--shadow-md);
 }
 
 .cancelButton {
-  background: linear-gradient(145deg, var(--secondary), var(--secondary-dark));
-  color: var(--text-white);
+  background: linear-gradient(to bottom, var(--btn-secondary-start), var(--btn-secondary-end));
+  color: var(--text-light);
+  border: 2px solid var(--color-border-light);
 }
 
 .cancelButton:hover {
-  transform: scale(1.05);
-  background: linear-gradient(145deg, var(--secondary-light), var(--secondary));
-  box-shadow: 0 0 10px rgba(231,76,60,0.3);
+  transform: translateY(-1px);
+  background: linear-gradient(to bottom, var(--btn-secondary-hover-start), var(--btn-secondary-hover-end));
+  border: 2px solid var(--color-border-lighter);
+  box-shadow: var(--shadow-md);
 }
 
 /* Spread indicator */
@@ -243,30 +239,26 @@
     width: 95%;
   }
   
-  .chip {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .chipLabel {
-    font-size: 10px;
-  }
-  
-  .chipAmount {
-    font-size: 14px;
+  .betButton {
+    padding: 6px 12px;
+    font-size: 13px;
+    min-width: 55px;
+    height: 36px;
   }
   
   .betInput {
-    width: 70px;
-    padding: 6px 10px;
-    font-size: 13px;
+    width: 120px;
+    height: 36px;
+    padding: 6px 12px;
+    font-size: 14px;
   }
   
   .confirmButton,
   .cancelButton {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
+    padding: 6px 12px;
+    font-size: 13px;
+    min-width: 55px;
+    height: 36px;
   }
 }
 
@@ -276,31 +268,65 @@
   }
   
   .bettingOverlay {
-    gap: 6px;
+    gap: 4px;
     bottom: 6px;
+    padding: 0 8px;
   }
   
-  .chip {
-    width: 45px;
-    height: 45px;
-  }
-  
-  .chipLabel {
-    font-size: 9px;
-  }
-  
-  .chipAmount {
-    font-size: 12px;
+  .betButton {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 45px;
+    height: 30px;
   }
   
   .betInput {
-    width: 60px;
-    padding: 5px 8px;
+    width: 85px;
+    height: 30px;
+    padding: 4px 8px;
     font-size: 12px;
+  }
+  
+  .confirmButton,
+  .cancelButton {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 40px;
+    height: 30px;
   }
   
   .spreadIndicator {
     font-size: 11px;
     padding: 3px 10px;
+  }
+}
+
+/* Extra small screens - ensure 3 buttons fit */
+@media (max-width: 380px) {
+  .bettingOverlay {
+    gap: 3px;
+    padding: 0 6px;
+  }
+  
+  .betButton {
+    padding: 3px 6px;
+    font-size: 10px;
+    min-width: 40px;
+    height: 28px;
+  }
+  
+  .betInput {
+    width: 75px;
+    height: 28px;
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+  
+  .confirmButton,
+  .cancelButton {
+    padding: 3px 6px;
+    font-size: 10px;
+    min-width: 35px;
+    height: 28px;
   }
 }

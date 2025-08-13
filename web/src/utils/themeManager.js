@@ -262,15 +262,15 @@ const themes = {
     '--text-error': '#FF6B6B',
     '--text-success': '#FFB612',
     '--text-warning': '#FFC42E',
-    '--text-info': '#FFFFFF',
+    '--text-info': '#FFB612',
     '--text-faded': 'rgba(255, 255, 255, 0.6)',
     '--text-subtle': 'rgba(255, 255, 255, 0.7)',
     '--text-bright': 'rgba(255, 255, 255, 0.9)',
     
-    // Info colors (white)
-    '--info': '#FFFFFF',
-    '--info-dark': '#F0F0F0',
-    '--info-light': '#FFFFFF',
+    // Info colors (Packers yellow)
+    '--info': '#FFB612',
+    '--info-dark': '#FFA300',
+    '--info-light': '#FFC42E',
     
     // Success colors (Packers green)
     '--success': '#203731',

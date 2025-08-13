@@ -55,7 +55,7 @@
   }
   .cardsRow {
     gap: 0.7rem;
-    transform: translate(-50%, calc(-50% - 4px));
+    transform: translate(-50%, calc(-50% - 12px));
   }
 }
 
@@ -66,7 +66,7 @@
   }
   .cardsRow {
     gap: 0.5rem;
-    transform: translate(-50%, calc(-50% - 4px));
+    transform: translate(-50%, calc(-50% - 12px));
   }
 }
 

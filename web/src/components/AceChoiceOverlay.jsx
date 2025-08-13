@@ -34,7 +34,7 @@ const AceChoiceOverlay = ({ card, isCurrentPlayersTurn, bottomPosition = false }
     }
     
     return (
-      <div className={styles.aceControlsBottom}>
+      <div className={`panel-game ${styles.aceControlsBottom}`}>
         <div className={styles.timerContainer}>
           <CountdownTimer duration={15} isActive={true} />
         </div>

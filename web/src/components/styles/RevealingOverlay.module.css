@@ -1,0 +1,128 @@
+/* Revealing overlay - shows during the revealing phase */
+.revealingOverlay {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: 75%;
+  max-width: 450px;
+  animation: betPlacement 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Make revealing overlay more compact on desktop */
+@media (min-width: 769px) {
+  .revealingOverlay {
+    padding: 8px 24px;
+  }
+}
+
+/* Content container */
+.revealingContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+/* Player name styling */
+.playerName {
+  color: var(--text-white);
+  font-weight: bold;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Action text styling */
+.actionText {
+  color: var(--text-subtle);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Bet amount styling */
+.betAmount {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 2px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.betAmount :global(*) {
+  color: #FFD700 !important;
+  font-weight: bold;
+  text-shadow: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .revealingOverlay {
+    bottom: 7px;
+    padding: 10px 20px;
+    width: 95%;
+    max-width: none;
+  }
+  
+  .playerName,
+  .actionText {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .revealingOverlay {
+    bottom: 6px;
+    padding: 8px 16px;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .revealingContent {
+    gap: 6px;
+  }
+  
+  .playerName,
+  .actionText {
+    font-size: 12px;
+  }
+  
+  .betAmount {
+    padding: 1px 6px;
+  }
+}
+
+/* Bet placement animation - toned down drop and settle */
+@keyframes betPlacement {
+  0% {
+    transform: translateX(-50%) translateY(-40px) scale(1.1);
+    opacity: 0;
+    filter: blur(1px);
+  }
+  30% {
+    opacity: 0.9;
+    filter: blur(0px);
+  }
+  70% {
+    transform: translateX(-50%) translateY(4px) scale(0.98);
+    opacity: 1;
+  }
+  90% {
+    transform: translateX(-50%) translateY(-2px) scale(1.02);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+    filter: blur(0px);
+  }
+}

@@ -52,8 +52,6 @@
   isolation: isolate;
 }
 
-
-
 .currentPlayerGlow {
   animation: subtlePulse 2s infinite;
   box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);

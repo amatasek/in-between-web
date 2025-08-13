@@ -54,7 +54,7 @@ const ResultsOverlay = ({ result, players }) => {
             <span className={styles.resultText}>WINS</span>
             {result.winnings && result.winnings > 0 && (
               <span className={styles.winAmount}>
-                <CurrencyAmount amount={result.winnings} size="small" />
+                <CurrencyAmount amount={result.winnings / 2} size="small" />
               </span>
             )}
           </div>
@@ -153,7 +153,7 @@ const ResultsOverlay = ({ result, players }) => {
       <div className={styles.messageArea}>
         <div className={`panel ${styles.resultBar} ${styles.penaltyBar}`}>
           <span className={styles.playerName}>{playerName}</span>
-          <span className={styles.resultText}>{result.isTripleAceTie ? 'TRIPLE TIE' : 'TIE'}</span>
+          <span className={styles.resultText}>{result.isTripleAceTie ? 'TRIPLE' : ''}</span>
           <span className={styles.penaltyText}>{result.isTripleAceTie ? '3x' : '2x'} PENALTY</span>
           <span className={styles.penaltyAmount}>
             <CurrencyAmount amount={penaltyAmount} size="small" />
