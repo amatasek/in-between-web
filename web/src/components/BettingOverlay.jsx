@@ -55,7 +55,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   };
   
   return (
-    <div className={`panel-game ${styles.bettingOverlay}`}>
+    <div className={styles.bettingOverlay}>
       {/* Timer */}
       <div className={styles.timerContainer}>
         <CountdownTimer duration={30} isActive={true} />
@@ -103,7 +103,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
           <span className={styles.chipLabel}>CUSTOM</span>
         </button>
       ) : (
-        <div className={`panel-game ${styles.customInput}`}>
+        <div className={styles.customInput}>
           <input
             type="number"
             value={customBet}

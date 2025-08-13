@@ -1,9 +1,31 @@
+/* Results container - fills the entire table */
+.resultsContainer {
+  position: absolute;
+  inset: 0;
+  border-radius: 150px / 75px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Message area - positioned at bottom */
+.messageArea {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 600px;
+  pointer-events: auto;
+}
+
 /* Result bar - bottom position like other overlays */
 .resultBar {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 12px;
+  flex-wrap: nowrap;
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
@@ -84,7 +106,7 @@
 /* Animation container - covers the whole table */
 .animationContainer {
   position: absolute;
-  inset: -100px;
+  inset: 0;
   pointer-events: none;
   z-index: 100;
 }
@@ -92,7 +114,7 @@
 /* Caution tape container */
 .cautionTapeContainer {
   position: absolute;
-  inset: -100px;
+  inset: 0;
   pointer-events: none;
   z-index: 150;
 }
@@ -126,7 +148,9 @@
 
 /* Second crossing tape */
 .cautionTape + .cautionTape {
-  top: 45%;
+  top: 50%;
+  left: -10%;
+  right: -10%;
   transform: rotate(8deg);
   opacity: 0.9;
 }
@@ -135,9 +159,18 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .resultsContainer {
+    border-radius: 130px / 65px;
+  }
+  
+  .messageArea {
+    width: 95%;
+    bottom: 7px;
+  }
+  
   .resultBar {
     font-size: 14px;
-    padding: 10px 20px;
+    padding: 16px 20px;
     gap: 10px;
     width: 100%;
     max-width: none;
@@ -150,9 +183,17 @@
 }
 
 @media (max-width: 480px) {
+  .resultsContainer {
+    border-radius: 20px;
+  }
+  
+  .messageArea {
+    bottom: 6px;
+  }
+  
   .resultBar {
     font-size: 11px;
-    padding: 6px 12px;
+    padding: 12px 12px;
     gap: 6px;
     width: 100%;
     max-width: none;

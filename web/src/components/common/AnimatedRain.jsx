@@ -28,7 +28,7 @@ const AnimatedRain = ({
             style={{
               left: `${randomLeft}%`,
               animationDelay: `${randomDelay}s`,
-              animationDuration: `${animationDuration}s`
+              '--animation-duration': `${animationDuration}s`
             }}
           >
             <CoinIcon size="large" />
@@ -44,7 +44,7 @@ const AnimatedRain = ({
             style={{
               left: `${randomLeft}%`,
               animationDelay: `${randomDelay}s`,
-              animationDuration: `${animationDuration * 1.2}s`,
+              '--animation-duration': `${animationDuration * 1.2}s`,
               backgroundColor: colors[Math.floor(Math.random() * colors.length)]
             }}
           />
@@ -60,7 +60,7 @@ const AnimatedRain = ({
             style={{
               left: `${randomLeft}%`,
               animationDelay: `${randomDelay}s`,
-              animationDuration: `${animationDuration}s`
+              '--animation-duration': `${animationDuration}s`
             }}
           >
             <span className={styles.emoji}>

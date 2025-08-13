@@ -34,7 +34,7 @@ const AnteOverlay = () => {
   };
   
   return (
-    <div className={`panel-game ${styles.anteOverlay}`}>
+    <div className={styles.anteOverlay}>
       {/* Ante status */}
       <div className={styles.anteStatus}>
         <div className={styles.statusHeader}>

@@ -1,20 +1,24 @@
 /* Ante Controls - Clean overlay style matching betting/choice overlays */
 
-.anteControlsWrapper {
+
+.anteControls {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  width: 100%;
+  justify-content: center;
+  gap: 15px;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
 }
 
-.controlsContainer {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center;
-  gap: 15px;
-  padding: 12px 20px;
-  /* Styled with panel-game class */
-  position: relative;
+/* Make ante controls more compact on desktop */
+@media (min-width: 769px) {
+  .anteControls {
+    gap: 12px;
+  }
 }
 
 /* Button row container - removed as no longer needed */
@@ -171,6 +175,10 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .anteControls {
+    bottom: 7px;
+  }
+  
   .anteButton, .backOutButton, .sitOutHalfWidth {
     width: 48px;
     height: 48px;
@@ -187,9 +195,9 @@
 }
 
 @media (max-width: 480px) {
-  .controlsContainer {
-    padding: 10px 15px;
+  .anteControls {
     gap: 8px;
+    bottom: 6px;
   }
   
   .anteButton, .backOutButton, .sitOutHalfWidth {

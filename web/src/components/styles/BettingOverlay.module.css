@@ -6,16 +6,30 @@
   align-items: center;
   justify-content: center;
   padding: 10px 16px;
-  position: relative;
-}
-
-/* Timer container */
-.timerContainer {
   position: absolute;
-  top: -60px;
+  bottom: 4px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 30;
+  width: 90%;
+  max-width: 600px;
+}
+
+/* Make betting overlay more compact on desktop */
+@media (min-width: 769px) {
+  .bettingOverlay {
+    padding: 4px 16px;
+    gap: 10px;
+  }
+}
+
+/* Timer container - centered on table */
+.timerContainer {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
 }
 
 /* Waiting overlay when not player's turn */
@@ -25,6 +39,13 @@
   justify-content: center;
   padding: 12px 24px;
   /* Styled with panel-game class */
+}
+
+/* Make waiting overlay more compact on desktop */
+@media (min-width: 769px) {
+  .waitingOverlay {
+    padding: 8px 24px;
+  }
 }
 
 .waitingText {
@@ -211,9 +232,15 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .timerContainer {
+    top: -105px;
+  }
+  
   .bettingOverlay {
     gap: 8px;
     padding: 0 10px;
+    bottom: 7px;
+    width: 95%;
   }
   
   .chip {
@@ -244,8 +271,13 @@
 }
 
 @media (max-width: 480px) {
+  .timerContainer {
+    top: -90px;
+  }
+  
   .bettingOverlay {
     gap: 6px;
+    bottom: 6px;
   }
   
   .chip {

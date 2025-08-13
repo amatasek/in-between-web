@@ -31,8 +31,8 @@ const ResultsOverlay = ({ result, players }) => {
     const coinCount = Math.floor(5 + (winIntensity * 20));
     
     return (
-      <>
-        {/* Animations container - positioned absolute to cover the whole table */}
+      <div className={styles.resultsContainer}>
+        {/* Animations container - fills the whole table */}
         <div className={styles.animationContainer}>
           <AnimatedRain 
             type="confetti"
@@ -48,16 +48,18 @@ const ResultsOverlay = ({ result, players }) => {
         </div>
         
         {/* Bottom message bar */}
-        <div className={`panel ${styles.resultBar} ${styles.winBar}`}>
-          <span className={styles.playerName}>{playerName}</span>
-          <span className={styles.resultText}>WINS</span>
-          {result.winnings && result.winnings > 0 && (
-            <span className={styles.winAmount}>
-              <CurrencyAmount amount={result.winnings / 2} size="small" />
-            </span>
-          )}
+        <div className={styles.messageArea}>
+          <div className={`panel ${styles.resultBar} ${styles.winBar}`}>
+            <span className={styles.playerName}>{playerName}</span>
+            <span className={styles.resultText}>WINS</span>
+            {result.winnings && result.winnings > 0 && (
+              <span className={styles.winAmount}>
+                <CurrencyAmount amount={result.winnings} size="small" />
+              </span>
+            )}
+          </div>
         </div>
-      </>
+      </div>
     );
   }
   
@@ -85,7 +87,7 @@ const ResultsOverlay = ({ result, players }) => {
     }
     
     return (
-      <>
+      <div className={styles.resultsContainer}>
         {/* Animations container */}
         <div className={styles.animationContainer}>
           <AnimatedRain 
@@ -97,16 +99,18 @@ const ResultsOverlay = ({ result, players }) => {
         </div>
         
         {/* Bottom message bar */}
-        <div className={`panel ${styles.resultBar} ${styles.lossBar}`}>
-          <span className={styles.playerName}>{playerName}</span>
-          <span className={styles.resultText}>LOST</span>
-          {result.betAmount && result.betAmount > 0 && (
-            <span className={styles.lossAmount}>
-              <CurrencyAmount amount={result.betAmount} size="small" />
-            </span>
-          )}
+        <div className={styles.messageArea}>
+          <div className={`panel ${styles.resultBar} ${styles.lossBar}`}>
+            <span className={styles.playerName}>{playerName}</span>
+            <span className={styles.resultText}>LOST</span>
+            {result.betAmount && result.betAmount > 0 && (
+              <span className={styles.lossAmount}>
+                <CurrencyAmount amount={result.betAmount} size="small" />
+              </span>
+            )}
+          </div>
         </div>
-      </>
+      </div>
     );
   }
   
@@ -120,7 +124,7 @@ const ResultsOverlay = ({ result, players }) => {
     : ['⚠️', '🚨', '⛔', '🔴', '❌', '💥', '🎯', '🎲'];
   
   return (
-    <>
+    <div className={styles.resultsContainer}>
       {/* Caution tapes container - absolute positioned across whole table */}
       <div className={styles.cautionTapeContainer}>
         <div className={styles.cautionTape}>
@@ -146,15 +150,17 @@ const ResultsOverlay = ({ result, players }) => {
       </div>
       
       {/* Bottom message bar */}
-      <div className={`panel ${styles.resultBar} ${styles.penaltyBar}`}>
-        <span className={styles.playerName}>{playerName}</span>
-        <span className={styles.resultText}>{result.isTripleAceTie ? 'TRIPLE TIE' : 'TIE'}</span>
-        <span className={styles.penaltyText}>{result.isTripleAceTie ? '3x' : '2x'} PENALTY</span>
-        <span className={styles.penaltyAmount}>
-          <CurrencyAmount amount={penaltyAmount} size="small" />
-        </span>
+      <div className={styles.messageArea}>
+        <div className={`panel ${styles.resultBar} ${styles.penaltyBar}`}>
+          <span className={styles.playerName}>{playerName}</span>
+          <span className={styles.resultText}>{result.isTripleAceTie ? 'TRIPLE TIE' : 'TIE'}</span>
+          <span className={styles.penaltyText}>{result.isTripleAceTie ? '3x' : '2x'} PENALTY</span>
+          <span className={styles.penaltyAmount}>
+            <CurrencyAmount amount={penaltyAmount} size="small" />
+          </span>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -13,7 +13,11 @@
   box-shadow: var(--shadow-lg);
   width: 75%;
   max-width: 450px;
-  margin: 0 auto;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
 }
 
 /* Timer content */
@@ -59,6 +63,7 @@
     padding: 10px 16px;
     width: 100%;
     max-width: none;
+    bottom: 7px;
   }
   
   .playerName,
@@ -69,10 +74,10 @@
 
 @media (max-width: 480px) {
   .waitingTimer {
-    min-width: 180px;
     padding: 8px 14px;
-    width: 100%;
-    max-width: none;
+    width: 90%;
+    max-width: 600px;
+    bottom: 6px;
   }
   
   .playerName,

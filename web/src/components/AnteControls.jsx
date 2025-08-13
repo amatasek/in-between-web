@@ -58,10 +58,9 @@ const AnteControls = () => {
   // Player state and readiness is managed by the game context
   
   return (
-    <div className={styles.anteControlsWrapper}>
-      <div className={`panel-game ${styles.controlsContainer}`}>
-        {/* Main action buttons */}
-        {!isPlayerReady ? (
+    <div className={styles.anteControls}>
+      {/* Main action buttons */}
+      {!isPlayerReady ? (
           // Player is not ready - show Auto-Ante, Ante button and Sit Out button
           <>
             {/* Auto-Ante toggle - only show when ante is available */}
@@ -126,11 +125,10 @@ const AnteControls = () => {
           </button>
         )}
         
-        {/* Not enough chips message */}
-        {!isPlayerReady && !hasEnoughChips && (
-          <p className={styles.notEnoughChipsText}>Not enough coins</p>
-        )}
-      </div>
+      {/* Not enough chips message */}
+      {!isPlayerReady && !hasEnoughChips && (
+        <p className={styles.notEnoughChipsText}>Not enough coins</p>
+      )}
     </div>
   );
 };

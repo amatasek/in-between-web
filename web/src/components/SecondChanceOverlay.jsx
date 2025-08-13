@@ -48,7 +48,7 @@ const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bott
     }
     
     return (
-      <div className={`panel-game ${styles.secondChanceBottom}`}>
+      <div className={styles.secondChanceBottom}>
         <div className={styles.timerContainer}>
           <CountdownTimer duration={15} isActive={true} />
         </div>

@@ -39,10 +39,8 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
     
-  /* Center content */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* Container for positioned elements */
+  position: relative;
   overflow: hidden;
 }
 
@@ -99,45 +97,8 @@
   mix-blend-mode: screen;
 }
 
-/* Pot area - top of table */
-.potArea {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-}
 
-/* Card display area - center of table */
-.cardArea {
-  position: relative;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-/* Betting area - bottom of table */
-.bettingArea {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  width: 90%;
-  max-width: 600px;
-}
-
-/* Ante area - center when waiting */
-.anteArea {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 25;
-  width: 90%;
-  max-width: 500px;
-}
 
 /* Sit out overlay */
 .sitOutOverlay {
@@ -175,18 +136,7 @@
     border-radius: 130px / 65px;
   }
 
-  .potArea {
-    top: 0px;
-  }
   
-  .bettingArea {
-    bottom: 10px;
-    width: 95%;
-  }
-  
-  .anteArea {
-    bottom: 15px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -207,9 +157,6 @@
     inset: -2px;
   }
 
-  .potArea {
-    top: 4px;
-  }
   
   .feltTexture {
     border-radius: 20px;
@@ -219,13 +166,6 @@
     border-radius: 20px;
   }
   
-  .bettingArea {
-    bottom: 8px;
-  }
-  
-  .anteArea {
-    bottom: 12px;
-  }
 }
 
 /* Animations */

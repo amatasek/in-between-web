@@ -48,78 +48,64 @@ const Table = () => {
       {/* Felt texture overlay */}
       <div className={styles.feltTexture} />
       
-      {/* Pot display integrated into table */}
-      <div className={styles.potArea}>
-        <PotDisplay />
-      </div>
+      {/* Pot display */}
+      <PotDisplay />
       
-      {/* Cards always centered */}
-      <div className={styles.cardArea}>
-        <CardDisplay />
-        
-        {/* Ace glow effect when waiting for decision */}
-        {waitingForAceDecision && (
-          <div className={styles.aceGlowEffect} />
-        )}
-        
-        {/* Second chance match indicator only */}
-        {waitingForSecondChance && (
-          <SecondChanceOverlay 
-            firstCard={firstCard}
-            secondCard={secondCard}
-            isCurrentPlayersTurn={isCurrentPlayersTurn}
-            indicatorOnly={true}
-          />
-        )}
-      </div>
+      {/* Cards display */}
+      <CardDisplay />
+      
+      {/* Ace glow effect when waiting for decision */}
+      {waitingForAceDecision && (
+        <div className={styles.aceGlowEffect} />
+      )}
+      
+      {/* Second chance match indicator only */}
+      {waitingForSecondChance && (
+        <SecondChanceOverlay 
+          firstCard={firstCard}
+          secondCard={secondCard}
+          isCurrentPlayersTurn={isCurrentPlayersTurn}
+          indicatorOnly={true}
+        />
+      )}
       
       {/* Bottom controls area - only show if not sitting out */}
       {!isSittingOut && (
         <>
           {/* Betting controls */}
           {phase === 'betting' && !waitingForAceDecision && !waitingForSecondChance && (
-            <div className={styles.bettingArea}>
-              <BettingOverlay isCurrentPlayersTurn={isCurrentPlayersTurn} />
-            </div>
+            <BettingOverlay isCurrentPlayersTurn={isCurrentPlayersTurn} />
           )}
           
           {/* Ace choice controls at bottom */}
           {waitingForAceDecision && (
-            <div className={styles.bettingArea}>
-              <AceChoiceOverlay 
-                card={firstCard} 
-                isCurrentPlayersTurn={isCurrentPlayersTurn}
-                bottomPosition={true}
-              />
-            </div>
+            <AceChoiceOverlay 
+              card={firstCard} 
+              isCurrentPlayersTurn={isCurrentPlayersTurn}
+              bottomPosition={true}
+            />
           )}
           
           {/* Second chance controls at bottom */}
           {waitingForSecondChance && (
-            <div className={styles.bettingArea}>
-              <SecondChanceOverlay 
-                firstCard={firstCard}
-                secondCard={secondCard}
-                isCurrentPlayersTurn={isCurrentPlayersTurn}
-                bottomPosition={true}
-              />
-            </div>
+            <SecondChanceOverlay 
+              firstCard={firstCard}
+              secondCard={secondCard}
+              isCurrentPlayersTurn={isCurrentPlayersTurn}
+              bottomPosition={true}
+            />
           )}
         </>
       )}
       
-      {/* Results overlay at bottom - show even when sitting out */}
+      {/* Results overlay fills entire table - show even when sitting out */}
       {phase === 'results' && result && !isSittingOut && (
-        <div className={styles.bettingArea}>
-          <ResultsOverlay result={result} players={players} />
-        </div>
+        <ResultsOverlay result={result} players={players} />
       )}
       
       {/* Waiting/Ante phase - show AnteControls only if not sitting out */}
       {phase === 'waiting' && !isSittingOut && (
-        <div className={styles.anteArea}>
-          <AnteControls />
-        </div>
+        <AnteControls />
       )}
       
       {/* I'm Back button overlay when sitting out */}

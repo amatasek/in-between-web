@@ -170,8 +170,8 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
  */
 .panel {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--spacing-md);
   flex-wrap: wrap;
   font-size: 1.2rem;
@@ -196,8 +196,6 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
 /* Responsive panel adjustments */
 @media (max-width: 400px) {
   .panel {
-    flex-direction: column;
-    align-items: flex-start;
     gap: 0.7rem;
     padding-bottom: 0.8rem;
   }

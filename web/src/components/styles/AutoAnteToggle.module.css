@@ -62,12 +62,26 @@
 }
 
 .toggleText {
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
   color: var(--text-white);
+  white-space: nowrap;
 }
 
 
+
+/* Responsive text sizing */
+@media (max-width: 768px) {
+  .toggleText {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .toggleText {
+    font-size: var(--font-size-xs);
+  }
+}
 
 .loading {
   color: var(--text-secondary);

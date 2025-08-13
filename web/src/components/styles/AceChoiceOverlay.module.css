@@ -139,16 +139,20 @@
   justify-content: center;
   align-items: center;
   gap: 15px;
-  position: relative;
-}
-
-/* Timer container - consistent positioning */
-.timerContainer {
   position: absolute;
-  top: -60px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 30;
+}
+
+/* Timer container - centered on table */
+.timerContainer {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
 }
 
 .aceButtonContainer {
@@ -239,6 +243,14 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .timerContainer {
+    top: -105px;
+  }
+  
+  .aceControlsBottom {
+    bottom: 7px;
+  }
+  
   .aceOverlay {
     left: -105px;
     width: 90px;
@@ -267,6 +279,14 @@
 }
 
 @media (max-width: 480px) {
+  .timerContainer {
+    top: -90px;
+  }
+  
+  .aceControlsBottom {
+    bottom: 6px;
+  }
+  
   .aceOverlay {
     left: -90px;
     width: 80px;
@@ -297,5 +317,15 @@
   .waitingMessage {
     font-size: 12px;
     padding: 6px 12px;
+  }
+  
+  .choicePrompt {
+    font-size: 11px;
+  }
+  
+  .bottomChoiceButton {
+    padding: 7px 12px;
+    font-size: 11px;
+    gap: 6px;
   }
 }

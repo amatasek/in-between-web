@@ -232,16 +232,20 @@
   justify-content: center;
   align-items: center;
   gap: 15px;
-  position: relative;
-}
-
-/* Timer container - consistent positioning */
-.timerContainer {
   position: absolute;
-  top: -60px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 30;
+}
+
+/* Timer container - centered on table */
+.timerContainer {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
 }
 
 .bottomButtonContainer {
@@ -287,21 +291,22 @@
 }
 
 .anteButtonBottom {
-  background: linear-gradient(135deg, var(--success-dark), var(--color-glass-light));
+  background: linear-gradient(to right, var(--btn-primary-start), var(--btn-primary-end));
 }
 
 .anteButtonBottom:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--success), var(--success-dark));
-  border-color: var(--success);
+  background: linear-gradient(to right, var(--btn-primary-hover-start), var(--btn-primary-hover-end));
+  transform: translateY(-2px) scale(1.02);
 }
 
 .passButtonBottom {
-  background: linear-gradient(135deg, var(--neutral-dark), var(--color-glass-light));
+  background: linear-gradient(145deg, var(--neutral-dark), var(--primary-dark));
+  border: 2px solid var(--primary-light);
 }
 
 .passButtonBottom:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--neutral), var(--neutral-dark));
-  border-color: var(--neutral);
+  background: linear-gradient(145deg, var(--neutral), var(--neutral-dark));
+  border-color: var(--neutral-dark);
 }
 
 .buttonIcon {
@@ -337,6 +342,14 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .timerContainer {
+    top: -105px;
+  }
+  
+  .secondChanceBottom {
+    bottom: 7px;
+  }
+  
   .bridge {
     width: 200px;
   }
@@ -375,6 +388,14 @@
 }
 
 @media (max-width: 480px) {
+  .timerContainer {
+    top: -90px;
+  }
+  
+  .secondChanceBottom {
+    bottom: 6px;
+  }
+  
   .bridge {
     width: 160px;
   }
@@ -410,6 +431,16 @@
   
   .buttonText {
     font-size: 10px;
+  }
+  
+  .choicePrompt {
+    font-size: 11px;
+  }
+  
+  .bottomChoiceButton {
+    padding: 7px 12px;
+    font-size: 11px;
+    gap: 6px;
   }
   
   .buttonAmount {

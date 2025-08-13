@@ -8,7 +8,7 @@ import styles from './styles/ImBackButton.module.css';
 const ImBackButton = ({ onClick }) => {
   return (
     <div className={styles.imBackOverlay}>
-      <div className={`panel-game ${styles.container}`}>
+      <div className={styles.container}>
         <h3 className={styles.sittingOutText}>You are sitting out</h3>
         <button
           className={styles.imBackButton}

@@ -1,5 +1,10 @@
 /* Simple text pot display for poker table */
 .potDisplay {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -22,6 +27,7 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .potDisplay {
+    top: 7px;
     gap: 8px;
   }
   
@@ -32,6 +38,7 @@
 
 @media (max-width: 480px) {
   .potDisplay {
+    top: 6px;
     gap: 6px;
   }
   
