@@ -13,25 +13,27 @@ import { useUserData } from '../contexts/UserDataContext';
  * @param {string} props.namePosition - Position of the username ('right', 'below')
  * @param {string} props.className - Additional CSS class for styling
  * @param {boolean} props.showTitle - Whether to show the title
+ * @param {string} props.fontWeight - Font weight for the username ('normal', 'bold', etc.)
  */
-const UserAvatar = ({ 
+const UserAvatar = ({
   userId,
-  size = 'medium', 
-  showName = true, 
+  size = 'medium',
+  showName = true,
   namePosition = 'right',
   className = '',
-  showTitle = true
+  showTitle = true,
+  fontWeight = 'normal'
 }) => {
   const [showPlayerCard, setShowPlayerCard] = useState(false);
   const user = useUserData(userId);
-  
+
   if (!userId) return null;
-  
+
   // Show loading state while user data loads
   if (!user) {
     const sizeClass = styles[size] || styles.medium;
     const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
-    
+
     return (
       <div className={`${styles.userAvatarContainer} ${containerClass} ${className}`}>
         <div className={`${styles.avatar} ${sizeClass} ${styles.loading}`}>
@@ -48,22 +50,22 @@ const UserAvatar = ({
       </div>
     );
   }
-  
+
   const { username, profileImg, title, xp, level } = user;
   const initials = getInitials(username || 'Unknown');
   const sizeClass = styles[size] || styles.medium;
   const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
-  
+
   // Format the image URL to point to the server
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-  
+
   // Handle different URL formats
   let formattedImageUrl = null;
   if (profileImg) {
     // If the URL already starts with http, use it as is
     if (profileImg.startsWith('http')) {
       formattedImageUrl = profileImg;
-    } 
+    }
     // If the URL contains /uploads/, replace it with /files/
     else if (profileImg.includes('/uploads/')) {
       // Extract just the filename from the path
@@ -76,19 +78,19 @@ const UserAvatar = ({
     }
   }
 
-  
+
   return (
     <div className={`${styles.userAvatarContainer} ${containerClass} ${className}`}>
-      <div 
+      <div
         className={`${styles.avatar} ${sizeClass}`}
         onMouseEnter={() => setShowPlayerCard(true)}
         onMouseLeave={() => setShowPlayerCard(false)}
       >
         <div className={styles.avatarImageContainer}>
           {formattedImageUrl ? (
-            <img 
-              src={formattedImageUrl} 
-              alt={`${username}'s avatar`} 
+            <img
+              src={formattedImageUrl}
+              alt={`${username}'s avatar`}
               className={styles.avatarImage}
               onError={(e) => {
                 console.error(`Failed to load profile image for ${username}:`, e);
@@ -97,7 +99,7 @@ const UserAvatar = ({
               }}
             />
           ) : null}
-          <div 
+          <div
             className={styles.initialsPlaceholder}
             style={{ display: formattedImageUrl ? 'none' : 'flex' }}
           >
@@ -110,9 +112,9 @@ const UserAvatar = ({
           <div className={styles.playerCard}>
             <div className={styles.playerCardAvatar}>
               {formattedImageUrl ? (
-                <img 
-                  src={formattedImageUrl} 
-                  alt={`${username}'s avatar`} 
+                <img
+                  src={formattedImageUrl}
+                  alt={`${username}'s avatar`}
                   className={styles.playerCardImage}
                 />
               ) : (
@@ -139,10 +141,13 @@ const UserAvatar = ({
           </div>
         )}
       </div>
-      
+
       {showName && (
         <div className={styles.userInfo}>
-          <div className={styles.username}>
+          <div
+            className={styles.username}
+            style={{ fontWeight }}
+          >
             {username || 'Unknown'}
           </div>
           {showTitle && title && (
@@ -159,7 +164,7 @@ const UserAvatar = ({
 // Helper function to get initials from a name
 const getInitials = (name) => {
   if (!name) return '?';
-  
+
   return name
     .split(' ')
     .map(part => part.charAt(0))

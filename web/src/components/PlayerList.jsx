@@ -83,6 +83,7 @@ const PlayerList = () => {
                   size="small" 
                   showName={true}
                   namePosition="right"
+                  fontWeight={'bold'}
                 />
                 <span className={styles.playerStatus}>
                   {player.disconnected && <span className={styles.disconnectedIndicator} title="Player disconnected">⚠️ Disconnected</span>}

@@ -12,6 +12,7 @@ const DEFAULT_SETTINGS = {
   enableAceChoice: true,
   enableSecondChance: true,
   numberOfBots: 0,
+  anteAmount: '',
 };
 
 const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClose }) => {
@@ -48,6 +49,15 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
     const botCount = currentSettings.numberOfBots;
     if (botCount < 0 || botCount > 16) {
       newErrors.numberOfBots = 'Number of bots must be between 0 and 16.';
+    }
+
+    // Validate Ante Amount (only if provided)
+    const anteAmount = currentSettings.anteAmount;
+    if (anteAmount !== '' && anteAmount !== null && anteAmount !== undefined) {
+      const numericAmount = parseInt(anteAmount);
+      if (isNaN(numericAmount) || numericAmount < 1 || numericAmount > 100) {
+        newErrors.anteAmount = 'Ante amount must be between 1 and 100.';
+      }
     }
 
     return newErrors;
@@ -105,6 +115,13 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
         return newErrors;
       });
     }
+    if (key === 'anteAmount' && errors.anteAmount) {
+      setErrors(currentErrors => {
+        const newErrors = { ...currentErrors };
+        delete newErrors.anteAmount;
+        return newErrors;
+      });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -118,6 +135,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
       const payload = {
         ...settings,
         customName: settings.useCustomName ? settings.customName : null,
+        anteAmount: settings.anteAmount === '' ? 1 : parseInt(settings.anteAmount), // Default to 1 if empty
       };
       delete payload.useCustomName; // Remove the toggle state key
 
@@ -226,6 +244,27 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 placeholder="0"
               />
               {errors.numberOfBots && <span className="errorMessage">{errors.numberOfBots}</span>}
+            </div>
+          </div>
+
+          {/* Ante Amount Setting */}
+          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
+            <div className={baseModalStyles.settingDescription}>
+              <h4>Ante Amount</h4>
+              <p>Set the ante amount for each round (1-100)</p>
+            </div>
+            <div className={baseModalStyles.settingControls}>
+              <GamepadInput
+                title="Ante Amount"
+                type="number"
+                min="1"
+                max="100"
+                value={settings.anteAmount}
+                onChange={e => handleChange('anteAmount', e.target.value)}
+                className={`${baseModalStyles.textInput} no-validation${errors.anteAmount ? ' ' + baseModalStyles.inputError : ''}`}
+                placeholder="1"
+              />
+              {errors.anteAmount && <span className="errorMessage">{errors.anteAmount}</span>}
             </div>
           </div>
 
