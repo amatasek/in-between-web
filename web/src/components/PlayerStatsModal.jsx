@@ -124,7 +124,7 @@ const PlayerStatsModal = ({ onClose }) => {
       // Format based on explicit type if provided
       if (type === 'currency') {
         // Return CurrencyAmount component for currency values
-        return <CurrencyAmount amount={value.toFixed(2)} size="small" />;
+        return <CurrencyAmount amount={value} size="small" />;
       }
       
       if (type === 'percentage') {
