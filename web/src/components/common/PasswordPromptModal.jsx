@@ -23,15 +23,18 @@ function PasswordPromptModal({ isOpen, onClose, onSubmit, gameId }) {
       <div className={styles.modalContent}>
         <h2>Password Required</h2>
         <p>Please enter the password for game <strong>{gameId || ''}</strong>:</p>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
           <GamepadInput
             title="Enter Game Password"
-            type="password"
+            type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={styles.passwordInput}
             autoFocus
             required
+            autoComplete="off"
+            data-form-type="other"
+            data-lpignore="true"
           />
           <div className={styles.modalActions}>
             <button type="button" onClick={handleCancel} className={`${styles.modalButton} ${styles.cancelButton}`} data-gamepad-focusable="true">
