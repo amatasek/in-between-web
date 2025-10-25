@@ -36,3 +36,8 @@ Thumbs.db
 
 # Files
 data/
+
+# Capacitor
+web/ios/
+web/android/
+web/.capacitor/

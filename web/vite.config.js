@@ -46,6 +46,7 @@ export default defineConfig({
     reportCompressedSize: false,
     chunkSizeWarningLimit: 1000
   },
+  base: './',
   // Optimize dependencies
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'socket.io-client', 'howler']
