@@ -39,14 +39,8 @@ jobs:
           npm install
       
       - name: Build web app
-        env:
-          API_URL: ${{ vars.API_URL }}
         run: |
           cd web
-          # Create .env.production file with environment variables
-          echo "VITE_API_URL=${API_URL}" > .env.production
-          echo "VITE_SOCKET_URL=${API_URL}" >> .env.production
-          # Build the app
           npm run build
       
       # Create a CNAME file for the custom domain
