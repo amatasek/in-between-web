@@ -5,7 +5,7 @@ import styles from './styles/ImBackButton.module.css';
  * ImBackButton - Button for players to rejoin the game after sitting out
  * Styled to match the new overlay design system
  */
-const ImBackButton = ({ onClick }) => {
+const ImBackButton = ({ onClick, disabled = false }) => {
   return (
     <div className={styles.imBackOverlay}>
       <div className={styles.container}>
@@ -13,6 +13,7 @@ const ImBackButton = ({ onClick }) => {
         <button
           className={styles.imBackButton}
           onClick={onClick}
+          disabled={disabled}
           data-gamepad-focusable="true"
           autoFocus
         >

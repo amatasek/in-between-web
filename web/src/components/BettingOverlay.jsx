@@ -14,6 +14,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   const { socket } = useSocket();
   const [customBet, setCustomBet] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
+  const [betPlaced, setBetPlaced] = useState(false);
   
   if (!gameState || !isCurrentPlayersTurn) {
     return (
@@ -46,13 +47,17 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   const presetBets = [1, 5, 10, 20, 50, 100].filter(amount => amount >= minBet && amount <= maxBet).slice(-3);
   
   const handleBet = (amount) => {
+    if (betPlaced) return; // Prevent double clicks
     if (amount >= minBet && amount <= maxBet) {
+      setBetPlaced(true);
       placeBet(amount);
       setShowCustomInput(false);
     }
   };
-  
+
   const handleFold = () => {
+    if (betPlaced) return; // Prevent double clicks
+    setBetPlaced(true);
     placeBet(0);
   };
   
@@ -77,18 +82,20 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
           <button
             className={`${styles.betButton} ${styles.passButton}`}
             onClick={handleFold}
+            disabled={betPlaced}
             data-gamepad-focusable="true"
             autoFocus
           >
             <span>PASS</span>
           </button>
-          
+
           {/* Preset bet buttons */}
           {presetBets.map(amount => (
             <button
               key={amount}
               className={`${styles.betButton} ${styles.amountButton}`}
               onClick={() => handleBet(amount)}
+              disabled={betPlaced}
               data-gamepad-focusable="true"
             >
               <div className={styles.amountPill}>
@@ -96,22 +103,23 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
               </div>
             </button>
           ))}
-          
+
           {/* POT button */}
           {maxBet === potAmount && (
             <div className={styles.potButtonWrapper}>
-              <PotButton 
+              <PotButton
                 onClick={() => handleBet(potAmount)}
-                disabled={false}
+                disabled={betPlaced}
                 amount={potAmount}
               />
             </div>
           )}
-          
+
           {/* Custom button */}
           <button
             className={`${styles.betButton} ${styles.customButton}`}
             onClick={() => setShowCustomInput(true)}
+            disabled={betPlaced}
             data-gamepad-focusable="true"
           >
             <span>CUSTOM</span>
@@ -132,19 +140,21 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
             autoFocus
             className={styles.betInput}
           />
-          <button 
+          <button
             onClick={handleCustomBet}
             className={styles.confirmButton}
+            disabled={betPlaced}
             data-gamepad-focusable="true"
           >
             {ICONS.CHECK}
           </button>
-          <button 
+          <button
             onClick={() => {
               setShowCustomInput(false);
               setCustomBet('');
             }}
             className={styles.cancelButton}
+            disabled={betPlaced}
             data-gamepad-focusable="true"
           >
             {ICONS.CROSS}

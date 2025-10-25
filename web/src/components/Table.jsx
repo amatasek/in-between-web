@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './styles/Table.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
@@ -17,6 +17,7 @@ const Table = () => {
   const { gameState } = useGameContext();
   const { socket } = useSocket();
   const { user } = useAuth();
+  const [imBackPending, setImBackPending] = useState(false);
   
   if (!gameState) return null;
   
@@ -39,7 +40,9 @@ const Table = () => {
   
   // Handler for the 'I'm Back' button
   const handleImBackClick = () => {
+    if (imBackPending) return; // Prevent double clicks
     if (socket && gameState.id) {
+      setImBackPending(true);
       socket.emit('imBack', { gameId: gameState.id });
     }
   };
@@ -120,7 +123,7 @@ const Table = () => {
       {/* I'm Back button overlay when sitting out */}
       {isSittingOut && (
         <div className={styles.sitOutOverlay}>
-          <ImBackButton onClick={handleImBackClick} />
+          <ImBackButton onClick={handleImBackClick} disabled={imBackPending} />
         </div>
       )}
     </div>

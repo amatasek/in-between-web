@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './styles/AnteControls.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
@@ -13,6 +13,7 @@ const AnteControls = () => {
   const { gameState, playerReady, playerUnready } = useGameContext();
   const { socket } = useSocket();
   const { user } = useAuth();
+  const [actionPending, setActionPending] = useState(false);
   
   if (!gameState) return null;
   
@@ -65,10 +66,14 @@ const AnteControls = () => {
           <>
             {/* Auto-Ante toggle - only show when ante is available */}
             <AutoAnteToggle />
-            <button 
+            <button
                 className={styles.anteButton}
-                onClick={playerReady}
-                disabled={!hasEnoughChips}
+                onClick={() => {
+                  if (actionPending) return;
+                  setActionPending(true);
+                  playerReady();
+                }}
+                disabled={!hasEnoughChips || actionPending}
                 aria-label="Ante up"
                 data-gamepad-focusable="true"
                 autoFocus
@@ -84,14 +89,16 @@ const AnteControls = () => {
               <button
                 className={`${styles.backOutButton} ${styles.sitOutHalfWidth}`}
                 onClick={() => {
+                  if (actionPending) return;
                   if (socket && gameState && user) {
+                    setActionPending(true);
                     socket.emit('sitOut', {
                       gameId: gameState.id,
                       userId: socket.auth?.userId || user.id
                     });
                   }
                 }}
-                disabled={myPlayer?.isSittingOut} // Disable if sitting out
+                disabled={myPlayer?.isSittingOut || actionPending} // Disable if sitting out or action pending
                 title={myPlayer?.isSittingOut ? "You are currently sitting out" : "Sit out next round"}
                 aria-label="Sit Out"
                 data-gamepad-focusable="true"
@@ -105,15 +112,18 @@ const AnteControls = () => {
           </>
         ) : (
           // Player is ready - show Back Out button
-          <button 
+          <button
                 className={styles.backOutButton}
                 onClick={() => {
+                  if (actionPending) return;
                   if (typeof playerUnready === 'function') {
+                    setActionPending(true);
                     playerUnready();
                   } else {
                     console.error('playerUnready is not a function');
                   }
                 }}
+                disabled={actionPending}
                 aria-label="Back out"
                 data-gamepad-focusable="true"
               >

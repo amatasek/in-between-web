@@ -10,16 +10,15 @@ import { TIMERS, ICONS } from '../constants';
 const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bottomPosition = false, indicatorOnly = false }) => {
   const { gameState } = useGameContext();
   const { socket } = useSocket();
-  const [loading, setLoading] = useState(false);
   const [choice, setChoice] = useState(null);
-  
+
   const { anteAmount = 1, players, currentPlayerId } = gameState;
   const currentPlayer = players[currentPlayerId];
   const currentPlayerName = currentPlayer?.name || 'Player';
-  
+
   const handleSecondChance = (anteAgain) => {
-    if (socket && choice === null) {
-      setLoading(true);
+    if (choice !== null) return; // Prevent double clicks
+    if (socket) {
       setChoice(anteAgain);
       socket.emit('secondChance', { anteAgain });
     }
@@ -57,7 +56,7 @@ const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bott
           <button
             className={`${styles.bottomChoiceButton} ${styles.anteButtonBottom}`}
             onClick={() => handleSecondChance(true)}
-            disabled={loading || choice !== null}
+            disabled={choice !== null}
             data-gamepad-focusable="true"
             autoFocus
           >
@@ -68,7 +67,7 @@ const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bott
           <button
             className={`${styles.bottomChoiceButton} ${styles.passButtonBottom}`}
             onClick={() => handleSecondChance(false)}
-            disabled={loading || choice !== null}
+            disabled={choice !== null}
             data-gamepad-focusable="true"
           >
             <span>PASS</span>
@@ -102,7 +101,7 @@ const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bott
             <button
               className={`${styles.choiceButton} ${styles.anteButton}`}
               onClick={() => handleSecondChance(true)}
-              disabled={loading || choice !== null}
+              disabled={choice !== null}
               data-gamepad-focusable="true"
               autoFocus
             >
@@ -112,11 +111,11 @@ const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bott
                 <CurrencyAmount amount={anteAmount} size="small" />
               </span>
             </button>
-            
+
             <button
               className={`${styles.choiceButton} ${styles.passButton}`}
               onClick={() => handleSecondChance(false)}
-              disabled={loading || choice !== null}
+              disabled={choice !== null}
               data-gamepad-focusable="true"
             >
               <span className={styles.buttonText}>PASS</span>
