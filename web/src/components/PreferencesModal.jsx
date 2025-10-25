@@ -26,7 +26,7 @@ const PreferencesModal = ({ onClose }) => {
   }
 
   return (
-    <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600, maxHeight: '80vh' }}>
+    <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600 }}>
       <div className={baseModalStyles.settingsContainer}>
         {/* Game Options Section */}
         <div className={baseModalStyles.sectionHeader}>Game Options</div>

@@ -28,10 +28,10 @@ const Toast = ({
   const isEmojiReaction = !title && emoji !== 'ℹ';
 
   return (
-    <div 
+    <div
       className={`${styles.toast} ${isEmojiReaction && isVisible ? styles.emojiReaction : ''} ${!isVisible ? styles.slideOut : ''}`}
-      style={{ 
-        top: '20px', 
+      style={{
+        top: 'max(20px, env(safe-area-inset-top))',
         zIndex: 10000 + position,
         borderColor: color
       }}

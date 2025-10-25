@@ -110,7 +110,7 @@ const Lobby = () => {
   }, [gameList, searchQuery, userId]); // Dependency on userId ensures resorting if user changes
   
    return (
-     <div className="screen">
+     <div className={`screen ${styles.lobbyScreen}`}>
        <AppHeader />
        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
          <OnlinePlayerCount />

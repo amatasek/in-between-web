@@ -159,8 +159,8 @@
 /* Mobile responsiveness */
 @media (max-width: 600px) {
   .toast {
-    left: 10px;
-    right: 10px;
+    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
     transform: translateX(0);
     min-width: unset;
     max-width: unset;

@@ -52,27 +52,27 @@ const GameLog = () => {
   const renderLogEntry = (entry, index) => {
     // Check if it's a rich turn summary object
     if (entry.type === 'turn') {
-      return <TurnSummaryPanel key={index} summary={entry} />;
+      return <TurnSummaryPanel key={entry.id} summary={entry} />;
     }
-    
+
     // Check if it's a round divider
     if (entry.type === 'round_start') {
-      return <RoundDivider key={index} roundNumber={entry.roundNumber} />;
+      return <RoundDivider key={entry.id} roundNumber={entry.roundNumber} />;
     }
-    
+
     // Check if it's a system message
     if (entry.type === 'system' || entry.type === 'error') {
       return (
-        <div key={index} className={`${styles.logEntry} ${styles.systemMessage}`}>
+        <div key={entry.id} className={`${styles.logEntry} ${styles.systemMessage}`}>
           <span className={styles.logTime}>{formatTime(entry.timestamp)}</span>
           <span className={styles.logMessage}>{entry.message}</span>
         </div>
       );
     }
-    
+
     // Default: legacy simple message format
     return (
-      <div key={index} className={styles.logEntry}>
+      <div key={entry.id} className={styles.logEntry}>
         <span className={styles.logTime}>{formatTime(entry.timestamp)}</span>
         <span className={styles.logMessage}>{entry.message}</span>
       </div>

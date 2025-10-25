@@ -1,3 +1,7 @@
+.lobbyScreen {
+  padding-top: max(0.75rem, var(--safe-area-inset-top));
+}
+
 .liveTag {
   font-size: 0.9rem;
   background-color: var(--text-error);
