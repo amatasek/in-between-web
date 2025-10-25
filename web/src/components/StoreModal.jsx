@@ -63,14 +63,14 @@ const StoreModal = ({ onClose }) => {
 
   if (loading) {
     return (
-      <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800, maxHeight: '80vh' }}>
+      <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800 }}>
         <div style={{ textAlign: 'center', padding: '2rem', color: '#a0b9d6' }}>Loading products...</div>
       </BaseModal>
     );
   }
 
   return (
-    <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800, maxHeight: '80vh' }}>
+    <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800 }}>
       {/* Tab Navigation */}
       <div className="tabs-container">
         <button
