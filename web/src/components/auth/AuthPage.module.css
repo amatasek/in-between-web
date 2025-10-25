@@ -1,7 +1,9 @@
 .authPage {
   justify-content: center;
   color: var(--text-primary);
-  overflow-x: hidden;
+  overflow: hidden;
+  height: 100vh;
+  min-height: 100vh;
 }
 
 /* Title styles moved to GameHeader.module.css */

@@ -70,6 +70,9 @@ const AuthForm = ({ onSubmit, mode }) => {
             required
             minLength={3}
             data-gamepad-focusable="true"
+            autoCapitalize="none"
+            autoCorrect="off"
+            autoComplete="username"
           />
         </div>
         
@@ -88,6 +91,7 @@ const AuthForm = ({ onSubmit, mode }) => {
             required
             minLength={6}
             data-gamepad-focusable="true"
+            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
           />
         </div>
 

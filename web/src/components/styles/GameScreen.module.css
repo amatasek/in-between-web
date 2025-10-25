@@ -1,5 +1,6 @@
 .gameContainer {
   position: relative;
+  padding-top: calc(0.75rem + var(--safe-area-inset-top));
 }
 
 .gameScreen {

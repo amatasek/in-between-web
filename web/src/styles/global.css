@@ -104,7 +104,7 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
   box-shadow: none !important;
 }
 
-/* 
+/*
  * Screen Layout Styles
  * Base styles for main app screens
  */
@@ -116,6 +116,8 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
   max-width: 100%;
   margin: 0;
   padding: var(--spacing-md);
+  padding-top: max(var(--spacing-md), var(--safe-area-inset-top));
+  padding-bottom: max(var(--spacing-md), var(--safe-area-inset-bottom));
   box-sizing: border-box;
   background-color: var(--bg-primary);
   background-image: linear-gradient(to bottom right, var(--bg-primary), var(--bg-secondary));
