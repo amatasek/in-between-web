@@ -1,5 +1,6 @@
 .lobbyScreen {
   padding-top: max(0.75rem, var(--safe-area-inset-top));
+  padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
 }
 
 .liveTag {

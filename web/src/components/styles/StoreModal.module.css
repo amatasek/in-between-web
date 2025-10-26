@@ -1,5 +1,36 @@
 /* Tab styles moved to global.css */
 
+.coinPacksGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-content: start;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
+}
+
+.coinPacksGrid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.coinPacksGrid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.coinPacksGrid::-webkit-scrollbar-thumb {
+  background: rgba(100, 169, 255, 0.3);
+  border-radius: 4px;
+}
+
+.coinPacksGrid::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 169, 255, 0.5);
+}
+
 .loadingSpinner {
   border: 3px solid rgba(255, 255, 255, 0.1);
   border-top-color: var(--text-info);

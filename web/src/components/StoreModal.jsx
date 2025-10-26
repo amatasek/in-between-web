@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import BaseModal from './common/BaseModal';
-import baseModalStyles from './common/BaseModal.module.css';
 import styles from './styles/StoreModal.module.css';
 import storeService from '../services/StoreService';
 
@@ -63,16 +62,16 @@ const StoreModal = ({ onClose }) => {
 
   if (loading) {
     return (
-      <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800 }}>
+      <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800, height: '80vh' }}>
         <div style={{ textAlign: 'center', padding: '2rem', color: '#a0b9d6' }}>Loading products...</div>
       </BaseModal>
     );
   }
 
   return (
-    <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800 }}>
-      {/* Tab Navigation */}
-      <div className="tabs-container">
+    <BaseModal title="Store" onClose={onClose} style={{ maxWidth: 800, height: '80vh' }}>
+        {/* Tab Navigation */}
+        <div className="tabs-container">
         <button
           className={`tab-button ${activeTab === 'coins' ? 'active' : ''}`}
           onClick={() => setActiveTab('coins')}
@@ -80,37 +79,35 @@ const StoreModal = ({ onClose }) => {
         >
           Coin Packs
         </button>
-      </div>
-
-      {/* Error Message */}
-      {error && (
-        <div style={{
-          marginBottom: '1rem',
-          padding: '0.75rem',
-          backgroundColor: 'rgba(231, 76, 60, 0.1)',
-          border: '1px solid #e74c3c',
-          borderRadius: '8px',
-          color: '#ffb3b3'
-        }}>
-          {error}
         </div>
-      )}
 
-      {/* Coin Packs Tab Content */}
-      {activeTab === 'coins' && (
-        <div>
-          <div className={baseModalStyles.sectionHeader}>Available Coin Packs</div>
-          
+        {/* Error Message */}
+        {error && (
+          <div style={{
+            marginBottom: '1rem',
+            padding: '0.75rem',
+            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+            border: '1px solid #e74c3c',
+            borderRadius: '8px',
+            color: '#ffb3b3'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Coin Packs Tab Content */}
+        {activeTab === 'coins' && (
+          <div className="tab-content">
           {coinOfferings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem', color: '#a0b9d6' }}>
               No coin packs available at the moment.
             </div>
           ) : (
-            <div style={{ 
-              display: 'grid', 
-              gap: '1rem', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' 
-            }}>
+            <div
+              className={styles.coinPacksGrid}
+              data-gamepad-scrollable="true"
+              tabIndex="0"
+            >
               {coinOfferings.map((offering) => (
                 <div
                   key={offering.id}
@@ -118,7 +115,7 @@ const StoreModal = ({ onClose }) => {
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: '1.5rem',
+                    padding: '10px',
                     minHeight: '280px'
                   }}
                 >
@@ -184,30 +181,16 @@ const StoreModal = ({ onClose }) => {
                     onClick={() => handlePurchase(offering.id)}
                     disabled={purchasing === offering.id}
                     className="btn btn-primary"
-                    style={{
-                      width: '100%',
-                      opacity: purchasing === offering.id ? 0.6 : 1,
-                      cursor: purchasing === offering.id ? 'not-allowed' : 'pointer'
-                    }}
                     data-gamepad-focusable="true"
                   >
-                    {purchasing === offering.id ? (
-                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div className={styles.loadingSpinner} style={{
-                          marginRight: '0.5rem'
-                        }}></div>
-                        Processing...
-                      </span>
-                    ) : (
-                      'Purchase'
-                    )}
+                    {purchasing === offering.id ? 'Processing...' : 'Purchase'}
                   </button>
                 </div>
               ))}
             </div>
           )}
-        </div>
-      )}
+          </div>
+        )}
     </BaseModal>
   );
 };

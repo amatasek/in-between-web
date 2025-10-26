@@ -280,11 +280,15 @@ const GameStats = ({ gameData }) => {
   };
 
   return (
-    <div className={styles.tabContent}>
+    <>
       {gameStats.length === 0 ? (
         <p className={styles.noDataMessage}>No statistics available for this game.</p>
       ) : (
-        <div className={styles.statsGrid}>
+        <div
+          className={styles.statsGrid}
+          data-gamepad-scrollable="true"
+          tabIndex="0"
+        >
           {gameStats.map((stat) => (
             <div key={stat.key} className={`panel-alt ${styles.statItem}`}>
               <div className={styles.statLabel}>{stat.label}</div>
@@ -296,7 +300,7 @@ const GameStats = ({ gameData }) => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

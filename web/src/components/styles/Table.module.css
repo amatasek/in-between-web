@@ -2,7 +2,7 @@
 .table {
   position: relative;
   height: 300px;
-  width: 100%;
+  width: calc(100% - 12px); /* Account for ::before extending 6px on each side */
   max-width: 800px;
   margin: 0 auto 1rem;
   
@@ -118,6 +118,7 @@
 @media (max-width: 768px) {
   .table {
     height: 260px;
+    width: calc(100% - 10px); /* Account for ::before extending 5px on each side */
     border-radius: 130px / 65px;
     margin: 0 auto 0.75rem;
   }
@@ -142,6 +143,7 @@
 @media (max-width: 480px) {
   .table {
     height: 220px;
+    width: calc(100% - 8px); /* Account for ::before extending 4px on each side */
     border-radius: 20px;
     margin: 0 auto 0.5rem;
     border-width: 2px;

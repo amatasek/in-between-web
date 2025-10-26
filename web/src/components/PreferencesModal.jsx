@@ -27,7 +27,6 @@ const PreferencesModal = ({ onClose }) => {
 
   return (
     <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600 }}>
-      <div className={baseModalStyles.settingsContainer}>
         {/* Game Options Section */}
         <div className={baseModalStyles.sectionHeader}>Game Options</div>
 
@@ -81,9 +80,6 @@ const PreferencesModal = ({ onClose }) => {
           <h4 style={{ margin: '0 0 12px 0' }}>Card Back</h4>
           <CardBackSelector />
         </div>
-
-      
-      </div>
     </BaseModal>
   );
 };

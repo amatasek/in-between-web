@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import baseModalStyles from './common/BaseModal.module.css';
 import BaseModal from './common/BaseModal';
 import GameSummaryModal from './GameSummaryModal';
 import CurrencyAmount from './common/CurrencyAmount';
@@ -171,8 +170,7 @@ const PlayerStatsModal = ({ onClose }) => {
 
   return (
     <>
-      <BaseModal title="Player Stats" onClose={onClose} style={{ maxWidth: 800, height: '90ßvh' }}>
-        <div className={baseModalStyles.settingsContainer}>
+      <BaseModal title="Player Stats" onClose={onClose} style={{ maxWidth: 800, height: '80vh' }}>
           {/* Tab Bar Navigation */}
           <div className="tabs-container">
             <button 
@@ -255,8 +253,8 @@ const PlayerStatsModal = ({ onClose }) => {
                 </div>
               ) : (
                 <>
-                  <div 
-                    className={styles.historyTable}
+                  <div
+                    className={`panel-alt ${styles.historyTable}`}
                     data-gamepad-scrollable="true"
                     tabIndex="0"
                   >
@@ -266,12 +264,12 @@ const PlayerStatsModal = ({ onClose }) => {
                       <div className={styles.roundsHeader}>Rounds</div>
                       <div className={styles.endDateHeader}>Ended</div>
                     </div>
-                    
+
                     {historyData.games.map((game) => (
                       <div key={game.id} className={styles.historyRow}>
                         <div className={styles.gameNameCell}>
-                          <span 
-                            className={styles.gameNameLink} 
+                          <span
+                            className={styles.gameNameLink}
                             onClick={() => handleGameClick(game.id)}
                             tabIndex="0"
                             role="button"
@@ -286,10 +284,10 @@ const PlayerStatsModal = ({ onClose }) => {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className={styles.pageInfo}>
-                    <button 
-                      onClick={handlePreviousPage} 
+                    <button
+                      onClick={handlePreviousPage}
                       disabled={currentPage === 0}
                       className={styles.pageButton}
                       aria-label="Previous page"
@@ -297,13 +295,13 @@ const PlayerStatsModal = ({ onClose }) => {
                     >
                       &larr;
                     </button>
-                    
+
                     Page {currentPage + 1}
-                    {historyData.pagination && historyData.pagination.total ? 
+                    {historyData.pagination && historyData.pagination.total ?
                       ` of ${Math.ceil(historyData.pagination.total / pageSize)}` : ''}
-                    
-                    <button 
-                      onClick={handleNextPage} 
+
+                    <button
+                      onClick={handleNextPage}
                       disabled={!historyData.pagination || historyData.games.length < pageSize}
                       className={styles.pageButton}
                       aria-label="Next page"
@@ -316,7 +314,6 @@ const PlayerStatsModal = ({ onClose }) => {
               )}
             </div>
           )}
-        </div>
       </BaseModal>
       
       {showGameSummary && selectedGameData && (

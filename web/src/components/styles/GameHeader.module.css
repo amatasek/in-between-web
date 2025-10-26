@@ -3,6 +3,12 @@
   margin-bottom: var(--spacing-md);
 }
 
+@media (max-width: 600px) {
+  .headerContainer {
+    flex-shrink: 0; /* Keep header fixed on mobile */
+  }
+}
+
 /* Single row header - never wraps */
 .header {
   display: flex;

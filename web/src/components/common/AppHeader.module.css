@@ -12,7 +12,7 @@
 .gameTitle {
   font-size: 3.2rem;
   color: var(--text-white);
-  margin-bottom: 0.4rem;
+  margin: 0.5rem;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;

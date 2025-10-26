@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ToggleSwitch from './ToggleSwitch.jsx';
 import BaseModal from './common/BaseModal';
-import baseModalStyles from './common/BaseModal.module.css';
+import styles from './styles/GameSettingsModal.module.css';
 import GamepadInput from './GamepadInput';
 
 const DEFAULT_SETTINGS = {
@@ -171,14 +171,13 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
       }
     >
       <form id="gameSettingsForm" onSubmit={handleSubmit}>
-        <div className={baseModalStyles.settingsContainer}>
           {/* Custom Game Name Setting */}
-          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
-            <div className={baseModalStyles.settingDescription}>
+          <div className={`panel-alt ${styles.gameSettingItem}`}>
+            <div className={styles.settingDescription}>
               <h4>Custom Game Name</h4>
               <p>Set a custom name for your game lobby</p>
             </div>
-            <div className={baseModalStyles.settingControls}>
+            <div className={styles.settingControls}>
               <ToggleSwitch
                 isChecked={settings.useCustomName}
                 onChange={e => handleChange('useCustomName', e.target.checked)}
@@ -189,7 +188,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   type="text"
                   value={settings.customName || ''}
                   onChange={e => handleChange('customName', e.target.value)}
-                  className={`${baseModalStyles.textInput}${errors.customName ? ' ' + baseModalStyles.inputError : ''}`}
+                  className={`${styles.textInput}${errors.customName ? ' ' + styles.inputError : ''}`}
                   placeholder="Game Name"
                   maxLength={26}
                   style={{ marginTop: 8 }}
@@ -200,12 +199,12 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Private Game Setting */}
-          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
-            <div className={baseModalStyles.settingDescription}>
+          <div className={`panel-alt ${styles.gameSettingItem}`}>
+            <div className={styles.settingDescription}>
               <h4>Private Game</h4>
               <p>Only players with the password can join</p>
             </div>
-            <div className={baseModalStyles.settingControls}>
+            <div className={styles.settingControls}>
               <ToggleSwitch
                 isChecked={settings.isPrivate}
                 onChange={e => handleChange('isPrivate', e.target.checked)}
@@ -216,7 +215,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   type="text"
                   value={settings.password || ''}
                   onChange={e => handleChange('password', e.target.value)}
-                  className={`${baseModalStyles.textInput}${errors.password ? ' ' + baseModalStyles.inputError : ''}`}
+                  className={`${styles.textInput}${errors.password ? ' ' + styles.inputError : ''}`}
                   placeholder="Password"
                   maxLength={36}
                   style={{ marginTop: 8 }}
@@ -227,12 +226,12 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Number of Bots Setting */}
-          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
-            <div className={baseModalStyles.settingDescription}>
+          <div className={`panel-alt ${styles.gameSettingItem}`}>
+            <div className={styles.settingDescription}>
               <h4>Number of Bots</h4>
               <p>Add AI players to your game (0-16)</p>
             </div>
-            <div className={baseModalStyles.settingControls}>
+            <div className={styles.settingControls}>
               <GamepadInput
                 title="Number of AI Players"
                 type="number"
@@ -240,7 +239,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 max="16"
                 value={settings.numberOfBots === 0 ? '' : settings.numberOfBots}
                 onChange={e => handleChange('numberOfBots', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
-                className={`${baseModalStyles.textInput} no-validation${errors.numberOfBots ? ' ' + baseModalStyles.inputError : ''}`}
+                className={`${styles.textInput} no-validation${errors.numberOfBots ? ' ' + styles.inputError : ''}`}
                 placeholder="0"
               />
               {errors.numberOfBots && <span className="errorMessage">{errors.numberOfBots}</span>}
@@ -248,12 +247,12 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Ante Amount Setting */}
-          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
-            <div className={baseModalStyles.settingDescription}>
+          <div className={`panel-alt ${styles.gameSettingItem}`}>
+            <div className={styles.settingDescription}>
               <h4>Ante Amount</h4>
               <p>Set the ante amount for each round (1-100)</p>
             </div>
-            <div className={baseModalStyles.settingControls}>
+            <div className={styles.settingControls}>
               <GamepadInput
                 title="Ante Amount"
                 type="number"
@@ -261,7 +260,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 max="100"
                 value={settings.anteAmount}
                 onChange={e => handleChange('anteAmount', e.target.value)}
-                className={`${baseModalStyles.textInput} no-validation${errors.anteAmount ? ' ' + baseModalStyles.inputError : ''}`}
+                className={`${styles.textInput} no-validation${errors.anteAmount ? ' ' + styles.inputError : ''}`}
                 placeholder="1"
               />
               {errors.anteAmount && <span className="errorMessage">{errors.anteAmount}</span>}
@@ -269,12 +268,12 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Ace Choice Setting */}
-          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
-            <div className={baseModalStyles.settingDescription}>
+          <div className={`panel-alt ${styles.gameSettingItem}`}>
+            <div className={styles.settingDescription}>
               <h4>Enable Ace Choice</h4>
               <p>Allow players to choose high/low on Ace</p>
             </div>
-            <div className={baseModalStyles.settingControls}>
+            <div className={styles.settingControls}>
               <ToggleSwitch
                 isChecked={settings.enableAceChoice}
                 onChange={e => handleChange('enableAceChoice', e.target.checked)}
@@ -283,19 +282,18 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
           </div>
 
           {/* Second Chance Setting */}
-          <div className={`panel-alt ${baseModalStyles.settingItem}`}>
-            <div className={baseModalStyles.settingDescription}>
+          <div className={`panel-alt ${styles.gameSettingItem}`}>
+            <div className={styles.settingDescription}>
               <h4>Enable Second Chance</h4>
               <p>Allow players to ante up for a second chance</p>
             </div>
-            <div className={baseModalStyles.settingControls}>
+            <div className={styles.settingControls}>
               <ToggleSwitch
                 isChecked={settings.enableSecondChance}
                 onChange={e => handleChange('enableSecondChance', e.target.checked)}
               />
             </div>
           </div>
-        </div>
       </form>
     </BaseModal>
   );

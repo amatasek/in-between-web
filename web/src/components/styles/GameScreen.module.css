@@ -12,13 +12,22 @@
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 /* Responsive adjustments for mobile */
 @media (max-width: 600px) {
+  .gameContainer {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
+  }
+
   .gameScreen {
     padding: 0;
     gap: 0.75rem; /* Reduce spacing between elements */
+    height: 100%;
   }
 }
 
@@ -48,6 +57,12 @@
   box-shadow: var(--shadow-sm);
 }
 
+@media (max-width: 600px) {
+  .errorContainer {
+    flex-shrink: 0; /* Keep error message visible */
+  }
+}
+
 .errorText {
   color: var(--secondary);
   margin: 0;
@@ -68,12 +83,6 @@
 }
 
 /* Game bottom section layout */
-/* Table wrapper for sitting out state */
-.tableWrapper {
-  position: relative;
-  width: 100%;
-}
-
 /* Sitting out overlay */
 .sittingOutOverlay {
   position: absolute;
@@ -94,6 +103,9 @@
 @media (max-width: 600px) {
   .gameBottomSection {
     flex-direction: column;
+    flex: 1 1 0; /* Take remaining space */
+    overflow-y: auto; /* Enable scrolling */
+    min-height: 0; /* Allow flex item to shrink below content size */
   }
 }
 

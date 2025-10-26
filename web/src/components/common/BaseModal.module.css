@@ -87,26 +87,6 @@
   padding-top: 4px;
 }
 
-.settingItem {
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  padding: 15px 20px !important;
-  border-radius: 8px;
-  position: relative;
-  gap: 1rem !important;
-}
-
-.settingControls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  width: 150px;
-}
-
-
 .settingDescription {
   color: var(--text-secondary);
   font-size: 0.95rem;
@@ -129,29 +109,6 @@
   font-size: 0.9rem;
 }
 
-.textInput {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  background-color: var(--input-bg);
-  border: 1px solid var(--input-border-color);
-  border-radius: 4px;
-  color: var(--input-text-color);
-  font-size: 0.9rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
-}
-
-.textInput:focus {
-  outline: none;
-  border-color: var(--input-border-focus);
-  box-shadow: var(--input-focus-shadow);
-}
-
-.inputError {
-  border-color: var(--text-error) !important;
-  box-shadow: 0 0 0 1px var(--text-error);
-}
-
 .errorMessage {
   color: var(--text-error);
   font-size: 0.75rem;
@@ -166,6 +123,8 @@
   padding: 18px 32px 0 32px;
   overflow-y: auto;
   flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
   scrollbar-width: thin;
   scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
 }
@@ -188,23 +147,6 @@
   background: rgba(100, 169, 255, 0.5);
 }
 
-@media (max-width: 600px) {
-  .settingItem {
-    flex-direction: column !important;
-    align-items: flex-start;
-  }
-  
-  .settingDescription {
-    margin-bottom: 15px;
-  }
-
-  .settingControls {
-    align-items: flex-start;
-  }
-}
-
-
-
 .footer {
   padding: 14px 32px 0 32px;
   border-top: 1px solid var(--color-border-light);
@@ -214,11 +156,16 @@
 }
 
 @media (max-width: 600px) {
+  .settingDescription {
+    margin-bottom: 15px;
+  }
+
   .modal {
     min-width: 0;
     width: 98vw;
     padding: 0 0 12px 0;
   }
+
   .header, .content, .footer {
     padding-left: 14px;
     padding-right: 14px;

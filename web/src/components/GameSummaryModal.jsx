@@ -15,7 +15,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
       <BaseModal
         title="Game Summary"
         onClose={onClose}
-        style={{ maxWidth: 800 }}
+        style={{ maxWidth: 800, height: '80vh' }}
       >
         <div className={styles.loadingMessage}>Loading game data...</div>
       </BaseModal>
@@ -154,29 +154,26 @@ const GameSummaryModal = ({ onClose, gameData }) => {
       title={`Game Summary (${gameId})`}
       onClose={onClose}
       headerButtons={<TransactionDownloadButton gameState={gameData} />}
-      style={{ maxWidth: 800 }}
+      style={{ maxWidth: 800, height: '80vh' }}
     >
-      <div className={styles.settingsContainer}>
           {/* Tab Bar Navigation */}
           <div className="tabs-container">
-            <button 
+            <button
               className={`tab-button ${activeTab === 'totals' ? 'active' : ''}`}
               onClick={() => setActiveTab('totals')}
               data-gamepad-focusable="true"
             >
               Totals
             </button>
-            
-            <button 
+            <button
               className={`tab-button ${activeTab === 'stats' ? 'active' : ''}`}
               onClick={() => setActiveTab('stats')}
               data-gamepad-focusable="true"
             >
               Stats
             </button>
-            
             {showPayoutsTab && (
-              <button 
+              <button
                 className={`tab-button ${activeTab === 'payouts' ? 'active' : ''}`}
                 onClick={() => setActiveTab('payouts')}
                 data-gamepad-focusable="true"
@@ -233,7 +230,6 @@ const GameSummaryModal = ({ onClose, gameData }) => {
               )}
             </div>
           )}
-      </div>
     </BaseModal>
   );
 };

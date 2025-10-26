@@ -81,12 +81,10 @@ const GameScreen = ({ onReturnToLobby }) => {
             <p className={styles.errorText}>{error}</p>
           </div>
         )}
-        
+
         {/* Game table with integrated controls */}
-        <div className={styles.tableWrapper}>
-          <Table />
-        </div>
-        
+        <Table />
+
         <div className={styles.gameBottomSection}>
           <PlayerList />
           <GameLog />

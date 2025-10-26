@@ -1,22 +1,10 @@
 .authPage {
-  justify-content: center;
+  padding-top: max(0.75rem, var(--safe-area-inset-top));
   color: var(--text-primary);
   overflow: hidden;
   height: 100vh;
   min-height: 100vh;
 }
-
-/* Title styles moved to GameHeader.module.css */
-
-/* Title media queries moved to GameHeader.module.css */
-
-/* Title media queries moved to GameHeader.module.css */
-
-/* Subtitle styles moved to GameHeader.module.css */
-
-/* Subtitle media queries moved to GameHeader.module.css */
-
-/* Subtitle media queries moved to GameHeader.module.css */
 
 .error {
   margin: var(--spacing-md) 0;
@@ -32,6 +20,8 @@
 }
 
 .formContainer {
+  flex: 1;
+  justify-content: space-evenly;
   width: 100%;
   max-width: 450px;
   display: flex;

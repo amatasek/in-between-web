@@ -2,7 +2,6 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: 0.75rem;
   box-sizing: border-box;
   transition: all 0.3s ease;
   flex: 1;
@@ -135,8 +134,9 @@
 @media (max-width: 600px) {
   .gameLogContainer {
     max-width: 100%;
+    padding: 0 0.5rem;
   }
-  
+
   .gameLogEntries {
     max-height: 300px;
   }
