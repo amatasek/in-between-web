@@ -9,6 +9,7 @@ on:
       - 'web/public/**'
       - 'web/package.json'
       - 'web/vite.config.js'
+  workflow_dispatch:
 
 jobs:
   deploy-ota:
