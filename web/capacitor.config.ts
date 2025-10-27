@@ -9,6 +9,12 @@ const config: CapacitorConfig = {
   },
   ios: {
     contentInset: 'never'
+  },
+  plugins: {
+    CapacitorUpdater: {
+      autoUpdate: true,
+      resetWhenUpdate: false
+    }
   }
 };
 

@@ -4,7 +4,7 @@
   "description": "A fun card game where you bet if the next card will be in-between two cards",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
+  "background_color": "#1a2a3a",
   "theme_color": "#0066cc",
   "icons": [
     {

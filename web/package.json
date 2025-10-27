@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "ios": "npm run build && npx cap sync ios && npx cap open ios",
-    "android": "npm run build && npx cap sync android && npx cap open android",
-    "sync": "npm run build && npx cap sync"
+    "sync": "npm run build && npx cap sync",
+    "ios": "npm run sync && npx cap open ios",
+    "android": "npm run sync && node scripts/patch-android-splash.js && npx cap open android",
+    "assets": "npx capacitor-assets generate --assetPath resources --iconBackgroundColor '#1a2a3a' --iconBackgroundColorDark '#1a2a3a' --splashBackgroundColor '#1a2a3a' --splashBackgroundColorDark '#1a2a3a'"
   },
   "dependencies": {
+    "@capgo/capacitor-updater": "^7.23.3",
     "howler": "^2.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -18,13 +20,13 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
-    "@capacitor/android": "^6.2.1",
-    "@capacitor/cli": "^6.2.1",
-    "@capacitor/core": "^6.2.1",
-    "@capacitor/ios": "^6.2.1",
-    "@vitejs/plugin-react-swc": "^3.8.1",
-    "terser": "^5.39.0",
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@vitejs/plugin-react-swc": "^4.2.0",
     "typescript": "^5.9.3",
-    "vite": "^5.4.17"
+    "vite": "^7.1.12"
   }
 }
