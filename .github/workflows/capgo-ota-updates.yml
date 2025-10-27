@@ -36,13 +36,25 @@ jobs:
           cd web
           npm run build
 
+      - name: Get package version
+        id: package-version
+        run: |
+          cd web
+          VERSION=$(node -p "require('./package.json').version")
+          TIMESTAMP=$(date +%s)
+          BUNDLE_VERSION="${VERSION}-${TIMESTAMP}"
+          echo "version=${BUNDLE_VERSION}" >> $GITHUB_OUTPUT
+          echo "base_version=${VERSION}" >> $GITHUB_OUTPUT
+
       - name: Upload to Capgo
         run: |
           cd web
-          npx @capgo/cli bundle upload --bundle ${{ github.sha }} --channel production --apikey ${{ secrets.CAPGO_API_KEY }}
+          npx @capgo/cli bundle upload --bundle ${{ steps.package-version.outputs.version }} --channel production --apikey ${{ secrets.CAPGO_API_KEY }}
 
       - name: Deploy summary
         run: |
           echo "✅ OTA update deployed to Capgo!"
           echo "📱 Users will receive this update automatically"
-          echo "🔖 Version: ${{ github.sha }}"
+          echo "🔖 Version: ${{ steps.package-version.outputs.version }}"
+          echo "📦 Base version: ${{ steps.package-version.outputs.base_version }}"
+          echo "🔗 Commit: ${{ github.sha }}"
