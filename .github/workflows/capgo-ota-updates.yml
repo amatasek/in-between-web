@@ -37,9 +37,11 @@ jobs:
           npm run build
 
       - name: Upload to Capgo
+        env:
+          CAPGO_API_KEY: ${{ secrets.CAPGO_API_KEY }}
         run: |
           cd web
-          npx @capgo/cli bundle upload --bundle ${{ github.sha }} --channel production --apikey ${{ secrets.CAPGO_API_KEY }}
+          npx @capgo/cli bundle upload --bundle ${{ github.sha }} --channel production --apikey "$CAPGO_API_KEY"
 
       - name: Deploy summary
         run: |
