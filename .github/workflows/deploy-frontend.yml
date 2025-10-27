@@ -4,21 +4,16 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'web/src/**'
+      - 'web/public/**'
+      - 'web/package.json'
+      - 'web/vite.config.js'
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-          - production
-          - staging
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'production' }}
     permissions:
       contents: write
     
