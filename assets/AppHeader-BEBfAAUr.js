@@ -1,1 +1,0 @@
-import{j as e}from"./index-BGl51GMi.js";import"./vendor-D3vErxIQ.js";const s="_headerContainer_13wru_1",a="_gameTitle_13wru_12",r="_liveTag_13wru_25",n=()=>e.jsx("div",{className:s,children:e.jsxs("h1",{className:a,children:["In Between ",e.jsx("span",{className:r,children:"LIVE"})]})});export{n as A};
