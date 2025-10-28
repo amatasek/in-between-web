@@ -23,6 +23,7 @@
   align-items: center;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .avatar:hover {
@@ -84,12 +85,17 @@
   display: flex;
   flex-direction: column;
   margin-left: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .username {
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .userTitle {

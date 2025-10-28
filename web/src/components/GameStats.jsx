@@ -290,7 +290,7 @@ const GameStats = ({ gameData }) => {
           tabIndex="0"
         >
           {gameStats.map((stat) => (
-            <div key={stat.key} className={`panel-alt ${styles.statItem}`}>
+            <div key={stat.key} className={`panel-alt`}>
               <div className={styles.statLabel}>{stat.label}</div>
               <div className={styles.statValue}>
                 {formatStatValue(stat.type, stat.value)}

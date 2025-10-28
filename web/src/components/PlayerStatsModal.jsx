@@ -93,10 +93,21 @@ const PlayerStatsModal = ({ onClose }) => {
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString, compact = false) => {
     if (!dateString) return 'Unknown';
-    
+
     const date = new Date(dateString);
+
+    if (compact) {
+      // Compact format for mobile: "Oct 25, 1:00 PM"
+      return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      }).format(date);
+    }
+
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
@@ -224,7 +235,7 @@ const PlayerStatsModal = ({ onClose }) => {
                   tabIndex="0"
                 >
                   {lifetimeStats.map((stat, index) => (
-                    <div key={stat.key || `stat-${index}`} className={`panel-alt ${styles.statItem}`}>
+                    <div key={stat.key || `stat-${index}`} className={`panel-alt`}>
                       <div className={styles.statLabel}>{stat.label}</div>
                       <div className={styles.statValue}>
                         {formatStatValue(stat.type, stat.value)}
@@ -253,11 +264,7 @@ const PlayerStatsModal = ({ onClose }) => {
                 </div>
               ) : (
                 <>
-                  <div
-                    className={`panel-alt ${styles.historyTable}`}
-                    data-gamepad-scrollable="true"
-                    tabIndex="0"
-                  >
+                  <div className={`panel-alt ${styles.historyTable}`}>
                     <div className={styles.tableHeader}>
                       <div className={styles.gameNameHeader}>Game</div>
                       <div className={styles.playerCountHeader}>Players</div>
@@ -265,24 +272,33 @@ const PlayerStatsModal = ({ onClose }) => {
                       <div className={styles.endDateHeader}>Ended</div>
                     </div>
 
-                    {historyData.games.map((game) => (
-                      <div key={game.id} className={styles.historyRow}>
-                        <div className={styles.gameNameCell}>
-                          <span
-                            className={styles.gameNameLink}
-                            onClick={() => handleGameClick(game.id)}
-                            tabIndex="0"
-                            role="button"
-                            data-gamepad-focusable="true"
-                          >
-                            #{game.id}
-                          </span>
+                    <div
+                      className={styles.tableBody}
+                      data-gamepad-scrollable="true"
+                      tabIndex="0"
+                    >
+                      {historyData.games.map((game) => (
+                        <div key={game.id} className={styles.historyRow}>
+                          <div className={styles.gameNameCell}>
+                            <span
+                              className={styles.gameNameLink}
+                              onClick={() => handleGameClick(game.id)}
+                              tabIndex="0"
+                              role="button"
+                              data-gamepad-focusable="true"
+                            >
+                              #{game.id}
+                            </span>
+                          </div>
+                          <div className={styles.playerCountCell}>{game.totalPlayerCount}</div>
+                          <div className={styles.roundsCell}>{getRoundCount(game)}</div>
+                          <div className={styles.endDateCell}>
+                            <span className={styles.dateDesktop}>{formatDate(game.endedAt)}</span>
+                            <span className={styles.dateMobile}>{formatDate(game.endedAt, true)}</span>
+                          </div>
                         </div>
-                        <div className={styles.playerCountCell}>{game.totalPlayerCount}</div>
-                        <div className={styles.roundsCell}>{getRoundCount(game)}</div>
-                        <div className={styles.endDateCell}>{formatDate(game.endedAt)}</div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
 
                   <div className={styles.pageInfo}>

@@ -39,12 +39,6 @@
   background: rgba(100, 169, 255, 0.5);
 }
 
-.statItem {
-  padding: 8px 10px !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
 .statLabel {
   color: var(--text-secondary);
   font-size: 0.85rem;
@@ -71,5 +65,6 @@
 @media (max-width: 600px) {
   .statsGrid {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 }

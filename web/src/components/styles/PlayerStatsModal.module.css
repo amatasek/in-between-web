@@ -44,12 +44,6 @@
   background: rgba(100, 169, 255, 0.5);
 }
 
-.statItem {
-  padding: 10px 12px !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
 .statLabel {
   color: var(--text-secondary);
   font-size: 0.85rem;
@@ -76,6 +70,7 @@
 @media (max-width: 600px) {
   .statsGrid {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 }
 
@@ -86,29 +81,36 @@
   overflow: hidden;
   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(44, 62, 80, 0.2);
-  table-layout: fixed;
-  overflow-y: auto;
-  overflow-x: hidden;
   padding: 0 !important;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
+  display: flex;
+  flex-direction: column;
 }
 
-.historyTable::-webkit-scrollbar {
+.tableBody {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 169, 255, 0.3) transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.tableBody::-webkit-scrollbar {
   width: 8px;
 }
 
-.historyTable::-webkit-scrollbar-track {
+.tableBody::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
 }
 
-.historyTable::-webkit-scrollbar-thumb {
+.tableBody::-webkit-scrollbar-thumb {
   background: rgba(100, 169, 255, 0.3);
   border-radius: 4px;
 }
 
-.historyTable::-webkit-scrollbar-thumb:hover {
+.tableBody::-webkit-scrollbar-thumb:hover {
   background: rgba(100, 169, 255, 0.5);
 }
 
@@ -146,6 +148,8 @@
   grid-template-columns: 2fr 1fr 1fr 2fr;
   padding: 10px 15px;
   border: none;
+  flex: 1;
+  align-items: center;
 }
 
 .historyRow:nth-child(even) {
@@ -341,4 +345,41 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Show/hide date formats based on screen size */
+.dateMobile {
+  display: none;
+}
+
+.dateDesktop {
+  display: inline;
+}
+
+/* Make table more compact on mobile */
+@media (max-width: 600px) {
+  .dateMobile {
+    display: inline;
+  }
+
+  .dateDesktop {
+    display: none;
+  }
+
+  .tableHeader {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .gameNameHeader, .playerCountHeader, .roundsHeader, .endDateHeader {
+    padding: 6px;
+  }
+
+  .historyRow {
+    padding: 8px 12px;
+  }
+
+  .endDateCell {
+    font-size: 0.85rem;
+  }
 }
