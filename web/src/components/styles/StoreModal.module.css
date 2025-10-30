@@ -45,3 +45,84 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Coin Pack Card */
+.coinPackCard {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.coinAmount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.productImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+}
+
+.productImage img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.productDescription {
+  color: #a0b9d6;
+  font-size: 0.875rem;
+  margin: 0 0 1rem 0;
+  text-align: center;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.productPrice {
+  font-size: 1.75rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.productPrice.free {
+  color: #2ecc71;
+}
+
+.productPrice.paid {
+  color: #bcdcff;
+}
+
+/* Watch Ad Button */
+.adButton {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+.adButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #229954, #27ae60);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+}
+
+.adButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

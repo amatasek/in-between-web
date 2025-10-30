@@ -112,13 +112,6 @@ class StoreService {
     }
   }
 
-  /**
-   * Get coin offerings specifically
-   * @returns {Promise<Array>} Array of coin product offerings
-   */
-  async getCoinOfferings() {
-    return this.getOfferingsByType('coin');
-  }
 }
 
 // Create a singleton instance

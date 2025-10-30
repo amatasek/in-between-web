@@ -1,25 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import BaseModal from './common/BaseModal';
+import CurrencyAmount from './common/CurrencyAmount';
 import styles from './styles/StoreModal.module.css';
 import storeService from '../services/StoreService';
 
 const StoreModal = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('coins');
   const [coinOfferings, setCoinOfferings] = useState([]);
+  const [upgradeOfferings, setUpgradeOfferings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     loadCoinOfferings();
+    loadUpgradeOfferings();
   }, []);
 
   const loadCoinOfferings = async () => {
     try {
       setLoading(true);
       setError(null);
-      const offerings = await storeService.getCoinOfferings();
-      setCoinOfferings(offerings);
+      const offerings = await storeService.getOfferingsByType('coin');
+
+      // Inject "Watch Ad" offering at the beginning
+      const watchAdOffering = {
+        id: 'watch-ad',
+        coinAmount: 300,
+        priceUSD: 0,
+        name: 'Watch Ad',
+        description: 'Watch a short video ad to earn free coins!',
+        imageUrl: null,
+        isAd: true
+      };
+
+      setCoinOfferings([watchAdOffering, ...offerings]);
     } catch (err) {
       console.error('Failed to load coin offerings:', err);
       setError('Failed to load products. Please try again.');
@@ -28,19 +43,36 @@ const StoreModal = ({ onClose }) => {
     }
   };
 
+  const loadUpgradeOfferings = async () => {
+    try {
+      const offerings = await storeService.getOfferingsByType('upgrade');
+      setUpgradeOfferings(offerings);
+    } catch (err) {
+      console.error('Failed to load upgrade offerings:', err);
+    }
+  };
+
   const handlePurchase = async (productId) => {
     try {
       setPurchasing(productId);
       setError(null);
-      
+
+      // Handle watch ad separately
+      if (productId === 'watch-ad') {
+        console.log('Watch ad clicked - Ad integration coming soon!');
+        alert('Ad feature coming soon! You would earn 300 coins by watching a short video.');
+        setPurchasing(null);
+        return;
+      }
+
       const result = await storeService.processPurchase(productId);
-      
+
       // Show success message or handle success
       console.log('Purchase successful:', result);
-      
+
       // Close modal on successful purchase
       onClose();
-      
+
     } catch (err) {
       console.error('Purchase failed:', err);
       setError(err.message || 'Purchase failed. Please try again.');
@@ -79,6 +111,13 @@ const StoreModal = ({ onClose }) => {
         >
           Coin Packs
         </button>
+        <button
+          className={`tab-button ${activeTab === 'upgrade' ? 'active' : ''}`}
+          onClick={() => setActiveTab('upgrade')}
+          data-gamepad-focusable="true"
+        >
+          Upgrades
+        </button>
         </div>
 
         {/* Error Message */}
@@ -111,79 +150,98 @@ const StoreModal = ({ onClose }) => {
               {coinOfferings.map((offering) => (
                 <div
                   key={offering.id}
-                  className="panel-alt"
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    padding: '10px',
-                    minHeight: '280px'
-                  }}
+                  className={`panel-alt ${styles.coinPackCard}`}
                 >
-                  {/* Coin Amount Header */}
-                  <h3 style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    color: '#FFD700',
-                    margin: '0 0 1rem 0',
-                    textAlign: 'center'
-                  }}>
-                    {formatCoins(offering.coinAmount)} Coins
+                  <h3 className={styles.coinAmount}>
+                    <CurrencyAmount amount={offering.coinAmount} size="large" />
                   </h3>
-                  
-                  {/* Product Image */}
-                  {offering.imageUrl && (
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'center', 
-                      alignItems: 'center',
-                      marginBottom: '1rem' 
-                    }}>
+
+                  <div className={styles.productImage}>
+                    {offering.imageUrl && (
                       <img
                         src={offering.imageUrl}
                         alt={offering.name}
-                        style={{
-                          width: '64px',
-                          height: '64px',
-                          objectFit: 'contain'
-                        }}
                         onError={(e) => {
                           e.target.style.display = 'none';
                         }}
                       />
-                    </div>
-                  )}
-                  
-                  {/* Description */}
-                  <p style={{
-                    color: '#a0b9d6',
-                    fontSize: '0.875rem',
-                    margin: '0 0 1rem 0',
-                    textAlign: 'center',
-                    lineHeight: '1.4',
-                    flex: '1'
-                  }}>
+                    )}
+                  </div>
+
+                  <p className={styles.productDescription}>
                     {offering.description}
                   </p>
-                  
-                  {/* Price */}
-                  <div style={{
-                    fontSize: '1.75rem',
-                    fontWeight: 'bold',
-                    color: '#bcdcff',
-                    textAlign: 'center',
-                    marginBottom: '1rem'
-                  }}>
-                    {formatPrice(offering.priceUSD)}
+
+                  <div className={`${styles.productPrice} ${offering.isAd ? styles.free : styles.paid}`}>
+                    {offering.isAd ? 'FREE' : formatPrice(offering.priceUSD)}
                   </div>
-                  
-                  {/* Purchase Button */}
+
+                  <button
+                    onClick={() => handlePurchase(offering.id)}
+                    disabled={purchasing === offering.id}
+                    className={offering.isAd ? styles.adButton : "btn btn-primary"}
+                    data-gamepad-focusable="true"
+                  >
+                    {purchasing === offering.id
+                      ? 'Processing...'
+                      : (offering.isAd ? 'Watch Ad' : 'Purchase')}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+        )}
+
+        {/* Upgrades Tab Content */}
+        {activeTab === 'upgrade' && (
+          <div className="tab-content">
+          {upgradeOfferings.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#a0b9d6' }}>
+              No upgrades available at the moment.
+            </div>
+          ) : (
+            <div
+              className={styles.coinPacksGrid}
+              data-gamepad-scrollable="true"
+              tabIndex="0"
+            >
+              {upgradeOfferings.map((offering) => (
+                <div
+                  key={offering.id}
+                  className={`panel-alt ${styles.coinPackCard}`}
+                >
+                  <h3 className={styles.coinAmount}>
+                    {offering.name}
+                  </h3>
+
+                  <div className={styles.productImage}>
+                    {offering.imageUrl && (
+                      <img
+                        src={offering.imageUrl}
+                        alt={offering.name}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  <p className={styles.productDescription}>
+                    {offering.description}
+                  </p>
+
+                  <div className={`${styles.productPrice} ${styles.paid}`}>
+                    {formatPrice(offering.priceUSD)}/month
+                  </div>
+
                   <button
                     onClick={() => handlePurchase(offering.id)}
                     disabled={purchasing === offering.id}
                     className="btn btn-primary"
                     data-gamepad-focusable="true"
                   >
-                    {purchasing === offering.id ? 'Processing...' : 'Purchase'}
+                    {purchasing === offering.id ? 'Processing...' : 'Subscribe'}
                   </button>
                 </div>
               ))}
