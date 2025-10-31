@@ -1,8 +1,7 @@
 .authPage {
   padding-top: max(0.75rem, var(--safe-area-inset-top));
   color: var(--text-primary);
-  overflow: hidden;
-  height: 100vh;
+  overflow-y: auto;
   min-height: 100vh;
 }
 
@@ -21,7 +20,7 @@
 
 .formContainer {
   flex: 1;
-  justify-content: space-evenly;
+  gap: 30px;
   width: 100%;
   max-width: 450px;
   display: flex;
@@ -85,33 +84,146 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.toggleContainer {
-  margin-top: 1.5rem;
+
+
+.legacyLinkContainer {
   text-align: center;
+  width: 100%;
 }
 
-.toggleButton {
-  background: transparent;
+.legacyText {
+  margin: 0 0 0.75rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.migrateButton {
+  width: 100%;
+}
+
+.migrateBanner {
+  margin-top: 50px;
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--secondary);
+  color: var(--text-white);
   border: none;
-  color: var(--text-primary);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
-  padding: 8px 16px;
   transition: all 0.3s ease;
-  opacity: 0.8;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
 }
 
-.toggleButton:hover {
-  opacity: 1;
-  color: var(--info);
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-sm);
-  text-decoration: none;
+.migrateBanner:hover {
+  background-color: #d63031;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-@media (max-width: 400px) {
-  .toggleButton {
-    font-size: 0.9rem;
+.migrateBanner:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .migrateBanner {
+    max-width: 100%;
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 0.875rem 1.25rem;
   }
+}
+
+/* Style FirebaseUI to match In-Between design */
+:global(.firebaseui-card-content),
+:global(.mdl-card) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+:global(.firebaseui-container.mdl-card) {
+  min-width: 350px !important;
+}
+
+:global(.firebaseui-textfield) {
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+:global(.firebaseui-label),
+:global(.mdl-textfield__label) {
+  color: var(--text-secondary) !important;
+  padding-left: 4px !important;
+}
+
+:global(.firebaseui-text) {
+  color: var(--text-secondary) !important;
+  text-align: center !important;
+}
+
+:global(.firebaseui-title) {
+  text-align: center !important;
+  color: var(--text-primary) !important;
+}
+
+:global(.firebaseui-form-actions) {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+:global(.firebaseui-form-actions .mdl-button--raised.mdl-button--colored) {
+  background: linear-gradient(to right, var(--btn-primary-start), var(--btn-primary-end)) !important;
+  color: white !important;
+  border-radius: 4px !important;
+}
+
+:global(.firebaseui-form-actions .mdl-button--primary) {
+  background: linear-gradient(to right, var(--btn-primary-start), var(--btn-primary-end)) !important;
+  color: white !important;
+  border-radius: 4px !important;
+}
+
+:global(.firebaseui-form-actions .firebaseui-id-submit) {
+  background: linear-gradient(to right, var(--btn-primary-start), var(--btn-primary-end)) !important;
+  color: white !important;
+  border-radius: 4px !important;
+}
+
+:global(.firebaseui-form-actions .mdl-button) {
+  background: linear-gradient(to bottom, var(--btn-secondary-start), var(--btn-secondary-end)) !important;
+  color: var(--text-light) !important;
+  border: 1px solid var(--color-border-light) !important;
+  border-radius: 4px !important;
+}
+
+:global(.firebaseui-form-actions .firebaseui-id-secondary-link) {
+  background: linear-gradient(to bottom, var(--btn-secondary-start), var(--btn-secondary-end)) !important;
+  color: var(--text-light) !important;
+  border: 1px solid var(--color-border-light) !important;
+  border-radius: 4px !important;
+}
+
+:global(.firebaseui-card-footer) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+:global(.firebaseui-card-footer p) {
+  text-align: center !important;
+}
+
+:global(.firebaseui-tos-list) {
+  display: flex !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+
+:global(.firebaseui-inline-list-item) {
+  text-align: center !important;
 }

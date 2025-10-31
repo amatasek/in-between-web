@@ -2,6 +2,8 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { useSocket } from './SocketContext.jsx';
 import WelcomePopup from '../components/common/WelcomePopup';
 import { API_URL } from '../config';
+import { auth } from '../services/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const AuthContext = createContext(null);
 
@@ -58,7 +60,7 @@ export const AuthProvider = ({ children }) => {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
@@ -71,39 +73,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Single Effect for Initial Authentication Check
+  // Firebase Auth State Listener
   useEffect(() => {
-    const initializeAuth = async () => {
-      let currentToken = null;
-      try {
-        currentToken = localStorage.getItem('token');
-        
-        if (currentToken) {
-          setToken(currentToken); 
-        }
-      } catch (error) {
-        console.error('[Auth] Error reading token from localStorage:', error);
-        localStorage.removeItem('token'); // Clear potentially corrupted token
-      }
-
-      // Now, decide whether to fetch user data based on the token found
-      if (currentToken) {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
         try {
-          const userData = await fetchUserData(currentToken); 
+          // Get Firebase ID token
+          const idToken = await firebaseUser.getIdToken();
+          setToken(idToken);
+
+          // Fetch user data from backend
+          const userData = await fetchUserData(idToken);
           if (userData) {
-            setUser(userData); 
+            setUser(userData);
           } else {
-            // Fetch failed or returned no data for a valid token
-            console.error('[Auth] Token valid but failed to fetch user data. Logging out.');
+            console.error('[Auth] Failed to fetch user data for Firebase user');
             setUser(null);
             setToken(null);
-            localStorage.removeItem('token');
           }
         } catch (error) {
-          console.error('[Auth] Error during user data fetch. Logging out.', error);
+          console.error('[Auth] Error getting Firebase token or user data:', error);
           setUser(null);
           setToken(null);
-          localStorage.removeItem('token');
         } finally {
           setLoading(false);
         }
@@ -112,12 +103,15 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setLoading(false);
       }
-    };
+    });
 
-    initializeAuth();
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []); // Empty dependency array ensures it runs only once on mount
 
   const login = async (userData, newToken) => {
+    // Note: This function is primarily used for the migration flow
+    // Firebase social logins are handled automatically by onAuthStateChanged
     if (!userData || !userData.username || !userData.id || typeof userData.balance !== 'number') {
       console.error('[Auth] Invalid user data:', userData);
       throw new Error('Invalid user data provided');
@@ -127,7 +121,7 @@ export const AuthProvider = ({ children }) => {
       console.error('[Auth] No token provided');
       throw new Error('No authentication token provided');
     }
-    
+
     try {
       // Set initial user data for immediate UI feedback
       const initialUserData = {
@@ -135,55 +129,64 @@ export const AuthProvider = ({ children }) => {
         id: userData.id,
         balance: userData.balance
       };
-      
-      // Store only the token in localStorage
+
+      // Set token and user data
       setUser(initialUserData);
       setToken(newToken);
-      localStorage.setItem('token', newToken);
-      
+
       // Show welcome popup when user logs in
       setShowWelcomePopup(true);
-      
+
       // Fetch complete user data from /me endpoint
       const completeUserData = await fetchUserData(newToken);
       if (completeUserData) {
         setUser(completeUserData);
       }
-      
+
     } catch (error) {
       console.error('[Auth] Error during login:', error);
       throw error;
     }
   };
 
-  const logout = useCallback(() => {
-    // Clear state
-    setUser(null);
-    setToken(null);
-    setShowWelcomePopup(false);
-    
-    // Clear localStorage
-    localStorage.removeItem('token');
+  const logout = useCallback(async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      setToken(null);
+      setShowWelcomePopup(false);
+    } catch (error) {
+      console.error('[Auth] Error during logout:', error);
+    }
   }, []); // Empty dependency array means this function never changes
 
   // Function to refresh user data from the /me endpoint
   const refreshUserData = useCallback(async () => {
     try {
-      // fetchUserData depends on the 'token' state variable
-      const userData = await fetchUserData(token);
+      // Get fresh Firebase token
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.error('[Auth] No Firebase user found. Logging out.');
+        logout();
+        return;
+      }
+
+      const freshToken = await currentUser.getIdToken(true); // Force refresh
+      setToken(freshToken);
+
+      // Fetch updated user data
+      const userData = await fetchUserData(freshToken);
       if (userData) {
         setUser(userData);
       } else {
         console.error('[Auth] Failed to refresh user data. Logging out.');
-        // logout is now stable thanks to useCallback above
         logout();
       }
-    } catch (error) { 
+    } catch (error) {
       console.error('[Auth] Error during manual refresh. Logging out.', error);
       logout();
     }
-  // Add dependencies: token and logout
-  }, [token, logout]);
+  }, [logout]);
 
   if (loading) {
     return null; // or a loading spinner

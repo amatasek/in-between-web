@@ -6,36 +6,32 @@ import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
 import styles from './AuthPage.module.css';
 import AppHeader from '../common/AppHeader';
 import { API_URL } from '../../config.js';
+import { auth } from '../../services/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 const AuthPage = () => {
-  const [mode, setMode] = useState('login');
-  const { login } = useAuth();
   const navigate = useNavigate();
-  
-  // Initialize gamepad navigation
-  useGamepadNavigation(true);
 
-  const [error, setError] = useState(null);
+  // Disable gamepad navigation on migration screen (users need to type in forms)
+  useGamepadNavigation(false);
 
-  const handleAuth = async (username, password) => {
-    if (!username || !password) {
-      setError('Username and password are required');
-      return;
+  const [success, setSuccess] = useState(null);
+
+  const handleMigration = async (username, password, email) => {
+    if (!username || !password || !email) {
+      throw new Error('Username, password, and email are required');
     }
 
-    setError(null);
-    const endpoint = `${API_URL}/auth/${mode}`;
-    
+    setSuccess(null);
 
     try {
-      const requestBody = { username, password };
-      const response = await fetch(endpoint, {
+      // Call the /auth/migrate endpoint
+      const response = await fetch(`${API_URL}/auth/migrate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({ username, password, email }),
       });
 
       let data;
@@ -45,63 +41,59 @@ const AuthPage = () => {
         console.error('[Client] Error parsing response:', error);
         throw new Error('Invalid response from server');
       }
-      
+
       if (!response.ok) {
-        throw new Error(data.message || 'Authentication failed');
+        throw new Error(data.message || 'Migration failed');
       }
 
-      if (!data.user?.username || !data.user?.id || !data.token) {
-        console.error('[Client] Invalid response format:', {
-          hasUser: !!data.user,
-          hasUsername: !!data.user?.username,
-          hasId: !!data.user?.id,
-          hasToken: !!data.token
-        });
+      if (!data.customToken) {
+        console.error('[Client] Invalid response format: missing customToken');
         throw new Error('Invalid server response format');
       }
 
-      try {
-        login(data.user, data.token);
-        // Navigate to the lobby after successful login
+      // Sign in to Firebase with the custom token
+      await signInWithCustomToken(auth, data.customToken);
+
+      // Show success message and redirect
+      setSuccess('Account migrated successfully! Redirecting...');
+
+      // Wait for auth state to update, then redirect to home
+      setTimeout(() => {
         navigate('/');
-      } catch (error) {
-        console.error('[Client] Error in login callback:', error);
-        throw new Error('Failed to initialize user session');
-      }
+      }, 1500);
     } catch (error) {
-      console.error('[Client] Auth error:', {
-        message: error.message,
-        endpoint,
-        mode
+      console.error('[Client] Migration error:', {
+        message: error.message
       });
-      setError(error.message || 'Failed to connect to server');
+      throw error;
     }
-
-
   };
 
   return (
     <div className={`screen ${styles.authPage}`}>
       <AppHeader />
-      
+
       <div className={styles.formContainer}>
-        {error && (
-          <div className={styles.error}>
-            {error}
+        {success && (
+          <div className={styles.successAlert}>
+            {success}
           </div>
         )}
-        
-        <AuthForm mode={mode} onSubmit={handleAuth} />
-        
+
+        <AuthForm
+          mode="migrate"
+          requireEmail={true}
+          onSubmit={handleMigration}
+          description="Enter your existing username and password, plus an email address to migrate your legacy account."
+        />
+
         <div className={styles.toggleContainer}>
           <button
             className={styles.toggleButton}
-            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+            onClick={() => navigate('/auth')}
             data-gamepad-focusable="true"
           >
-            {mode === 'login' 
-              ? "Don't have an account? Register" 
-              : "Already have an account? Login"}
+            Back to Login
           </button>
         </div>
       </div>
