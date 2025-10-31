@@ -11,10 +11,10 @@ class StoreService {
 
   /**
    * Get the authorization header for API requests
+   * @param {string} token - Auth token to use
    * @returns {Object} Headers object with authorization
    */
-  getAuthHeaders() {
-    const token = localStorage.getItem('token');
+  getAuthHeaders(token) {
     return {
       'Content-Type': 'application/json',
       'Authorization': token ? `Bearer ${token}` : ''
@@ -24,14 +24,15 @@ class StoreService {
   /**
    * Get product offerings by type
    * @param {string} offeringType - Type of offering (e.g., 'coin')
+   * @param {string} token - Auth token
    * @returns {Promise<Array>} Array of product offerings
    */
-  async getOfferingsByType(offeringType) {
+  async getOfferingsByType(offeringType, token) {
     try {
       const url = `${this.baseURL}/offerings?offeringType=${encodeURIComponent(offeringType)}`;
       const response = await fetch(url, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
+        headers: this.getAuthHeaders(token),
         credentials: 'include'
       });
 
@@ -50,13 +51,14 @@ class StoreService {
 
   /**
    * Get all available product offerings
+   * @param {string} token - Auth token
    * @returns {Promise<Array>} Array of all product offerings
    */
-  async getAllOfferings() {
+  async getAllOfferings(token) {
     try {
       const response = await fetch(`${this.baseURL}/offerings`, {
         method: 'GET',
-        headers: this.getAuthHeaders(),
+        headers: this.getAuthHeaders(token),
         credentials: 'include'
       });
 
@@ -76,9 +78,10 @@ class StoreService {
   /**
    * Process a purchase
    * @param {string} productId - ID of the product to purchase
+   * @param {string} token - Auth token
    * @returns {Promise<Object>} Purchase result
    */
-  async processPurchase(productId) {
+  async processPurchase(productId, token) {
     try {
       if (!productId) {
         throw new Error('Product ID is required');
@@ -86,7 +89,7 @@ class StoreService {
 
       const response = await fetch(`${this.baseURL}/process`, {
         method: 'POST',
-        headers: this.getAuthHeaders(),
+        headers: this.getAuthHeaders(token),
         credentials: 'include',
         body: JSON.stringify({ productId })
       });

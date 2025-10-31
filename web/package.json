@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "sync": "npm run build && npx cap sync",
+    "sync": "npm run build && node scripts/copy-firebase-config.js && npx cap sync",
     "ios": "npm run sync && npx cap open ios",
     "android": "npm run sync && node scripts/patch-android-splash.js && npx cap open android",
     "assets": "npx capacitor-assets generate --assetPath resources --iconBackgroundColor '#1a2a3a' --iconBackgroundColorDark '#1a2a3a' --splashBackgroundColor '#1a2a3a' --splashBackgroundColorDark '#1a2a3a'"

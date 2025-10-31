@@ -3,8 +3,10 @@ import BaseModal from './common/BaseModal';
 import CurrencyAmount from './common/CurrencyAmount';
 import styles from './styles/StoreModal.module.css';
 import storeService from '../services/StoreService';
+import { useAuth } from '../contexts/AuthContext';
 
 const StoreModal = ({ onClose }) => {
+  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState('coins');
   const [coinOfferings, setCoinOfferings] = useState([]);
   const [upgradeOfferings, setUpgradeOfferings] = useState([]);
@@ -13,15 +15,17 @@ const StoreModal = ({ onClose }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadCoinOfferings();
-    loadUpgradeOfferings();
-  }, []);
+    if (token) {
+      loadCoinOfferings();
+      loadUpgradeOfferings();
+    }
+  }, [token]);
 
   const loadCoinOfferings = async () => {
     try {
       setLoading(true);
       setError(null);
-      const offerings = await storeService.getOfferingsByType('coin');
+      const offerings = await storeService.getOfferingsByType('coin', token);
 
       // Inject "Watch Ad" offering at the beginning
       const watchAdOffering = {
@@ -45,7 +49,7 @@ const StoreModal = ({ onClose }) => {
 
   const loadUpgradeOfferings = async () => {
     try {
-      const offerings = await storeService.getOfferingsByType('upgrade');
+      const offerings = await storeService.getOfferingsByType('upgrade', token);
       setUpgradeOfferings(offerings);
     } catch (err) {
       console.error('Failed to load upgrade offerings:', err);
@@ -65,7 +69,7 @@ const StoreModal = ({ onClose }) => {
         return;
       }
 
-      const result = await storeService.processPurchase(productId);
+      const result = await storeService.processPurchase(productId, token);
 
       // Show success message or handle success
       console.log('Purchase successful:', result);

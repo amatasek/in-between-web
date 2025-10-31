@@ -51,8 +51,8 @@ export const PreferencesProvider = ({ children }) => {
     selectedTitle: null
   });
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  
+  const { user, token } = useAuth();
+
   // Define loadPreferences function with useCallback to handle dependencies properly
   const loadPreferences = React.useCallback(async () => {
     if (!user) {
@@ -60,14 +60,13 @@ export const PreferencesProvider = ({ children }) => {
       setLoading(false);
       return;
     }
-    
-      
+
+
     try {
       setLoading(true);
       // Get API URL from environment or use localhost as fallback
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const token = localStorage.getItem('token');
-      
+
       if (!token) {
         console.error('[Preferences] No token available');
         setLoading(false);
@@ -105,7 +104,7 @@ export const PreferencesProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, token]);
   
   // Load preferences from the server when the user changes or component mounts
   useEffect(() => {
@@ -120,12 +119,11 @@ export const PreferencesProvider = ({ children }) => {
       console.error('[Preferences] Cannot update preferences: User not logged in');
       return false;
     }
-    
+
     try {
       // Get API URL from environment or use localhost as fallback
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const token = localStorage.getItem('token');
-      
+
       if (!token) {
         console.error('[Preferences] No token available');
         return false;
@@ -197,16 +195,15 @@ export const PreferencesProvider = ({ children }) => {
       console.error('[Preferences] No file provided for profile image upload');
       return false;
     }
-    
-    
+
+
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       // Get API URL from environment or use localhost as fallback
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const token = localStorage.getItem('token');
-      
+
       if (!token) {
         console.error('[Preferences] No token available');
         return false;

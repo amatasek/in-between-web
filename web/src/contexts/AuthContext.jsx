@@ -10,7 +10,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   
   // Get socket from socket context to listen for balance updates
@@ -95,13 +95,10 @@ export const AuthProvider = ({ children }) => {
           console.error('[Auth] Error getting Firebase token or user data:', error);
           setUser(null);
           setToken(null);
-        } finally {
-          setLoading(false);
         }
       } else {
         setUser(null);
         setToken(null);
-        setLoading(false);
       }
     });
 
