@@ -154,6 +154,11 @@
   padding: 0 !important;
 }
 
+:global(.mdl-textfield__label::after),
+:global(.firebaseui-textfield.mdl-textfield .firebaseui-label::after) {
+  display: none !important;
+}
+
 :global(.firebaseui-label),
 :global(.mdl-textfield__label) {
   color: var(--text-secondary) !important;
