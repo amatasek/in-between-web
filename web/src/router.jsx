@@ -5,7 +5,7 @@ import { useAuth } from './contexts/AuthContext';
 import { LobbyProvider } from './contexts/LobbyContext';
 
 // Lazy load routes for code splitting
-const FirebaseAuthPage = lazy(() => import('./components/auth/FirebaseAuthPage'));
+const ModernAuthPage = lazy(() => import('./components/auth/ModernAuthPage'));
 const AuthPage = lazy(() => import('./components/auth/AuthPage')); // Legacy, for /migrate route
 const Lobby = lazy(() => import('./components/Lobby'));
 const GameRoom = lazy(() => import('./components/GameRoom'));
@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
     path: '/auth',
     element: (
       <Suspense fallback={<LoadingScreen message="Loading..." />}>
-        <FirebaseAuthPage />
+        <ModernAuthPage />
       </Suspense>
     ),
   },
