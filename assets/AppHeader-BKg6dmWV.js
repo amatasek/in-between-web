@@ -1,0 +1,1 @@
+import{M as e}from"./index-BIeZhRtM.js";import"./vendor-ByZL_ylL.js";const r="_headerContainer_13wru_1",s="_gameTitle_13wru_12",n="_liveTag_13wru_25",a={headerContainer:r,gameTitle:s,liveTag:n},l=()=>e.jsx("div",{className:a.headerContainer,children:e.jsxs("h1",{className:a.gameTitle,children:["In Between ",e.jsx("span",{className:a.liveTag,children:"LIVE"})]})});export{l as A};
