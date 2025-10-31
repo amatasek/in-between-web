@@ -2,9 +2,11 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a2a3a 0%, #0f1419 100%);
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--primary-dark) 100%);
   position: relative;
   overflow: hidden;
+  padding-top: max(0.75rem, var(--safe-area-inset-top));
+  padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
 }
 
 /* Animated background effect */
@@ -15,7 +17,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
   animation: pulse 15s ease-in-out infinite;
 }
 
@@ -33,8 +35,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  padding: 40px 20px;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-md);
   position: relative;
   z-index: 1;
 }
@@ -63,12 +65,12 @@
   align-items: center;
   gap: 10px;
   padding: 14px 16px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 12px;
-  color: #fca5a5;
-  font-size: 14px;
-  margin-bottom: 24px;
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid var(--secondary);
+  border-radius: var(--radius-lg);
+  color: var(--secondary-light);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-lg);
   animation: shake 0.4s ease-out;
 }
 
@@ -86,17 +88,17 @@
 .socialButtons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
 }
 
 /* Divider */
 .divider {
   display: flex;
   align-items: center;
-  margin: 20px 0;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 14px;
+  margin: var(--spacing-md) 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
 }
 
 .divider::before,
@@ -104,12 +106,12 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-border-light);
 }
 
 .divider span {
-  padding: 0 16px;
-  font-weight: 500;
+  padding: 0 var(--spacing-md);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Email Button */
@@ -117,24 +119,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: var(--spacing-sm);
   width: 100%;
-  padding: 14px 24px;
+  padding: 14px var(--spacing-lg);
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
+  border: 1px solid var(--color-border-lighter);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--button-transition);
 }
 
 .emailButton:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: var(--color-border-lighter);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .emailButton:active:not(:disabled) {
@@ -149,65 +151,65 @@
 /* Privacy Note */
 .privacyNote {
   text-align: center;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
   margin: 0;
-  font-weight: 400;
+  font-weight: var(--font-weight-regular);
 }
 
 /* Email Form */
 .emailForm {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-md);
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-xs);
 }
 
 .label {
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: 0.3px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .input {
   width: 100%;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  color: #fff;
-  font-size: 16px;
-  transition: all 0.2s ease;
+  padding: var(--input-padding);
+  background: var(--input-bg);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--radius-md);
+  color: var(--input-text-color);
+  font-size: var(--font-size-base);
+  transition: var(--button-transition);
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--input-placeholder-color);
 }
 
 .input:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: var(--input-bg-focus);
+  border-color: var(--input-border-focus);
+  box-shadow: var(--input-focus-shadow);
 }
 
 .submitButton {
   width: 100%;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  padding: 14px var(--spacing-lg);
+  background: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
   border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  color: var(--text-white);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--button-transition);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -216,7 +218,7 @@
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+  box-shadow: var(--shadow-lg);
 }
 
 .submitButton:active:not(:disabled) {
@@ -232,7 +234,7 @@
   width: 20px;
   height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
+  border-top-color: var(--text-white);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -244,15 +246,15 @@
 .toggleMode {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  padding: 8px;
+  padding: var(--spacing-xs);
   transition: color 0.2s ease;
 }
 
 .toggleMode:hover:not(:disabled) {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .toggleMode:disabled {
@@ -263,19 +265,19 @@
 .backButton {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 14px;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  padding: 8px;
+  padding: var(--spacing-xs);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .backButton:hover:not(:disabled) {
-  color: #fff;
+  color: var(--text-bright);
 }
 
 .backButton:disabled {
@@ -283,19 +285,81 @@
   cursor: not-allowed;
 }
 
+/* Forgot Password Link */
+.forgotPasswordLink {
+  background: none;
+  border: none;
+  color: var(--info);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  padding: 0;
+  margin-top: -6px;
+  margin-bottom: 6px;
+  text-align: right;
+  transition: color 0.2s ease;
+  align-self: flex-end;
+}
+
+.forgotPasswordLink:hover {
+  color: var(--info-light);
+  text-decoration: underline;
+}
+
+.forgotPasswordText {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Success Message */
+.successMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.successMessage svg {
+  color: var(--success);
+  stroke-width: 2;
+}
+
+.successMessage h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.successMessage p {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+.successMessage p strong {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
 /* Migration Banner - Temporary, above login area */
 .migrationBanner {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 10px;
-  margin-bottom: 24px;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.95);
+  gap: var(--spacing-xs);
+  padding: 10px var(--spacing-md);
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
   max-width: 440px;
   width: 100%;
   animation: slideIn 0.4s ease-out 0.2s both;
@@ -303,14 +367,14 @@
 
 .migrationBanner svg {
   flex-shrink: 0;
-  color: rgba(248, 113, 113, 0.9);
+  color: var(--secondary-light);
 }
 
 .migrationLink {
   background: none;
   border: none;
-  color: #fca5a5;
-  font-weight: 600;
+  color: var(--secondary-light);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
@@ -318,7 +382,7 @@
 }
 
 .migrationLink:hover {
-  color: #fecaca;
+  color: var(--secondary);
 }
 
 /* Footer */
@@ -326,30 +390,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-top: 24px;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  gap: var(--spacing-sm);
+  margin-top: auto;
+  padding-bottom: var(--spacing-lg);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
 }
 
 .footerLink {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .footerLink:hover {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .footerDivider {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
 }
 
 /* Responsive */
 @media (max-width: 480px) {
   .container {
-    padding: 20px 16px;
+    padding: var(--spacing-md);
   }
 
   .content {

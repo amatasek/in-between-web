@@ -4,13 +4,15 @@ import WelcomePopup from '../components/common/WelcomePopup';
 import { API_URL } from '../config';
 import { auth } from '../services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+import { Capacitor } from '@capacitor/core';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   
   // Get socket from socket context to listen for balance updates
@@ -45,26 +47,20 @@ export const AuthProvider = ({ children }) => {
     }
   }, [socket, user]);
 
-  // Function to fetch user data from the /me endpoint
+  // Fetch user data from backend
   const fetchUserData = async (authToken) => {
-    try {
-      // Use the passed token directly
-      if (!authToken) {
-        return null;
-      }
+    if (!authToken) return null;
 
+    try {
       const response = await fetch(`${API_URL}/auth/me`, {
-        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${authToken}`, // Use authToken
+          'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json'
         }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      
+      if (!response.ok) return null;
+
       const data = await response.json();
       return data.user;
     } catch (error) {
@@ -73,114 +69,110 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Firebase Auth State Listener
+  // Auth state listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          // Get Firebase ID token
-          const idToken = await firebaseUser.getIdToken();
-          setToken(idToken);
+    const isNative = Capacitor.isNativePlatform();
 
-          // Fetch user data from backend
-          const userData = await fetchUserData(idToken);
-          if (userData) {
-            setUser(userData);
-          } else {
-            console.error('[Auth] Failed to fetch user data for Firebase user');
-            setUser(null);
-            setToken(null);
-          }
-        } catch (error) {
-          console.error('[Auth] Error getting Firebase token or user data:', error);
-          setUser(null);
-          setToken(null);
-        }
+    const handleAuthStateChange = async (idToken) => {
+      if (!idToken) {
+        setUser(null);
+        setToken(null);
+        setLoading(false);
+        return;
+      }
+
+      setToken(idToken);
+      const userData = await fetchUserData(idToken);
+
+      if (userData) {
+        setUser(userData);
       } else {
         setUser(null);
         setToken(null);
       }
-    });
+      setLoading(false);
+    };
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []); // Empty dependency array ensures it runs only once on mount
+    if (isNative) {
+      // Native platform
+      const listener = FirebaseAuthentication.addListener('authStateChange', async (result) => {
+        if (result.user) {
+          const tokenResult = await FirebaseAuthentication.getIdToken();
+          await handleAuthStateChange(tokenResult.token);
+        } else {
+          await handleAuthStateChange(null);
+        }
+      });
+
+      // Check initial state
+      FirebaseAuthentication.getCurrentUser().then(async (result) => {
+        if (result.user) {
+          const tokenResult = await FirebaseAuthentication.getIdToken();
+          await handleAuthStateChange(tokenResult.token);
+        } else {
+          setLoading(false);
+        }
+      });
+
+      return () => listener.remove();
+    } else {
+      // Web platform
+      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          const idToken = await firebaseUser.getIdToken();
+          await handleAuthStateChange(idToken);
+        } else {
+          await handleAuthStateChange(null);
+        }
+      });
+
+      return () => unsubscribe();
+    }
+  }, []);
 
   const login = async (userData, newToken) => {
-    // Note: This function is primarily used for the migration flow
-    // Firebase social logins are handled automatically by onAuthStateChanged
-    if (!userData || !userData.username || !userData.id || typeof userData.balance !== 'number') {
-      console.error('[Auth] Invalid user data:', userData);
-      throw new Error('Invalid user data provided');
-    }
+    // Used for migration flow - Firebase auth handled by listener
+    setUser(userData);
+    setToken(newToken);
+    setShowWelcomePopup(true);
 
-    if (!newToken) {
-      console.error('[Auth] No token provided');
-      throw new Error('No authentication token provided');
-    }
-
-    try {
-      // Set initial user data for immediate UI feedback
-      const initialUserData = {
-        username: userData.username,
-        id: userData.id,
-        balance: userData.balance
-      };
-
-      // Set token and user data
-      setUser(initialUserData);
-      setToken(newToken);
-
-      // Show welcome popup when user logs in
-      setShowWelcomePopup(true);
-
-      // Fetch complete user data from /me endpoint
-      const completeUserData = await fetchUserData(newToken);
-      if (completeUserData) {
-        setUser(completeUserData);
-      }
-
-    } catch (error) {
-      console.error('[Auth] Error during login:', error);
-      throw error;
+    const completeUserData = await fetchUserData(newToken);
+    if (completeUserData) {
+      setUser(completeUserData);
     }
   };
 
   const logout = useCallback(async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-      setToken(null);
-      setShowWelcomePopup(false);
-    } catch (error) {
-      console.error('[Auth] Error during logout:', error);
-    }
-  }, []); // Empty dependency array means this function never changes
+    const isNative = Capacitor.isNativePlatform();
 
-  // Function to refresh user data from the /me endpoint
+    await (isNative
+      ? FirebaseAuthentication.signOut()
+      : signOut(auth)
+    );
+
+    setUser(null);
+    setToken(null);
+    setShowWelcomePopup(false);
+  }, []);
+
   const refreshUserData = useCallback(async () => {
-    try {
-      // Get fresh Firebase token
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
-        console.error('[Auth] No Firebase user found. Logging out.');
-        logout();
-        return;
-      }
+    const isNative = Capacitor.isNativePlatform();
 
-      const freshToken = await currentUser.getIdToken(true); // Force refresh
-      setToken(freshToken);
+    const freshToken = isNative
+      ? (await FirebaseAuthentication.getIdToken({ forceRefresh: true })).token
+      : await auth.currentUser?.getIdToken(true);
 
-      // Fetch updated user data
-      const userData = await fetchUserData(freshToken);
-      if (userData) {
-        setUser(userData);
-      } else {
-        console.error('[Auth] Failed to refresh user data. Logging out.');
-        logout();
-      }
-    } catch (error) {
-      console.error('[Auth] Error during manual refresh. Logging out.', error);
+    if (!freshToken) {
+      logout();
+      return;
+    }
+
+    setToken(freshToken);
+
+    const userData = await fetchUserData(freshToken);
+    if (userData) {
+      setUser(userData);
+    } else {
       logout();
     }
   }, [logout]);

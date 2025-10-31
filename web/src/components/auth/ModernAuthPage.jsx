@@ -17,6 +17,8 @@ const ModernAuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailLoading, setEmailLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
 
   // Disable gamepad navigation on auth screen
   useGamepadNavigation(false);
@@ -48,7 +50,6 @@ const ModernAuthPage = () => {
       }
       // Auth context will handle redirect automatically
     } catch (err) {
-      console.error('[ModernAuthPage] Social login error:', err);
       setError(authService.getErrorMessage(err));
     } finally {
       setLoading(null);
@@ -68,7 +69,25 @@ const ModernAuthPage = () => {
       }
       // Auth context will handle redirect automatically
     } catch (err) {
-      console.error('[ModernAuthPage] Email auth error:', err);
+      setError(authService.getErrorMessage(err));
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setEmailLoading(true);
+
+    try {
+      if (!email) {
+        setError('Please enter your email address');
+        return;
+      }
+      await authService.sendPasswordResetEmail(email);
+      setResetEmailSent(true);
+    } catch (err) {
       setError(authService.getErrorMessage(err));
     } finally {
       setEmailLoading(false);
@@ -156,6 +175,76 @@ const ModernAuthPage = () => {
                 <span>Continue with Email</span>
               </button>
             </>
+          ) : showForgotPassword ? (
+            <>
+              {/* Forgot Password Form */}
+              {resetEmailSent ? (
+                <div className={styles.successMessage}>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                  <h3>Check your email</h3>
+                  <p>We've sent a password reset link to <strong>{email}</strong></p>
+                  <button
+                    type="button"
+                    className={styles.backButton}
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setResetEmailSent(false);
+                      setEmail('');
+                    }}
+                  >
+                    ← Back to sign in
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleForgotPassword} className={styles.emailForm}>
+                  <p className={styles.forgotPasswordText}>
+                    Enter your email address and we'll send you a link to reset your password.
+                  </p>
+
+                  <div className={styles.inputGroup}>
+                    <label htmlFor="reset-email" className={styles.label}>Email</label>
+                    <input
+                      id="reset-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={styles.input}
+                      placeholder="your@email.com"
+                      required
+                      autoComplete="email"
+                      autoFocus
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={emailLoading}
+                  >
+                    {emailLoading ? (
+                      <div className={styles.spinner}></div>
+                    ) : (
+                      'Send reset link'
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    className={styles.backButton}
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setError(null);
+                    }}
+                    disabled={emailLoading}
+                  >
+                    ← Back to sign in
+                  </button>
+                </form>
+              )}
+            </>
           ) : (
             <>
               {/* Email/Password Form */}
@@ -164,13 +253,14 @@ const ModernAuthPage = () => {
                   <label htmlFor="email" className={styles.label}>Email</label>
                   <input
                     id="email"
+                    name="username"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className={styles.input}
                     placeholder="your@email.com"
                     required
-                    autoComplete="email"
+                    autoComplete="username"
                     autoFocus
                   />
                 </div>
@@ -179,6 +269,7 @@ const ModernAuthPage = () => {
                   <label htmlFor="password" className={styles.label}>Password</label>
                   <input
                     id="password"
+                    name="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -188,6 +279,15 @@ const ModernAuthPage = () => {
                     autoComplete={isSignUp ? 'new-password' : 'current-password'}
                     minLength="6"
                   />
+                  {!isSignUp && (
+                    <button
+                      type="button"
+                      className={styles.forgotPasswordLink}
+                      onClick={() => setShowForgotPassword(true)}
+                    >
+                      Forgot password?
+                    </button>
+                  )}
                 </div>
 
                 <button
@@ -216,6 +316,7 @@ const ModernAuthPage = () => {
                   className={styles.backButton}
                   onClick={() => {
                     setShowEmailForm(false);
+                    setShowForgotPassword(false);
                     setError(null);
                   }}
                   disabled={emailLoading}
