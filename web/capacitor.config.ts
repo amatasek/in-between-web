@@ -14,6 +14,10 @@ const config: CapacitorConfig = {
     CapacitorUpdater: {
       autoUpdate: true,
       resetWhenUpdate: false
+    },
+    FirebaseAuthentication: {
+      skipNativeAuth: false,
+      providers: ['google.com', 'apple.com', 'facebook.com']
     }
   }
 };

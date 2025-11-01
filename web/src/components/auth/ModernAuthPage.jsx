@@ -5,6 +5,7 @@ import { authService } from '../../services/authService';
 import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
 import SocialButton from './SocialButton';
 import AppHeader from '../common/AppHeader';
+import { getVersionInfo } from '../../utils/version';
 import styles from './ModernAuthPage.module.css';
 
 const ModernAuthPage = () => {
@@ -19,9 +20,15 @@ const ModernAuthPage = () => {
   const [emailLoading, setEmailLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [versionInfo, setVersionInfo] = useState(null);
 
   // Disable gamepad navigation on auth screen
   useGamepadNavigation(false);
+
+  // Get version info
+  useEffect(() => {
+    getVersionInfo().then(setVersionInfo);
+  }, []);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -330,9 +337,14 @@ const ModernAuthPage = () => {
 
         {/* Footer */}
         <div className={styles.footer}>
-          <a href="/terms" className={styles.footerLink}>Terms of Service</a>
-          <span className={styles.footerDivider}>•</span>
-          <a href="/privacy" className={styles.footerLink}>Privacy Policy</a>
+          <div className={styles.footerLinks}>
+            <a href="/terms" className={styles.footerLink}>Terms of Service</a>
+            <span className={styles.footerDivider}>•</span>
+            <a href="/privacy" className={styles.footerLink}>Privacy Policy</a>
+          </div>
+          {versionInfo && (
+            <div className={styles.footerVersion}>{versionInfo.display}</div>
+          )}
         </div>
       </div>
     </div>

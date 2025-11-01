@@ -388,6 +388,7 @@
 /* Footer */
 .footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
@@ -395,6 +396,12 @@
   padding-bottom: var(--spacing-lg);
   font-size: var(--font-size-xs);
   color: var(--text-muted);
+}
+
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .footerLink {
@@ -409,6 +416,12 @@
 
 .footerDivider {
   color: var(--text-muted);
+}
+
+.footerVersion {
+  color: var(--text-muted);
+  font-family: monospace;
+  font-size: var(--font-size-xs);
 }
 
 /* Responsive */

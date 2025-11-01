@@ -12,6 +12,7 @@ import GameCard from './GameCard';
 import GameSettingsModal from './GameSettingsModal.jsx';
 import GamepadInput from './GamepadInput';
 import soundService from '../services/SoundService';
+import { getVersionInfo } from '../utils/version';
 
 const Lobby = () => {
   const { gameList } = useLobby();
@@ -23,8 +24,13 @@ const Lobby = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
-  
+  const [versionInfo, setVersionInfo] = useState(null);
+
   const userId = user?.username ? `user_${user.username}` : null;
+
+  useEffect(() => {
+    getVersionInfo().then(setVersionInfo);
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -199,6 +205,12 @@ const Lobby = () => {
            onSubmit={handleSubmitCustomSettings}
            onClose={() => setShowGameSettingsModal(false)}
          />
+       )}
+
+       {versionInfo && (
+         <div className={styles.versionInfo}>
+           {versionInfo.display}
+         </div>
        )}
      </div>
    );

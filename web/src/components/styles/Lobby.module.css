@@ -3,6 +3,16 @@
   padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
 }
 
+.versionInfo {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-family: monospace;
+  opacity: 0.6;
+  padding: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
 .liveTag {
   font-size: 0.9rem;
   background-color: var(--text-error);
