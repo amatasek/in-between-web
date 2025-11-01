@@ -22,9 +22,14 @@
 }
 
 .legalLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
   color: var(--text-secondary);
   text-decoration: none;
   font-size: var(--font-size-xs);
+  cursor: pointer;
   transition: color 0.2s ease;
 }
 

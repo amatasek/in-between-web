@@ -6,6 +6,8 @@ import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
 import SocialButton from './SocialButton';
 import AppHeader from '../common/AppHeader';
 import { getVersionInfo } from '../../utils/version';
+import { openInBrowser } from '../../utils/openInBrowser';
+import { WEB_URL } from '../../config';
 import styles from './ModernAuthPage.module.css';
 
 const ModernAuthPage = () => {
@@ -338,9 +340,9 @@ const ModernAuthPage = () => {
         {/* Footer */}
         <div className={styles.footer}>
           <div className={styles.footerLinks}>
-            <a href="/terms" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Terms of Service</a>
+            <button onClick={() => openInBrowser(`${WEB_URL}/terms`)} className={styles.footerLink}>Terms of Service</button>
             <span className={styles.footerDivider}>•</span>
-            <a href="/privacy" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Privacy Policy</a>
+            <button onClick={() => openInBrowser(`${WEB_URL}/privacy`)} className={styles.footerLink}>Privacy Policy</button>
           </div>
           {versionInfo && (
             <div className={styles.footerVersion}>{versionInfo.display}</div>

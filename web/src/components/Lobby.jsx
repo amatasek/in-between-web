@@ -13,6 +13,8 @@ import GameSettingsModal from './GameSettingsModal.jsx';
 import GamepadInput from './GamepadInput';
 import soundService from '../services/SoundService';
 import { getVersionInfo } from '../utils/version';
+import { openInBrowser } from '../utils/openInBrowser';
+import { WEB_URL } from '../config';
 
 const Lobby = () => {
   const { gameList } = useLobby();
@@ -210,9 +212,9 @@ const Lobby = () => {
        {versionInfo && (
          <div className={styles.versionInfo}>
            <div className={styles.legalLinks}>
-             <a href="/terms" target="_blank" rel="noopener noreferrer" className={styles.legalLink}>Terms of Service</a>
+             <button onClick={() => openInBrowser(`${WEB_URL}/terms`)} className={styles.legalLink}>Terms of Service</button>
              <span className={styles.legalDivider}>•</span>
-             <a href="/privacy" target="_blank" rel="noopener noreferrer" className={styles.legalLink}>Privacy Policy</a>
+             <button onClick={() => openInBrowser(`${WEB_URL}/privacy`)} className={styles.legalLink}>Privacy Policy</button>
            </div>
            <div>{versionInfo.display}</div>
          </div>

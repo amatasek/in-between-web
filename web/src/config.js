@@ -1,6 +1,7 @@
 // These MUST be defined in .env.development or .env.production
 const API_URL = import.meta.env.VITE_API_URL;
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+const WEB_URL = import.meta.env.VITE_WEB_URL;
 
 // Firebase configuration
 const FIREBASE_CONFIG = {
@@ -16,5 +17,6 @@ const FIREBASE_CONFIG = {
 export {
   API_URL,
   SOCKET_URL,
+  WEB_URL,
   FIREBASE_CONFIG
 };
