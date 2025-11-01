@@ -26,7 +26,7 @@ const Lobby = () => {
   const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
   const [versionInfo, setVersionInfo] = useState(null);
 
-  const userId = user?.username ? `user_${user.username}` : null;
+  const userId = user?.id || null;
 
   useEffect(() => {
     getVersionInfo().then(setVersionInfo);
