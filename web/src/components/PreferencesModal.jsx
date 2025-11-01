@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { usePreferences } from '../contexts/PreferencesContext';
 import baseModalStyles from './common/BaseModal.module.css';
 import BaseModal from './common/BaseModal';
@@ -7,15 +8,18 @@ import FileUpload from './FileUpload.jsx';
 import TitlesSelector from './TitlesSelector.jsx';
 import ThemeSelector from './ThemeSelector.jsx';
 import CardBackSelector from './CardBackSelector.jsx';
+import UsernameChange from './UsernameChange.jsx';
 
-const PreferencesModal = ({ onClose }) => {
-  const { 
-    preferences, 
+const PreferencesModal = ({ onClose, defaultTab = 'profile' }) => {
+  const { user } = useAuth();
+  const {
+    preferences,
     toggleAutoAnte,
     toggleMute,
     uploadProfileImg,
-    loading 
+    loading
   } = usePreferences();
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   if (loading) {
     return (
@@ -27,59 +31,91 @@ const PreferencesModal = ({ onClose }) => {
 
   return (
     <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600 }}>
-        {/* Game Options Section */}
-        <div className={baseModalStyles.sectionHeader}>Game Options</div>
+      {/* Tab Navigation */}
+      <div className="tabs-container">
+        <button
+          className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
+          onClick={() => setActiveTab('profile')}
+          data-gamepad-focusable="true"
+        >
+          Profile
+        </button>
+        <button
+          className={`tab-button ${activeTab === 'game' ? 'active' : ''}`}
+          onClick={() => setActiveTab('game')}
+          data-gamepad-focusable="true"
+        >
+          Game Options
+        </button>
+      </div>
 
-        {/* Mute Setting */}
-        <div className={`panel-alt`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0 }}>Mute Sound</h4>
-          <ToggleSwitch 
-            isChecked={preferences.muted}
-            onChange={toggleMute}
-          />
+      {/* Profile Tab */}
+      {activeTab === 'profile' && (
+        <div className="tab-content">
+          {/* Username Change */}
+          <div className={`panel-alt`}>
+            <UsernameChange
+              currentUsername={user?.username}
+              onUsernameChanged={(newUsername) => {
+                console.log('Username changed to:', newUsername);
+              }}
+            />
+          </div>
+
+          {/* Profile Image Setting */}
+          <div className={`panel-alt`} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h4 style={{ margin: 0 }}>Profile Image</h4>
+            <FileUpload
+              onUpload={uploadProfileImg}
+              currentFileUrl={preferences.profileImg}
+              acceptedFileTypes="image/jpeg,image/png,image/gif"
+              label="Image"
+              previewType="image"
+            />
+          </div>
+
+          {/* Titles Selection */}
+          <div className={`panel-alt`}>
+            <h4 style={{ margin: '0 0 12px 0' }}>Title</h4>
+            <TitlesSelector />
+          </div>
         </div>
+      )}
 
-        {/* Auto-Ante Setting */}
-        <div className={`panel-alt`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0 }}>Auto-Ante</h4>
-          <ToggleSwitch 
-            isChecked={preferences.autoAnte}
-            onChange={toggleAutoAnte}
-          />
+      {/* Game Options Tab */}
+      {activeTab === 'game' && (
+        <div className="tab-content">
+          {/* Mute Setting */}
+          <div className={`panel-alt`} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h4 style={{ margin: 0 }}>Mute Sound</h4>
+            <ToggleSwitch
+              isChecked={preferences.muted}
+              onChange={toggleMute}
+            />
+          </div>
+
+          {/* Auto-Ante Setting */}
+          <div className={`panel-alt`} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h4 style={{ margin: 0 }}>Auto-Ante</h4>
+            <ToggleSwitch
+              isChecked={preferences.autoAnte}
+              onChange={toggleAutoAnte}
+            />
+          </div>
+
+          {/* Theme Selection */}
+          <div className={`panel-alt`}>
+            <h4 style={{ margin: '0 0 12px 0' }}>Theme</h4>
+            <ThemeSelector />
+          </div>
+
+          {/* Card Back Selection */}
+          <div className={`panel-alt`}>
+            <h4 style={{ margin: '0 0 12px 0' }}>Card Back</h4>
+            <CardBackSelector />
+          </div>
         </div>
-
-        {/* Customization Options Section */}
-        <div className={baseModalStyles.sectionHeader}>Customization Options</div>
-
-        {/* Profile Image Setting */}
-        <div className={`panel-alt`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0 }}>Profile Image</h4>
-          <FileUpload
-            onUpload={uploadProfileImg}
-            currentFileUrl={preferences.profileImg}
-            acceptedFileTypes="image/jpeg,image/png,image/gif"
-            label="Image"
-            previewType="image"
-          />
-        </div>
-
-        {/* Titles Selection */}
-        <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
-          <h4 style={{ margin: '0 0 12px 0' }}>Title</h4>
-          <TitlesSelector />
-        </div>
-
-        {/* Theme Selection */}
-        <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
-          <h4 style={{ margin: '0 0 12px 0' }}>Theme</h4>
-          <ThemeSelector />
-        </div>
-
-        {/* Card Back Selection */}
-        <div className={`panel-alt`} style={{ marginBottom: '20px' }}>
-          <h4 style={{ margin: '0 0 12px 0' }}>Card Back</h4>
-          <CardBackSelector />
-        </div>
+      )}
     </BaseModal>
   );
 };

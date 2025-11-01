@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import styles from './styles/GameStats.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
+import Username, { getDisplayName } from './Username';
 
 const GameStats = ({ gameData }) => {
   const transactions = gameData.gameTransactions;
@@ -205,40 +206,40 @@ const GameStats = ({ gameData }) => {
         label: 'Biggest Single Bet',
         value: biggestBet ? Math.abs(biggestBet.amount) : 0,
         type: 'currency',
-        suffix: biggestBet ? ` by ${biggestBet.playerName}` : ''
+        suffix: biggestBet ? ` by ${getDisplayName(biggestBet.playerName)}` : ''
       },
       {
         key: 'biggestWinner',
         label: 'Biggest Winner',
-        value: biggestWinnerId ? playerNames[biggestWinnerId] || 'Unknown Player' : 'N/A',
+        value: biggestWinnerId ? getDisplayName(playerNames[biggestWinnerId] || 'Unknown Player') : 'N/A',
         type: 'text',
         suffix: biggestWinnerId ? ` (+${formatNumber(biggestWin)})` : ''
       },
       {
         key: 'biggestLoser',
         label: 'Biggest Loser',
-        value: biggestLoserId ? playerNames[biggestLoserId] || 'Unknown Player' : 'N/A',
+        value: biggestLoserId ? getDisplayName(playerNames[biggestLoserId] || 'Unknown Player') : 'N/A',
         type: 'text',
         suffix: biggestLoserId ? ` (${formatNumber(biggestLoss)})` : ''
       },
       {
         key: 'mostAggressive',
         label: 'Most Aggressive Player',
-        value: mostAggressivePlayerId ? playerNames[mostAggressivePlayerId] || 'Unknown Player' : 'N/A',
+        value: mostAggressivePlayerId ? getDisplayName(playerNames[mostAggressivePlayerId] || 'Unknown Player') : 'N/A',
         type: 'text',
         suffix: mostAggressivePlayerId ? ` (${formatNumber(mostBets)} bets)` : ''
       },
       {
         key: 'highestAvgBet',
         label: 'Highest Average Bet',
-        value: highestAvgBetPlayerId ? playerNames[highestAvgBetPlayerId] || 'Unknown Player' : 'N/A',
+        value: highestAvgBetPlayerId ? getDisplayName(playerNames[highestAvgBetPlayerId] || 'Unknown Player') : 'N/A',
         type: 'text',
         suffix: highestAvgBetPlayerId ? ` (avg: ${formatNumber(Math.round(highestAvgBet))})` : ''
       },
       {
         key: 'mostWinning',
         label: 'Most Winning Player',
-        value: mostWinningPlayerId ? playerNames[mostWinningPlayerId] || 'Unknown Player' : 'N/A',
+        value: mostWinningPlayerId ? getDisplayName(playerNames[mostWinningPlayerId] || 'Unknown Player') : 'N/A',
         type: 'text',
         suffix: mostWinningPlayerId ? ` (${formatNumber(mostWins)} wins)` : ''
       },
@@ -252,7 +253,7 @@ const GameStats = ({ gameData }) => {
       {
         key: 'unluckyPlayer',
         label: 'Most Penalized Player',
-        value: mostPenaltiesPlayerId ? playerNames[mostPenaltiesPlayerId] || 'Unknown Player' : 'N/A',
+        value: mostPenaltiesPlayerId ? getDisplayName(playerNames[mostPenaltiesPlayerId] || 'Unknown Player') : 'N/A',
         type: 'text',
         suffix: mostPenaltiesPlayerId ? ` (${formatNumber(mostPenalties)} penalties)` : ''
       }

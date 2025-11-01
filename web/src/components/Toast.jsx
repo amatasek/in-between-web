@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './styles/Toast.module.css';
+import Username from './Username';
 
 const Toast = ({ 
   title, 
@@ -56,7 +57,7 @@ const Toast = ({
         <div className={`${styles.message} ${isEmojiReaction ? styles.emojiMessage : ''}`}>
           {isEmojiReaction ? (
             <>
-              <span className={styles.playerName}>{message}</span>
+              <span className={styles.playerName}><Username username={message} /></span>
               <span className={styles.reactionText}>reacted!</span>
             </>
           ) : (

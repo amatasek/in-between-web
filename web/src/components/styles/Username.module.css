@@ -1,0 +1,11 @@
+.username {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.discriminator {
+  color: var(--text-secondary, #888);
+  font-weight: 400;
+  font-size: 0.875em;
+  margin-left: 0.25em;
+}

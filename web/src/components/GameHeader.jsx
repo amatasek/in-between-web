@@ -68,9 +68,10 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
               <CurrencyAmount amount={Number(playerBalance)} size="small" />
             </div>
             <div className={styles.controlsGroup}>
-              <PreferencesButton 
+              <PreferencesButton
+                inGame={true}
                 onModalStateChange={setIsPreferencesOpen}
-                data-gamepad-focusable="true" 
+                data-gamepad-focusable="true"
               />
               <RulesButton 
                 onModalStateChange={setIsRulesOpen}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './styles/ResultsOverlay.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 import AnimatedRain from './common/AnimatedRain';
+import Username from './Username';
 
 const ResultsOverlay = ({ result, players }) => {
   const [isAnimating, setIsAnimating] = useState(true);
@@ -50,7 +51,7 @@ const ResultsOverlay = ({ result, players }) => {
         {/* Bottom message bar */}
         <div className={styles.messageArea}>
           <div className={`panel ${styles.resultBar} ${styles.winBar}`}>
-            <span className={styles.playerName}>{playerName}</span>
+            <span className={styles.playerName}><Username username={playerName} /></span>
             <span className={styles.resultText}>WINS</span>
             {result.winnings && result.winnings > 0 && (
               <span className={styles.winAmount}>
@@ -101,7 +102,7 @@ const ResultsOverlay = ({ result, players }) => {
         {/* Bottom message bar */}
         <div className={styles.messageArea}>
           <div className={`panel ${styles.resultBar} ${styles.lossBar}`}>
-            <span className={styles.playerName}>{playerName}</span>
+            <span className={styles.playerName}><Username username={playerName} /></span>
             <span className={styles.resultText}>LOST</span>
             {result.betAmount && result.betAmount > 0 && (
               <span className={styles.lossAmount}>
@@ -152,7 +153,7 @@ const ResultsOverlay = ({ result, players }) => {
       {/* Bottom message bar */}
       <div className={styles.messageArea}>
         <div className={`panel ${styles.resultBar} ${styles.penaltyBar}`}>
-          <span className={styles.playerName}>{playerName}</span>
+          <span className={styles.playerName}><Username username={playerName} /></span>
           <span className={styles.resultText}>{result.isTripleAceTie ? 'TRIPLE' : ''}</span>
           <span className={styles.penaltyText}>{result.isTripleAceTie ? '3x' : '2x'} PENALTY</span>
           <span className={styles.penaltyAmount}>

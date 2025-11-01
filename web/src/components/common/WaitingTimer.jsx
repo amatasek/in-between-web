@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from '../styles/common/WaitingTimer.module.css';
+import Username from '../Username';
 
 const WaitingTimer = ({ 
   playerName, 
@@ -35,7 +36,7 @@ const WaitingTimer = ({
   return (
     <div className={`panel-game ${styles.waitingTimer}`}>
       <div className={styles.timerContent}>
-        <span className={styles.playerName}>{playerName}</span>
+        <span className={styles.playerName}><Username username={playerName} /></span>
         <span className={styles.action}>is {action}...</span>
       </div>
       <div className={styles.timerBar}>

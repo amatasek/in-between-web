@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './WelcomePopup.module.css';
 import CoinIcon from './CoinIcon';
+import Username from '../Username';
 
 /**
  * A popup component that displays a welcome message and balance reset notification
@@ -14,7 +15,7 @@ const WelcomePopup = ({ username, balance, onClose }) => {
     <div className={styles.overlay}>
       <div className={styles.popup} role="dialog" aria-labelledby="welcome-title">
         <div className={styles.header}>
-          <h2 id="welcome-title">Welcome, {username}!</h2>
+          <h2 id="welcome-title">Welcome, <Username username={username} />!</h2>
           <button className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
         </div>
         <div className={styles.content}>

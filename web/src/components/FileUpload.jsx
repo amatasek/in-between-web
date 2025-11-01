@@ -93,14 +93,14 @@ const FileUpload = ({
       
       {currentFileUrl && renderPreview()}
       
-      <button 
-        type="button" 
+      <button
+        type="button"
         onClick={handleButtonClick}
         className={`${styles.uploadButton} ${currentFileUrl ? styles.changeButton : ''}`}
         disabled={isUploading}
         data-gamepad-focusable="true"
       >
-        {isUploading ? 'Uploading...' : currentFileUrl ? `Change ${label}` : `Upload ${label}`}
+        {isUploading ? 'Uploading...' : currentFileUrl ? 'Change' : 'Upload'}
       </button>
       
       {error && (

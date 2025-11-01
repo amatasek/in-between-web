@@ -3,7 +3,7 @@ import GearIcon from '../icons/GearIcon';
 import PreferencesModal from '../PreferencesModal';
 import IconButton from './IconButton';
 
-const PreferencesButton = ({ onModalStateChange }) => {
+const PreferencesButton = ({ onModalStateChange, inGame = false }) => {
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
 
   const openPreferences = () => {
@@ -32,7 +32,13 @@ const PreferencesButton = ({ onModalStateChange }) => {
         data-gamepad-focusable="true"
       />
       {/* Render the modal conditionally */}
-      {isPreferencesOpen && <PreferencesModal isOpen={isPreferencesOpen} onClose={closePreferences} />}
+      {isPreferencesOpen && (
+        <PreferencesModal
+          isOpen={isPreferencesOpen}
+          onClose={closePreferences}
+          defaultTab={inGame ? 'game' : 'profile'}
+        />
+      )}
     </>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './styles/UserAvatar.module.css';
 import { useUserData } from '../contexts/UserDataContext';
+import Username, { getDisplayName } from './Username';
 
 /**
  * UserAvatar component displays a user's profile image or their initials if no image is available.
@@ -52,7 +53,8 @@ const UserAvatar = ({
   }
 
   const { username, profileImg, title, xp, level } = user;
-  const initials = getInitials(username || 'Unknown');
+  const displayName = getDisplayName(username);
+  const initials = getInitials(displayName || 'Unknown');
   const sizeClass = styles[size] || styles.medium;
   const containerClass = showName ? styles[`container${namePosition.charAt(0).toUpperCase() + namePosition.slice(1)}`] : '';
 
@@ -125,7 +127,7 @@ const UserAvatar = ({
             </div>
             <div className={styles.playerCardInfo}>
               <div className={styles.playerCardUsername}>
-                {username || 'Unknown'}
+                <Username username={username || 'Unknown'} showDiscriminator={true} />
               </div>
               {title && (
                 <div className={styles.playerCardTitle}>
@@ -148,7 +150,7 @@ const UserAvatar = ({
             className={styles.username}
             style={{ fontWeight }}
           >
-            {username || 'Unknown'}
+            {displayName || 'Unknown'}
           </div>
           {showTitle && title && (
             <div className={styles.userTitle}>

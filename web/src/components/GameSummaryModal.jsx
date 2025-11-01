@@ -4,6 +4,7 @@ import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 import TransactionDownloadButton from './common/TransactionDownloadButton';
 import GameStats from './GameStats';
+import Username from './Username';
 
 /**
  * Game Summary Modal component that displays running scores and settle-up calculations
@@ -192,7 +193,9 @@ const GameSummaryModal = ({ onClose, gameData }) => {
                 <div className={styles.totalsTable}>
                   {Object.entries(playerTotals).map(([playerId, total]) => (
                     <div key={playerId} className={styles.totalRow}>
-                      <span className={styles.playerName}>{playerNames[playerId] || 'Unknown Player'}</span>
+                      <span className={styles.playerName}>
+                        <Username username={playerNames[playerId] || 'Unknown Player'} showDiscriminator={true} />
+                      </span>
                       <span className={`${styles.totalAmount} ${total >= 0 ? styles.positive : styles.negative}`}>
                         <CurrencyAmount amount={total} size="small" />
                       </span>
@@ -218,8 +221,12 @@ const GameSummaryModal = ({ onClose, gameData }) => {
                   {settleUpPayments.map((payment, index) => (
                     <div key={index} className={styles.paymentRow}>
                       <span className={styles.paymentText}>
-                        <span className={styles.playerName}>{payment.fromName}</span> pays{' '}
-                        <span className={styles.playerName}>{payment.toName}</span>
+                        <span className={styles.playerName}>
+                          <Username username={payment.fromName} showDiscriminator={true} />
+                        </span> pays{' '}
+                        <span className={styles.playerName}>
+                          <Username username={payment.toName} showDiscriminator={true} />
+                        </span>
                       </span>
                       <span className={styles.paymentAmount}>
                         <CurrencyAmount amount={payment.amount} size="small" />

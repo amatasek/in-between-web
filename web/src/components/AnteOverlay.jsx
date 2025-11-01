@@ -5,6 +5,7 @@ import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
 import CurrencyAmount from './common/CurrencyAmount';
 import { ICONS } from '../constants';
+import Username from './Username';
 
 const AnteOverlay = () => {
   const { gameState } = useGameContext();
@@ -60,7 +61,7 @@ const AnteOverlay = () => {
             {playersNotAnted.map(player => (
               <div key={player.id} className={styles.waitingPlayer}>
                 <span className={styles.playerDot} />
-                <span className={styles.playerName}>{player.name}</span>
+                <span className={styles.playerName}><Username username={player.name} /></span>
               </div>
             ))}
           </div>

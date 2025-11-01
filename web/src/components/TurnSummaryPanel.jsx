@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './styles/TurnSummaryPanel.module.css';
 import CardMini from './CardMini';
 import CurrencyAmount from './common/CurrencyAmount';
+import Username from './Username';
 
 const TurnSummaryPanel = ({ summary }) => {
   if (!summary) return null;
@@ -48,7 +49,7 @@ const TurnSummaryPanel = ({ summary }) => {
           )}
           <CardMini card={summary.cards?.right} />
         </div>
-        <span className={styles.playerName}>{summary.playerName}</span>
+        <span className={styles.playerName}><Username username={summary.playerName} /></span>
         <span className={styles.action}>{getActionText(summary.action)}</span>
       </div>
       
