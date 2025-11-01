@@ -1,8 +1,6 @@
 .authPage {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--primary-dark) 100%);
   position: relative;
   overflow: hidden;
   padding-top: max(0.75rem, var(--safe-area-inset-top));

@@ -36,6 +36,12 @@ code, pre {
   font-family: var(--font-family-mono);
 }
 
+/* Global gradient background for main app screens */
+.app-gradient-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--primary-dark) 100%);
+}
+
 /* Modal open state - prevent body scroll */
 body.modal-open {
   overflow: hidden;

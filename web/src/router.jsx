@@ -3,6 +3,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LoadingScreen } from './components/common/LoadingScreen';
 import { useAuth } from './contexts/AuthContext';
 import { LobbyProvider } from './contexts/LobbyContext';
+import TermsOfService from './components/TermsOfService';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 // Lazy load routes for code splitting
 const ModernAuthPage = lazy(() => import('./components/auth/ModernAuthPage'));
@@ -54,6 +56,14 @@ export const router = createBrowserRouter([
         <AuthPage />
       </Suspense>
     ),
+  },
+  {
+    path: '/terms',
+    element: <TermsOfService />,
+  },
+  {
+    path: '/privacy',
+    element: <PrivacyPolicy />,
   },
   {
     path: '/:gameId',

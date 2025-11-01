@@ -13,6 +13,31 @@
   margin-top: var(--spacing-lg);
 }
 
+.legalLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.legalLink {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-xs);
+  transition: color 0.2s ease;
+}
+
+.legalLink:hover {
+  color: var(--text-primary);
+}
+
+.legalDivider {
+  color: var(--text-muted);
+  opacity: 0.5;
+  user-select: none;
+}
+
 .liveTag {
   font-size: 0.9rem;
   background-color: var(--text-error);

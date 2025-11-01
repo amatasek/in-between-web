@@ -1,0 +1,133 @@
+/* Legal Pages - Terms of Service and Privacy Policy */
+
+.legalPage {
+  background: #ffffff;
+  color: #000000;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.legalPage h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.lastUpdated {
+  font-size: 0.95rem;
+  color: #666666;
+  margin-bottom: 2.5rem;
+  font-style: italic;
+}
+
+.legalPage section {
+  margin-bottom: 2.5rem;
+}
+
+.legalPage h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #000000;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.legalPage h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000000;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.legalPage p {
+  margin-bottom: 1rem;
+  color: #000000;
+}
+
+.legalPage ul,
+.legalPage ol {
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+}
+
+.legalPage li {
+  margin-bottom: 0.5rem;
+  color: #000000;
+}
+
+.legalPage a {
+  color: #0066cc;
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.legalPage a:hover {
+  color: #0052a3;
+}
+
+.legalPage strong {
+  font-weight: 600;
+  color: #000000;
+}
+
+.legalPage em {
+  font-style: italic;
+}
+
+.footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  color: #666666;
+}
+
+/* Responsive typography for mobile */
+@media (max-width: 768px) {
+  .legalPage {
+    padding: 30px 16px;
+  }
+
+  .legalPage h1 {
+    font-size: 2rem;
+  }
+
+  .legalPage h2 {
+    font-size: 1.5rem;
+  }
+
+  .legalPage h3 {
+    font-size: 1.1rem;
+  }
+
+  .legalPage ul,
+  .legalPage ol {
+    padding-left: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .legalPage {
+    padding: 20px 12px;
+  }
+
+  .legalPage h1 {
+    font-size: 1.75rem;
+  }
+
+  .legalPage h2 {
+    font-size: 1.35rem;
+  }
+}

@@ -102,7 +102,7 @@ const ModernAuthPage = () => {
   };
 
   return (
-    <div className={`screen ${styles.authPage}`}>
+    <div className={`screen app-gradient-bg ${styles.authPage}`}>
       <AppHeader />
 
       <div className={styles.container}>
@@ -338,9 +338,9 @@ const ModernAuthPage = () => {
         {/* Footer */}
         <div className={styles.footer}>
           <div className={styles.footerLinks}>
-            <a href="/terms" className={styles.footerLink}>Terms of Service</a>
+            <a href="/terms" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Terms of Service</a>
             <span className={styles.footerDivider}>•</span>
-            <a href="/privacy" className={styles.footerLink}>Privacy Policy</a>
+            <a href="/privacy" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Privacy Policy</a>
           </div>
           {versionInfo && (
             <div className={styles.footerVersion}>{versionInfo.display}</div>

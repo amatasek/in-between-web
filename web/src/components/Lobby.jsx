@@ -116,7 +116,7 @@ const Lobby = () => {
   }, [gameList, searchQuery, userId]); // Dependency on userId ensures resorting if user changes
   
    return (
-     <div className={`screen ${styles.lobbyScreen}`}>
+     <div className={`screen app-gradient-bg ${styles.lobbyScreen}`}>
        <AppHeader />
        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
          <OnlinePlayerCount />
@@ -209,7 +209,12 @@ const Lobby = () => {
 
        {versionInfo && (
          <div className={styles.versionInfo}>
-           {versionInfo.display}
+           <div className={styles.legalLinks}>
+             <a href="/terms" target="_blank" rel="noopener noreferrer" className={styles.legalLink}>Terms of Service</a>
+             <span className={styles.legalDivider}>•</span>
+             <a href="/privacy" target="_blank" rel="noopener noreferrer" className={styles.legalLink}>Privacy Policy</a>
+           </div>
+           <div>{versionInfo.display}</div>
          </div>
        )}
      </div>

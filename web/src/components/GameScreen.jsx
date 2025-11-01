@@ -69,7 +69,7 @@ const GameScreen = ({ onReturnToLobby }) => {
 
 
   return (
-    <div className={`screen ${styles.gameContainer}`}>
+    <div className={`screen app-gradient-bg ${styles.gameContainer}`}>
       <div className={`${styles.gameScreen} mobile-scale-content`}>
         <GameHeader 
           handleLeaveGame={handleLeaveGame} 
