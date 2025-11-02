@@ -80,10 +80,7 @@ export const ICONS = {
   ARROW_DOWN: '↓',
   ROTATE: '↻',
   CHECK: '✓',
-  CROSS: '✕',
-  
-  // Game Icons (keeping for GameHeader - not in our Table work)
-  DEALER: '🃏'
+  CROSS: '✕'
 };
 
 // Export specific commonly used constants for convenience

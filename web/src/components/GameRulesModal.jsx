@@ -32,7 +32,7 @@ const GameRulesModal = ({ onClose }) => {
           <div className={baseModalStyles.settingDescription}>
             <ol style={{ paddingLeft: 20, margin: 0 }}>
               <li>Each player antes up to join the round.</li>
-              <li>The player to the right of the dealer goes first.</li>
+              <li>Players take turns in seat order.</li>
               <li>Two cards are dealt face up.</li>
               <li>Player decides whether to bet or pass.</li>
               <li>If a bet is placed, the third card is revealed.</li>

@@ -22,17 +22,14 @@ const CardDisplay = () => {
     return <div className={styles.loading}>Loading game state...</div>;
   }
   
-  const { 
+  const {
     firstCard,
     secondCard,
     thirdCard,
-    phase,
-    dealer
+    phase
   } = gameState;
-  
+
   // Card state is managed by the game context
-  
-  const dealerName = dealer?.name;
   const cardLabels = {
     '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9', '10': '10',
     'J': 'J', 'Q': 'Q', 'K': 'K', 'A': 'A'
