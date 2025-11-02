@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">In-Between</string>
+    <string name="title_activity_main">In-Between</string>
+    <string name="package_name">com.appliedmethod.inbetween</string>
+    <string name="custom_url_scheme">com.appliedmethod.inbetween</string>
+
+    <!-- Facebook SDK -->
+    <string name="facebook_app_id">1362806222521193</string>
+    <string name="fb_login_protocol_scheme">fb1362806222521193</string>
+    <string name="facebook_client_token">198a439755c476c7e44178dba4c683ba</string>
+</resources>

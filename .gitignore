@@ -51,16 +51,19 @@ web/ios/**
 !web/ios/App/App/GoogleService-Info.plist
 !web/ios/App/App.xcodeproj/project.pbxproj
 
-# Android - Same pattern
+# Android - Ignore everything first, then un-ignore what we want
+web/android/**
+# Un-ignore parent directories (required for negation to work)
 !web/android/
 !web/android/app/
 !web/android/app/src/
 !web/android/app/src/main/
 !web/android/app/src/main/res/
 !web/android/app/src/main/res/values/
-# Then ignore everything under them
-web/android/**
-# Then un-ignore the files we want
+# Un-ignore the specific files we want to track
+!web/android/variables.gradle
 !web/android/app/build.gradle
 !web/android/app/google-services.json
+!web/android/app/src/main/AndroidManifest.xml
 !web/android/app/src/main/res/values/styles.xml
+!web/android/app/src/main/res/values/strings.xml
