@@ -108,7 +108,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
       socket.off('gameState');
       socket.off('gameError');
     };
-  }, [socket]);
+  }, [socket, clearError, gameState, user]);
 
   // Game-specific actions
   const placeBet = useCallback((amount) => {

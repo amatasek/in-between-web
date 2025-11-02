@@ -96,8 +96,7 @@ const PlayerList = () => {
                     ${player.isSittingOut ? styles.sittingOut : (player.isReady ? styles.ready : styles.notReady)}
                   `}
                   title={player.isSittingOut ? 'Sitting Out' : (player.isReady ? 'Ready' : 'Not Ready')}
-                >
-                </div>
+                 />
               </div>
             </div>
           );

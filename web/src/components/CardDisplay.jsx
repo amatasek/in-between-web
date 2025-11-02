@@ -59,7 +59,7 @@ const CardDisplay = () => {
         <div 
           className={styles.cardBack}
           style={{ backgroundImage: `url(${cardBackImage})` }}
-        ></div>
+         />
       </div>
     );}
     

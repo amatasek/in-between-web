@@ -464,7 +464,7 @@ export const useGamepadNavigation = (isEnabled = true) => {
     };
   }, [showFocusIndicator]);
 
-  // Handle initial focus when elements are available  
+  // Handle initial focus when elements are available
   useEffect(() => {
     if (navigableElements.length > 0 && !focusedElement) {
       const firstElement = navigableElements[0];
@@ -472,7 +472,7 @@ export const useGamepadNavigation = (isEnabled = true) => {
       // Don't focus initially - let autoFocus handle it
       // firstElement.focus();
     }
-  }, [navigableElements.length]); // Only depend on length, not the array itself
+  }, [navigableElements, focusedElement]);
   
   // Sync focus state when elements gain focus outside of gamepad navigation
   useEffect(() => {

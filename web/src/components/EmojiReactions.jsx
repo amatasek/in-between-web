@@ -75,6 +75,7 @@ const EmojiReactions = () => {
     <div className={styles.emojiReactions} ref={containerRef}>
       {/* Toggle button */}
       <button
+        type="button"
         className={styles.toggleButton}
         onClick={togglePanel}
         data-gamepad-focusable="true"
@@ -87,9 +88,10 @@ const EmojiReactions = () => {
       {isOpen && (
         <div className={styles.emojiPanel}>
           <div className={styles.emojiGrid}>
-            {emojis.map((emojiData, index) => (
+            {emojis.map((emojiData) => (
               <button
-                key={index}
+                key={emojiData.name}
+                type="button"
                 className={styles.emojiButton}
                 onClick={() => handleEmojiClick(emojiData)}
                 data-gamepad-focusable="true"

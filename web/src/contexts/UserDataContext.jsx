@@ -17,7 +17,6 @@ export const UserDataProvider = ({ children }) => {
     if (!socket) return;
 
     const handleUserDataUpdate = ({ userId, data }) => {
-      console.log('[UserDataContext] Received user data update:', userId, data);
       setUserCache(prev => {
         const newCache = new Map(prev);
         newCache.set(userId, data);

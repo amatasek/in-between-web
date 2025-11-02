@@ -174,21 +174,24 @@ const PlayerStatsModal = ({ onClose }) => {
       <BaseModal title="Player Stats" onClose={onClose} style={{ maxWidth: 800, height: '80vh' }}>
           {/* Tab Bar Navigation */}
           <div className="tabs-container">
-            <button 
+            <button
+              type="button"
               className={`tab-button ${activeTab === 'leaderboard' ? 'active' : ''}`}
               onClick={() => setActiveTab('leaderboard')}
               data-gamepad-focusable="true"
             >
               Leaderboard
             </button>
-            <button 
+            <button
+              type="button"
               className={`tab-button ${activeTab === 'stats' ? 'active' : ''}`}
               onClick={() => setActiveTab('stats')}
               data-gamepad-focusable="true"
             >
               Lifetime Stats
             </button>
-            <button 
+            <button
+              type="button"
               className={`tab-button ${activeTab === 'history' ? 'active' : ''}`}
               onClick={() => setActiveTab('history')}
               data-gamepad-focusable="true"
@@ -209,7 +212,7 @@ const PlayerStatsModal = ({ onClose }) => {
             <div className="tab-content">
               {statsLoading ? (
                 <div className={styles.loadingMessage}>
-                  <div className={styles.loadingSpinner}></div>
+                  <div className={styles.loadingSpinner} />
                   Loading your lifetime stats...
                 </div>
               ) : statsError ? (
@@ -243,7 +246,7 @@ const PlayerStatsModal = ({ onClose }) => {
             <div className="tab-content">
               {loading ? (
                 <div className={styles.loadingMessage}>
-                  <div className={styles.loadingSpinner}></div>
+                  <div className={styles.loadingSpinner} />
                   Loading your game history...
                 </div>
               ) : error ? (
@@ -293,6 +296,7 @@ const PlayerStatsModal = ({ onClose }) => {
 
                   <div className={styles.pageInfo}>
                     <button
+                      type="button"
                       onClick={handlePreviousPage}
                       disabled={currentPage === 0}
                       className={styles.pageButton}
@@ -307,6 +311,7 @@ const PlayerStatsModal = ({ onClose }) => {
                       ` of ${Math.ceil(historyData.pagination.total / pageSize)}` : ''}
 
                     <button
+                      type="button"
                       onClick={handleNextPage}
                       disabled={!historyData.pagination || historyData.games.length < pageSize}
                       className={styles.pageButton}

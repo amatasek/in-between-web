@@ -38,13 +38,13 @@ const UserAvatar = ({
     return (
       <div className={`${styles.userAvatarContainer} ${containerClass} ${className}`}>
         <div className={`${styles.avatar} ${sizeClass} ${styles.loading}`}>
-          <div className={styles.avatarLoader}></div>
+          <div className={styles.avatarLoader} />
         </div>
         {showName && (
           <div className={styles.userInfo}>
-            <div className={styles.skeletonUsername}></div>
+            <div className={styles.skeletonUsername} />
             {showTitle && (
-              <div className={styles.skeletonTitle}></div>
+              <div className={styles.skeletonTitle} />
             )}
           </div>
         )}

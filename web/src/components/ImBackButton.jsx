@@ -10,13 +10,14 @@ const ImBackButton = ({ onClick, disabled = false }) => {
       <div className={styles.container}>
         <h3 className={styles.sittingOutText}>You are sitting out</h3>
         <button
+          type="button"
           className={styles.imBackButton}
           onClick={onClick}
           disabled={disabled}
           data-gamepad-focusable="true"
           autoFocus
         >
-          <span className={styles.buttonText}>I'M BACK!</span>
+          <span className={styles.buttonText}>{"I'M BACK!"}</span>
         </button>
         <p className={styles.helpText}>Click to rejoin the game</p>
       </div>

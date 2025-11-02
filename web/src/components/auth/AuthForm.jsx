@@ -63,7 +63,7 @@ const AuthForm = ({ onSubmit, mode, requireEmail = false, title = null, descript
           {description}
         </p>
       )}
-      <div className="divider" style={{ marginBottom: '1.5rem' }}></div>
+      <div className="divider" style={{ marginBottom: '1.5rem' }} />
 
       {error && (
         <div className={styles.errorAlert}>

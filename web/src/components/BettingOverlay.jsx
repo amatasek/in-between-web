@@ -75,6 +75,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
         <>
           {/* Pass button */}
           <button
+            type="button"
             className={`${styles.betButton} ${styles.passButton}`}
             onClick={handleFold}
             disabled={betPlaced}
@@ -88,6 +89,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
           {presetBets.map(amount => (
             <button
               key={amount}
+              type="button"
               className={`${styles.betButton} ${styles.amountButton}`}
               onClick={() => handleBet(amount)}
               disabled={betPlaced}
@@ -112,6 +114,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
 
           {/* Custom button */}
           <button
+            type="button"
             className={`${styles.betButton} ${styles.customButton}`}
             onClick={() => setShowCustomInput(true)}
             disabled={betPlaced}
@@ -136,6 +139,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
             className={styles.betInput}
           />
           <button
+            type="button"
             onClick={handleCustomBet}
             className={styles.confirmButton}
             disabled={betPlaced}
@@ -144,6 +148,7 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
             {ICONS.CHECK}
           </button>
           <button
+            type="button"
             onClick={() => {
               setShowCustomInput(false);
               setCustomBet('');

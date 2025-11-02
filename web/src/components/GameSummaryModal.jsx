@@ -11,45 +11,44 @@ import styles from './styles/GameSummaryModal.module.css';
  * Can be used with active game data from GameContext or with historical game data passed directly
  */
 const GameSummaryModal = ({ onClose, gameData }) => {
-  if (!gameData) {
-    return (
-      <BaseModal
-        title="Game Summary"
-        onClose={onClose}
-        style={{ maxWidth: 800, height: '80vh' }}
-      >
-        <div className={styles.loadingMessage}>Loading game data...</div>
-      </BaseModal>
-    );
-  }
+  // Hooks must be at the top - before any early returns
+  const [activeTab, setActiveTab] = useState('totals');
 
   // Extract data from gameData with clean access now that structure is consistent
-  const gameTransactions = gameData.gameTransactions || [];
-  const players = gameData.players || {};
-  const gameId = gameData.id || 'unknown';
-  const showPayoutsTab = gameData.settings?.isPrivate || false;
-  
-  // Ensure gameTransactions is always an array
-  const transactions = Array.isArray(gameTransactions) ? gameTransactions : [];
-  
+  const gameId = gameData?.id || 'unknown';
+  const showPayoutsTab = gameData?.settings?.isPrivate || false;
+
+  // Memoize players object to prevent recreation on every render
+  const players = useMemo(() => gameData?.players || {}, [gameData?.players]);
+
+  // Memoize transactions array to prevent recreation on every render
+  const transactions = useMemo(() => {
+    const gameTransactions = gameData?.gameTransactions || [];
+    return Array.isArray(gameTransactions) ? gameTransactions : [];
+  }, [gameData?.gameTransactions]);
+
   // Get player names (including those who left)
-  const playerNames = {};
-  
-  // First add current players
-  Object.entries(players).forEach(([playerId, player]) => {
-    playerNames[playerId] = player.name;
-  });
-  
-  // Then add players who left but have transactions
-  transactions.forEach(tx => {
-    if (tx.playerId && !playerNames[tx.playerId]) {
-      playerNames[tx.playerId] = tx.playerName || 'Unknown Player';
-    }
-  });
+  const playerNames = useMemo(() => {
+    const names = {};
+
+    // First add current players
+    Object.entries(players).forEach(([playerId, player]) => {
+      names[playerId] = player.name;
+    });
+
+    // Then add players who left but have transactions
+    transactions.forEach(tx => {
+      if (tx.playerId && !names[tx.playerId]) {
+        names[tx.playerId] = tx.playerName || 'Unknown Player';
+      }
+    });
+
+    return names;
+  }, [players, transactions]);
 
   // Use server-side calculated totals (active games have totals, historical games have it at top level)
-  const playerTotals = gameData.totals || {};
-  
+  const playerTotals = useMemo(() => gameData.totals || {}, [gameData.totals]);
+
   // Calculate settle-up payments
   const settleUpPayments = useMemo(() => {
     // For simple 2-player games, just have the loser pay the winner directly
@@ -147,8 +146,18 @@ const GameSummaryModal = ({ onClose, gameData }) => {
     return payments;
   }, [playerTotals, playerNames]);
 
-  // Track the active tab - start with 'totals' tab
-  const [activeTab, setActiveTab] = useState('totals');
+  // Early return check AFTER all hooks
+  if (!gameData) {
+    return (
+      <BaseModal
+        title="Game Summary"
+        onClose={onClose}
+        style={{ maxWidth: 800, height: '80vh' }}
+      >
+        <div className={styles.loadingMessage}>Loading game data...</div>
+      </BaseModal>
+    );
+  }
 
   return (
     <BaseModal
@@ -160,6 +169,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
           {/* Tab Bar Navigation */}
           <div className="tabs-container">
             <button
+              type="button"
               className={`tab-button ${activeTab === 'totals' ? 'active' : ''}`}
               onClick={() => setActiveTab('totals')}
               data-gamepad-focusable="true"
@@ -167,6 +177,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
               Totals
             </button>
             <button
+              type="button"
               className={`tab-button ${activeTab === 'stats' ? 'active' : ''}`}
               onClick={() => setActiveTab('stats')}
               data-gamepad-focusable="true"
@@ -175,6 +186,7 @@ const GameSummaryModal = ({ onClose, gameData }) => {
             </button>
             {showPayoutsTab && (
               <button
+                type="button"
                 className={`tab-button ${activeTab === 'payouts' ? 'active' : ''}`}
                 onClick={() => setActiveTab('payouts')}
                 data-gamepad-focusable="true"
@@ -218,8 +230,8 @@ const GameSummaryModal = ({ onClose, gameData }) => {
                 <p className={styles.noDataMessage}>No payments needed or no transactions recorded yet.</p>
               ) : (
                 <div className={styles.settleUpTable}>
-                  {settleUpPayments.map((payment, index) => (
-                    <div key={index} className={styles.paymentRow}>
+                  {settleUpPayments.map((payment) => (
+                    <div key={`${payment.fromName}-${payment.toName}-${payment.amount}`} className={styles.paymentRow}>
                       <span className={styles.paymentText}>
                         <span className={styles.playerName}>
                           <Username username={payment.fromName} showDiscriminator={true} />

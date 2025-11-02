@@ -48,7 +48,7 @@ const AutoAnteToggle = () => {
         className={styles.toggleInput}
         data-gamepad-focusable="true"
       />
-      <span className={styles.toggleSlider}></span>
+      <span className={styles.toggleSlider} />
       <span className={styles.toggleText}>
         Auto-Ante
       </span>

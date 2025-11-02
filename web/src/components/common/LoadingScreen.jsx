@@ -9,7 +9,7 @@ export const LoadingScreen = ({ message = 'Loading...' }) => {
   return (
     <div className={styles.loadingScreen}>
       <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
+        <div className={styles.spinner} />
         <p className={styles.message}>{message}</p>
       </div>
     </div>

@@ -7,6 +7,68 @@ import PasswordPromptModal from './common/PasswordPromptModal';
 import GameScreen from './GameScreen';
 import soundService from '../services/SoundService';
 
+// Move component outside to prevent re-creation on every render
+const GameRoomContent = ({
+  loading,
+  error,
+  isPasswordModalOpen,
+  handlePasswordCancel,
+  handlePasswordSubmit,
+  handleReturnToLobby,
+  gameId
+}) => {
+  const { gameState } = useGameContext();
+  const { socket } = useSocket();
+
+  // Add beforeunload listener to warn users who are ready (in an active hand)
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      const currentUserId = socket?.auth?.userId;
+      const currentPlayer = currentUserId && gameState?.players ? gameState.players[currentUserId] : null;
+      const isPlayerReady = currentPlayer?.isReady || false;
+
+      // Only show warning if player is ready (has ante'd and is in the hand)
+      if (isPlayerReady) {
+        e.preventDefault();
+        e.returnValue = 'You have money in the pot! Are you sure you want to leave?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [gameState, socket]);
+
+  return (
+    <>
+      <PasswordPromptModal
+        isOpen={isPasswordModalOpen}
+        onClose={handlePasswordCancel}
+        onSubmit={handlePasswordSubmit}
+        gameId={gameId}
+      />
+
+      {loading && <LoadingScreen message={`Joining game ${gameId}...`} />}
+
+      {error && !loading && !isPasswordModalOpen && (
+        <div className="error-container" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+          <h2>An error occurred</h2>
+          <p>{error}</p>
+          {/* Suggest refreshing the page instead of navigating back */}
+          <button type="button" onClick={() => window.location.reload()}>Refresh Page</button>
+        </div>
+      )}
+
+      {!loading && !error && gameState &&
+        <GameScreen onReturnToLobby={handleReturnToLobby} />
+      }
+    </>
+  );
+};
+
 const GameRoom = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
@@ -107,62 +169,17 @@ const GameRoom = () => {
     // Dependencies remain minimal: only run when socket or gameId fundamentally change
   }, [socket, gameId]);
 
-  const GameRoomContent = () => {
-    const { gameState } = useGameContext();
-    const { socket } = useSocket();
-
-    // Add beforeunload listener to warn users who are ready (in an active hand)
-    useEffect(() => {
-      const handleBeforeUnload = (e) => {
-        const currentUserId = socket?.auth?.userId;
-        const currentPlayer = currentUserId && gameState?.players ? gameState.players[currentUserId] : null;
-        const isPlayerReady = currentPlayer?.isReady || false;
-
-        // Only show warning if player is ready (has ante'd and is in the hand)
-        if (isPlayerReady) {
-          e.preventDefault();
-          e.returnValue = 'You have money in the pot! Are you sure you want to leave?';
-          return e.returnValue;
-        }
-      };
-
-      window.addEventListener('beforeunload', handleBeforeUnload);
-
-      return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      };
-    }, [gameState, socket]);
-
-    return (
-      <>
-        <PasswordPromptModal
-          isOpen={isPasswordModalOpen}
-          onClose={handlePasswordCancel}
-          onSubmit={handlePasswordSubmit}
-          gameId={gameId}
-        />
-
-        {loading && <LoadingScreen message={`Joining game ${gameId}...`} />}
-
-        {error && !loading && !isPasswordModalOpen && (
-          <div className="error-container" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
-            <h2>An error occurred</h2>
-            <p>{error}</p>
-        {/* Suggest refreshing the page instead of navigating back */}
-        <button onClick={() => window.location.reload()}>Refresh Page</button>
-          </div>
-        )}
-
-        {!loading && !error && gameState &&
-          <GameScreen onReturnToLobby={handleReturnToLobby} />
-        }
-      </>
-    );
-  };
-
   return (
     <GameProvider gameId={gameId}>
-      <GameRoomContent />
+      <GameRoomContent
+        loading={loading}
+        error={error}
+        isPasswordModalOpen={isPasswordModalOpen}
+        handlePasswordCancel={handlePasswordCancel}
+        handlePasswordSubmit={handlePasswordSubmit}
+        handleReturnToLobby={handleReturnToLobby}
+        gameId={gameId}
+      />
     </GameProvider>
   );
 };

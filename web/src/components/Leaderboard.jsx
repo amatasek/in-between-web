@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import styles from './styles/Leaderboard.module.css';
 import { API_URL } from '../config';
 import UserDataContext from '../contexts/UserDataContext';
@@ -12,11 +12,7 @@ const Leaderboard = () => {
   const [duration, setDuration] = useState('all');
   const userDataContext = useContext(UserDataContext);
 
-  useEffect(() => {
-    fetchLeaderboard();
-  }, [duration]);
-
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -41,7 +37,11 @@ const Leaderboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [duration, userDataContext]);
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
 
   const getRankDisplay = (rank) => {
     if (rank === 1) return '🥇';
@@ -54,14 +54,16 @@ const Leaderboard = () => {
     <div className={styles.leaderboardContainer}>
       <div className={styles.leaderboardHeader}>
         <div className={styles.durationSelector}>
-          <button 
+          <button
+            type="button"
             className={`${styles.durationButton} ${duration === 'all' ? styles.active : ''}`}
             onClick={() => setDuration('all')}
             data-gamepad-focusable="true"
           >
             All Time
           </button>
-          <button 
+          <button
+            type="button" 
             className={`${styles.durationButton} ${duration === '30days' ? styles.active : ''}`}
             onClick={() => setDuration('30days')}
             data-gamepad-focusable="true"
@@ -73,7 +75,7 @@ const Leaderboard = () => {
 
       {loading ? (
         <div className={styles.loadingMessage}>
-          <div className={styles.loadingSpinner}></div>
+          <div className={styles.loadingSpinner} />
           Loading leaderboard...
         </div>
       ) : error ? (

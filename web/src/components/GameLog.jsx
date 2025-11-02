@@ -7,24 +7,25 @@ import TurnSummaryPanel from './TurnSummaryPanel';
 const GameLog = () => {
   const { gameState } = useGameContext();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
-  if (!gameState || !gameState.gameLog) return null;
-  
+
   // Get the game log entries
-  const logEntries = gameState.gameLog || [];
-  
+  const logEntries = gameState?.gameLog || [];
+
   // Calculate number of players to determine initial visible count
-  const playerCount = gameState.seats ? gameState.seats.filter(seat => seat !== null).length : 0;
+  const playerCount = gameState?.seats ? gameState.seats.filter(seat => seat !== null).length : 0;
   const defaultVisibleCount = Math.max(playerCount, 4); // Show at least 4, but match player count if higher
-  
+
   const [visibleCount, setVisibleCount] = useState(defaultVisibleCount);
-  
+
   // Update visible count when player count changes
   useEffect(() => {
     if (!isCollapsed) {
       setVisibleCount(defaultVisibleCount);
     }
   }, [playerCount, defaultVisibleCount, isCollapsed]);
+
+  // Early return AFTER all hooks
+  if (!gameState || !gameState.gameLog) return null;
   
   // Format timestamp to readable time
   const formatTime = (timestamp) => {

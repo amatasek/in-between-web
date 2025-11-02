@@ -29,7 +29,8 @@ const PlayerPanel = () => {
           balance={user?.balance}
         />
         <div className={styles.headerButtons}>
-          <button 
+          <button
+            type="button"
             className={styles.logoutButton}
             onClick={logout}
             data-gamepad-focusable="true"

@@ -16,13 +16,13 @@ const GameRulesModal = ({ onClose }) => {
       <div style={{ marginBottom: 22 }}>
           <div className={baseModalStyles.sectionHeader}>Objective</div>
           <div className={baseModalStyles.settingDescription}>
-            The goal is to bet on whether the third card will have a value that falls "in between" the first two cards.
+            {'The goal is to bet on whether the third card will have a value that falls "in between" the first two cards.'}
           </div>
         </div>
         <div style={{ marginBottom: 22 }}>
           <div className={baseModalStyles.sectionHeader}>Card Values</div>
           <div className={baseModalStyles.settingDescription}>
-            Cards are valued numerically: 2-10 as face value, Jack = 11, Queen = 12, King = 13, and Ace = 1 or 14 (player's choice).
+            {"Cards are valued numerically: 2-10 as face value, Jack = 11, Queen = 12, King = 13, and Ace = 1 or 14 (player's choice)."}
           </div>
         </div>
         <div style={{ marginBottom: 22 }}>

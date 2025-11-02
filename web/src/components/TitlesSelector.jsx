@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePreferences } from '../contexts/PreferencesContext';
 import baseModalStyles from './common/BaseModal.module.css';
@@ -11,11 +11,7 @@ const TitlesSelector = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    loadTitles();
-  }, []);
-
-  const loadTitles = async () => {
+  const loadTitles = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/me/titles`, {
@@ -35,7 +31,11 @@ const TitlesSelector = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    loadTitles();
+  }, [loadTitles]);
 
   const handleTitleSelect = async (titleString) => {
     try {

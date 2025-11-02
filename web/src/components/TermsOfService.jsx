@@ -30,8 +30,8 @@ export default function TermsOfService() {
           <h2>1. Introduction and Acceptance</h2>
           <p>
             Welcome to In-Between, a multiplayer card game platform operated by Applied Method, LLC
-            ("we," "us," or "our"). By accessing or using our Service, you agree to be bound by
-            these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Service.
+            (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). By accessing or using our Service, you agree to be bound by
+            these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, do not use the Service.
           </p>
           <p>
             These Terms constitute a legally binding agreement between you and Applied Method, LLC.
@@ -124,7 +124,7 @@ export default function TermsOfService() {
           <p>
             All content, features, and functionality of the Service, including but not limited to text,
             graphics, logos, icons, images, audio clips, video clips, data compilations, software, and
-            the compilation thereof (collectively, "Content"), are owned by Applied Method, LLC and are
+            the compilation thereof (collectively, &quot;Content&quot;), are owned by Applied Method, LLC and are
             protected by United States and international copyright, trademark, patent, trade secret, and
             other intellectual property laws.
           </p>
@@ -167,7 +167,7 @@ export default function TermsOfService() {
         <section>
           <h2>8. Disclaimer of Warranties</h2>
           <p>
-            THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER
+            THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT WARRANTIES OF ANY KIND, EITHER
             EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY,
             FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
           </p>
@@ -221,7 +221,7 @@ export default function TermsOfService() {
           <p>
             You agree to indemnify, defend, and hold harmless Applied Method, LLC, its officers, directors,
             employees, agents, and affiliates from and against any claims, liabilities, damages, losses,
-            costs, expenses, or fees (including reasonable attorneys' fees) arising from:
+            costs, expenses, or fees (including reasonable attorneys&apos; fees) arising from:
           </p>
           <ul>
             <li>Your use or misuse of the Service</li>
@@ -245,12 +245,12 @@ export default function TermsOfService() {
           <p>
             Any disputes arising out of or relating to these Terms or the Service shall be resolved
             through binding arbitration in accordance with the rules of the American Arbitration
-            Association. The arbitration shall take place in Delaware, and the arbitrator's
+            Association. The arbitration shall take place in Delaware, and the arbitrator&apos;s
             decision shall be final and binding.
           </p>
           <p>
             You agree to waive any right to a jury trial and to participate in a class action lawsuit
-            against Applied Method, LLC. Each party shall bear its own costs and attorneys' fees, unless
+            against Applied Method, LLC. Each party shall bear its own costs and attorneys&apos; fees, unless
             otherwise awarded by the arbitrator.
           </p>
           <p>

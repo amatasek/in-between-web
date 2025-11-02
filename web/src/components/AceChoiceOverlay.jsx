@@ -41,6 +41,7 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
         <div className={styles.aceButtonContainer}>
           <span className={styles.choicePrompt}>ACE VALUE:</span>
           <button
+            type="button"
             className={`${styles.bottomChoiceButton} ${styles.lowButtonBottom}`}
             onClick={() => handleAceChoice(true)}
             disabled={choice !== null}
@@ -51,6 +52,7 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
             <span>LOW</span>
           </button>
           <button
+            type="button"
             className={`${styles.bottomChoiceButton} ${styles.highButtonBottom}`}
             onClick={() => handleAceChoice(false)}
             disabled={choice !== null}
@@ -89,6 +91,7 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
         <>
           {/* HIGH button at top of card */}
           <button
+            type="button"
             className={`${styles.choiceButton} ${styles.highButton}`}
             onClick={() => handleAceChoice(false)}
             disabled={choice !== null}
@@ -101,6 +104,7 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
           
           {/* LOW button at bottom of card */}
           <button
+            type="button"
             className={`${styles.choiceButton} ${styles.lowButton}`}
             onClick={() => handleAceChoice(true)}
             disabled={choice !== null}

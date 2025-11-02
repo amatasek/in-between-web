@@ -13,6 +13,7 @@ import CurrencyAmount from './common/CurrencyAmount';
 const PotButton = ({ amount, disabled, onClick, ...props }) => {
   return (
     <button
+      type="button"
       className={`${styles.potButton} ${disabled ? styles.disabled : ''}`}
       onClick={onClick}
       disabled={disabled}

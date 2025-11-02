@@ -29,9 +29,7 @@ export default function PrivacyPolicy() {
         <section>
           <h2>1. Introduction</h2>
           <p>
-            Applied Method, LLC ("we," "us," or "our") operates the In-Between card game platform
-            (the "Service"). This Privacy Policy explains how we collect, use, disclose, and protect
-            your personal information when you use our Service.
+            Applied Method, LLC (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates the In-Between card game platform (the &quot;Service&quot;). This Privacy Policy explains how we collect, use, disclose, and protect your personal information when you use our Service.
           </p>
           <p>
             By using the Service, you agree to the collection and use of information in accordance
@@ -148,7 +146,7 @@ export default function PrivacyPolicy() {
             <li>We receive limited profile data (email address, name, profile picture)</li>
             <li>These providers have their own privacy policies governing their data practices</li>
             <li>We do not have access to your social media passwords</li>
-            <li>You can revoke our access through your social provider's settings at any time</li>
+            <li>You can revoke our access through your social provider&apos;s settings at any time</li>
           </ul>
 
           <h3>4.2 Analytics Services</h3>
@@ -246,7 +244,7 @@ export default function PrivacyPolicy() {
             You can request that we correct any inaccurate or incomplete personal data.
           </p>
 
-          <h3>Right to Erasure ("Right to be Forgotten")</h3>
+          <h3>Right to Erasure (&quot;Right to be Forgotten&quot;)</h3>
           <p>
             You can request that we delete your personal data, subject to certain legal exceptions.
           </p>
@@ -310,7 +308,7 @@ export default function PrivacyPolicy() {
           <h3>Right to Opt-Out of Sale</h3>
           <p>
             <strong>We do not sell your personal information.</strong> However, if we ever decide to
-            do so in the future, we will provide a clear "Do Not Sell My Personal Information" link
+            do so in the future, we will provide a clear &quot;Do Not Sell My Personal Information&quot; link
             on our website.
           </p>
 
@@ -409,7 +407,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2>10. Children's Privacy (COPPA Compliance)</h2>
+          <h2>10. Children&apos;s Privacy (COPPA Compliance)</h2>
           <p>
             The Service is not directed to children under the age of 13, and we do not knowingly
             collect personal information from children under 13.
@@ -457,10 +455,10 @@ export default function PrivacyPolicy() {
             When we make material changes to this Privacy Policy, we will:
           </p>
           <ul>
-            <li>Update the "Last Updated" date at the top of this page</li>
+            <li>Update the &quot;Last Updated&quot; date at the top of this page</li>
             <li>Notify you by email (to the address associated with your account)</li>
             <li>Display a prominent notice on the Service</li>
-            <li>Provide at least 30 days' notice before the changes take effect</li>
+            <li>Provide at least 30 days&apos; notice before the changes take effect</li>
           </ul>
           <p>
             Your continued use of the Service after the effective date of the updated Privacy Policy

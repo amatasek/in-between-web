@@ -13,7 +13,7 @@ const WelcomePopup = ({ username, balance, onClose }) => {
       <div className={styles.popup} role="dialog" aria-labelledby="welcome-title">
         <div className={styles.header}>
           <h2 id="welcome-title">Welcome, <Username username={username} />!</h2>
-          <button className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
+          <button type="button" className={styles.closeButton} onClick={onClose} data-gamepad-focusable="true">×</button>
         </div>
         <div className={styles.content}>
           <p className={styles.message}>
@@ -28,8 +28,8 @@ const WelcomePopup = ({ username, balance, onClose }) => {
           </p>
         </div>
         <div className={styles.footer}>
-          <button className={styles.actionButton} onClick={onClose} data-gamepad-focusable="true">
-            Let's Play!
+          <button type="button" className={styles.actionButton} onClick={onClose} data-gamepad-focusable="true">
+            {"Let's Play!"}
           </button>
         </div>
       </div>

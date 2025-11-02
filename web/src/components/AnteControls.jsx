@@ -66,6 +66,7 @@ const AnteControls = () => {
             {/* Auto-Ante toggle - only show when ante is available */}
             <AutoAnteToggle />
             <button
+                type="button"
                 className={styles.anteButton}
                 onClick={() => {
                   if (actionPending) return;
@@ -78,7 +79,7 @@ const AnteControls = () => {
                 autoFocus
               >
                 {/* Add shimmer border for glimmering effect */}
-                <div className={styles.shimmerBorder}></div>
+                <div className={styles.shimmerBorder} />
                 <div className={styles.buttonInfo}>
                   <span className={styles.buttonLabel}>ANTE</span>
                   <span className={styles.buttonAmount}><CurrencyAmount amount={anteAmount} /></span>
@@ -86,6 +87,7 @@ const AnteControls = () => {
               </button>
 
               <button
+                type="button"
                 className={`${styles.backOutButton} ${styles.sitOutHalfWidth}`}
                 onClick={() => {
                   if (actionPending) return;
@@ -102,7 +104,7 @@ const AnteControls = () => {
                 aria-label="Sit Out"
                 data-gamepad-focusable="true"
               >
-                <div className={styles.shimmerBorder}></div>
+                <div className={styles.shimmerBorder} />
                 <div className={styles.buttonInfo}>
                   <span className={styles.buttonLabel}>SIT OUT</span>
                 </div>
@@ -112,6 +114,7 @@ const AnteControls = () => {
         ) : (
           // Player is ready - show Back Out button
           <button
+                type="button"
                 className={styles.backOutButton}
                 onClick={() => {
                   if (actionPending) return;
@@ -127,7 +130,7 @@ const AnteControls = () => {
                 data-gamepad-focusable="true"
               >
                 {/* Add shimmer border for glimmering effect */}
-                <div className={styles.shimmerBorder}></div>
+                <div className={styles.shimmerBorder} />
                 <div className={styles.buttonInfo}>
                   <span className={styles.buttonLabel}>BACK OUT</span>
                 </div>

@@ -196,7 +196,7 @@ const ModernAuthPage = () => {
                     <polyline points="22 4 12 14.01 9 11.01"/>
                   </svg>
                   <h3>Check your email</h3>
-                  <p>We've sent a password reset link to <strong>{email}</strong></p>
+                  <p>{"We've sent a password reset link to "}<strong>{email}</strong></p>
                   <button
                     type="button"
                     className={styles.backButton}
@@ -212,7 +212,7 @@ const ModernAuthPage = () => {
               ) : (
                 <form onSubmit={handleForgotPassword} className={styles.emailForm}>
                   <p className={styles.forgotPasswordText}>
-                    Enter your email address and we'll send you a link to reset your password.
+                    {"Enter your email address and we'll send you a link to reset your password."}
                   </p>
 
                   <div className={styles.inputGroup}>
@@ -236,7 +236,7 @@ const ModernAuthPage = () => {
                     disabled={emailLoading}
                   >
                     {emailLoading ? (
-                      <div className={styles.spinner}></div>
+                      <div className={styles.spinner} />
                     ) : (
                       'Send reset link'
                     )}
@@ -307,7 +307,7 @@ const ModernAuthPage = () => {
                   disabled={emailLoading}
                 >
                   {emailLoading ? (
-                    <div className={styles.spinner}></div>
+                    <div className={styles.spinner} />
                   ) : (
                     isSignUp ? 'Create Account' : 'Sign In'
                   )}
@@ -342,9 +342,9 @@ const ModernAuthPage = () => {
         {/* Footer */}
         <div className={styles.footer}>
           <div className={styles.footerLinks}>
-            <button onClick={() => openInBrowser(`${WEB_URL}/terms`)} className={styles.footerLink}>Terms of Service</button>
+            <button type="button" onClick={() => openInBrowser(`${WEB_URL}/terms`)} className={styles.footerLink}>Terms of Service</button>
             <span className={styles.footerDivider}>•</span>
-            <button onClick={() => openInBrowser(`${WEB_URL}/privacy`)} className={styles.footerLink}>Privacy Policy</button>
+            <button type="button" onClick={() => openInBrowser(`${WEB_URL}/privacy`)} className={styles.footerLink}>Privacy Policy</button>
           </div>
           {versionInfo && (
             <div className={styles.footerVersion}>{versionInfo.display}</div>

@@ -33,14 +33,14 @@ const PreferencesModal = ({ onClose, defaultTab = 'profile' }) => {
     <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600 }}>
       {/* Tab Navigation */}
       <div className="tabs-container">
-        <button
+        <button type="button"
           className={`tab-button ${activeTab === 'profile' ? 'active' : ''}`}
           onClick={() => setActiveTab('profile')}
           data-gamepad-focusable="true"
         >
           Profile
         </button>
-        <button
+        <button type="button"
           className={`tab-button ${activeTab === 'game' ? 'active' : ''}`}
           onClick={() => setActiveTab('game')}
           data-gamepad-focusable="true"

@@ -50,6 +50,7 @@ const SecondChanceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false, ind
         <div className={styles.bottomButtonContainer}>
           <span className={styles.choicePrompt}>SECOND CHANCE:</span>
           <button
+            type="button"
             className={`${styles.bottomChoiceButton} ${styles.anteButtonBottom}`}
             onClick={() => handleSecondChance(true)}
             disabled={choice !== null}
@@ -61,6 +62,7 @@ const SecondChanceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false, ind
             <CurrencyAmount amount={anteAmount} size="small" />
           </button>
           <button
+            type="button"
             className={`${styles.bottomChoiceButton} ${styles.passButtonBottom}`}
             onClick={() => handleSecondChance(false)}
             disabled={choice !== null}
@@ -95,6 +97,7 @@ const SecondChanceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false, ind
           {/* Choice buttons */}
           <div className={styles.buttons}>
             <button
+              type="button"
               className={`${styles.choiceButton} ${styles.anteButton}`}
               onClick={() => handleSecondChance(true)}
               disabled={choice !== null}
@@ -109,6 +112,7 @@ const SecondChanceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false, ind
             </button>
 
             <button
+              type="button"
               className={`${styles.choiceButton} ${styles.passButton}`}
               onClick={() => handleSecondChance(false)}
               disabled={choice !== null}

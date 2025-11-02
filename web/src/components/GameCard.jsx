@@ -41,7 +41,7 @@ function GameCard({ game, onJoin, userId }) {
             <span className={styles.disconnectedBadge} title="You're disconnected from this game">⚠️ Reconnect</span>
           )}
           {isUserInGame && (
-            <span className={styles.inGameBadge} title="You're in this game">You're In</span>
+            <span className={styles.inGameBadge} title="You're in this game">{"You're In"}</span>
           )}
         </div>
         <div className={styles.gameListPlayers}> {/* Div for Player Count */}
@@ -49,7 +49,8 @@ function GameCard({ game, onJoin, userId }) {
         </div>
       </div>
       {/* Button as sibling to gameListInfo */}
-      <button 
+      <button
+        type="button"
         className="btn btn-primary"
         style={{ 
           padding: '0.4rem 1rem',

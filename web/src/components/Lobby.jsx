@@ -126,9 +126,9 @@ const Lobby = () => {
 
        <div className="card" style={{ width: '100%', maxWidth: '600px', marginBottom: '2rem' }}>
          <PlayerPanel />
-         <div className="divider"></div>
+         <div className="divider" />
          <div className={styles.gameActionsSection}>
-           <button 
+           <button type="button" 
              className="btn btn-primary"
              onClick={handleCreateGame}
              disabled={!user?.username}
@@ -136,7 +136,7 @@ const Lobby = () => {
            >
              Create Quick Game
            </button>
-           <button
+           <button type="button"
              className="btn btn-primary"
              onClick={handleCreateCustomGame}
              disabled={!user?.username}
@@ -212,9 +212,9 @@ const Lobby = () => {
        {versionInfo && (
          <div className={styles.versionInfo}>
            <div className={styles.legalLinks}>
-             <button onClick={() => openInBrowser(`${WEB_URL}/terms`)} className={styles.legalLink}>Terms of Service</button>
+             <button type="button" onClick={() => openInBrowser(`${WEB_URL}/terms`)} className={styles.legalLink}>Terms of Service</button>
              <span className={styles.legalDivider}>•</span>
-             <button onClick={() => openInBrowser(`${WEB_URL}/privacy`)} className={styles.legalLink}>Privacy Policy</button>
+             <button type="button" onClick={() => openInBrowser(`${WEB_URL}/privacy`)} className={styles.legalLink}>Privacy Policy</button>
            </div>
            <div>{versionInfo.display}</div>
          </div>

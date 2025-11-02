@@ -85,7 +85,7 @@ const AuthPage = () => {
         />
 
         <div className={styles.toggleContainer}>
-          <button
+          <button type="button"
             className={styles.toggleButton}
             onClick={() => navigate('/auth')}
             data-gamepad-focusable="true"

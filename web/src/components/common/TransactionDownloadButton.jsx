@@ -17,20 +17,13 @@ try {
  * @param {string} props.title Custom tooltip text (optional)
  * @param {Object} props.gameState Game state object (optional, will use context if not provided)
  */
-const TransactionDownloadButton = ({ 
+const TransactionDownloadButton = ({
   title = "Download Transaction Log as CSV",
   gameState: propGameState,
-  ...restProps 
+  ...restProps
 }) => {
-  // Use provided gameState or try to get from context if available
-  let contextValue;
-  try {
-    contextValue = useGameContext ? useGameContext() : { gameState: null };
-  } catch {
-    // Context not available
-    contextValue = { gameState: null };
-  }
-  
+  const contextValue = useGameContext();
+
   // Handle both the original gameState format and our new gameData format
   const gameData = propGameState || contextValue?.gameState;
   

@@ -11,7 +11,7 @@ const ToggleSwitch = ({ isChecked, onChange, label }) => {
           className={styles.toggleInput}
           data-gamepad-focusable="true"
         />
-        <span className={styles.toggleSlider}></span>
+        <span className={styles.toggleSlider} />
         {label && <span className={styles.toggleText}>{label}</span>}
       </label>
     </div>

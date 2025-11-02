@@ -71,6 +71,7 @@ const AnteOverlay = () => {
       {canPlayerAnte ? (
         <div className={styles.anteContainer}>
           <button
+            type="button"
             className={styles.anteButton}
             onClick={handleAnte}
             data-gamepad-focusable="true"

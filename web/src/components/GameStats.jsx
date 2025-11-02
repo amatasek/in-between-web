@@ -6,21 +6,25 @@ import CurrencyAmount from './common/CurrencyAmount';
 const GameStats = ({ gameData }) => {
   const transactions = gameData.gameTransactions;
   const players = gameData.players;
-  
+
   // Construct player names from both players and transactions
-  const playerNames = {};
-  
-  // First add current players
-  Object.entries(players).forEach(([playerId, player]) => {
-    playerNames[playerId] = player.name;
-  });
-  
-  // Then add players who left but have transactions
-  transactions.forEach(tx => {
-    if (tx.playerId && !playerNames[tx.playerId]) {
-      playerNames[tx.playerId] = tx.playerName || 'Unknown Player';
-    }
-  });
+  const playerNames = useMemo(() => {
+    const names = {};
+
+    // First add current players
+    Object.entries(players).forEach(([playerId, player]) => {
+      names[playerId] = player.name;
+    });
+
+    // Then add players who left but have transactions
+    transactions.forEach(tx => {
+      if (tx.playerId && !names[tx.playerId]) {
+        names[tx.playerId] = tx.playerName || 'Unknown Player';
+      }
+    });
+
+    return names;
+  }, [players, transactions]);
 
   // Calculate game statistics from transaction data
   const gameStats = useMemo(() => {
@@ -258,7 +262,7 @@ const GameStats = ({ gameData }) => {
         suffix: mostPenaltiesPlayerId ? ` (${formatNumber(mostPenalties)} penalties)` : ''
       }
     ];
-  }, [transactions, playerNames]);
+  }, [transactions, playerNames, gameData.deckCount, gameData.round, gameData.totals]);
 
   // Helper function to format stat values based on their type
   const formatStatValue = (type, value) => {
@@ -280,28 +284,24 @@ const GameStats = ({ gameData }) => {
     return value;
   };
 
-  return (
-    <>
-      {gameStats.length === 0 ? (
-        <p className={styles.noDataMessage}>No statistics available for this game.</p>
-      ) : (
-        <div
-          className={styles.statsGrid}
-          data-gamepad-scrollable="true"
-          tabIndex="0"
-        >
-          {gameStats.map((stat) => (
-            <div key={stat.key} className={`panel-alt`}>
-              <div className={styles.statLabel}>{stat.label}</div>
-              <div className={styles.statValue}>
-                {formatStatValue(stat.type, stat.value)}
-                {stat.suffix && <span className={styles.statSuffix}>{stat.suffix}</span>}
-              </div>
-            </div>
-          ))}
+  return gameStats.length === 0 ? (
+    <p className={styles.noDataMessage}>No statistics available for this game.</p>
+  ) : (
+    <div
+      className={styles.statsGrid}
+      data-gamepad-scrollable="true"
+      tabIndex="0"
+    >
+      {gameStats.map((stat) => (
+        <div key={stat.key} className={`panel-alt`}>
+          <div className={styles.statLabel}>{stat.label}</div>
+          <div className={styles.statValue}>
+            {formatStatValue(stat.type, stat.value)}
+            {stat.suffix && <span className={styles.statSuffix}>{stat.suffix}</span>}
+          </div>
         </div>
-      )}
-    </>
+      ))}
+    </div>
   );
 };
 

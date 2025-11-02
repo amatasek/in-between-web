@@ -65,7 +65,7 @@ const Toast = ({
           )}
         </div>
       </div>
-      <button 
+      <button type="button" 
         className={styles.closeButton} 
         onClick={onClose}
         aria-label="Close notification"

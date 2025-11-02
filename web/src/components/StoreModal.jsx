@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import BaseModal from './common/BaseModal';
 import CurrencyAmount from './common/CurrencyAmount';
 import styles from './styles/StoreModal.module.css';
@@ -16,14 +16,7 @@ const StoreModal = ({ onClose }) => {
   const [purchasing, setPurchasing] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (token) {
-      loadCoinOfferings();
-      loadUpgradeOfferings();
-    }
-  }, [token]);
-
-  const loadCoinOfferings = async () => {
+  const loadCoinOfferings = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -47,16 +40,23 @@ const StoreModal = ({ onClose }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
-  const loadUpgradeOfferings = async () => {
+  const loadUpgradeOfferings = useCallback(async () => {
     try {
       const offerings = await storeService.getOfferingsByType('upgrade', token);
       setUpgradeOfferings(offerings);
     } catch (err) {
       console.error('Failed to load upgrade offerings:', err);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      loadCoinOfferings();
+      loadUpgradeOfferings();
+    }
+  }, [token, loadCoinOfferings, loadUpgradeOfferings]);
 
   const handlePurchase = async (productId) => {
     try {
@@ -107,6 +107,7 @@ const StoreModal = ({ onClose }) => {
         {/* Tab Navigation */}
         <div className="tabs-container">
         <button
+          type="button"
           className={`tab-button ${activeTab === 'coins' ? 'active' : ''}`}
           onClick={() => setActiveTab('coins')}
           data-gamepad-focusable="true"
@@ -114,6 +115,7 @@ const StoreModal = ({ onClose }) => {
           Coin Packs
         </button>
         <button
+          type="button"
           className={`tab-button ${activeTab === 'upgrade' ? 'active' : ''}`}
           onClick={() => setActiveTab('upgrade')}
           data-gamepad-focusable="true"
@@ -179,6 +181,7 @@ const StoreModal = ({ onClose }) => {
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => handlePurchase(offering.id)}
                     disabled={purchasing === offering.id}
                     className={offering.isAd ? styles.adButton : "btn btn-primary"}
@@ -238,6 +241,7 @@ const StoreModal = ({ onClose }) => {
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => handlePurchase(offering.id)}
                     disabled={purchasing === offering.id}
                     className="btn btn-primary"

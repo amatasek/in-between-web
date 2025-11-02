@@ -146,17 +146,17 @@ const VirtualKeyboard = ({
         />
       </div>
       <div className={styles.keyboardGrid}>
-        {keys.map((row, rowIndex) => (
-          <div key={rowIndex} className={styles.keyRow}>
-            {row.map((key, keyIndex) => (
-              <button
-                key={`${rowIndex}-${keyIndex}`}
+        {keys.map((row) => (
+          <div key={row[0]} className={styles.keyRow}>
+            {row.map((key) => (
+              <button type="button"
+                key={key}
                 className={getKeyClass(key)}
                 onClick={() => handleKeyPress(key)}
                 data-gamepad-focusable="true"
-                aria-label={key === 'backspace' ? 'Backspace' : 
-                           key === 'enter' ? 'Enter' : 
-                           key === 'space' ? 'Space' : 
+                aria-label={key === 'backspace' ? 'Backspace' :
+                           key === 'enter' ? 'Enter' :
+                           key === 'space' ? 'Space' :
                            key === 'shift' ? 'Shift' : key}
               >
                 {getKeyDisplayText(key)}

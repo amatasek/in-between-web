@@ -84,7 +84,7 @@ export const SocketProvider = ({ children }) => {
         setError(null);
       }
     };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const value = {

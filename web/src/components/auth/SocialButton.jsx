@@ -57,7 +57,7 @@ const SocialButton = ({ provider, onClick, disabled, loading }) => {
       disabled={disabled || loading}
     >
       {loading ? (
-        <div className={styles.spinner}></div>
+        <div className={styles.spinner} />
       ) : (
         <>
           <span className={styles.icon}>{config.icon}</span>
