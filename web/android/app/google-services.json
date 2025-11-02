@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "800669475084",
+    "project_id": "in-between-live",
+    "storage_bucket": "in-between-live.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800669475084:android:e35a90fc5f6d17323d2929",
+        "android_client_info": {
+          "package_name": "com.appliedmethod.inbetween"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "800669475084-qvg3iid01j1u4lilfojhgnu1do8jelfg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.appliedmethod.inbetween",
+            "certificate_hash": "2ba72a7c8b73e86a89287597e6bf8875aed28959"
+          }
+        },
+        {
+          "client_id": "800669475084-nehcgm60fs53h2jqegc3722022pbag9l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoO9vHlb_XogxXOgGrUChmMKXt79RtMW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "800669475084-nehcgm60fs53h2jqegc3722022pbag9l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "800669475084-5qenojn2uqrp5odndhpk6vdao2kgvq8m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.appliedmethod.inbetween"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

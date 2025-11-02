@@ -34,7 +34,31 @@ Thumbs.db
 # Files
 data/
 
-# Capacitor
-web/ios/
-web/android/
+# Capacitor - Track only specific config files
 web/.capacitor/
+
+# iOS - Un-ignore parent directories to allow negation patterns
+!web/ios/
+!web/ios/App/
+!web/ios/App/App/
+# Then ignore everything under them
+web/ios/**
+# Then un-ignore the files we want
+!web/ios/App/Podfile
+!web/ios/App/Podfile.lock
+!web/ios/App/App/Info.plist
+!web/ios/App/App/GoogleService-Info.plist
+
+# Android - Same pattern
+!web/android/
+!web/android/app/
+!web/android/app/src/
+!web/android/app/src/main/
+!web/android/app/src/main/res/
+!web/android/app/src/main/res/values/
+# Then ignore everything under them
+web/android/**
+# Then un-ignore the files we want
+!web/android/app/build.gradle
+!web/android/app/google-services.json
+!web/android/app/src/main/res/values/styles.xml
