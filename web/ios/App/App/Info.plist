@@ -75,7 +75,5 @@
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
 	</array>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>We use this to provide you with a personalized experience.</string>
 </dict>
 </plist>
