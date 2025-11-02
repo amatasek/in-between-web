@@ -37,17 +37,19 @@ data/
 # Capacitor - Track only specific config files
 web/.capacitor/
 
-# iOS - Un-ignore parent directories to allow negation patterns
+# iOS - Ignore everything first, then un-ignore what we want
+web/ios/**
+# Un-ignore parent directories (required for negation to work)
 !web/ios/
 !web/ios/App/
 !web/ios/App/App/
-# Then ignore everything under them
-web/ios/**
-# Then un-ignore the files we want
+!web/ios/App/App.xcodeproj/
+# Un-ignore the specific files we want to track
 !web/ios/App/Podfile
 !web/ios/App/Podfile.lock
 !web/ios/App/App/Info.plist
 !web/ios/App/App/GoogleService-Info.plist
+!web/ios/App/App.xcodeproj/project.pbxproj
 
 # Android - Same pattern
 !web/android/
