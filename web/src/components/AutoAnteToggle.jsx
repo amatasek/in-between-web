@@ -1,4 +1,3 @@
-import React from 'react';
 import { usePreferences } from '../contexts/PreferencesContext';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';

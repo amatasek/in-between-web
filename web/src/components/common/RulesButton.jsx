@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import IconButton from './IconButton';
 import QuestionIcon from '../icons/QuestionIcon';
 import GameRulesModal from '../GameRulesModal';

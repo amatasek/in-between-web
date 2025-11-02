@@ -1,6 +1,5 @@
-import React from 'react';
 import styles from './styles/Lobby.module.css'; // Use the new CSS module
-import LockIcon from './icons/LockIcon'; // Import the new icon
+import LockIcon from './icons/LockIcon';
 
 function GameCard({ game, onJoin, userId }) { 
   // Determine display name: Use custom name if available, otherwise fallback to ID

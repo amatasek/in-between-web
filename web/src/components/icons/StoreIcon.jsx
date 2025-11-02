@@ -1,4 +1,3 @@
-import React from 'react';
 
 const StoreIcon = ({ className = 'h-6 w-6', ...props }) => {
   return (

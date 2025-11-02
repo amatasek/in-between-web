@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles/Toast.module.css';
 import Username from './Username';
 
@@ -43,7 +43,7 @@ const Toast = ({
         <span 
           className={`${styles.icon} ${isEmojiReaction ? styles.emojiIcon : ''}`} 
           style={{ 
-            color: color,
+            color,
             textShadow: isEmojiReaction 
               ? `0 0 20px ${color}, 0 0 40px ${color}60` 
               : `0 0 8px ${color}80`

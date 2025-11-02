@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useVirtualKeyboardContext } from '../../contexts/VirtualKeyboardContext';
 import styles from './AuthForm.module.css';
 

@@ -1,7 +1,4 @@
-import React from 'react';
 import styles from './WelcomePopup.module.css';
-import CoinIcon from './CoinIcon';
-import Username from '../Username';
 
 /**
  * A popup component that displays a welcome message and balance reset notification

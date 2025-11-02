@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import BaseModal from './common/BaseModal';
-import styles from './styles/GameSummaryModal.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
-import TransactionDownloadButton from './common/TransactionDownloadButton';
 import GameStats from './GameStats';
+import TransactionDownloadButton from './common/TransactionDownloadButton';
 import Username from './Username';
+import styles from './styles/GameSummaryModal.module.css';
 
 /**
  * Game Summary Modal component that displays running scores and settle-up calculations
@@ -87,15 +87,15 @@ const GameSummaryModal = ({ onClose, gameData }) => {
     
     // Split into winners and losers
     const losers = Object.entries(playerTotals)
-      .filter(([_, amount]) => amount < 0)
+      .filter(([, amount]) => amount < 0)
       .map(([playerId, amount]) => ({
         playerId,
         playerName: playerNames[playerId] || 'Unknown Player',
         amount: Math.abs(amount) // Convert to positive amount for easier calculation
       }));
-    
+
     const winners = Object.entries(playerTotals)
-      .filter(([_, amount]) => amount > 0)
+      .filter(([, amount]) => amount > 0)
       .map(([playerId, amount]) => ({
         playerId,
         playerName: playerNames[playerId] || 'Unknown Player',

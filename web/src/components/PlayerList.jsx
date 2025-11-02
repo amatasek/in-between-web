@@ -1,11 +1,10 @@
-import React, { useRef, useEffect, useState, useMemo, useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import styles from './styles/PlayerList.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
-import CurrencyAmount from './common/CurrencyAmount';
-import UserAvatar from './UserAvatar.jsx';
-import { ICONS } from '../constants';
 import UserDataContext from '../contexts/UserDataContext';
+import UserAvatar from './UserAvatar';
+import CurrencyAmount from './common/CurrencyAmount';
 
 const PlayerList = () => {
   const { gameState } = useGameContext();
@@ -30,7 +29,7 @@ const PlayerList = () => {
     );
   }
   
-  const { players, currentPlayerId, gameTransactions = [] } = gameState;
+  const { players, currentPlayerId } = gameState;
   const currentUserId = socket?.auth?.userId;
   
   // Use server-side calculated totals
@@ -57,7 +56,6 @@ const PlayerList = () => {
             const isCurrentPlayer = playerId === currentPlayerId;
             // Compare player.userId with currentUserId instead of comparing playerId with currentUserId
             const isCurrentUser = player.userId === currentUserId;
-            const isDisconnected = player.disconnected === true;
             
             return (
               <div 
@@ -90,7 +88,7 @@ const PlayerList = () => {
                 </span>
               </div>
               <div className={styles.playerBalanceContainer}>
-                <BalanceDisplay balance={playerTotals[playerId] || 0} />
+                <CurrencyAmount amount={playerTotals[playerId] || 0} size="small" />
 
                 <div 
                   className={`
@@ -106,44 +104,6 @@ const PlayerList = () => {
         })}
       </div>
     </div>
-  );
-};
-
-const BalanceDisplay = ({ balance }) => {
-  const [prevBalance, setPrevBalance] = useState(balance);
-  const [animationClass, setAnimationClass] = useState('');
-  const timeoutRef = useRef(null);
-
-  useEffect(() => {
-    if (balance !== prevBalance) {
-      // Determine if balance increased or decreased
-      const isIncrease = balance > prevBalance;
-      setAnimationClass(isIncrease ? styles.balanceIncrease : styles.balanceDecrease);
-
-      // Clear previous timeout if it exists
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      // Remove animation class after animation completes
-      timeoutRef.current = setTimeout(() => {
-        setAnimationClass('');
-      }, 1000); // Match animation duration
-
-      setPrevBalance(balance);
-    }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [balance]);
-
-  return (
-    <span className={`${styles.playerBalance} ${animationClass}`}>
-      <CurrencyAmount amount={balance} />
-    </span>
   );
 };
 

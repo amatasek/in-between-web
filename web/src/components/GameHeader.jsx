@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles/GameHeader.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
-import { ICONS } from '../constants';
 import CurrencyAmount from './common/CurrencyAmount';
-import GameSummaryModal from './GameSummaryModal.jsx';
-import StoreModal from './StoreModal.jsx';
+import PreferencesButton from './common/PreferencesButton';
 import RulesButton from './common/RulesButton';
 import PlayerStatsButton from './common/PlayerStatsButton';
-import PreferencesButton from './common/PreferencesButton';
 import StoreButton from './StoreButton';
 import IconButton from './common/IconButton';
 import ExitIcon from './icons/ExitIcon';
+import GameSummaryModal from './GameSummaryModal';
+import StoreModal from './StoreModal';
 
 const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
   const { gameState, gameId } = useGameContext();

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "eslint src",
     "build": "vite build",
     "sync": "npm run build && npx cap sync && git status",
     "ios": "npm run sync && npx cap open ios",
@@ -31,8 +32,12 @@
     "@capacitor/core": "^7.0.0",
     "@capacitor/ios": "^7.0.0",
     "@vitejs/plugin-react-swc": "^4.2.0",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.5.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.12",
+    "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-static-copy": "^3.1.4"
   }
 }

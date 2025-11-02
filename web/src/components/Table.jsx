@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './styles/Table.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
-import CardDisplay from './CardDisplay';
-import PotDisplay from './PotDisplay';
 import AceChoiceOverlay from './AceChoiceOverlay';
+import AnteControls from './AnteControls';
 import BettingOverlay from './BettingOverlay';
-import SecondChanceOverlay from './SecondChanceOverlay';
+import CardDisplay from './CardDisplay';
+import ImBackButton from './ImBackButton';
+import PotDisplay from './PotDisplay';
 import ResultsOverlay from './ResultsOverlay';
 import RevealingOverlay from './RevealingOverlay';
-import AnteControls from './AnteControls';
-import ImBackButton from './ImBackButton';
+import SecondChanceOverlay from './SecondChanceOverlay';
 
 const Table = () => {
   const { gameState } = useGameContext();

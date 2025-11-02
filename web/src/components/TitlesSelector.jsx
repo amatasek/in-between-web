@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePreferences } from '../contexts/PreferencesContext';
 import baseModalStyles from './common/BaseModal.module.css';
@@ -40,7 +40,7 @@ const TitlesSelector = () => {
   const handleTitleSelect = async (titleString) => {
     try {
       await updateSelectedTitle(titleString);
-    } catch (err) {
+    } catch {
       setError('Failed to update title');
     }
   };

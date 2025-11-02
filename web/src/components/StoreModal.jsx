@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import BaseModal from './common/BaseModal';
 import CurrencyAmount from './common/CurrencyAmount';
 import styles from './styles/StoreModal.module.css';
 import storeService from '../services/StoreService';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 
 const StoreModal = ({ onClose }) => {
   const { token } = useAuth();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState('coins');
   const [coinOfferings, setCoinOfferings] = useState([]);
   const [upgradeOfferings, setUpgradeOfferings] = useState([]);
@@ -64,7 +66,7 @@ const StoreModal = ({ onClose }) => {
       // Handle watch ad separately
       if (productId === 'watch-ad') {
         console.log('Watch ad clicked - Ad integration coming soon!');
-        alert('Ad feature coming soon! You would earn 300 coins by watching a short video.');
+        showToast('Ad feature coming soon! You would earn 300 coins by watching a short video.');
         setPurchasing(null);
         return;
       }
@@ -90,10 +92,6 @@ const StoreModal = ({ onClose }) => {
       style: 'currency',
       currency: 'USD'
     }).format(price);
-  };
-
-  const formatCoins = (amount) => {
-    return new Intl.NumberFormat('en-US').format(amount);
   };
 
   if (loading) {

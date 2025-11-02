@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './styles/SecondChanceOverlay.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
-import CurrencyAmount from './common/CurrencyAmount';
+import { ICONS, TIMERS } from '../constants';
 import WaitingTimer from './common/WaitingTimer';
 import CountdownTimer from './common/CountdownTimer';
-import { TIMERS, ICONS } from '../constants';
+import CurrencyAmount from './common/CurrencyAmount';
 
-const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bottomPosition = false, indicatorOnly = false }) => {
+const SecondChanceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false, indicatorOnly = false }) => {
   const { gameState } = useGameContext();
   const { socket } = useSocket();
   const [choice, setChoice] = useState(null);
@@ -23,11 +23,7 @@ const SecondChanceOverlay = ({ firstCard, secondCard, isCurrentPlayersTurn, bott
       socket.emit('secondChance', { anteAgain });
     }
   };
-  
-  // Determine if cards are matching
-  const isMatching = firstCard && secondCard && 
-    firstCard.numericValue === secondCard.numericValue;
-  
+
   // If indicator only, don't show anything
   if (indicatorOnly) {
     return null;

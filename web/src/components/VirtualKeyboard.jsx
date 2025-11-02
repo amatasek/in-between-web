@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import BaseModal from './common/BaseModal';
+import { useCallback, useEffect, useState } from 'react';
 import { useVirtualKeyboardContext } from '../contexts/VirtualKeyboardContext';
+import BaseModal from './common/BaseModal';
 import styles from './VirtualKeyboard.module.css';
 
 const VirtualKeyboard = ({ 
@@ -69,7 +69,7 @@ const VirtualKeyboard = ({
         onEnter?.(tempInput);
         break;
       case 'space':
-        setTempInput(prev => prev + ' ');
+        setTempInput(prev => `${prev  } `);
         break;
       default:
         setTempInput(prev => prev + key);

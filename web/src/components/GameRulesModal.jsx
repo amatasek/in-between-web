@@ -1,7 +1,5 @@
-import React from 'react';
 import BaseModal from './common/BaseModal';
 import baseModalStyles from './common/BaseModal.module.css';
-import { ICONS } from '../constants';
 
 /**
  * Game Rules Modal that displays the rules of the game

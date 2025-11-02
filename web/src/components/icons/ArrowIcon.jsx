@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Arrow icon component that can be rotated to point up or down

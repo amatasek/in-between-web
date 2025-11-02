@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import soundService from '../services/SoundService';
 
@@ -28,9 +28,9 @@ const formatImageUrl = (url) => {
     return `${API_URL}/files/${type}/${filename}`;
   }
   // Otherwise, just append the URL to the API_URL
-  else {
+  
     return `${API_URL}${url}`;
-  }
+  
 };
 
 // Helper function to format preferences data with proper image URLs
@@ -172,20 +172,20 @@ export const PreferencesProvider = ({ children }) => {
   };
   
   // Toggle auto-ante preference
-  const toggleAutoAnte = async () => {
+  const toggleAutoAnte = () => {
     const newValue = !preferences.autoAnte;
-    return await updatePreference('autoAnte', newValue);
+    return updatePreference('autoAnte', newValue);
   };
 
   // Toggle mute preference
-  const toggleMute = async () => {
+  const toggleMute = () => {
     const newValue = !preferences.muted;
-    return await updatePreference('muted', newValue);
+    return updatePreference('muted', newValue);
   };
 
   // Update selected title (expects title string, not ID)
-  const updateSelectedTitle = async (titleString) => {
-    return await updatePreference('selectedTitle', titleString);
+  const updateSelectedTitle = (titleString) => {
+    return updatePreference('selectedTitle', titleString);
   };
 
   

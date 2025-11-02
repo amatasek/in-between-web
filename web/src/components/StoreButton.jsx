@@ -1,6 +1,5 @@
-import React from 'react';
-import StoreIcon from './icons/StoreIcon';
 import IconButton from './common/IconButton';
+import StoreIcon from './icons/StoreIcon';
 
 const StoreButton = ({ onClick, ...props }) => {
   return (

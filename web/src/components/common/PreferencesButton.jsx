@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import IconButton from './IconButton';
 import GearIcon from '../icons/GearIcon';
 import PreferencesModal from '../PreferencesModal';
-import IconButton from './IconButton';
 
 const PreferencesButton = ({ onModalStateChange, inGame = false }) => {
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);

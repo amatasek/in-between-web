@@ -1,7 +1,6 @@
-import React from 'react';
 import styles from './styles/ProgressInfo.module.css';
-import CurrencyAmount from './common/CurrencyAmount';
 import { useUserData } from '../contexts/UserDataContext';
+import CurrencyAmount from './common/CurrencyAmount';
 
 /**
  * ProgressInfo component displays user's balance and XP progress in a unified display

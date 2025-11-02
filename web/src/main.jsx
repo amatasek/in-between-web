@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
 
 // Import global styles
 import './styles/variables.css';
@@ -10,10 +9,11 @@ import './styles/global.css';
 import { initializeTheme } from './utils/themeManager';
 
 // Import our context providers
-import { SocketProvider } from './contexts/SocketContext';
 import { AuthProvider } from './contexts/AuthContext';
-import { PreferencesProvider } from './contexts/PreferencesContext';
+import { SocketProvider } from './contexts/SocketContext';
 import { UserDataProvider } from './contexts/UserDataContext';
+import { PreferencesProvider } from './contexts/PreferencesContext';
+import App from './App';
 
 // Import Capgo for live updates
 import { CapacitorUpdater } from '@capgo/capacitor-updater';

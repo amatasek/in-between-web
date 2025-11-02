@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { authService } from '../../services/authService';
 import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
-import SocialButton from './SocialButton';
-import AppHeader from '../common/AppHeader';
 import { getVersionInfo } from '../../utils/version';
 import { openInBrowser } from '../../utils/openInBrowser';
 import { WEB_URL } from '../../config';
+import AppHeader from '../common/AppHeader';
+import SocialButton from './SocialButton';
 import styles from './ModernAuthPage.module.css';
 
 const ModernAuthPage = () => {

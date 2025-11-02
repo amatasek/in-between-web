@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Exit/door icon component for leave game button

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import UserAvatar from './UserAvatar.jsx';
-import ProgressInfo from './ProgressInfo.jsx';
-import PreferencesButton from './common/PreferencesButton.jsx';
-import PlayerStatsButton from './common/PlayerStatsButton.jsx';
-import StoreButton from './StoreButton.jsx';
-import RulesButton from './common/RulesButton';
-import StoreModal from './StoreModal.jsx';
 import styles from './styles/PlayerPanel.module.css';
+import UserAvatar from './UserAvatar';
+import PlayerStatsButton from './common/PlayerStatsButton';
+import PreferencesButton from './common/PreferencesButton';
+import ProgressInfo from './ProgressInfo';
+import RulesButton from './common/RulesButton';
+import StoreButton from './StoreButton';
+import StoreModal from './StoreModal';
 
 const PlayerPanel = () => {
   const { user, logout, refreshUserData } = useAuth();

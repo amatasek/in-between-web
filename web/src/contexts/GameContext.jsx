@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useSocket } from './SocketContext.jsx';
 import { useAuth } from './AuthContext.jsx';
 import soundService from '../services/SoundService';
@@ -25,10 +25,7 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
   // Game-specific state - we only need to track the full gameState object and error
   /** @type {[GameState|null, React.Dispatch<React.SetStateAction<GameState|null>>]} */
   const [gameState, setGameState] = useState(initialGameState);
-  
-  // Keep track of previous players to detect joins/leaves
-  const prevPlayersRef = useRef({});
-  
+
   // Keep track of previous active player to detect turn changes
   const prevActivePlayerRef = useRef(null);
   
@@ -237,8 +234,8 @@ export const GameProvider = ({ children, gameId, initialGameState = null }) => {
 
 // Named exports for specific pieces of state/actions
 export const useGameState = () => {
-  const { gameState, players, currentPlayer, cards, gamePhase, dealerName, deckNumber, remainingCards, error } = useGameContext();
-  return { gameState, players, currentPlayer, cards, gamePhase, dealerName, deckNumber, remainingCards, error };
+  const { gameState, error } = useGameContext();
+  return { gameState, error };
 };
 
 export const useGameActions = () => {

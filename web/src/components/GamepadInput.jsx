@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useVirtualKeyboardContext } from '../contexts/VirtualKeyboardContext';
 
 /**
@@ -17,7 +17,7 @@ const GamepadInput = ({
   try {
     const context = useVirtualKeyboardContext();
     enhanceInput = context?.enhanceInput;
-  } catch (error) {
+  } catch {
     // Context not available - component will work as regular input
     console.warn('VirtualKeyboardProvider not found - GamepadInput working as regular input');
   }

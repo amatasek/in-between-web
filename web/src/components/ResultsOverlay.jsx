@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from 'react';
 import styles from './styles/ResultsOverlay.module.css';
-import CurrencyAmount from './common/CurrencyAmount';
 import AnimatedRain from './common/AnimatedRain';
 import Username from './Username';
+import CurrencyAmount from './common/CurrencyAmount';
 
 const ResultsOverlay = ({ result, players }) => {
-  const [isAnimating, setIsAnimating] = useState(true);
-  
-  useEffect(() => {
-    // Start animation
-    setIsAnimating(true);
-    const timer = setTimeout(() => setIsAnimating(false), 3000);
-    return () => clearTimeout(timer);
-  }, [result]);
-  
   if (!result) return null;
   
   const playerName = players[result.playerId]?.name || 'Player';

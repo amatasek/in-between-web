@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './styles/CardMini.module.css';
 import { ICONS } from '../constants';
 

@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles/GameScreen.module.css';
-import GameHeader from './GameHeader.jsx';
-import Table from './Table.jsx';
-import PlayerList from './PlayerList.jsx';
-import GameLog from './GameLog.jsx';
-import EmojiReactions from './EmojiReactions.jsx';
 
 import { useGameContext } from '../contexts/GameContext';
-import { useSocket } from '../contexts/SocketContext';
-import { useAuth } from '../contexts/AuthContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
+import EmojiReactions from './EmojiReactions';
+import GameHeader from './GameHeader';
+import GameLog from './GameLog';
+import PlayerList from './PlayerList';
+import Table from './Table';
 
 const GameScreen = ({ onReturnToLobby }) => {
   // Track modal state to hide emoji reactions
@@ -23,7 +21,7 @@ const GameScreen = ({ onReturnToLobby }) => {
   } = useGameContext();
   
   // Initialize gamepad navigation
-  const { isGamepadConnected } = useGamepadNavigation(true);
+  useGamepadNavigation(true);
   
   // Auto-clear errors after 10 seconds
   useEffect(() => {
@@ -43,12 +41,7 @@ const GameScreen = ({ onReturnToLobby }) => {
       onReturnToLobby();
     }
   };
-  
-  // Get the socket instance for event emission
-  const { socket } = useSocket(); 
-  // Get the authenticated user data from AuthContext
-  const { user } = useAuth(); 
-  
+
   // Safety check for null gameState or missing phase
   if (!gameState) {
     return (
@@ -57,16 +50,6 @@ const GameScreen = ({ onReturnToLobby }) => {
       </div>
     );
   }
-  
-  // Make sure we have a valid phase
-  const phase = gameState.phase || 'waiting';
-
-  // Find the current player based on the authenticated user ID from AuthContext
-  // Assuming the user object from AuthContext has an 'id' property
-  const currentUserId = user?.id; // Use user.id (adjust if property name is different e.g., user.userId)
-  const currentPlayer = gameState.players && currentUserId ? gameState.players[currentUserId] : null;
-
-
 
   return (
     <div className={`screen app-gradient-bg ${styles.gameContainer}`}>

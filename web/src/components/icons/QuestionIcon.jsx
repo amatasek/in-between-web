@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Question mark icon component for rules button

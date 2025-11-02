@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import BaseModal from './common/BaseModal';
-import GameSummaryModal from './GameSummaryModal';
 import CurrencyAmount from './common/CurrencyAmount';
+import GameSummaryModal from './GameSummaryModal';
 import Leaderboard from './Leaderboard';
 import styles from './styles/PlayerStatsModal.module.css';
 import { API_URL } from '../config';
@@ -116,17 +116,7 @@ const PlayerStatsModal = ({ onClose }) => {
       minute: '2-digit'
     }).format(date);
   };
-  
-  // Format stat label from camelCase to Title Case with spaces
-  const formatStatLabel = (key) => {
-    // Insert space before capital letters and uppercase the first letter
-    const formatted = key
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (str) => str.toUpperCase());
-    
-    return formatted;
-  };
-  
+
   // Format stat value based on the explicit type or the value itself
   const formatStatValue = (type, value) => {
     // Handle different types of values appropriately

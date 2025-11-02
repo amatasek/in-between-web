@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext.jsx';
@@ -7,10 +7,10 @@ import { useSocket } from '../contexts/SocketContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
 import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
-import PlayerPanel from './PlayerPanel.jsx';
 import GameCard from './GameCard';
-import GameSettingsModal from './GameSettingsModal.jsx';
+import GameSettingsModal from './GameSettingsModal';
 import GamepadInput from './GamepadInput';
+import PlayerPanel from './PlayerPanel';
 import soundService from '../services/SoundService';
 import { getVersionInfo } from '../utils/version';
 import { openInBrowser } from '../utils/openInBrowser';
@@ -42,7 +42,7 @@ const Lobby = () => {
     if (!user.username || !user.id) {
       console.error('[Lobby] Invalid user data received:', user);
       logout(); // Clear invalid session
-      return;
+      
     }
   }, [user, logout]);
   

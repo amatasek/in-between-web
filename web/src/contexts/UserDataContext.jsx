@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 import { API_URL } from '../config';
@@ -68,7 +68,7 @@ export const UserDataProvider = ({ children }) => {
       });
       
       return userData;
-    } catch (error) {
+    } catch {
       return {};
     }
   }, [token]);

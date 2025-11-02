@@ -1,11 +1,10 @@
-import React from 'react';
 import styles from './styles/AnteOverlay.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
-import CurrencyAmount from './common/CurrencyAmount';
 import { ICONS } from '../constants';
 import Username from './Username';
+import CurrencyAmount from './common/CurrencyAmount';
 
 const AnteOverlay = () => {
   const { gameState } = useGameContext();

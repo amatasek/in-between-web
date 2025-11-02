@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './styles/PotButton.module.css';
 import CurrencyAmount from './common/CurrencyAmount';
 

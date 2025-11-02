@@ -163,7 +163,7 @@ class SoundService {
         document.body.removeEventListener('touchstart', unlockAudio);
         document.body.removeEventListener('touchend', unlockAudio);
         document.body.removeEventListener('click', unlockAudio);
-      }).catch(e => {
+      }).catch(() => {
         // Silent failure - we'll try again on next user interaction
       });
     };

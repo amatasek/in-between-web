@@ -1,4 +1,3 @@
-import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import packageJson from '../../package.json';
@@ -24,7 +23,7 @@ export async function getVersionInfo() {
         build: bundleVersion,
         display: `v${bundleVersion}`
       };
-    } catch (error) {
+    } catch {
       return {
         version: packageJson.version,
         build: 'unknown',

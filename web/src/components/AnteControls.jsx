@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './styles/AnteControls.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
+import AutoAnteToggle from './AutoAnteToggle';
 import CurrencyAmount from './common/CurrencyAmount';
-import { ICONS } from '../constants';
-import AutoAnteToggle from './AutoAnteToggle.jsx';
 
 
 const AnteControls = () => {

@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './styles/BettingOverlay.module.css';
 import { useGameContext } from '../contexts/GameContext';
-import { useSocket } from '../contexts/SocketContext';
-import CurrencyAmount from './common/CurrencyAmount';
-import PotButton from './PotButton';
+import { ICONS, TIMERS } from '../constants';
 import WaitingTimer from './common/WaitingTimer';
 import CountdownTimer from './common/CountdownTimer';
+import CurrencyAmount from './common/CurrencyAmount';
+import PotButton from './PotButton';
 import GamepadInput from './GamepadInput';
-import { ICONS, TIMERS } from '../constants';
 
 const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   const { gameState, placeBet } = useGameContext();
-  const { socket } = useSocket();
   const [customBet, setCustomBet] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [betPlaced, setBetPlaced] = useState(false);
@@ -29,9 +27,6 @@ const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   const { pot: potAmount, firstCard, secondCard, players, currentPlayerId, anteAmount = 1 } = gameState;
   const currentPlayer = players[currentPlayerId];
   const playerBalance = currentPlayer?.balance || 0;
-
-  // Calculate spread
-  const spread = Math.abs(firstCard.numericValue - secondCard.numericValue) - 1;
 
   // Check if both outer cards are Aces (risk of 3x penalty)
   const bothAces = firstCard?.value === 'A' && secondCard?.value === 'A';

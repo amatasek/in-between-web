@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Custom hook for comprehensive gamepad navigation support
@@ -170,15 +170,15 @@ export const useGamepadNavigation = (isEnabled = true) => {
       // Get all candidates in the target direction
       const candidates = navigableElements
         .map((el, index) => ({ el, index, rect: el.getBoundingClientRect() }))
-        .filter(({ el, rect, index }) => {
+        .filter(({ rect, index }) => {
           // Exclude the current element
           if (index === currentIndex) return false;
           
           if (direction === 'up') {
             return rect.bottom <= currentRect.top + 20; // More generous tolerance for upward navigation
-          } else {
+          } 
             return rect.top >= currentRect.bottom - 20; // More generous tolerance for downward navigation
-          }
+          
         });
       
       
@@ -209,7 +209,7 @@ export const useGamepadNavigation = (isEnabled = true) => {
         // No elements in target direction - find closest element in ANY direction
         const allOtherElements = navigableElements
           .filter((el, index) => index !== currentIndex)
-          .map((el, index) => ({ el, rect: el.getBoundingClientRect() }));
+          .map((el) => ({ el, rect: el.getBoundingClientRect() }));
         
         if (allOtherElements.length > 0) {
           // Find the element closest to where we want to go
@@ -220,13 +220,11 @@ export const useGamepadNavigation = (isEnabled = true) => {
             return candidateDistance < bestDistance ? candidate : best;
           });
           nextElement = closest.el;
-        } else {
+        } else if (direction === 'up') {
           // Ultimate fallback - wrap around
-          if (direction === 'up') {
-            nextElement = navigableElements[navigableElements.length - 1];
-          } else {
-            nextElement = navigableElements[0];
-          }
+          nextElement = navigableElements[navigableElements.length - 1];
+        } else {
+          nextElement = navigableElements[0];
         }
       }
     } else {
@@ -244,7 +242,7 @@ export const useGamepadNavigation = (isEnabled = true) => {
         
         const sameRowElements = navigableElements
           .map((el, index) => ({ el, index, rect: el.getBoundingClientRect() }))
-          .filter(({ rect, index }) => {
+          .filter(({ rect }) => {
             const candidateCenterY = rect.top + rect.height / 2;
             return Math.abs(candidateCenterY - currentCenterY) <= rowTolerance;
           })
@@ -325,6 +323,8 @@ export const useGamepadNavigation = (isEnabled = true) => {
         case ' ': // Space bar
           activateElement();
           break;
+        default:
+          break;
       }
     };
 
@@ -397,13 +397,11 @@ export const useGamepadNavigation = (isEnabled = true) => {
               } else if (leftStickX < -deadzone) {
                 navigateDirection('left');
               }
-            } else {
-              if (leftStickY > deadzone) {
+            } else if (leftStickY > deadzone) {
                 navigateDirection('down');
               } else if (leftStickY < -deadzone) {
                 navigateDirection('up');
               }
-            }
             prevStates.stickMoved = true;
           } else if (Math.abs(leftStickX) <= deadzone && Math.abs(leftStickY) <= deadzone) {
             prevStates.stickMoved = false;

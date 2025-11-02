@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { setCardBack, getCurrentCardBack } from '../utils/cardBackManager';
+import { useEffect, useState } from 'react';
+import { getCurrentCardBack, setCardBack } from '../utils/cardBackManager';
 
 const cardBacks = [
   { id: 'back01', image: '/cards/back01.png' },

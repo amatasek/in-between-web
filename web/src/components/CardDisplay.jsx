@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles/CardDisplay.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { getCurrentCardBackImage } from '../utils/cardBackManager';
@@ -54,14 +54,14 @@ const CardDisplay = () => {
   };
   
   const renderCard = (card, index) => {
-    if (!card) return (
+    if (!card) {return (
       <div key={`empty-${index}`} className={styles.card}>
         <div 
           className={styles.cardBack}
           style={{ backgroundImage: `url(${cardBackImage})` }}
         ></div>
       </div>
-    );
+    );}
     
     const isRed = isRedSuit(card.suit);
     const isAce = card.value === 'A';
@@ -99,7 +99,7 @@ const CardDisplay = () => {
   // Function to handle card positioning 
   const renderCardLayout = () => {
     // Create an array of 3 nulls to represent the card slots
-    let displayCards = [null, null, null];
+    const displayCards = [null, null, null];
     
     // Check if we have a valid game state with cards
     if (!firstCard && !secondCard && !thirdCard) {

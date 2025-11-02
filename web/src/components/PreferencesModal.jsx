@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePreferences } from '../contexts/PreferencesContext';
-import baseModalStyles from './common/BaseModal.module.css';
 import BaseModal from './common/BaseModal';
-import ToggleSwitch from './ToggleSwitch.jsx';
-import FileUpload from './FileUpload.jsx';
-import TitlesSelector from './TitlesSelector.jsx';
-import ThemeSelector from './ThemeSelector.jsx';
-import CardBackSelector from './CardBackSelector.jsx';
-import UsernameChange from './UsernameChange.jsx';
+import UsernameChange from './UsernameChange';
+import FileUpload from './FileUpload';
+import TitlesSelector from './TitlesSelector';
+import CardBackSelector from './CardBackSelector';
+import ThemeSelector from './ThemeSelector';
+import ToggleSwitch from './ToggleSwitch';
+import baseModalStyles from './common/BaseModal.module.css';
 
 const PreferencesModal = ({ onClose, defaultTab = 'profile' }) => {
   const { user } = useAuth();

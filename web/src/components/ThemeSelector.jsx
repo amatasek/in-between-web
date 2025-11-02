@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { setTheme, getCurrentTheme } from '../utils/themeManager';
+import { useEffect, useState } from 'react';
+import { getCurrentTheme, setTheme } from '../utils/themeManager';
 
 const themes = [
   {

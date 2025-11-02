@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Bar chart icon component for stats button

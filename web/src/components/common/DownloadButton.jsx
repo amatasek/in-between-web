@@ -1,6 +1,3 @@
-import React from 'react';
-import IconButton from './IconButton';
-import DownloadIcon from '../icons/DownloadIcon';
 
 /**
  * A standardized download button component

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { API_URL } from '../config';
 import { parseUsername } from './Username';
 import { useAuth } from '../contexts/AuthContext';
-import styles from './styles/UsernameChange.module.css';
 
 const UsernameChange = ({ currentUsername, onUsernameChanged }) => {
   const [newUsername, setNewUsername] = useState('');
@@ -56,7 +55,7 @@ const UsernameChange = ({ currentUsername, onUsernameChanged }) => {
         window.location.reload();
       }, 1500);
 
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);

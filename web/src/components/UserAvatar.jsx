@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from './styles/UserAvatar.module.css';
 import { useUserData } from '../contexts/UserDataContext';
 import Username, { getDisplayName } from './Username';
@@ -178,10 +178,10 @@ const getInitials = (name) => {
 // Helper function to format XP with abbreviations
 const formatXP = (xp) => {
   if (xp >= 1000000) {
-    return (xp / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    return `${(xp / 1000000).toFixed(1).replace(/\.0$/, '')  }M`;
   }
   if (xp >= 1000) {
-    return (xp / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return `${(xp / 1000).toFixed(1).replace(/\.0$/, '')  }K`;
   }
   return xp.toString();
 };

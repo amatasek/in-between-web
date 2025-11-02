@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './styles/EmojiReactions.module.css';
 import { useSocket } from '../contexts/SocketContext';
 import { useGameContext } from '../contexts/GameContext';

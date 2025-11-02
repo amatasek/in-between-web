@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
-import CurrencyAmount from './common/CurrencyAmount';
-import UserAvatar from './UserAvatar';
+import { useContext, useEffect, useState } from 'react';
 import styles from './styles/Leaderboard.module.css';
 import { API_URL } from '../config';
 import UserDataContext from '../contexts/UserDataContext';
+import CurrencyAmount from './common/CurrencyAmount';
+import UserAvatar from './UserAvatar';
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from '../styles/common/WaitingTimer.module.css';
 import Username from '../Username';
 

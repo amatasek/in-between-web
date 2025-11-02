@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import eslint from 'vite-plugin-eslint';
 
 export default defineConfig({
   plugins: [
     react(),
+    eslint(),
     viteStaticCopy({
       targets: [
         {

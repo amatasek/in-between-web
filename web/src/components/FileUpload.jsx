@@ -1,11 +1,10 @@
-import React, { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import styles from './styles/FileUpload.module.css';
 
-const FileUpload = ({ 
-  onUpload, 
-  currentFileUrl, 
-  acceptedFileTypes, 
-  label,
+const FileUpload = ({
+  onUpload,
+  currentFileUrl,
+  acceptedFileTypes,
   previewType = 'image' // 'image', 'audio', or 'none'
 }) => {
   const [isUploading, setIsUploading] = useState(false);

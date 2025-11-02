@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styles from './styles/GameStats.module.css';
+import { getDisplayName } from './Username';
 import CurrencyAmount from './common/CurrencyAmount';
-import Username, { getDisplayName } from './Username';
 
 const GameStats = ({ gameData }) => {
   const transactions = gameData.gameTransactions;

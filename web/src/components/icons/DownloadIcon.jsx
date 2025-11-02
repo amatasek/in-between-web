@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Download CSV icon component for transaction log download button

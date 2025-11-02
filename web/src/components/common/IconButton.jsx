@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './IconButton.module.css';
 
 /**
@@ -12,12 +11,11 @@ import styles from './IconButton.module.css';
  * @param {boolean} props.compact Whether to use compact styling
  * @param {string} props.className Additional class names
  */
-const IconButton = ({ 
-  icon, 
-  title, 
-  onClick, 
+const IconButton = ({
+  icon,
+  title,
+  onClick,
   variant = 'default',
-  compact = true,
   className = '',
   ...restProps
 }) => {

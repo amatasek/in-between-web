@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthForm from './AuthForm.jsx';
-import { useAuth } from '../../contexts/AuthContext';
 import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
 import styles from './AuthPage.module.css';
-import AppHeader from '../common/AppHeader';
 import { API_URL } from '../../config.js';
 import { auth } from '../../services/firebase';
 import { signInWithCustomToken } from 'firebase/auth';

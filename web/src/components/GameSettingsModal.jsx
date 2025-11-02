@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import ToggleSwitch from './ToggleSwitch.jsx';
+import { useState } from 'react';
 import BaseModal from './common/BaseModal';
-import styles from './styles/GameSettingsModal.module.css';
+import ToggleSwitch from './ToggleSwitch';
 import GamepadInput from './GamepadInput';
+import styles from './styles/GameSettingsModal.module.css';
 
 const DEFAULT_SETTINGS = {
   useCustomName: false,
@@ -188,7 +188,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   type="text"
                   value={settings.customName || ''}
                   onChange={e => handleChange('customName', e.target.value)}
-                  className={`${styles.textInput}${errors.customName ? ' ' + styles.inputError : ''}`}
+                  className={`${styles.textInput}${errors.customName ? ` ${  styles.inputError}` : ''}`}
                   placeholder="Game Name"
                   maxLength={26}
                   style={{ marginTop: 8 }}
@@ -215,7 +215,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                   type="text"
                   value={settings.password || ''}
                   onChange={e => handleChange('password', e.target.value)}
-                  className={`${styles.textInput}${errors.password ? ' ' + styles.inputError : ''}`}
+                  className={`${styles.textInput}${errors.password ? ` ${  styles.inputError}` : ''}`}
                   placeholder="Password"
                   maxLength={36}
                   style={{ marginTop: 8 }}
@@ -239,7 +239,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 max="16"
                 value={settings.numberOfBots === 0 ? '' : settings.numberOfBots}
                 onChange={e => handleChange('numberOfBots', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
-                className={`${styles.textInput} no-validation${errors.numberOfBots ? ' ' + styles.inputError : ''}`}
+                className={`${styles.textInput} no-validation${errors.numberOfBots ? ` ${  styles.inputError}` : ''}`}
                 placeholder="0"
               />
               {errors.numberOfBots && <span className="errorMessage">{errors.numberOfBots}</span>}
@@ -260,7 +260,7 @@ const GameSettingsModal = ({ initialSettings = DEFAULT_SETTINGS, onSubmit, onClo
                 max="100"
                 value={settings.anteAmount}
                 onChange={e => handleChange('anteAmount', e.target.value)}
-                className={`${styles.textInput} no-validation${errors.anteAmount ? ' ' + styles.inputError : ''}`}
+                className={`${styles.textInput} no-validation${errors.anteAmount ? ` ${  styles.inputError}` : ''}`}
                 placeholder="1"
               />
               {errors.anteAmount && <span className="errorMessage">{errors.anteAmount}</span>}

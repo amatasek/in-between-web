@@ -1,6 +1,5 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useSocket } from './SocketContext.jsx';
-import WelcomePopup from '../components/common/WelcomePopup';
 import { API_URL } from '../config';
 import { auth } from '../services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -13,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false); // eslint-disable-line no-unused-vars
   
   // Get socket from socket context to listen for balance updates
   const socketData = useSocket();
@@ -115,7 +114,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       return () => listener.remove();
-    } else {
+    } 
       // Web platform
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
@@ -127,7 +126,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       return () => unsubscribe();
-    }
+    
   }, []);
 
   const login = async (userData, newToken) => {
@@ -180,7 +179,8 @@ export const AuthProvider = ({ children }) => {
   if (loading) {
     return null; // or a loading spinner
   }
-  
+
+  // eslint-disable-next-line no-unused-vars
   const handleCloseWelcomePopup = () => {
     setShowWelcomePopup(false);
   };

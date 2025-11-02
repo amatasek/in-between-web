@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { GameProvider, useGameContext } from '../contexts/GameContext';
-import GameScreen from './GameScreen';
 import { useSocket } from '../contexts/SocketContext';
 import { LoadingScreen } from './common/LoadingScreen';
 import PasswordPromptModal from './common/PasswordPromptModal';
+import GameScreen from './GameScreen';
 import soundService from '../services/SoundService';
 
 const GameRoom = () => {
@@ -98,26 +98,26 @@ const GameRoom = () => {
     // Use ref to prevent double emission due to StrictMode or rapid state changes
     if (socket && gameId && !hasInitiatedJoin.current) {
       hasInitiatedJoin.current = true; // Mark as initiated *immediately*
-      setLoading(true); 
-      setError(null); 
-      setIsPasswordModalOpen(false); 
+      setLoading(true);
+      setError(null);
+      setIsPasswordModalOpen(false);
       socket.emit('joinGame', { gameId });
     } else {
     }
     // Dependencies remain minimal: only run when socket or gameId fundamentally change
-  }, [socket, gameId]); 
+  }, [socket, gameId]);
 
   const GameRoomContent = () => {
-    const { gameState } = useGameContext(); 
+    const { gameState } = useGameContext();
     const { socket } = useSocket();
-    
+
     // Add beforeunload listener to warn users who are ready (in an active hand)
     useEffect(() => {
       const handleBeforeUnload = (e) => {
         const currentUserId = socket?.auth?.userId;
         const currentPlayer = currentUserId && gameState?.players ? gameState.players[currentUserId] : null;
         const isPlayerReady = currentPlayer?.isReady || false;
-        
+
         // Only show warning if player is ready (has ante'd and is in the hand)
         if (isPlayerReady) {
           e.preventDefault();
@@ -125,9 +125,9 @@ const GameRoom = () => {
           return e.returnValue;
         }
       };
-      
+
       window.addEventListener('beforeunload', handleBeforeUnload);
-      
+
       return () => {
         window.removeEventListener('beforeunload', handleBeforeUnload);
       };
@@ -135,15 +135,15 @@ const GameRoom = () => {
 
     return (
       <>
-        <PasswordPromptModal 
+        <PasswordPromptModal
           isOpen={isPasswordModalOpen}
           onClose={handlePasswordCancel}
           onSubmit={handlePasswordSubmit}
-          gameId={gameId} 
+          gameId={gameId}
         />
 
-        {loading && <LoadingScreen message={`Joining game ${gameId}...`} />} 
-        
+        {loading && <LoadingScreen message={`Joining game ${gameId}...`} />}
+
         {error && !loading && !isPasswordModalOpen && (
           <div className="error-container" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
             <h2>An error occurred</h2>
@@ -152,8 +152,8 @@ const GameRoom = () => {
         <button onClick={() => window.location.reload()}>Refresh Page</button>
           </div>
         )}
-        
-        {!loading && !error && gameState && 
+
+        {!loading && !error && gameState &&
           <GameScreen onReturnToLobby={handleReturnToLobby} />
         }
       </>
@@ -162,7 +162,7 @@ const GameRoom = () => {
 
   return (
     <GameProvider gameId={gameId}>
-      <GameRoomContent /> 
+      <GameRoomContent />
     </GameProvider>
   );
 };

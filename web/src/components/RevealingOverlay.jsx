@@ -1,7 +1,6 @@
-import React from 'react';
 import styles from './styles/RevealingOverlay.module.css';
-import CurrencyAmount from './common/CurrencyAmount';
 import Username from './Username';
+import CurrencyAmount from './common/CurrencyAmount';
 
 const RevealingOverlay = ({ playerName, betAmount }) => {
   if (!playerName || !betAmount) return null;

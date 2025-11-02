@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { SOCKET_URL } from '../config';
 import { useAuth } from './AuthContext';
@@ -54,7 +54,7 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('connect_error', (error) => {
-      setError('Failed to connect to game server: ' + error.message);
+      setError(`Failed to connect to game server: ${  error.message}`);
       setIsConnected(false);
     });
 

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './styles/AceChoiceOverlay.module.css';
 import { useSocket } from '../contexts/SocketContext';
 import { useGameContext } from '../contexts/GameContext';
-import ArrowIcon from './icons/ArrowIcon';
+import { TIMERS } from '../constants';
 import WaitingTimer from './common/WaitingTimer';
 import CountdownTimer from './common/CountdownTimer';
-import { TIMERS } from '../constants';
+import ArrowIcon from './icons/ArrowIcon';
 
-const AceChoiceOverlay = ({ card, isCurrentPlayersTurn, bottomPosition = false }) => {
+const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
   const { socket } = useSocket();
   const { gameState } = useGameContext();
   const [choice, setChoice] = useState(null);

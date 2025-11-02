@@ -1,5 +1,5 @@
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
 import { Capacitor } from '@capacitor/core';
 
@@ -52,7 +52,7 @@ export const authService = {
     } else {
       const { sendPasswordResetEmail } = await import('firebase/auth');
       await sendPasswordResetEmail(auth, email, {
-        url: window.location.origin + '/auth',
+        url: `${window.location.origin  }/auth`,
         handleCodeInApp: false
       });
     }

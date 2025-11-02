@@ -1,11 +1,11 @@
-import React from 'react';
 import IconButton from './IconButton';
 import DownloadIcon from '../icons/DownloadIcon';
+
 // Optional import - only used if gameState not provided via props
 let useGameContext;
 try {
   useGameContext = require('../../contexts/GameContext').useGameContext;
-} catch (error) {
+} catch {
   // Context not available - will rely on props
   useGameContext = () => ({ gameState: null });
 }
@@ -26,7 +26,7 @@ const TransactionDownloadButton = ({
   let contextValue;
   try {
     contextValue = useGameContext ? useGameContext() : { gameState: null };
-  } catch (error) {
+  } catch {
     // Context not available
     contextValue = { gameState: null };
   }

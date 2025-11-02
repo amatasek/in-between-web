@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles/GameLog.module.css';
 import { useGameContext } from '../contexts/GameContext';
-import TurnSummaryPanel from './TurnSummaryPanel';
 import RoundDivider from './RoundDivider';
+import TurnSummaryPanel from './TurnSummaryPanel';
 
 const GameLog = () => {
   const { gameState } = useGameContext();
@@ -49,7 +49,7 @@ const GameLog = () => {
   const displayEntries = isCollapsed ? [] : logEntries.slice(0, visibleCount);
   
   // Render a log entry (either simple message or rich turn summary)
-  const renderLogEntry = (entry, index) => {
+  const renderLogEntry = (entry) => {
     // Check if it's a rich turn summary object
     if (entry.type === 'turn') {
       return <TurnSummaryPanel key={entry.id} summary={entry} />;

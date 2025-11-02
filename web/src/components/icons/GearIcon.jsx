@@ -1,4 +1,3 @@
-import React from 'react';
 
 const GearIcon = ({ className = 'h-6 w-6', ...props }) => {
   return (

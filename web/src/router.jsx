@@ -1,8 +1,8 @@
-import { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import { LoadingScreen } from './components/common/LoadingScreen';
+import { Suspense, lazy } from 'react';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { LobbyProvider } from './contexts/LobbyContext';
+import { LoadingScreen } from './components/common/LoadingScreen';
 import TermsOfService from './components/TermsOfService';
 import PrivacyPolicy from './components/PrivacyPolicy';
 

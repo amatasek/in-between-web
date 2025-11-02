@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import IconButton from './IconButton';
 import BarChartIcon from '../icons/BarChartIcon';
 import PlayerStatsModal from '../PlayerStatsModal';
-import IconButton from './IconButton';
 
 const PlayerStatsButton = ({ onModalStateChange, ...props }) => {
   const [isStatsOpen, setIsStatsOpen] = useState(false);
