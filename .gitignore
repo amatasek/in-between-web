@@ -49,6 +49,7 @@ web/ios/**
 !web/ios/App/Podfile.lock
 !web/ios/App/App/Info.plist
 !web/ios/App/App/GoogleService-Info.plist
+!web/ios/App/App/AppDelegate.swift
 !web/ios/App/App.xcodeproj/project.pbxproj
 
 # Android - Ignore everything first, then un-ignore what we want

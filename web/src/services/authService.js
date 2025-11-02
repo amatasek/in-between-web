@@ -17,7 +17,9 @@ export const authService = {
   },
 
   async signInWithFacebook() {
-    const result = await FirebaseAuthentication.signInWithFacebook();
+    const result = await FirebaseAuthentication.signInWithFacebook({
+      useLimitedLogin: true
+    });
     return result.user;
   },
 

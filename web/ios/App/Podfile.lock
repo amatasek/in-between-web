@@ -18,6 +18,11 @@ PODS:
     - Capacitor
     - CapacitorFirebaseAuthentication/Lite (= 7.3.1)
     - FirebaseAuth (~> 11.7.0)
+  - CapacitorFirebaseAuthentication/Facebook (7.3.1):
+    - Capacitor
+    - FBSDKCoreKit (= 18.0.0)
+    - FBSDKLoginKit (= 18.0.0)
+    - FirebaseAuth (~> 11.7.0)
   - CapacitorFirebaseAuthentication/Google (7.3.1):
     - Capacitor
     - FirebaseAuth (~> 11.7.0)
@@ -31,6 +36,14 @@ PODS:
     - Capacitor
     - SSZipArchive (= 2.4.3)
     - Version (= 0.8.0)
+  - FBAEMKit (18.0.0):
+    - FBSDKCoreKit_Basics (= 18.0.0)
+  - FBSDKCoreKit (18.0.0):
+    - FBAEMKit (= 18.0.0)
+    - FBSDKCoreKit_Basics (= 18.0.0)
+  - FBSDKCoreKit_Basics (18.0.0)
+  - FBSDKLoginKit (18.0.0):
+    - FBSDKCoreKit (= 18.0.0)
   - FirebaseAppCheckInterop (11.15.0)
   - FirebaseAuth (11.7.0):
     - FirebaseAppCheckInterop (~> 11.0)
@@ -92,6 +105,7 @@ DEPENDENCIES:
   - "CapacitorBrowser (from `../../node_modules/@capacitor/browser`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorFirebaseAuthentication (from `../../node_modules/@capacitor-firebase/authentication`)"
+  - "CapacitorFirebaseAuthentication/Facebook (from `../../node_modules/@capacitor-firebase/authentication`)"
   - "CapacitorFirebaseAuthentication/Google (from `../../node_modules/@capacitor-firebase/authentication`)"
   - "CapgoCapacitorUpdater (from `../../node_modules/@capgo/capacitor-updater`)"
   - InBetweenGoogleSigninConfig (from `../../plugins/google-signin-config`)
@@ -101,6 +115,10 @@ SPEC REPOS:
     - Alamofire
     - AppAuth
     - BigInt
+    - FBAEMKit
+    - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
+    - FBSDKLoginKit
     - FirebaseAppCheckInterop
     - FirebaseAuth
     - FirebaseAuthInterop
@@ -141,6 +159,10 @@ SPEC CHECKSUMS:
   CapacitorCordova: bf648a636f3c153f652d312ae145fb508b6ffced
   CapacitorFirebaseAuthentication: d966e29421168f94621b8df9bc8ddf602b261fc7
   CapgoCapacitorUpdater: 49bb18187d387c62a49f50d354b67464c0fb8582
+  FBAEMKit: e34530df538b8eb8aeb53c35867715ba6c63ef0c
+  FBSDKCoreKit: d3f479a69127acebb1c6aad91c1a33907bcf6c2f
+  FBSDKCoreKit_Basics: 017b6dc2a1862024815a8229e75661e627ac1e29
+  FBSDKLoginKit: 5875762d1fe09ddcb05d03365d4f5dc34413843d
   FirebaseAppCheckInterop: 06fe5a3799278ae4667e6c432edd86b1030fa3df
   FirebaseAuth: 77e25aa24f3e1c626c5babd3338551fc1669ee0e
   FirebaseAuthInterop: 7087d7a4ee4bc4de019b2d0c240974ed5d89e2fd
@@ -156,6 +178,6 @@ SPEC CHECKSUMS:
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
-PODFILE CHECKSUM: 5e3039d7369addf1ffc649d8fe3e0e678326d189
+PODFILE CHECKSUM: 9971b5fff7310875dbdf02428968c712259f8a70
 
 COCOAPODS: 1.16.2
