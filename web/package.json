@@ -16,6 +16,7 @@
     "@capacitor/app": "^7.1.0",
     "@capacitor/browser": "^7.0.2",
     "@capgo/capacitor-updater": "^7.23.3",
+    "@in-between/google-signin-config": "file:plugins/google-signin-config",
     "firebase": "^11.2.0",
     "howler": "^2.2.4",
     "react": "^18.2.0",

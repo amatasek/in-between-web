@@ -4,7 +4,7 @@
 
 We commit only the native files we manually configure. Everything else (build outputs, generated projects, assets) stays ignored.
 
-**No scripts. Just git.**
+**Minimal automation via local Capacitor plugin. Everything else is git.**
 
 Why this works:
 - Git shows exactly what `cap sync` changes after each build
@@ -14,6 +14,14 @@ Why this works:
 
 This beats premature optimization. Scripts are maintenance debt. Only add them when the pain is real.
 
+## Local Plugin
+
+We use a local Capacitor plugin (`plugins/google-signin-config`) to automatically handle:
+- Google Sign-In pod dependency
+- GoogleSignIn SDK version pinning
+
+This eliminates the most repetitive manual config. Everything else stays in git.
+
 ## Tracked Native Files
 
 ### iOS
@@ -21,6 +29,7 @@ This beats premature optimization. Scripts are maintenance debt. Only add them w
 - `ios/App/Podfile.lock` - Pod versions
 - `ios/App/App/Info.plist` - URL scheme
 - `ios/App/App/GoogleService-Info.plist` - Firebase config
+- `ios/App/App.xcodeproj/project.pbxproj` - Xcode project (keeps GoogleService-Info.plist referenced)
 
 ### Android
 - `android/app/build.gradle` - Version numbers

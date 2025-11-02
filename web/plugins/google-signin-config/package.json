@@ -1,0 +1,11 @@
+{
+  "name": "@in-between/google-signin-config",
+  "version": "1.0.0",
+  "description": "Local Capacitor plugin for Google Sign-In configuration",
+  "main": "dist/plugin.js",
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    }
+  }
+}
