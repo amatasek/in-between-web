@@ -140,12 +140,14 @@ const ModernAuthPage = () => {
             <>
               {/* Social Login Buttons */}
               <div className={styles.socialButtons}>
+                {/* Temporarily disabled - requires Apple Developer enrollment
                 <SocialButton
                   provider="apple"
                   onClick={() => handleSocialLogin('apple')}
                   disabled={loading !== null}
                   loading={loading === 'apple'}
                 />
+                */}
                 <SocialButton
                   provider="google"
                   onClick={() => handleSocialLogin('google')}
