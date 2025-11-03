@@ -26,7 +26,7 @@ const WelcomePopup = ({ username, balance, onClose }) => {
             <span className={styles.balanceAmount}>{balance}</span>
           </p>
           <p className={styles.subtext}>
-            Thank you for participating in the <span className={styles.inlineGameName}>In Between <span className={styles.inlineLiveTag}>LIVE</span></span> beta program. Your feedback is valuable as we continue to enhance the gaming experience.
+            Thank you for participating in the <span className={styles.inlineGameName}>In Between <span className="live-tag large">LIVE</span></span> beta program. Your feedback is valuable as we continue to enhance the gaming experience.
           </p>
         </div>
         <div className={styles.footer}>

@@ -1,14 +1,12 @@
-import styles from './AppHeader.module.css';
-
 /**
  * A shared header component for the In-Between game
  * Used across auth and lobby screens for consistent branding
  */
 const AppHeader = () => {
   return (
-    <div className={styles.headerContainer}>
-      <h1 className={styles.gameTitle}>
-        In Between <span className={styles.liveTag}>LIVE</span>
+    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <h1 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>
+        In Between <span className="live-tag large">LIVE</span>
       </h1>
     </div>
   );

@@ -45,7 +45,7 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
       <div className={styles.header}>
         {/* Left: Logo and game ID */}
         <div className={styles.headerLeft}>
-          <h1 className={styles.gameTitle}>In Between <span className={styles.liveTag}>LIVE</span></h1>
+          <h1 className={styles.gameTitle}>In Between <span className="live-tag small">LIVE</span></h1>
           <p className={styles.gameIdText}>
             <span 
               className={styles.gameIdLink} 

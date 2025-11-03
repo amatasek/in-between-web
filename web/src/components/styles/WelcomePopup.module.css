@@ -90,17 +90,6 @@
   top: 0;
 }
 
-.inlineLiveTag {
-  background-color: #e74c3c;
-  color: var(--text-white);
-  font-size: 0.65rem;
-  padding: 0.1rem 0.35rem;
-  border-radius: 10px;
-  margin: 0 2px;
-  font-weight: bold;
-  display: inline-block;
-}
-
 .subtext {
   font-size: 0.95rem;
   opacity: 0.9;

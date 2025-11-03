@@ -47,24 +47,6 @@
   white-space: nowrap;
 }
 
-.liveTag {
-  background-color: var(--secondary);
-  color: var(--text-white);
-  font-size: 0.7rem;
-  padding: 0.15rem 0.4rem;
-  border-radius: var(--radius-md);
-  font-weight: bold;
-  display: inline-block;
-  box-shadow: var(--shadow-sm);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 var(--secondary); }
-  70% { box-shadow: 0 0 0 6px transparent; }
-  100% { box-shadow: 0 0 0 0 transparent; }
-}
-
 .gameIdText {
   font-size: 0.9rem;
   color: var(--text-muted);

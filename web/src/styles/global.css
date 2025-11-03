@@ -696,3 +696,38 @@ input[type="search"]::-webkit-search-results-decoration {
     margin: 0 2px;
   }
 }
+
+/* Live Tag - Pulsing animation badge */
+.live-tag {
+  background-color: var(--secondary);
+  color: var(--text-white);
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 12px;
+  font-weight: bold;
+  display: inline-block;
+  box-shadow: var(--shadow-sm);
+  animation: livePulse 2s infinite;
+  vertical-align: super;
+  line-height: 1;
+}
+
+/* Large variant for lobby/login headers */
+.live-tag.large {
+  font-size: 1.1rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 14px;
+}
+
+/* Small variant for game header */
+.live-tag.small {
+  font-size: 0.6rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 10px;
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 var(--secondary); }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
