@@ -1,0 +1,48 @@
+.adSideBannerContainer {
+  position: fixed;
+  top: 100px;
+  width: 160px;
+  height: 600px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.left {
+  left: 20px;
+}
+
+.right {
+  right: 20px;
+}
+
+.adPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: rgba(128, 128, 128, 0.2);
+  border: 2px dashed white;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.adLabel {
+  color: white;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 1000px) {
+  .minWidth1000 {
+    display: flex;
+  }
+}
+
+@media (min-width: 1200px) {
+  .minWidth1200 {
+    display: flex;
+  }
+}

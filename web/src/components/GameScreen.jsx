@@ -3,6 +3,7 @@ import styles from './styles/GameScreen.module.css';
 
 import { useGameContext } from '../contexts/GameContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
+import { useAds } from '../contexts/AdContext';
 import EmojiReactions from './EmojiReactions';
 import GameHeader from './GameHeader';
 import GameLog from './GameLog';
@@ -12,14 +13,15 @@ import CardTable from './CardTable';
 const GameScreen = ({ onReturnToLobby }) => {
   // Track modal state to hide emoji reactions
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // Get state and actions from context
-  const { 
+  const {
     gameState,
     error,
     clearError
   } = useGameContext();
-  
+  const { showAds } = useAds();
+
   // Initialize gamepad navigation
   useGamepadNavigation(true);
   
@@ -52,7 +54,7 @@ const GameScreen = ({ onReturnToLobby }) => {
   }
 
   return (
-    <div className={`screen app-gradient-bg ${styles.gameContainer}`}>
+    <div className={`screen app-gradient-bg ${styles.gameContainer} ${showAds ? styles.withAds : ''}`}>
       <div className={`${styles.gameScreen} mobile-scale-content`}>
         <GameHeader 
           handleLeaveGame={handleLeaveGame} 

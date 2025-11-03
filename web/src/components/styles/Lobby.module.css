@@ -3,6 +3,18 @@
   padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
 }
 
+.lobbyScreen.withAds::after {
+  content: '';
+  display: block;
+  height: 100px;
+}
+
+@media (max-width: 768px) {
+  .lobbyScreen.withAds::after {
+    height: 110px;
+  }
+}
+
 .versionInfo {
   text-align: center;
   font-size: var(--font-size-xs);

@@ -1,0 +1,63 @@
+.adBannerContainer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  z-index: 100;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.adBannerContainer > * {
+  pointer-events: auto;
+}
+
+.adPlaceholder {
+  width: calc(100% - 1rem);
+  max-width: 728px;
+  height: 90px;
+  background-color: #1a1a2e;
+  border: 2px dashed white;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.adLabel {
+  color: white;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 1000px) {
+  .hideAt1000 {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hideAt1200 {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .adBannerContainer {
+    min-height: 100px;
+    padding: 0.25rem;
+  }
+
+  .adPlaceholder {
+    width: 320px;
+    max-width: calc(100% - 0.5rem);
+    height: 100px;
+  }
+}

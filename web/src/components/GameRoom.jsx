@@ -5,6 +5,10 @@ import { useSocket } from '../contexts/SocketContext';
 import { LoadingScreen } from './common/LoadingScreen';
 import PasswordPromptModal from './common/PasswordPromptModal';
 import GameScreen from './GameScreen';
+import AdInterstitial from './AdInterstitial';
+import AdBanner from './AdBanner';
+import AdSideBanner from './AdSideBanner';
+import { useAdInterstitial } from '../hooks/useAdInterstitial';
 import soundService from '../services/SoundService';
 
 // Move component outside to prevent re-creation on every render
@@ -76,13 +80,14 @@ const GameRoom = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const hasInitiatedJoin = useRef(false); // Ref to track true initiation
+  const hasInitiatedJoin = useRef(false);
+  const { shouldShowAd, hideAd } = useAdInterstitial();
 
   const handleReturnToLobby = useCallback(() => {
     if (socket && isConnected && gameId) {
-      soundService.play('ui.leave'); 
-      socket.emit('leaveGame', { gameId }); 
-      navigate('/');
+      soundService.play('ui.leave');
+      socket.emit('leaveGame', { gameId });
+      navigate('/', { state: { fromGame: true } });
     }
   }, [socket, isConnected, gameId, navigate]);
 
@@ -180,6 +185,11 @@ const GameRoom = () => {
         handleReturnToLobby={handleReturnToLobby}
         gameId={gameId}
       />
+
+      {shouldShowAd && <AdInterstitial onClose={hideAd} />}
+      <AdBanner />
+      <AdSideBanner position="left" minWidth={1200} />
+      <AdSideBanner position="right" minWidth={1200} />
     </GameProvider>
   );
 };

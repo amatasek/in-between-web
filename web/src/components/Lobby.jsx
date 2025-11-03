@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './styles/Lobby.module.css';
 import { useLobby } from '../contexts/LobbyContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,6 +11,11 @@ import GameCard from './GameCard';
 import GameSettingsModal from './GameSettingsModal';
 import GamepadInput from './common/GamepadInput';
 import PlayerPanel from './PlayerPanel';
+import AdBanner from './AdBanner';
+import AdSideBanner from './AdSideBanner';
+import AdInterstitial from './AdInterstitial';
+import { useAdInterstitial } from '../hooks/useAdInterstitial';
+import { useAds } from '../contexts/AdContext';
 import soundService from '../services/SoundService';
 import { getVersionInfo } from '../utils/version';
 import { openInBrowser } from '../utils/openInBrowser';
@@ -20,15 +25,23 @@ const Lobby = () => {
   const { gameList } = useLobby();
   const { user, logout } = useAuth();
   const { socket, isConnected } = useSocket();
-  
-  // Initialize gamepad navigation
+  const location = useLocation();
+
   useGamepadNavigation(true);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
   const [versionInfo, setVersionInfo] = useState(null);
+  const { shouldShowAd, showAd, hideAd } = useAdInterstitial();
+  const { showAds } = useAds();
 
   const userId = user?.id || null;
+
+  useEffect(() => {
+    if (location.state?.fromGame) {
+      showAd();
+    }
+  }, [location.state, showAd]);
 
   useEffect(() => {
     getVersionInfo().then(setVersionInfo);
@@ -118,7 +131,7 @@ const Lobby = () => {
   }, [gameList, searchQuery, userId]); // Dependency on userId ensures resorting if user changes
   
    return (
-     <div className={`screen app-gradient-bg ${styles.lobbyScreen}`}>
+     <div className={`screen app-gradient-bg ${styles.lobbyScreen} ${showAds ? styles.withAds : ''}`}>
        <AppHeader />
        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
          <OnlinePlayerCount />
@@ -146,9 +159,9 @@ const Lobby = () => {
            </button>
          </div>
        </div>
-       
-       <div 
-         className="card" 
+
+       <div
+         className="card"
          style={{width: '100%', maxWidth: '600px', minHeight: '200px'}}
        >
          <h2 className={styles.gameListTitle}>Available Games</h2>
@@ -201,7 +214,7 @@ const Lobby = () => {
            </div>
          )}
        </div>
-       
+
        {showGameSettingsModal && (
          <GameSettingsModal
            onSubmit={handleSubmitCustomSettings}
@@ -219,6 +232,11 @@ const Lobby = () => {
            <div>{versionInfo.display}</div>
          </div>
        )}
+
+       {shouldShowAd && <AdInterstitial onClose={hideAd} />}
+       <AdBanner hideAtWidth={1000} />
+       <AdSideBanner position="left" />
+       <AdSideBanner position="right" />
      </div>
    );
  };

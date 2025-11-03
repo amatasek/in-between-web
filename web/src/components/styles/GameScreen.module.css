@@ -1,6 +1,7 @@
 .gameContainer {
   position: relative;
   padding-top: max(0.75rem, var(--safe-area-inset-top));
+  padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
 }
 
 .gameScreen {
@@ -21,7 +22,6 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
   }
 
   .gameScreen {
@@ -97,6 +97,18 @@
   width: 100%;
   margin-top: 1rem;
   gap: 1rem;
+}
+
+.gameContainer.withAds::after {
+  content: '';
+  display: block;
+  height: 100px;
+}
+
+@media (max-width: 768px) {
+  .gameContainer.withAds::after {
+    height: 110px;
+  }
 }
 
 /* Responsive layout for mobile - switch to column at 600px */
