@@ -1,6 +1,6 @@
 import styles from './styles/ResultsOverlay.module.css';
 import AnimatedRain from './common/AnimatedRain';
-import Username from './Username';
+import Username from './common/Username';
 import CurrencyAmount from './common/CurrencyAmount';
 
 const ResultsOverlay = ({ result, players }) => {

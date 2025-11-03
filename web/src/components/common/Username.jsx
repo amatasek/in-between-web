@@ -1,4 +1,4 @@
-import styles from './styles/Username.module.css';
+import styles from './Username.module.css';
 
 /**
  * Username utility functions for handling discriminators

@@ -7,8 +7,8 @@ import TermsOfService from './components/TermsOfService';
 import PrivacyPolicy from './components/PrivacyPolicy';
 
 // Lazy load routes for code splitting
-const ModernAuthPage = lazy(() => import('./components/auth/ModernAuthPage'));
-const AuthPage = lazy(() => import('./components/auth/AuthPage')); // Legacy, for /migrate route
+const LoginPage = lazy(() => import('./components/LoginPage'));
+const TempMigratePage = lazy(() => import('./components/TempMigratePage')); // Temporary migration route for legacy accounts
 const Lobby = lazy(() => import('./components/Lobby'));
 const GameRoom = lazy(() => import('./components/GameRoom'));
 
@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
     path: '/auth',
     element: (
       <Suspense fallback={<LoadingScreen message="Loading..." />}>
-        <ModernAuthPage />
+        <LoginPage />
       </Suspense>
     ),
   },
@@ -53,7 +53,7 @@ export const router = createBrowserRouter([
     path: '/migrate',
     element: (
       <Suspense fallback={<LoadingScreen message="Loading..." />}>
-        <AuthPage />
+        <TempMigratePage />
       </Suspense>
     ),
   },

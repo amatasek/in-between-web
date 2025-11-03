@@ -1,5 +1,5 @@
 import styles from './styles/RevealingOverlay.module.css';
-import Username from './Username';
+import Username from './common/Username';
 import CurrencyAmount from './common/CurrencyAmount';
 
 const RevealingOverlay = ({ playerName, betAmount }) => {

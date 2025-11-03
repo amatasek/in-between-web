@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import BaseModal from './common/BaseModal';
-import ToggleSwitch from './ToggleSwitch';
-import GamepadInput from './GamepadInput';
+import ToggleSwitch from './common/ToggleSwitch';
+import GamepadInput from './common/GamepadInput';
 import styles from './styles/GameSettingsModal.module.css';
 
 const DEFAULT_SETTINGS = {

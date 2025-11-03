@@ -1,6 +1,6 @@
 import styles from './styles/TurnSummaryPanel.module.css';
 import CardMini from './CardMini';
-import Username from './Username';
+import Username from './common/Username';
 import CurrencyAmount from './common/CurrencyAmount';
 
 const TurnSummaryPanel = ({ summary }) => {

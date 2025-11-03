@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { authService } from '../../services/authService';
-import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
-import { getVersionInfo } from '../../utils/version';
-import { openInBrowser } from '../../utils/openInBrowser';
-import { WEB_URL } from '../../config';
-import AppHeader from '../common/AppHeader';
-import SocialButton from './SocialButton';
-import styles from './ModernAuthPage.module.css';
+import { useAuth } from '../contexts/AuthContext';
+import { authService } from '../services/auth/authService';
+import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
+import { getVersionInfo } from '../utils/version';
+import { openInBrowser } from '../utils/openInBrowser';
+import { WEB_URL } from '../config';
+import AppHeader from './common/AppHeader';
+import SocialButton from './common/SocialButton';
+import styles from './styles/LoginPage.module.css';
 
-const ModernAuthPage = () => {
+const LoginPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState(null); // Which provider is loading
@@ -57,7 +57,6 @@ const ModernAuthPage = () => {
         default:
           throw new Error('Unknown provider');
       }
-      // Auth context will handle redirect automatically
     } catch (err) {
       setError(authService.getErrorMessage(err));
     } finally {
@@ -355,4 +354,4 @@ const ModernAuthPage = () => {
   );
 };
 
-export default ModernAuthPage;
+export default LoginPage;

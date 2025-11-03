@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './PasswordPromptModal.module.css';
-import GamepadInput from '../GamepadInput';
+import GamepadInput from './GamepadInput';
 
 function PasswordPromptModal({ isOpen, onClose, onSubmit, gameId }) {
   const [password, setPassword] = useState('');

@@ -1,9 +1,4 @@
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './firebase';
-import { Capacitor } from '@capacitor/core';
-
-const isNative = Capacitor.isNativePlatform();
 
 export const authService = {
   async signInWithApple() {
@@ -24,16 +19,12 @@ export const authService = {
   },
 
   async signInWithEmail(email, password) {
-    const result = isNative
-      ? await FirebaseAuthentication.signInWithEmailAndPassword({ email, password })
-      : await signInWithEmailAndPassword(auth, email, password);
+    const result = await FirebaseAuthentication.signInWithEmailAndPassword({ email, password });
     return result.user;
   },
 
   async createAccountWithEmail(email, password) {
-    const result = isNative
-      ? await FirebaseAuthentication.createUserWithEmailAndPassword({ email, password })
-      : await createUserWithEmailAndPassword(auth, email, password);
+    const result = await FirebaseAuthentication.createUserWithEmailAndPassword({ email, password });
     return result.user;
   },
 
@@ -47,15 +38,7 @@ export const authService = {
   },
 
   async sendPasswordResetEmail(email) {
-    if (isNative) {
-      await FirebaseAuthentication.sendPasswordResetEmail({ email });
-    } else {
-      const { sendPasswordResetEmail } = await import('firebase/auth');
-      await sendPasswordResetEmail(auth, email, {
-        url: `${window.location.origin  }/auth`,
-        handleCodeInApp: false
-      });
-    }
+    await FirebaseAuthentication.sendPasswordResetEmail({ email });
   },
 
   getErrorMessage(error) {

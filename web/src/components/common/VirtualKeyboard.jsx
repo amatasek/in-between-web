@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useVirtualKeyboardContext } from '../contexts/VirtualKeyboardContext';
-import BaseModal from './common/BaseModal';
+import { useVirtualKeyboardContext } from '../../contexts/VirtualKeyboardContext';
+import BaseModal from './BaseModal';
 import styles from './VirtualKeyboard.module.css';
 
 const VirtualKeyboard = ({ 

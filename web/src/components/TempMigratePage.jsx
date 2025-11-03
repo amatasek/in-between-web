@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGamepadNavigation } from '../../hooks/useGamepadNavigation';
-import styles from './AuthPage.module.css';
-import { API_URL } from '../../config.js';
-import { auth } from '../../services/firebase';
+import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
+import AppHeader from './common/AppHeader';
+import TempMigrateForm from './TempMigrateForm';
+import styles from './styles/TempMigratePage.module.css';
+import { API_URL } from '../config.js';
+import { auth } from '../services/firebase';
 import { signInWithCustomToken } from 'firebase/auth';
 
-const AuthPage = () => {
+const TempMigratePage = () => {
   const navigate = useNavigate();
 
   // Disable gamepad navigation on migration screen (users need to type in forms)
@@ -77,7 +79,7 @@ const AuthPage = () => {
           </div>
         )}
 
-        <AuthForm
+        <TempMigrateForm
           mode="migrate"
           requireEmail={true}
           onSubmit={handleMigration}
@@ -98,4 +100,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;
+export default TempMigratePage;

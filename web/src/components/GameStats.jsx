@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import styles from './styles/GameStats.module.css';
-import { getDisplayName } from './Username';
+import { getDisplayName } from './common/Username';
 import CurrencyAmount from './common/CurrencyAmount';
 
 const GameStats = ({ gameData }) => {

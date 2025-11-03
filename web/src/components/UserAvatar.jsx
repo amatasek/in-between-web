@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from './styles/UserAvatar.module.css';
 import { useUserData } from '../contexts/UserDataContext';
-import Username, { getDisplayName } from './Username';
+import Username, { getDisplayName } from './common/Username';
 
 /**
  * UserAvatar component displays a user's profile image or their initials if no image is available.

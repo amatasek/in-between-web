@@ -1,4 +1,4 @@
-import styles from './styles/ToggleSwitch.module.css';
+import styles from './ToggleSwitch.module.css';
 
 const ToggleSwitch = ({ isChecked, onChange, label }) => {
   return (

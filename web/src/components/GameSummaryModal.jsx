@@ -3,7 +3,7 @@ import BaseModal from './common/BaseModal';
 import CurrencyAmount from './common/CurrencyAmount';
 import GameStats from './GameStats';
 import TransactionDownloadButton from './common/TransactionDownloadButton';
-import Username from './Username';
+import Username from './common/Username';
 import styles from './styles/GameSummaryModal.module.css';
 
 /**

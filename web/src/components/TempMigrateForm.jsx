@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { useVirtualKeyboardContext } from '../../contexts/VirtualKeyboardContext';
-import styles from './AuthForm.module.css';
+import { useVirtualKeyboardContext } from '../contexts/VirtualKeyboardContext';
+import styles from './styles/TempMigrateForm.module.css';
 
-const AuthForm = ({ onSubmit, mode, requireEmail = false, title = null, description = null }) => {
+const TempMigrateForm = ({ onSubmit, mode, requireEmail = false, title = null, description = null }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -146,4 +146,4 @@ const AuthForm = ({ onSubmit, mode, requireEmail = false, title = null, descript
   );
 };
 
-export default AuthForm;
+export default TempMigrateForm;

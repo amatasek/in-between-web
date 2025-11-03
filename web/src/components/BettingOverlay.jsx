@@ -6,7 +6,7 @@ import WaitingTimer from './common/WaitingTimer';
 import CountdownTimer from './common/CountdownTimer';
 import CurrencyAmount from './common/CurrencyAmount';
 import PotButton from './PotButton';
-import GamepadInput from './GamepadInput';
+import GamepadInput from './common/GamepadInput';
 
 const BettingOverlay = ({ isCurrentPlayersTurn }) => {
   const { gameState, placeBet } = useGameContext();

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useVirtualKeyboardContext } from '../contexts/VirtualKeyboardContext';
+import { useVirtualKeyboardContext } from '../../contexts/VirtualKeyboardContext';
 
 /**
  * Enhanced input component that automatically shows virtual keyboard for gamepad users

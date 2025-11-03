@@ -1,4 +1,6 @@
-import styles from './WelcomePopup.module.css';
+import styles from './styles/WelcomePopup.module.css';
+import Username from './common/Username';
+import CoinIcon from './common/CoinIcon';
 
 /**
  * A popup component that displays a welcome message and balance reset notification

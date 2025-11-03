@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import styles from '../styles/common/WaitingTimer.module.css';
-import Username from '../Username';
+import styles from './WaitingTimer.module.css';
+import Username from './Username';
 
 const WaitingTimer = ({ 
   playerName, 

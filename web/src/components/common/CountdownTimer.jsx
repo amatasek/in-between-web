@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import styles from '../styles/common/CountdownTimer.module.css';
+import styles from './CountdownTimer.module.css';
 
 /**
  * CountdownTimer - A circular countdown timer with color transition

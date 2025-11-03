@@ -9,7 +9,7 @@ import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
 import GameCard from './GameCard';
 import GameSettingsModal from './GameSettingsModal';
-import GamepadInput from './GamepadInput';
+import GamepadInput from './common/GamepadInput';
 import PlayerPanel from './PlayerPanel';
 import soundService from '../services/SoundService';
 import { getVersionInfo } from '../utils/version';

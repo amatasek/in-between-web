@@ -7,7 +7,7 @@ import EmojiReactions from './EmojiReactions';
 import GameHeader from './GameHeader';
 import GameLog from './GameLog';
 import PlayerList from './PlayerList';
-import Table from './Table';
+import CardTable from './CardTable';
 
 const GameScreen = ({ onReturnToLobby }) => {
   // Track modal state to hide emoji reactions
@@ -66,7 +66,7 @@ const GameScreen = ({ onReturnToLobby }) => {
         )}
 
         {/* Game table with integrated controls */}
-        <Table />
+        <CardTable />
 
         <div className={styles.gameBottomSection}>
           <PlayerList />

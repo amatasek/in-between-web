@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import styles from './styles/Toast.module.css';
+import styles from './Toast.module.css';
 import Username from './Username';
 
 const Toast = ({ 

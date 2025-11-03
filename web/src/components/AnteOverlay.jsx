@@ -3,7 +3,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
 import { ICONS } from '../constants';
-import Username from './Username';
+import Username from './common/Username';
 import CurrencyAmount from './common/CurrencyAmount';
 
 const AnteOverlay = () => {

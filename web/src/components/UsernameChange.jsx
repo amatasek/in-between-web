@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { API_URL } from '../config';
-import { parseUsername } from './Username';
+import { parseUsername } from './common/Username';
 import { useAuth } from '../contexts/AuthContext';
 
 const UsernameChange = ({ currentUsername, onUsernameChanged }) => {

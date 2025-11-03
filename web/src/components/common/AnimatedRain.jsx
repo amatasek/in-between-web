@@ -1,4 +1,4 @@
-import styles from './styles/AnimatedRain.module.css';
+import styles from './AnimatedRain.module.css';
 import CoinIcon from './CoinIcon';
 
 const AnimatedRain = ({ 

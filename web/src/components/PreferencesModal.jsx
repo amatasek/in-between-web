@@ -3,11 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePreferences } from '../contexts/PreferencesContext';
 import BaseModal from './common/BaseModal';
 import UsernameChange from './UsernameChange';
-import FileUpload from './FileUpload';
+import FileUpload from './common/FileUpload';
 import TitlesSelector from './TitlesSelector';
 import CardBackSelector from './CardBackSelector';
 import ThemeSelector from './ThemeSelector';
-import ToggleSwitch from './ToggleSwitch';
+import ToggleSwitch from './common/ToggleSwitch';
 import baseModalStyles from './common/BaseModal.module.css';
 
 const PreferencesModal = ({ onClose, defaultTab = 'profile' }) => {

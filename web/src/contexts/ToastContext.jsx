@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useSocket } from './SocketContext';
-import Toast from '../components/Toast';
+import Toast from '../components/common/Toast';
 
 const ToastContext = createContext();
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from './styles/Table.module.css';
+import styles from './styles/CardTable.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { useSocket } from '../contexts/SocketContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,7 +13,7 @@ import ResultsOverlay from './ResultsOverlay';
 import RevealingOverlay from './RevealingOverlay';
 import SecondChanceOverlay from './SecondChanceOverlay';
 
-const Table = () => {
+const CardTable = () => {
   const { gameState } = useGameContext();
   const { socket } = useSocket();
   const { user } = useAuth();
@@ -130,4 +130,4 @@ const Table = () => {
   );
 };
 
-export default Table;
+export default CardTable;
