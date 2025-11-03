@@ -1,0 +1,1 @@
+import{Z as e}from"./index--b34lDLk.js";const s="_headerContainer_13wru_1",n="_gameTitle_13wru_12",r="_liveTag_13wru_25",a={headerContainer:s,gameTitle:n,liveTag:r},i=()=>e.jsx("div",{className:a.headerContainer,children:e.jsxs("h1",{className:a.gameTitle,children:["In Between ",e.jsx("span",{className:a.liveTag,children:"LIVE"})]})});export{i as A};
