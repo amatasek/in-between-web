@@ -1,0 +1,1 @@
+import{Z as e}from"./index-C2Xvkgvu.js";const t=()=>e.jsx("div",{style:{textAlign:"center",marginBottom:"2rem"},children:e.jsxs("h1",{style:{fontSize:"2.5rem",color:"var(--text-primary)",margin:0,fontWeight:"bold"},children:["In Between ",e.jsx("span",{className:"live-tag large",children:"LIVE"})]})});export{t as A};
