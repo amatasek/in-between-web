@@ -100,16 +100,7 @@ class StoreService {
         throw new Error(errorData.error || `HTTP ${response.status}: Purchase failed`);
       }
 
-      const result = await response.json();
-      
-      // Log successful purchase for debugging
-      console.log('[PURCHASE_SERVICE] Purchase completed:', {
-        productId,
-        coinsAdded: result.coinsAdded,
-        newBalance: result.newBalance
-      });
-
-      return result;
+      return await response.json();
     } catch (error) {
       console.error('[PURCHASE_SERVICE] Error processing purchase:', error);
       throw new Error(`Purchase failed: ${error.message}`);
@@ -160,9 +151,7 @@ class StoreService {
         throw new Error(errorData.error || `HTTP ${response.status}: Cancellation failed`);
       }
 
-      const result = await response.json();
-      console.log('[STORE_SERVICE] Subscription cancelled:', result);
-      return result;
+      return await response.json();
     } catch (error) {
       console.error('[STORE_SERVICE] Error cancelling subscription:', error);
       throw new Error(`Cancellation failed: ${error.message}`);
