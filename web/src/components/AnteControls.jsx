@@ -78,7 +78,6 @@ const AnteControls = () => {
                 data-gamepad-focusable="true"
                 autoFocus
               >
-                {/* Add shimmer border for glimmering effect */}
                 <div className={styles.shimmerBorder} />
                 <div className={styles.buttonInfo}>
                   <span className={styles.buttonLabel}>ANTE</span>
@@ -129,7 +128,6 @@ const AnteControls = () => {
                 aria-label="Back out"
                 data-gamepad-focusable="true"
               >
-                {/* Add shimmer border for glimmering effect */}
                 <div className={styles.shimmerBorder} />
                 <div className={styles.buttonInfo}>
                   <span className={styles.buttonLabel}>BACK OUT</span>

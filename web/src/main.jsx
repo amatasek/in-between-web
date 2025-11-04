@@ -13,7 +13,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
 import { UserDataProvider } from './contexts/UserDataContext';
 import { PreferencesProvider } from './contexts/PreferencesContext';
-import { AdProvider } from './contexts/AdContext';
 import App from './App';
 
 // Import Capgo for live updates
@@ -44,9 +43,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <SocketProvider>
         <UserDataProvider>
           <PreferencesProvider>
-            <AdProvider>
-              <App />
-            </AdProvider>
+            <App />
           </PreferencesProvider>
         </UserDataProvider>
       </SocketProvider>

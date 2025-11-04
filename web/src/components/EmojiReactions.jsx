@@ -3,14 +3,13 @@ import styles from './styles/EmojiReactions.module.css';
 import { useSocket } from '../contexts/SocketContext';
 import { useGameContext } from '../contexts/GameContext';
 import { useAuth } from '../contexts/AuthContext';
-import { useAds } from '../contexts/AdContext';
 
 const EmojiReactions = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { socket } = useSocket();
   const { gameState } = useGameContext();
   const { user } = useAuth();
-  const { showAds } = useAds();
+  const showAds = !user?.subscription?.isPremium;
   const containerRef = useRef(null);
 
   // Available emojis for reactions - colors matched to emoji appearance

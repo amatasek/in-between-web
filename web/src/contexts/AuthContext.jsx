@@ -155,26 +155,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const refreshUserData = useCallback(async () => {
-    const isNative = Capacitor.isNativePlatform();
+    if (!token) return;
 
-    const freshToken = isNative
-      ? (await FirebaseAuthentication.getIdToken({ forceRefresh: true })).token
-      : await auth.currentUser?.getIdToken(true);
-
-    if (!freshToken) {
-      logout();
-      return;
-    }
-
-    setToken(freshToken);
-
-    const userData = await fetchUserData(freshToken);
+    const userData = await fetchUserData(token);
     if (userData) {
       setUser(userData);
-    } else {
-      logout();
     }
-  }, [logout]);
+  }, [token]);
 
   if (loading) {
     return null; // or a loading spinner

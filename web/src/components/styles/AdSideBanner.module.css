@@ -20,19 +20,32 @@
 .adPlaceholder {
   width: 100%;
   height: 100%;
-  background: rgba(128, 128, 128, 0.2);
-  border: 2px dashed white;
+  background-color: #f0f0f0;
+  border: 2px solid #4285f4;
   border-radius: 8px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 8px;
   writing-mode: vertical-rl;
   text-orientation: mixed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.adPlaceholder::before {
+  content: 'Advertisement';
+  font-weight: bold;
+  font-size: 14px;
+  color: #4285f4;
+  letter-spacing: 0.5px;
 }
 
 .adLabel {
-  color: white;
-  font-size: 0.9rem;
+  color: #666;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 @media (min-width: 1000px) {

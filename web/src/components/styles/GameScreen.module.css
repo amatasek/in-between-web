@@ -99,15 +99,23 @@
   gap: 1rem;
 }
 
-.gameContainer.withAds::after {
-  content: '';
-  display: block;
-  height: 100px;
+.gameContainer.withAds {
+  /* Add padding to prevent content from being hidden behind fixed ad */
+  /* Ad already handles safe area, so just use fixed height */
+  padding-bottom: 100px;
 }
 
 @media (max-width: 768px) {
-  .gameContainer.withAds::after {
-    height: 110px;
+  .gameContainer.withAds {
+    /* Mobile ad is 100px tall + 10px extra spacing */
+    padding-bottom: 110px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .gameContainer.withAds {
+    /* Reset padding on desktop where ad is hidden */
+    padding-bottom: max(0.75rem, var(--safe-area-inset-bottom));
   }
 }
 

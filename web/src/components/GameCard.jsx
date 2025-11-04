@@ -1,9 +1,9 @@
-import styles from './styles/Lobby.module.css'; // Use the new CSS module
-import LockIcon from './icons/LockIcon';
+import styles from './styles/Lobby.module.css';
+import { Lock } from 'lucide-react';
 
-function GameCard({ game, onJoin, userId }) { 
+function GameCard({ game, onJoin, userId }) {
   // Determine display name: Use custom name if available, otherwise fallback to ID
-  const gameDisplayName = game.settings?.customName || `Game ${game.id}`;
+  const gameDisplayName = game.settings?.customName || game.id;
 
   // Determine user's status in this game
   const isUserDisconnected = game.disconnectedPlayers?.some(player => player.userId === userId);
@@ -18,7 +18,7 @@ function GameCard({ game, onJoin, userId }) {
   }
 
   // Determine card container class
-  let cardClass = `panel ${styles.gameCard}`; // Use global panel class + gameCard layout
+  let cardClass = `panel-frost ${styles.gameCard}`;
   if (isUserDisconnected) {
     cardClass += ` ${styles.userDisconnectedGame}`;
   } else if (isUserInGame) {
@@ -26,14 +26,14 @@ function GameCard({ game, onJoin, userId }) {
   }
 
   return (
-    <div className={cardClass}> {/* Use panel + conditional */}
+    <div className={cardClass}>
       {/* Replicate original info structure */}
       <div className={styles.gameListInfo} style={{ flex: 1 }}>
         <div className={styles.gameListId}> {/* Div for ID/Name + Badges */}
           {gameDisplayName}
           {game.settings?.isPrivate && (
             <span className={styles.privatePill} title="Private Game">
-              <LockIcon width="0.9em" height="0.9em" style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+              <Lock size="0.9em" style={{ marginRight: '4px', verticalAlign: 'middle' }} />
               Private
             </span>
           )}

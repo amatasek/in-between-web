@@ -1,11 +1,11 @@
 import IconButton from './common/IconButton';
-import StoreIcon from './icons/StoreIcon';
+import { ShoppingBag } from 'lucide-react';
 
 const StoreButton = ({ onClick, ...props }) => {
   return (
     <IconButton
       onClick={onClick}
-      icon={<StoreIcon style={{ color: 'white', width: 20, height: 20 }} />}
+      icon={<ShoppingBag size={20} style={{ color: 'white' }} />}
       aria-label="Store"
       variant="store"
       title="Store"

@@ -59,7 +59,7 @@
 /* Google Button */
 .google {
   background: #fff;
-  color: var(--text-dark);
+  color: #202124;
   border-color: #dadce0;
 }
 
@@ -105,12 +105,5 @@
 
   .label {
     font-size: var(--font-size-sm);
-  }
-}
-
-/* Dark mode compatibility */
-@media (prefers-color-scheme: dark) {
-  .google {
-    background: rgba(255, 255, 255, 0.95);
   }
 }

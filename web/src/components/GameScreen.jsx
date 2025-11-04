@@ -3,7 +3,7 @@ import styles from './styles/GameScreen.module.css';
 
 import { useGameContext } from '../contexts/GameContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
-import { useAds } from '../contexts/AdContext';
+import { useAuth } from '../contexts/AuthContext';
 import EmojiReactions from './EmojiReactions';
 import GameHeader from './GameHeader';
 import GameLog from './GameLog';
@@ -20,7 +20,8 @@ const GameScreen = ({ onReturnToLobby }) => {
     error,
     clearError
   } = useGameContext();
-  const { showAds } = useAds();
+  const { user } = useAuth();
+  const showAds = !user?.subscription?.isPremium;
 
   // Initialize gamepad navigation
   useGamepadNavigation(true);

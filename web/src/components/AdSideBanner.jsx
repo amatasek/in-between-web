@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { useAds } from '../contexts/AdContext';
+import { useAuth } from '../contexts/AuthContext';
 import styles from './styles/AdSideBanner.module.css';
 
 /**
@@ -15,7 +15,8 @@ import styles from './styles/AdSideBanner.module.css';
 const AdSideBanner = ({ position = 'left', minWidth = 1000 }) => {
   const adContainerRef = useRef(null);
   const isNativeApp = Capacitor.isNativePlatform();
-  const { showAds } = useAds();
+  const { user } = useAuth();
+  const showAds = !user?.subscription?.isPremium;
 
   useEffect(() => {
     if (isNativeApp) {
@@ -40,7 +41,7 @@ const AdSideBanner = ({ position = 'left', minWidth = 1000 }) => {
   return (
     <div className={`${styles.adSideBannerContainer} ${styles[position]} ${widthClass}`} ref={adContainerRef}>
       <div className={styles.adPlaceholder}>
-        <span className={styles.adLabel}>Advertisement</span>
+        <span className={styles.adLabel}>Test Ad - 160x600</span>
       </div>
       <ins
         className="adsbygoogle"

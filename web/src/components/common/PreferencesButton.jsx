@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import IconButton from './IconButton';
-import GearIcon from '../icons/GearIcon';
+import { Settings } from 'lucide-react';
 import PreferencesModal from '../PreferencesModal';
 
 const PreferencesButton = ({ onModalStateChange, inGame = false }) => {
@@ -25,7 +25,7 @@ const PreferencesButton = ({ onModalStateChange, inGame = false }) => {
     <>
       <IconButton
         onClick={openPreferences}
-        icon={<GearIcon style={{ color: 'white', width: 20, height: 20 }} />}
+        icon={<Settings size={20} style={{ color: 'white' }} />}
         aria-label="Open Preferences"
         variant="preferences"
         title="Preferences"

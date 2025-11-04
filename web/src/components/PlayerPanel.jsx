@@ -10,21 +10,21 @@ import StoreButton from './StoreButton';
 import StoreModal from './StoreModal';
 
 const PlayerPanel = () => {
-  const { user, logout, refreshUserData } = useAuth();
+  const { user, logout } = useAuth();
   const [showStoreModal, setShowStoreModal] = useState(false);
 
   return (
-    <div style={{ width: '100%' }}>
-      <div className={`panel ${styles.userSection}`}>
+    <>
+      <div className={`panel-frost ${styles.userSection}`}>
         <div className={styles.avatarContainer}>
-          <UserAvatar 
+          <UserAvatar
             userId={user?.id}
-            size="medium" 
-            showName={true} 
+            size="medium"
+            showName={true}
             namePosition="right"
           />
         </div>
-        <ProgressInfo 
+        <ProgressInfo
           userId={user?.id}
           balance={user?.balance}
         />
@@ -44,16 +44,9 @@ const PlayerPanel = () => {
         </div>
       </div>
       {showStoreModal && (
-        <StoreModal
-          onClose={() => {
-            setShowStoreModal(false);
-            if (refreshUserData) {
-              refreshUserData();
-            }
-          }}
-        />
+        <StoreModal onClose={() => setShowStoreModal(false)} />
       )}
-    </div>
+    </>
   );
 };
 

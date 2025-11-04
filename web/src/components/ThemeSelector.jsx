@@ -5,27 +5,27 @@ const themes = [
   {
     id: 'default',
     name: 'Default',
-    description: 'Classic blue theme',
-    primary: '#1a2a3a',
+    description: 'Orignal blue theme',
+    primary: '#2c3e50',
     accent: '#3498db'
-  },
-  {
-    id: 'light',
-    name: 'Light Mode',
-    description: 'Professional theme',
-    primary: '#f8f9fa',
-    accent: '#ffc107'
   },
   {
     id: 'dark',
     name: 'Dark Mode',
-    description: 'Deep dark theme',
+    description: 'Lights out',
     primary: '#0d0d0d',
-    accent: '#2980b9'
+    accent: '#f39c12'
   },
   {
-    id: 'packers',
-    name: 'Packers',
+    id: 'blue-steel',
+    name: 'Blue Steel',
+    description: 'Graphite & sky blue',
+    primary: '#3d424a',
+    accent: '#87ceeb'
+  },
+  {
+    id: 'lambeau',
+    name: 'Lambeau',
     description: 'Go Pack Go!',
     primary: '#203731',
     accent: '#FFB612'
@@ -33,7 +33,7 @@ const themes = [
   {
     id: 'sunset',
     name: 'Sunset',
-    description: 'Romantic twilight',
+    description: 'Stunning twilight',
     primary: '#0c1929',
     accent: '#ff6b6b'
   },
@@ -47,7 +47,7 @@ const themes = [
   {
     id: 'purple',
     name: 'Royal Purple',
-    description: 'Elegant purple theme',
+    description: 'Bold purple theme',
     primary: '#1a1a2e',
     accent: '#8e44ad'
   }

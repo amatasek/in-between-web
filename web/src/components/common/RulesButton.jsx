@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import IconButton from './IconButton';
-import QuestionIcon from '../icons/QuestionIcon';
+import { HelpCircle } from 'lucide-react';
 import GameRulesModal from '../GameRulesModal';
 
 /**
@@ -35,7 +35,7 @@ const RulesButton = ({
   return (
     <>
       <IconButton
-        icon={<QuestionIcon color="white" size={20} />}
+        icon={<HelpCircle size={20} style={{ color: 'white' }} />}
         title={title}
         onClick={openRules}
         variant="default"

@@ -68,97 +68,96 @@ const themes = {
     '--secondary': '#e74c3c',
     '--secondary-dark': '#c0392b',
     
-    // Input overrides for default theme - deep blue
-    '--input-bg': 'rgba(10, 25, 47, 0.95)',
-    '--input-bg-hover': 'rgba(15, 35, 60, 0.98)',
-    '--input-bg-focus': 'rgba(20, 40, 70, 1)',
+    '--input-bg': 'rgba(0, 0, 0, 0.3)',
+    '--input-bg-hover': 'rgba(0, 0, 0, 0.4)',
+    '--input-bg-focus': 'rgba(0, 0, 0, 0.45)',
     '--input-text-color': '#ecf0f1',
-    '--input-border-color': 'rgba(51, 65, 85, 0.7)',
+    '--input-border-color': 'rgba(255, 255, 255, 0.1)',
     
     // Glass colors for panel-alt - dark glass like it's always been
     '--color-glass-dark': 'rgba(0, 0, 0, 0.3)',
     '--color-glass-light': 'rgba(0, 0, 0, 0.1)'
   },
-  light: {
-    // Backgrounds - Clean professional whites and grays
-    '--bg-primary': '#f8f9fa',
-    '--bg-secondary': '#e9ecef',
-    '--bg-card': '#ffffff',
-    '--bg-card-dark': '#f1f3f5',
-    '--bg-panel-start': '#dee2e6',
-    '--bg-panel-end': '#ced4da',
-    '--bg-loading': '#e9ecef',
-    
-    // Text colors - Professional dark grays and blues
-    '--text-primary': '#212529',
-    '--text-secondary': '#495057',
-    '--text-dark': '#212529',
-    '--text-light': '#212529',
-    '--text-muted': '#6c757d',
+  'blue-steel': {
+    // Backgrounds - Graphite greys with sky blue accents
+    '--bg-primary': '#2a2e35',
+    '--bg-secondary': '#35393f',
+    '--bg-card': '#2f3339',
+    '--bg-card-dark': '#23262b',
+    '--bg-panel-start': '#393d44',
+    '--bg-panel-end': '#4a7c9e',
+    '--bg-loading': '#1f2226',
+
+    // Text colors - Clean whites and light greys
+    '--text-primary': '#e8eef2',
+    '--text-secondary': '#b8c5d0',
+    '--text-dark': '#354a5f',
+    '--text-light': '#e8eef2',
+    '--text-muted': '#8a98a8',
     '--text-white': '#ffffff',
-    '--text-gray': '#6c757d',
-    '--text-error': '#dc3545',
-    '--text-success': '#28a745',
-    '--text-warning': '#ffc107',
-    '--text-info': '#17a2b8',
-    '--text-faded': 'rgba(33, 37, 41, 0.6)',
-    '--text-subtle': 'rgba(33, 37, 41, 0.75)',
-    '--text-bright': 'rgba(33, 37, 41, 0.9)',
-    
-    // Info colors - Professional teal
-    '--info': '#17a2b8',
-    '--info-dark': '#138496',
-    '--info-light': '#20c997',
-    
-    // Glass colors for panel-alt - subtle gray backgrounds
-    '--color-glass-dark': 'rgba(248, 249, 250, 1)',
-    '--color-glass-light': 'rgba(233, 236, 239, 0.8)',
-    
-    // Success colors - Professional green
-    '--success': '#28a745',
-    '--success-dark': '#218838',
-    '--success-light': '#38c757',
-    
-    // Primary button (Professional blue gradient)
-    '--btn-primary-start': '#007bff',
-    '--btn-primary-end': '#0056b3',
-    '--btn-primary-hover-start': '#0069d9',
-    '--btn-primary-hover-end': '#004085',
-    
-    // Secondary button (Subtle gray)
-    '--btn-secondary-start': 'rgba(108, 117, 125, 0.2)',
-    '--btn-secondary-end': 'rgba(73, 80, 87, 0.2)',
-    '--btn-secondary-hover-start': 'rgba(108, 117, 125, 0.3)',
-    '--btn-secondary-hover-end': 'rgba(73, 80, 87, 0.3)',
-    
-    // Tertiary button (Steel blue)
-    '--btn-tertiary-start': '#6c757d',
-    '--btn-tertiary-end': '#545b62',
-    '--btn-tertiary-hover-start': '#5a6268',
-    '--btn-tertiary-hover-end': '#454d55',
-    '--btn-tertiary-shadow': 'rgba(108, 117, 125, 0.3)',
-    
+    '--text-gray': '#9ca8b5',
+    '--text-error': '#ff6b7a',
+    '--text-success': '#2ecc71',
+    '--text-warning': '#ffd966',
+    '--text-info': '#87ceeb',
+    '--text-faded': 'rgba(232, 238, 242, 0.6)',
+    '--text-subtle': 'rgba(232, 238, 242, 0.75)',
+    '--text-bright': 'rgba(232, 238, 242, 0.95)',
+
+    // Info colors - Sky blue
+    '--info': '#87ceeb',
+    '--info-dark': '#5dade2',
+    '--info-light': '#a8d8f0',
+
+    // Glass colors for panel-alt - subtle graphite overlays
+    '--color-glass-dark': 'rgba(35, 38, 43, 0.6)',
+    '--color-glass-light': 'rgba(135, 206, 235, 0.08)',
+
+    // Success colors - Green for ante button
+    '--success': '#2ecc71',
+    '--success-dark': '#27ae60',
+    '--success-light': '#58d68d',
+
+    // Primary button (Sky blue gradient)
+    '--btn-primary-start': '#5dade2',
+    '--btn-primary-end': '#3498db',
+    '--btn-primary-hover-start': '#7dbfe8',
+    '--btn-primary-hover-end': '#5dade2',
+
+    // Secondary button (Steel grey)
+    '--btn-secondary-start': 'rgba(60, 72, 88, 0.9)',
+    '--btn-secondary-end': 'rgba(42, 54, 69, 0.9)',
+    '--btn-secondary-hover-start': 'rgba(74, 86, 102, 1)',
+    '--btn-secondary-hover-end': 'rgba(60, 72, 88, 1)',
+
+    // Tertiary button (Dark steel blue)
+    '--btn-tertiary-start': '#4a7c9e',
+    '--btn-tertiary-end': '#3a6480',
+    '--btn-tertiary-hover-start': '#5a8cae',
+    '--btn-tertiary-hover-end': '#4a7c9e',
+    '--btn-tertiary-shadow': 'rgba(74, 124, 158, 0.4)',
+
     // Special colors
-    '--color-focus': '#007bff',
-    '--color-focus-shadow': 'rgba(0, 123, 255, 0.25)',
-    '--color-border-light': 'rgba(0, 0, 0, 0.175)',
-    '--color-border-lighter': 'rgba(0, 0, 0, 0.125)',
-    '--color-divider-start': 'rgba(0, 123, 255, 0.15)',
-    '--color-divider-middle': 'rgba(0, 123, 255, 0.5)',
-    '--color-divider-end': 'rgba(0, 123, 255, 0.15)',
-    '--accent': '#ffc107',
-    '--accent-dark': '#e0a800',
-    '--accent2': '#17a2b8',
-    '--accent3': '#28a745',
-    '--secondary': '#6c757d',
-    '--secondary-dark': '#545b62',
-    
-    // Input overrides for light theme
-    '--input-bg': '#ffffff',
-    '--input-bg-hover': '#f8f9fa',
-    '--input-bg-focus': '#ffffff',
-    '--input-text-color': '#212529',
-    '--input-border-color': 'rgba(0, 0, 0, 0.15)'
+    '--color-focus': '#87ceeb',
+    '--color-focus-shadow': 'rgba(135, 206, 235, 0.4)',
+    '--color-border-light': 'rgba(135, 206, 235, 0.2)',
+    '--color-border-lighter': 'rgba(135, 206, 235, 0.15)',
+    '--color-divider-start': 'rgba(135, 206, 235, 0.2)',
+    '--color-divider-middle': 'rgba(135, 206, 235, 0.7)',
+    '--color-divider-end': 'rgba(135, 206, 235, 0.2)',
+    '--accent': '#87ceeb',
+    '--accent-dark': '#5dade2',
+    '--accent2': '#a8d8f0',
+    '--accent3': '#4a9bca',
+    '--secondary': '#6c7d8f',
+    '--secondary-dark': '#5a6979',
+
+    // Input overrides for Blue Steel theme
+    '--input-bg': 'rgba(31, 34, 38, 0.7)',
+    '--input-bg-hover': 'rgba(31, 34, 38, 0.85)',
+    '--input-bg-focus': 'rgba(31, 34, 38, 0.95)',
+    '--input-text-color': '#e8eef2',
+    '--input-border-color': 'rgba(135, 206, 235, 0.25)'
   },
   dark: {
     // Backgrounds - deep greys that pop
@@ -241,7 +240,7 @@ const themes = {
     '--color-glass-dark': 'rgba(41, 128, 185, 0.08)',
     '--color-glass-light': 'rgba(243, 156, 18, 0.08)'
   },
-  'packers': {
+  'lambeau': {
     // Backgrounds - Dark Packers green
     '--bg-primary': '#0A1713',
     '--bg-secondary': '#154734',
@@ -309,7 +308,7 @@ const themes = {
     '--secondary': '#C9B896',
     '--secondary-dark': '#B5A482',
     
-    // Input overrides for Packers theme
+    // Input overrides for Lambeau theme
     '--input-bg': 'rgba(21, 71, 52, 0.3)',
     '--input-bg-hover': 'rgba(21, 71, 52, 0.4)',
     '--input-bg-focus': 'rgba(21, 71, 52, 0.5)',

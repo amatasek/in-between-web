@@ -5,7 +5,7 @@
 const AppHeader = () => {
   return (
     <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-      <h1 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>
+      <h1 style={{ fontSize: '2.5rem', color: '#ffffff', margin: 0, fontWeight: 'bold' }}>
         In Between <span className="live-tag large">LIVE</span>
       </h1>
     </div>

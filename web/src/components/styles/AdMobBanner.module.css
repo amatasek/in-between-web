@@ -1,0 +1,70 @@
+/* AdMob Banner Placeholder - For Mobile Layout Testing */
+
+.adMobBannerContainer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #f0f0f0;
+  border-top: 2px solid #4285f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.banner {
+  height: 50px;
+  min-height: 50px;
+}
+
+.largeBanner {
+  height: 100px;
+  min-height: 100px;
+}
+
+.mediumRectangle {
+  height: 250px;
+  min-height: 250px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: 300px;
+  max-width: 100%;
+  border: 2px solid #4285f4;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+.placeholderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+}
+
+.adMobLogo {
+  font-weight: bold;
+  font-size: 14px;
+  color: #4285f4;
+  letter-spacing: 0.5px;
+}
+
+.adLabel {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Mobile specific styles */
+@media (max-width: 600px) {
+  .adMobBannerContainer {
+    max-width: 100%;
+  }
+}

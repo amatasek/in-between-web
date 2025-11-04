@@ -7,6 +7,7 @@ import { useSocket } from '../contexts/SocketContext';
 import { useGamepadNavigation } from '../hooks/useGamepadNavigation';
 import AppHeader from './common/AppHeader';
 import OnlinePlayerCount from './common/OnlinePlayerCount';
+import Footer from './common/Footer';
 import GameCard from './GameCard';
 import GameSettingsModal from './GameSettingsModal';
 import GamepadInput from './common/GamepadInput';
@@ -15,11 +16,8 @@ import AdBanner from './AdBanner';
 import AdSideBanner from './AdSideBanner';
 import AdInterstitial from './AdInterstitial';
 import { useAdInterstitial } from '../hooks/useAdInterstitial';
-import { useAds } from '../contexts/AdContext';
 import soundService from '../services/SoundService';
-import { getVersionInfo } from '../utils/version';
-import { openInBrowser } from '../utils/openInBrowser';
-import { WEB_URL } from '../config';
+import { Search } from 'lucide-react';
 
 const Lobby = () => {
   const { gameList } = useLobby();
@@ -31,9 +29,8 @@ const Lobby = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showGameSettingsModal, setShowGameSettingsModal] = useState(false);
-  const [versionInfo, setVersionInfo] = useState(null);
   const { shouldShowAd, showAd, hideAd } = useAdInterstitial();
-  const { showAds } = useAds();
+  const showAds = !user?.subscription?.isPremium;
 
   const userId = user?.id || null;
 
@@ -42,10 +39,6 @@ const Lobby = () => {
       showAd();
     }
   }, [location.state, showAd]);
-
-  useEffect(() => {
-    getVersionInfo().then(setVersionInfo);
-  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -133,85 +126,68 @@ const Lobby = () => {
    return (
      <div className={`screen app-gradient-bg ${styles.lobbyScreen} ${showAds ? styles.withAds : ''}`}>
        <AppHeader />
-       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.1em', marginBottom: '-0.6em' }}>
+       <div className={styles.onlineCountWrapper}>
          <OnlinePlayerCount />
-       </div>       
-
-       <div className="card" style={{ width: '100%', maxWidth: '600px', marginBottom: '2rem' }}>
-         <PlayerPanel />
-         <div className="divider" />
-         <div className={styles.gameActionsSection}>
-           <button type="button" 
-             className="btn btn-primary"
-             onClick={handleCreateGame}
-             disabled={!user?.username}
-             data-gamepad-focusable="true"
-           >
-             Create Quick Game
-           </button>
-           <button type="button"
-             className="btn btn-primary"
-             onClick={handleCreateCustomGame}
-             disabled={!user?.username}
-             data-gamepad-focusable="true"
-           >
-             Create Custom Game
-           </button>
-         </div>
        </div>
 
-       <div
-         className="card"
-         style={{width: '100%', maxWidth: '600px', minHeight: '200px'}}
-       >
+       <div className={styles.playerSection}>
+         <PlayerPanel />
+       </div>
+
+       <div className={styles.gameActionsSection}>
+         <button type="button"
+           className="btn btn-primary"
+           onClick={handleCreateGame}
+           disabled={!user?.username}
+           data-gamepad-focusable="true"
+         >
+           Create Quick Game
+         </button>
+         <button type="button"
+           className="btn btn-primary"
+           onClick={handleCreateCustomGame}
+           disabled={!user?.username}
+           data-gamepad-focusable="true"
+         >
+           Create Custom Game
+         </button>
+       </div>
+
+       <div className={`panel-frost ${styles.gameListSection}`}>
          <h2 className={styles.gameListTitle}>Available Games</h2>
-         
+
          {/* Search bar for filtering games */}
          <div className={styles.searchContainer}>
            <div className="input-with-icon">
-             <span className="input-icon left">🔍</span>
+             <span className="input-icon left" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Search size={18} strokeWidth={2.5} />
+            </span>
              <GamepadInput
                title="Search Games"
                type="search"
                className="no-validation"
-               placeholder="Search games by ID"
+               placeholder="Search available games"
                value={searchQuery}
                onChange={handleSearchChange}
              />
            </div>
          </div>
-         
+
          {filteredGameList && filteredGameList.length > 0 ? (
            <div className={styles.gameListWrapper}>
              {filteredGameList.map(game => (
-               <GameCard 
-                 key={game.id} 
-                 game={game} 
-                 onJoin={handleJoinGame} 
-                 userId={userId} // Pass userId
+               <GameCard
+                 key={game.id}
+                 game={game}
+                 onJoin={handleJoinGame}
+                 userId={userId}
                />
              ))}
            </div>
          ) : (
-           <div className="panel-alt" style={{ 
-             textAlign: 'center', 
-             padding: '2rem',
-             minHeight: '150px',
-             display: 'flex',
-             flexDirection: 'column',
-             alignItems: 'center',
-             justifyContent: 'center'
-           }}>
-             <div className={styles.emptyStateIcon}>🃏</div>
-             <p className={styles.emptyStateMessage}>
-               {searchQuery.trim() ? 'No matching games found' : 'No games in progress'}
-             </p>
-             <p className={styles.emptyStateHint}>
-               {searchQuery.trim() 
-                 ? 'Try a different search or create a new game' 
-                 : 'Create a new game to get started!'}
-             </p>
-           </div>
+           <p className={styles.emptyStateMessage}>
+             {searchQuery.trim() ? 'No games found' : 'No games available'}
+           </p>
          )}
        </div>
 
@@ -222,16 +198,7 @@ const Lobby = () => {
          />
        )}
 
-       {versionInfo && (
-         <div className={styles.versionInfo}>
-           <div className={styles.legalLinks}>
-             <button type="button" onClick={() => openInBrowser(`${WEB_URL}/terms`)} className={styles.legalLink}>Terms of Service</button>
-             <span className={styles.legalDivider}>•</span>
-             <button type="button" onClick={() => openInBrowser(`${WEB_URL}/privacy`)} className={styles.legalLink}>Privacy Policy</button>
-           </div>
-           <div>{versionInfo.display}</div>
-         </div>
-       )}
+       <Footer />
 
        {shouldShowAd && <AdInterstitial onClose={hideAd} />}
        <AdBanner hideAtWidth={1000} />

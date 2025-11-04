@@ -7,6 +7,7 @@ class StoreService {
     // Get API URL from environment or use localhost as fallback
     this.API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     this.baseURL = `${this.API_URL}/purchases`;
+    this.subscriptionURL = `${this.API_URL}/subscription`;
   }
 
   /**
@@ -112,6 +113,59 @@ class StoreService {
     } catch (error) {
       console.error('[PURCHASE_SERVICE] Error processing purchase:', error);
       throw new Error(`Purchase failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get subscription status for the authenticated user
+   * @param {string} token - Auth token
+   * @returns {Promise<Object>} Subscription status
+   */
+  async getSubscriptionStatus(token) {
+    try {
+      const response = await fetch(`${this.subscriptionURL}/status`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(token),
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch subscription`);
+      }
+
+      const data = await response.json();
+      return data.subscription || { isPremium: false };
+    } catch (error) {
+      console.error('[STORE_SERVICE] Error fetching subscription status:', error);
+      return { isPremium: false };
+    }
+  }
+
+  /**
+   * Cancel subscription for the authenticated user
+   * @param {string} token - Auth token
+   * @returns {Promise<Object>} Cancellation result
+   */
+  async cancelSubscription(token) {
+    try {
+      const response = await fetch(`${this.subscriptionURL}/cancel`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(token),
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Cancellation failed`);
+      }
+
+      const result = await response.json();
+      console.log('[STORE_SERVICE] Subscription cancelled:', result);
+      return result;
+    } catch (error) {
+      console.error('[STORE_SERVICE] Error cancelling subscription:', error);
+      throw new Error(`Cancellation failed: ${error.message}`);
     }
   }
 

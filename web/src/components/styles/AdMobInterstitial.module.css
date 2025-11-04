@@ -1,0 +1,152 @@
+/* AdMob Interstitial Placeholder - For Mobile Layout Testing */
+
+.interstitialOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.interstitialContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 600px;
+  padding: 20px;
+  gap: 20px;
+}
+
+.adContainer {
+  width: 100%;
+  min-height: 250px;
+  background-color: #f0f0f0;
+  border: 3px solid #4285f4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.placeholderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.adMobLogo {
+  font-weight: bold;
+  font-size: 32px;
+  color: #4285f4;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.adTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.adDescription {
+  font-size: 14px;
+  color: #666;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.adSize {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 8px;
+}
+
+.closeButtonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+}
+
+.closeButton {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.closeButton:hover {
+  transform: scale(1.05);
+}
+
+.countdown {
+  color: #fff;
+  font-size: 16px;
+  text-align: center;
+  padding: 12px 24px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+/* Mobile specific styles */
+@media (max-width: 768px) {
+  .adContainer {
+    min-height: 200px;
+  }
+
+  .adMobLogo {
+    font-size: 24px;
+  }
+
+  .adTitle {
+    font-size: 16px;
+  }
+
+  .adDescription {
+    font-size: 12px;
+  }
+
+  .interstitialContent {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adContainer {
+    min-height: 180px;
+  }
+
+  .placeholderContent {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+}

@@ -15,18 +15,19 @@ const Leaderboard = () => {
   const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`${API_URL}/leaderboard?duration=${duration}`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch leaderboard');
       }
-      
+
       const data = await response.json();
       setLeaderboard(data.leaderboard || []);
-      
+
       // Prefetch all user data for better performance
+      // userDataContext is intentionally not in deps - it's just an optimization
       if (userDataContext && data.leaderboard) {
         const userIds = data.leaderboard.map(player => player.userId);
         userDataContext.prefetchUsers(userIds);
@@ -37,7 +38,8 @@ const Leaderboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [duration, userDataContext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [duration]);
 
   useEffect(() => {
     fetchLeaderboard();

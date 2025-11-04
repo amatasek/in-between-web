@@ -5,7 +5,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { TIMERS } from '../constants';
 import WaitingTimer from './common/WaitingTimer';
 import CountdownTimer from './common/CountdownTimer';
-import ArrowIcon from './icons/ArrowIcon';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 
 const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
   const { socket } = useSocket();
@@ -48,7 +48,7 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
             data-gamepad-focusable="true"
             autoFocus
           >
-            <ArrowIcon direction="down" size={16} />
+            <ChevronDown size={16} />
             <span>LOW</span>
           </button>
           <button
@@ -59,7 +59,7 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
             data-gamepad-focusable="true"
           >
             <span>HIGH</span>
-            <ArrowIcon direction="up" size={16} />
+            <ChevronUp size={16} />
           </button>
         </div>
       </div>
@@ -98,10 +98,10 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
             data-gamepad-focusable="true"
             autoFocus
           >
-            <ArrowIcon direction="up" size={20} />
+            <ChevronUp size={20} />
             <span>HIGH</span>
           </button>
-          
+
           {/* LOW button at bottom of card */}
           <button
             type="button"
@@ -111,7 +111,7 @@ const AceChoiceOverlay = ({ isCurrentPlayersTurn, bottomPosition = false }) => {
             data-gamepad-focusable="true"
           >
             <span>LOW</span>
-            <ArrowIcon direction="down" size={20} />
+            <ChevronDown size={20} />
           </button>
           
           {/* Timer display */}

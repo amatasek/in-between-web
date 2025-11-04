@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import IconButton from './IconButton';
-import BarChartIcon from '../icons/BarChartIcon';
+import { BarChart3 } from 'lucide-react';
 import PlayerStatsModal from '../PlayerStatsModal';
 
 const PlayerStatsButton = ({ onModalStateChange, ...props }) => {
@@ -25,7 +25,7 @@ const PlayerStatsButton = ({ onModalStateChange, ...props }) => {
     <>
       <IconButton
         onClick={openStats}
-        icon={<BarChartIcon color="white" size={20} />}
+        icon={<BarChart3 size={20} style={{ color: 'white' }} />}
         aria-label="Open Player Stats"
         variant="stats"
         title="Player Stats"

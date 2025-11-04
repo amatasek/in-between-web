@@ -4,11 +4,9 @@ import CurrencyAmount from './common/CurrencyAmount';
 import styles from './styles/StoreModal.module.css';
 import storeService from '../services/StoreService';
 import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../contexts/ToastContext';
 
 const StoreModal = ({ onClose }) => {
-  const { token } = useAuth();
-  const { showToast } = useToast();
+  const { token, user, refreshUserData } = useAuth();
   const [activeTab, setActiveTab] = useState('coins');
   const [coinOfferings, setCoinOfferings] = useState([]);
   const [upgradeOfferings, setUpgradeOfferings] = useState([]);
@@ -44,7 +42,7 @@ const StoreModal = ({ onClose }) => {
 
   const loadUpgradeOfferings = useCallback(async () => {
     try {
-      const offerings = await storeService.getOfferingsByType('upgrade', token);
+      const offerings = await storeService.getOfferingsByType('subscription', token);
       setUpgradeOfferings(offerings);
     } catch (err) {
       console.error('Failed to load upgrade offerings:', err);
@@ -63,25 +61,34 @@ const StoreModal = ({ onClose }) => {
       setPurchasing(productId);
       setError(null);
 
-      // Handle watch ad separately
       if (productId === 'watch-ad') {
-        console.log('Watch ad clicked - Ad integration coming soon!');
-        showToast('Ad feature coming soon! You would earn 300 coins by watching a short video.');
         setPurchasing(null);
         return;
       }
 
-      const result = await storeService.processPurchase(productId, token);
-
-      // Show success message or handle success
-      console.log('Purchase successful:', result);
-
-      // Close modal on successful purchase
+      await storeService.processPurchase(productId, token);
+      await refreshUserData();
       onClose();
 
     } catch (err) {
       console.error('Purchase failed:', err);
       setError(err.message || 'Purchase failed. Please try again.');
+    } finally {
+      setPurchasing(null);
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      setPurchasing('cancel');
+      setError(null);
+
+      await storeService.cancelSubscription(token);
+      await refreshUserData();
+
+    } catch (err) {
+      console.error('Cancel failed:', err);
+      setError(err.message || 'Cancellation failed. Please try again.');
     } finally {
       setPurchasing(null);
     }
@@ -183,13 +190,13 @@ const StoreModal = ({ onClose }) => {
                   <button
                     type="button"
                     onClick={() => handlePurchase(offering.id)}
-                    disabled={purchasing === offering.id}
+                    disabled={purchasing === offering.id || offering.isAd}
                     className={offering.isAd ? styles.adButton : "btn btn-primary"}
                     data-gamepad-focusable="true"
                   >
                     {purchasing === offering.id
                       ? 'Processing...'
-                      : (offering.isAd ? 'Watch Ad' : 'Purchase')}
+                      : (offering.isAd ? 'COMING SOON' : 'TEST BUY')}
                   </button>
                 </div>
               ))}
@@ -211,46 +218,59 @@ const StoreModal = ({ onClose }) => {
               data-gamepad-scrollable="true"
               tabIndex="0"
             >
-              {upgradeOfferings.map((offering) => (
-                <div
-                  key={offering.id}
-                  className={`panel-alt ${styles.coinPackCard}`}
-                >
-                  <h3 className={styles.coinAmount}>
-                    {offering.name}
-                  </h3>
+              {upgradeOfferings.map((offering) => {
+                const isSubscribed = user?.subscription?.isPremium;
+                const isProcessing = purchasing === offering.id || purchasing === 'cancel';
 
-                  <div className={styles.productImage}>
-                    {offering.imageUrl && (
-                      <img
-                        src={offering.imageUrl}
-                        alt={offering.name}
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  <p className={styles.productDescription}>
-                    {offering.description}
-                  </p>
-
-                  <div className={`${styles.productPrice} ${styles.paid}`}>
-                    {formatPrice(offering.priceUSD)}/month
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handlePurchase(offering.id)}
-                    disabled={purchasing === offering.id}
-                    className="btn btn-primary"
-                    data-gamepad-focusable="true"
+                return (
+                  <div
+                    key={offering.id}
+                    className={`panel-alt ${styles.coinPackCard}`}
                   >
-                    {purchasing === offering.id ? 'Processing...' : 'Subscribe'}
-                  </button>
-                </div>
-              ))}
+                    <h3 className={styles.coinAmount} style={{ color: '#ff73fa' }}>
+                      {offering.name}
+                    </h3>
+
+                    <div className={styles.productImage}>
+                      {offering.imageUrl && (
+                        <img
+                          src={offering.imageUrl}
+                          alt={offering.name}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      )}
+                    </div>
+
+                    <p className={styles.productDescription}>
+                      {offering.description}
+                    </p>
+
+                    <div className={`${styles.productPrice} ${styles.paid}`}>
+                      {formatPrice(offering.priceUSD)}/month
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => isSubscribed ? handleCancel() : handlePurchase(offering.id)}
+                      disabled={isProcessing}
+                      className={isSubscribed ? "btn btn-danger" : "btn btn-primary"}
+                      data-gamepad-focusable="true"
+                      style={isSubscribed ? {
+                        backgroundColor: '#e74c3c',
+                        borderColor: '#c0392b',
+                        color: '#ffffff'
+                      } : {
+                        background: 'linear-gradient(135deg, #ff73fa, #d946ef)',
+                        borderColor: '#ff73fa'
+                      }}
+                    >
+                      {isProcessing ? 'Processing...' : (isSubscribed ? 'TEST CANCEL' : 'TEST SUBSCRIBE')}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
           </div>

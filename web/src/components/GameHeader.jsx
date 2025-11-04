@@ -9,7 +9,7 @@ import RulesButton from './common/RulesButton';
 import PlayerStatsButton from './common/PlayerStatsButton';
 import StoreButton from './StoreButton';
 import IconButton from './common/IconButton';
-import ExitIcon from './icons/ExitIcon';
+import { LogOut } from 'lucide-react';
 import GameSummaryModal from './GameSummaryModal';
 import StoreModal from './StoreModal';
 
@@ -82,7 +82,7 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
               />
               <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
               <IconButton
-                icon={<ExitIcon color="white" size={20} />}
+                icon={<LogOut size={20} style={{ color: 'white' }} />}
                 title="Leave Game"
                 onClick={handleLeaveGame}
                 variant="danger"

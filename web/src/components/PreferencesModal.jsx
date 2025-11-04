@@ -23,14 +23,14 @@ const PreferencesModal = ({ onClose, defaultTab = 'profile' }) => {
 
   if (loading) {
     return (
-      <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600, maxHeight: '25vh' }}>
+      <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600, height: '80vh' }}>
         <div className={baseModalStyles.loadingMessage}>Loading preferences...</div>
       </BaseModal>
     );
   }
 
   return (
-    <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600 }}>
+    <BaseModal title="Preferences" onClose={onClose} style={{ maxWidth: 600, height: '80vh' }}>
       {/* Tab Navigation */}
       <div className="tabs-container">
         <button type="button"

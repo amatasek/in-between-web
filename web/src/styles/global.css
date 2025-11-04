@@ -8,6 +8,29 @@
  * Consistent text fonts across all platforms
  */
 
+/* Prevent overscroll and keep app contained */
+html {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Prevent pull-to-refresh and overscroll bounce */
+  overscroll-behavior: none;
+}
+
+#root {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
 /* Base typography styles - Apple-style fonts */
 * {
   font-family: var(--font-family-system);
@@ -64,12 +87,7 @@ html.loading * {
 
 /* Mobile - No scaling, just responsive sizing */
 @media (max-width: 600px) {
-  body {
-    min-height: 100vh;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-  }
+  /* Mobile-specific styles if needed */
 }
 
 /* Gamepad focus indicators - only show when gamepad/keyboard is active */
@@ -265,6 +283,26 @@ body:not(.gamepad-navigation-active) [data-gamepad-scrollable="true"]:focus {
     padding: var(--spacing-sm);
     gap: var(--spacing-xs);
   }
+}
+
+/* Panel Frost variant - modern frosted glass style */
+.panel-frost {
+  display: flex;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.panel-frost:has([class*="avatar"]:hover) {
+  z-index: 1000;
+  overflow: visible;
 }
 
 @media (max-width: 400px) {
@@ -699,15 +737,15 @@ input[type="search"]::-webkit-search-results-decoration {
 
 /* Live Tag - Pulsing animation badge */
 .live-tag {
-  background-color: var(--secondary);
-  color: var(--text-white);
+  background-color: #e74c3c;
+  color: #ffffff;
   font-size: 0.7rem;
   padding: 0.15rem 0.4rem;
   border-radius: 12px;
   font-weight: bold;
   display: inline-block;
   box-shadow: var(--shadow-sm);
-  animation: livePulse 2s infinite;
+  animation: livePulse 3s infinite;
   vertical-align: super;
   line-height: 1;
 }
@@ -727,7 +765,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 @keyframes livePulse {
-  0% { box-shadow: 0 0 0 0 var(--secondary); }
+  0% { box-shadow: 0 0 0 0 #e74c3c; }
   70% { box-shadow: 0 0 0 6px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }

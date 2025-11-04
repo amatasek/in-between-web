@@ -37,23 +37,20 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: bold;
-  box-shadow: 
-    var(--shadow-md),
-    inset 0 2px 4px var(--color-border-lighter);
+  box-shadow: var(--shadow-md);
 }
 
 /* Ante button - ready/green theme */
 .anteButton {
-  background: linear-gradient(145deg, var(--color-ready), var(--success-dark));
+  background: var(--success);
   border: 3px solid var(--success-dark);
   color: var(--text-white);
 }
 
 .anteButton:hover:not(:disabled) {
   transform: translateY(-4px) scale(1.1);
-  box-shadow: 
+  box-shadow:
     var(--shadow-lg),
-    inset 0 2px 4px var(--color-border-lighter),
     0 0 20px var(--color-focus-shadow);
 }
 
@@ -62,7 +59,7 @@
 }
 
 .anteButton:disabled {
-  background: linear-gradient(145deg, var(--neutral-dark), var(--primary-dark));
+  background: var(--neutral-dark);
   border-color: var(--primary-light);
   opacity: 0.6;
   cursor: not-allowed;
@@ -70,16 +67,15 @@
 
 /* Back out button - danger/red theme */
 .backOutButton {
-  background: linear-gradient(145deg, var(--color-danger), var(--secondary-dark));
+  background: var(--color-danger);
   border: 3px solid var(--secondary-dark);
   color: var(--text-white);
 }
 
 .backOutButton:hover {
   transform: translateY(-4px) scale(1.1);
-  box-shadow: 
+  box-shadow:
     var(--shadow-lg),
-    inset 0 2px 4px var(--color-border-lighter),
     0 0 20px var(--color-focus-shadow);
 }
 
@@ -89,15 +85,14 @@
 
 /* Sit out button - danger/red theme like back out */
 .sitOutHalfWidth {
-  background: linear-gradient(145deg, var(--color-danger), var(--secondary-dark));
+  background: var(--color-danger);
   border: 3px solid var(--secondary-dark);
 }
 
 .sitOutHalfWidth:hover:not(:disabled) {
   transform: translateY(-4px) scale(1.1);
-  box-shadow: 
+  box-shadow:
     var(--shadow-lg),
-    inset 0 2px 4px var(--color-border-lighter),
     0 0 15px var(--color-focus-shadow);
 }
 
@@ -111,9 +106,9 @@
   position: absolute;
   inset: -1px;
   border-radius: 50%;
-  background: linear-gradient(45deg, 
-    transparent 30%, 
-    var(--color-border-light) 50%, 
+  background: linear-gradient(45deg,
+    transparent 30%,
+    var(--color-border-light) 50%,
     transparent 70%
   );
   animation: shimmerRotate 3s linear infinite;

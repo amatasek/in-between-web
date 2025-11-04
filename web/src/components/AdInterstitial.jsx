@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { useAds } from '../contexts/AdContext';
+import { useAuth } from '../contexts/AuthContext';
+import AdMobInterstitial from './AdMobInterstitial';
 import styles from './styles/AdInterstitial.module.css';
 
 /**
@@ -8,19 +9,22 @@ import styles from './styles/AdInterstitial.module.css';
  *
  * Shows after each game with 5-second countdown
  * Web: Shows Google AdSense interstitial ad
- * Mobile: Returns null (use AdMob instead)
- *
- * TODO: Add premium user check to skip ads
+ * Mobile: Shows AdMob interstitial placeholder
  */
 const AdInterstitial = ({ onClose }) => {
   const [countdown, setCountdown] = useState(5);
   const [canClose, setCanClose] = useState(false);
   const adContainerRef = useRef(null);
   const isNativeApp = Capacitor.isNativePlatform();
-  const { showAds } = useAds();
+  const { user } = useAuth();
+  const showAds = !user?.subscription?.isPremium;
 
   useEffect(() => {
-    if (isNativeApp || !showAds) {
+    if (isNativeApp) {
+      return;
+    }
+
+    if (!showAds) {
       onClose();
       return;
     }
@@ -47,7 +51,12 @@ const AdInterstitial = ({ onClose }) => {
     return () => clearInterval(timer);
   }, [isNativeApp, showAds, onClose]);
 
-  if (isNativeApp || !showAds) {
+  // Show AdMob placeholder on native mobile apps
+  if (isNativeApp) {
+    return <AdMobInterstitial onClose={onClose} />;
+  }
+
+  if (!showAds) {
     return null;
   }
 
@@ -62,7 +71,7 @@ const AdInterstitial = ({ onClose }) => {
       <div className={styles.interstitialContent}>
         <div className={styles.adContainer} ref={adContainerRef}>
           <div className={styles.adPlaceholder}>
-            <span className={styles.adLabel}>Advertisement</span>
+            <span className={styles.adLabel}>Full Screen Ad</span>
           </div>
           <ins
             className="adsbygoogle"

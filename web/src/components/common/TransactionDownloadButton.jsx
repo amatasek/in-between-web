@@ -1,5 +1,5 @@
 import IconButton from './IconButton';
-import DownloadIcon from '../icons/DownloadIcon';
+import { Download } from 'lucide-react';
 
 // Optional import - only used if gameState not provided via props
 let useGameContext;
@@ -97,7 +97,7 @@ const TransactionDownloadButton = ({
 
   return (
     <IconButton
-      icon={<DownloadIcon color="white" size={20} />}
+      icon={<Download size={20} style={{ color: 'white' }} />}
       title={title}
       onClick={downloadTransactionsCSV}
       variant="default"
