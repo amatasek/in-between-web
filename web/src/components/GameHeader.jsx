@@ -77,20 +77,20 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
               </div>
             </div>
             <div className={styles.controlsGroup}>
+              <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
+              <PlayerStatsButton
+                onModalStateChange={setIsStatsOpen}
+                data-gamepad-focusable="true"
+              />
+              <RulesButton
+                onModalStateChange={setIsRulesOpen}
+                data-gamepad-focusable="true"
+              />
               <PreferencesButton
                 inGame={true}
                 onModalStateChange={setIsPreferencesOpen}
                 data-gamepad-focusable="true"
               />
-              <RulesButton 
-                onModalStateChange={setIsRulesOpen}
-                data-gamepad-focusable="true" 
-              />
-              <PlayerStatsButton 
-                onModalStateChange={setIsStatsOpen}
-                data-gamepad-focusable="true" 
-              />
-              <StoreButton onClick={() => setShowStoreModal(true)} data-gamepad-focusable="true" />
               <IconButton
                 icon={<LogOut size={20} style={{ color: 'white' }} />}
                 title="Leave Game"

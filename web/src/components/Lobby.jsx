@@ -18,7 +18,6 @@ import AdInterstitial from './AdInterstitial';
 import { useAdInterstitial } from '../hooks/useAdInterstitial';
 import soundService from '../services/SoundService';
 import { Search } from 'lucide-react';
-
 const Lobby = () => {
   const { gameList } = useLobby();
   const { user, logout } = useAuth();

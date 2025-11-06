@@ -7,6 +7,26 @@
   overflow: visible;
 }
 
+/* Container 1: Avatar + Button (always row) */
+.container1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+/* Container 2: Container1 + ProgressInfo (always column) */
+.container2 {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding-top: 0;
+  padding-bottom: var(--spacing-sm);
+}
+
 .avatarContainer {
   min-width: 200px;
 }
