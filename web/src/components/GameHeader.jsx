@@ -9,7 +9,7 @@ import RulesButton from './common/RulesButton';
 import PlayerStatsButton from './common/PlayerStatsButton';
 import StoreButton from './StoreButton';
 import IconButton from './common/IconButton';
-import { LogOut } from 'lucide-react';
+import { LogOut, Zap } from 'lucide-react';
 import GameSummaryModal from './GameSummaryModal';
 import StoreModal from './StoreModal';
 
@@ -17,14 +17,17 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
   const { gameState, gameId } = useGameContext();
   const { socket } = useSocket();
   const { user } = useAuth();
-  
+
   // Get the current user's balance from game state (real-time) or fallback to auth context
   const currentUserId = socket?.auth?.userId;
   const currentPlayer = currentUserId && gameState?.players ? gameState.players[currentUserId] : null;
   const playerBalance = currentPlayer?.balance ?? user?.balance ?? 0;
-  
+
   // Check if user is ready (committed to current hand)
   const isPlayerReady = currentPlayer?.isReady || false;
+
+  // Check if user has premium subscription
+  const isPremium = user?.subscription?.isPremium;
   const [showGameSummary, setShowGameSummary] = useState(false);
   const [showStoreModal, setShowStoreModal] = useState(false);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
@@ -63,8 +66,15 @@ const GameHeader = ({ handleLeaveGame, onModalStateChange }) => {
         <div className={styles.headerRight}>
           <div className={styles.controlsStack}>
             <div className={styles.balanceDisplay}>
-              <span className={styles.balanceLabel}>Balance:</span>
-              <CurrencyAmount amount={Number(playerBalance)} size="small" />
+              {isPremium && (
+                <div className={styles.xpBonusIndicator}>
+                  <Zap size={16} strokeWidth={2.5} className={styles.xpBonusIcon} />
+                  <span className={styles.xpBonusText}>2x XP</span>
+                </div>
+              )}
+              <div className={styles.balanceLeft}>
+                <CurrencyAmount amount={Number(playerBalance)} size="small" />
+              </div>
             </div>
             <div className={styles.controlsGroup}>
               <PreferencesButton

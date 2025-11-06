@@ -83,7 +83,7 @@
 .balanceDisplay {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
   background: var(--color-glass-dark);
   border-radius: var(--radius-lg);
@@ -93,10 +93,36 @@
   white-space: nowrap;
 }
 
+.balanceLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
 .balanceLabel {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.xpBonusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.xpBonusIcon {
+  color: #ff73fa;
+  display: flex;
+  align-items: center;
+}
+
+.xpBonusText {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ff73fa;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.5px;
 }
 
 .controlsGroup {
@@ -111,25 +137,29 @@
     padding: var(--spacing-xs);
     gap: var(--spacing-sm);
   }
-  
+
   .gameTitle {
     font-size: 1.2rem;
   }
-  
+
   .liveTag {
     font-size: 0.6rem;
     padding: var(--spacing-xs);
   }
-  
+
   .gameIdText {
     font-size: 0.8rem;
   }
-  
+
   .balanceDisplay {
     padding: calc(var(--spacing-xs) * 0.75) var(--spacing-xs);
     font-size: 0.8rem;
   }
-  
+
+  .xpBonusText {
+    font-size: 0.8rem;
+  }
+
   .controlsGroup {
     gap: calc(var(--spacing-xs) * 0.8);
   }
@@ -140,24 +170,28 @@
     gap: var(--spacing-xs);
     padding: var(--spacing-xs);
   }
-  
+
   .gameTitle {
     font-size: 1rem;
   }
-  
+
   .liveTag {
     font-size: 0.55rem;
     padding: calc(var(--spacing-xs) * 0.6) calc(var(--spacing-xs) * 0.8);
   }
-  
+
   .gameIdText {
     font-size: 0.75rem;
   }
-  
+
   .balanceDisplay {
     font-size: 0.75rem;
   }
-  
+
+  .xpBonusText {
+    font-size: 0.75rem;
+  }
+
   .controlsGroup {
     gap: calc(var(--spacing-xs) * 0.6);
   }
@@ -167,33 +201,37 @@
   .header {
     padding: calc(var(--spacing-xs) * 0.8);
   }
-  
+
   .gameTitle {
     font-size: 0.9rem;
   }
-  
+
   .liveTag {
     font-size: 0.5rem;
     padding: calc(var(--spacing-xs) * 0.5) calc(var(--spacing-xs) * 0.7);
   }
-  
+
   .gameIdText {
     font-size: 0.7rem;
   }
-  
+
   .balanceDisplay {
     font-size: 0.7rem;
     padding: calc(var(--spacing-xs) * 0.5) calc(var(--spacing-xs) * 0.8);
   }
-  
+
   .balanceLabel {
     font-size: 0.7rem;
   }
-  
+
+  .xpBonusText {
+    font-size: 0.7rem;
+  }
+
   .controlsGroup {
     gap: calc(var(--spacing-xs) * 0.4);
   }
-  
+
   .controlsStack {
     gap: calc(var(--spacing-xs) * 0.4);
   }
@@ -203,17 +241,21 @@
   .gameTitle {
     font-size: 0.8rem;
   }
-  
+
   .liveTag {
     font-size: 0.45rem;
     padding: calc(var(--spacing-xs) * 0.4) calc(var(--spacing-xs) * 0.5);
   }
-  
+
   .gameIdText {
     font-size: 0.65rem;
   }
-  
+
   .balanceDisplay {
+    font-size: 0.65rem;
+  }
+
+  .xpBonusText {
     font-size: 0.65rem;
   }
 }

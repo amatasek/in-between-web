@@ -1,9 +1,33 @@
 /* Tab styles moved to global.css */
 
-.totalsTable, .settleUpTable {
+.infoTable, .totalsTable, .settleUpTable {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-right: 10px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.infoLabel {
+  font-weight: 500;
+  color: var(--text-subtle);
+  min-width: 140px;
+}
+
+.infoValue {
+  font-weight: 600;
+  color: var(--text-white);
+  display: inline-flex;
+  align-items: center;
+  text-align: right;
 }
 
 .totalRow, .paymentRow {
@@ -44,6 +68,12 @@
   flex: 1;
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.paymentArrow {
+  color: var(--text-subtle);
+  flex-shrink: 0;
 }
 
 .paymentAmount {
@@ -56,6 +86,35 @@
   font-style: italic;
   text-align: center;
   padding: 15px 0;
+}
+
+.optimizeButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.optimizeButton {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.optimizeButton:hover {
+  color: var(--text-primary);
+}
+
+.optimizeIcon {
+  flex-shrink: 0;
 }
 
 .loadingMessage {

@@ -35,21 +35,6 @@ const GameStats = ({ gameData }) => {
     // Helper function to format numbers with commas
     const formatNumber = (num) => num.toLocaleString();
 
-    // Group transactions by player
-    const playerTransactions = {};
-    transactions.forEach(tx => {
-      if (!playerTransactions[tx.playerId]) {
-        playerTransactions[tx.playerId] = [];
-      }
-      playerTransactions[tx.playerId].push(tx);
-    });
-
-    // Get rounds from game data
-    const rounds = gameData.round || 1;
-    
-    // Calculate total decks - get from game data, not transactions
-    const decks = gameData.deckCount || 1;
-
     // Calculate total ante amount
     const totalAnteAmount = transactions
       .filter(tx => tx.transactionType === 'Ante')
@@ -170,18 +155,6 @@ const GameStats = ({ gameData }) => {
     // Build stats array with all the interesting stats we've calculated
     return [
       {
-        key: 'totalDecks',
-        label: 'Total Decks',
-        value: decks,
-        type: 'number'
-      },
-      {
-        key: 'totalRounds',
-        label: 'Total Rounds',
-        value: rounds,
-        type: 'number'
-      },
-      {
         key: 'totalBets',
         label: 'Total Bets Placed',
         value: bets.length,
@@ -262,7 +235,7 @@ const GameStats = ({ gameData }) => {
         suffix: mostPenaltiesPlayerId ? ` (${formatNumber(mostPenalties)} penalties)` : ''
       }
     ];
-  }, [transactions, playerNames, gameData.deckCount, gameData.round, gameData.totals]);
+  }, [transactions, playerNames, gameData.totals]);
 
   // Helper function to format stat values based on their type
   const formatStatValue = (type, value) => {

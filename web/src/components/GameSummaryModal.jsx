@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { ArrowRightLeft, ArrowRight, ArrowLeft } from 'lucide-react';
 import BaseModal from './common/BaseModal';
 import CurrencyAmount from './common/CurrencyAmount';
 import GameStats from './GameStats';
@@ -12,11 +13,12 @@ import styles from './styles/GameSummaryModal.module.css';
  */
 const GameSummaryModal = ({ onClose, gameData }) => {
   // Hooks must be at the top - before any early returns
-  const [activeTab, setActiveTab] = useState('totals');
+  const [activeTab, setActiveTab] = useState('info');
+  const [gameDuration, setGameDuration] = useState(0);
+  const [showOptimized, setShowOptimized] = useState(false);
 
   // Extract data from gameData with clean access now that structure is consistent
   const gameId = gameData?.id || 'unknown';
-  const showPayoutsTab = gameData?.settings?.isPrivate || false;
 
   // Memoize players object to prevent recreation on every render
   const players = useMemo(() => gameData?.players || {}, [gameData?.players]);
@@ -49,8 +51,62 @@ const GameSummaryModal = ({ onClose, gameData }) => {
   // Use server-side calculated totals (active games have totals, historical games have it at top level)
   const playerTotals = useMemo(() => gameData.totals || {}, [gameData.totals]);
 
-  // Calculate settle-up payments
-  const settleUpPayments = useMemo(() => {
+  // Calculate game start time from createdAt or first transaction
+  const gameStartTime = useMemo(() => {
+    // Historical games have createdAt
+    if (gameData?.createdAt) {
+      return new Date(gameData.createdAt).getTime();
+    }
+
+    // Active games - use first transaction timestamp
+    if (transactions.length > 0) {
+      return new Date(transactions[0].timestamp).getTime();
+    }
+
+    // Fallback to now
+    return Date.now();
+  }, [gameData?.createdAt, transactions]);
+
+  // Calculate game end time (for historical games)
+  const gameEndTime = useMemo(() => {
+    if (gameData?.endedAt) {
+      return new Date(gameData.endedAt).getTime();
+    }
+    return null; // Active game - no end time
+  }, [gameData?.endedAt]);
+
+  // Update duration periodically for active games
+  useEffect(() => {
+    const updateDuration = () => {
+      const now = gameEndTime || Date.now();
+      const durationMs = now - gameStartTime;
+      setGameDuration(durationMs);
+    };
+
+    // Initial update
+    updateDuration();
+
+    // Only set interval for active games (no end time)
+    if (!gameEndTime) {
+      const interval = setInterval(updateDuration, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [gameStartTime, gameEndTime]);
+
+  // Format duration as HH:MM:SS
+  const formatDuration = (ms) => {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+
+    const s = seconds % 60;
+    const m = minutes % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  // Calculate optimized payments
+  const optimizedPayments = useMemo(() => {
     // For simple 2-player games, just have the loser pay the winner directly
     if (Object.keys(playerTotals).length === 2) {
       const players = Object.entries(playerTotals);
@@ -170,6 +226,14 @@ const GameSummaryModal = ({ onClose, gameData }) => {
           <div className="tabs-container">
             <button
               type="button"
+              className={`tab-button ${activeTab === 'info' ? 'active' : ''}`}
+              onClick={() => setActiveTab('info')}
+              data-gamepad-focusable="true"
+            >
+              Info
+            </button>
+            <button
+              type="button"
               className={`tab-button ${activeTab === 'totals' ? 'active' : ''}`}
               onClick={() => setActiveTab('totals')}
               data-gamepad-focusable="true"
@@ -184,17 +248,66 @@ const GameSummaryModal = ({ onClose, gameData }) => {
             >
               Stats
             </button>
-            {showPayoutsTab && (
-              <button
-                type="button"
-                className={`tab-button ${activeTab === 'payouts' ? 'active' : ''}`}
-                onClick={() => setActiveTab('payouts')}
-                data-gamepad-focusable="true"
-              >
-                Payouts
-              </button>
-            )}
           </div>
+
+          {/* Info Tab Content */}
+          {activeTab === 'info' && (
+            <div className="tab-content">
+              <div className={styles.infoTable}>
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Game Name:</span>
+                  <span className={styles.infoValue}>{gameId}</span>
+                </div>
+
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Privacy:</span>
+                  <span className={styles.infoValue}>
+                    {gameData?.settings?.isPrivate ? 'Private' : 'Public'}
+                  </span>
+                </div>
+
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Duration:</span>
+                  <span className={styles.infoValue}>{formatDuration(gameDuration)}</span>
+                </div>
+
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Rounds:</span>
+                  <span className={styles.infoValue}>
+                    {gameData?.roundCount || gameData?.round || 1}
+                  </span>
+                </div>
+
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Players:</span>
+                  <span className={styles.infoValue}>
+                    {gameData?.totalPlayerCount || Object.keys(players).length}
+                  </span>
+                </div>
+
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Ante Amount:</span>
+                  <span className={styles.infoValue}>
+                    <CurrencyAmount amount={gameData?.settings?.anteAmount || gameData?.anteAmount || 1} size="small" />
+                  </span>
+                </div>
+
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Ace Choice:</span>
+                  <span className={styles.infoValue}>
+                    {gameData?.settings?.enableAceChoice ? 'Enabled' : 'Disabled'}
+                  </span>
+                </div>
+
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Second Chance:</span>
+                  <span className={styles.infoValue}>
+                    {gameData?.settings?.enableSecondChance ? 'Enabled' : 'Disabled'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Totals Tab Content */}
           {activeTab === 'totals' && (
@@ -202,18 +315,61 @@ const GameSummaryModal = ({ onClose, gameData }) => {
               {Object.keys(playerTotals).length === 0 ? (
                 <p className={styles.noDataMessage}>No transactions recorded yet.</p>
               ) : (
-                <div className={styles.totalsTable}>
-                  {Object.entries(playerTotals).map(([playerId, total]) => (
-                    <div key={playerId} className={styles.totalRow}>
-                      <span className={styles.playerName}>
-                        <Username username={playerNames[playerId] || 'Unknown Player'} showDiscriminator={true} />
-                      </span>
-                      <span className={`${styles.totalAmount} ${total >= 0 ? styles.positive : styles.negative}`}>
-                        <CurrencyAmount amount={total} size="small" />
-                      </span>
+                <>
+                  {!showOptimized ? (
+                    <div className={styles.totalsTable}>
+                      {Object.entries(playerTotals).map(([playerId, total]) => (
+                        <div key={playerId} className={styles.totalRow}>
+                          <span className={styles.playerName}>
+                            <Username username={playerNames[playerId] || 'Unknown Player'} showDiscriminator={true} />
+                          </span>
+                          <span className={`${styles.totalAmount} ${total >= 0 ? styles.positive : styles.negative}`}>
+                            <CurrencyAmount amount={total} size="small" />
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  ) : (
+                    <div className={styles.totalsTable}>
+                      {optimizedPayments.length === 0 ? (
+                        <p className={styles.noDataMessage}>No payments needed.</p>
+                      ) : (
+                        optimizedPayments.map((payment) => (
+                          <div key={`${payment.fromName}-${payment.toName}-${payment.amount}`} className={styles.totalRow}>
+                            <span className={styles.paymentText}>
+                              <span className={styles.playerName}>
+                                <Username username={payment.fromName} showDiscriminator={true} />
+                              </span>
+                              <ArrowRight size={16} className={styles.paymentArrow} />
+                              <span className={styles.playerName}>
+                                <Username username={payment.toName} showDiscriminator={true} />
+                              </span>
+                            </span>
+                            <span className={styles.paymentAmount}>
+                              <CurrencyAmount amount={payment.amount} size="small" />
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+
+                  <div className={styles.optimizeButtonContainer}>
+                    <button
+                      type="button"
+                      className={styles.optimizeButton}
+                      onClick={() => setShowOptimized(!showOptimized)}
+                      data-gamepad-focusable="true"
+                    >
+                      {showOptimized ? (
+                        <ArrowLeft size={14} className={styles.optimizeIcon} />
+                      ) : (
+                        <ArrowRightLeft size={14} className={styles.optimizeIcon} />
+                      )}
+                      {showOptimized ? 'Return to totals' : 'Optimize ledger'}
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           )}
@@ -221,33 +377,6 @@ const GameSummaryModal = ({ onClose, gameData }) => {
           {/* Stats Tab Content */}
           {activeTab === 'stats' && (
             <GameStats gameData={gameData} />
-          )}
-
-          {/* Payouts Tab Content - Only shown for private games and when selected */}
-          {activeTab === 'payouts' && showPayoutsTab && (
-            <div className="tab-content">
-              {settleUpPayments.length === 0 ? (
-                <p className={styles.noDataMessage}>No payments needed or no transactions recorded yet.</p>
-              ) : (
-                <div className={styles.settleUpTable}>
-                  {settleUpPayments.map((payment) => (
-                    <div key={`${payment.fromName}-${payment.toName}-${payment.amount}`} className={styles.paymentRow}>
-                      <span className={styles.paymentText}>
-                        <span className={styles.playerName}>
-                          <Username username={payment.fromName} showDiscriminator={true} />
-                        </span> pays{' '}
-                        <span className={styles.playerName}>
-                          <Username username={payment.toName} showDiscriminator={true} />
-                        </span>
-                      </span>
-                      <span className={styles.paymentAmount}>
-                        <CurrencyAmount amount={payment.amount} size="small" />
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           )}
     </BaseModal>
   );

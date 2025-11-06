@@ -52,7 +52,7 @@ const UserAvatar = ({
     );
   }
 
-  const { username, profileImg, title, xp, level } = user;
+  const { username, profileImg, title, xp, level, isPremium } = user;
   const displayName = getDisplayName(username);
   const initials = getInitials(displayName || 'Unknown');
   const sizeClass = styles[size] || styles.medium;
@@ -147,7 +147,7 @@ const UserAvatar = ({
       {showName && (
         <div className={styles.userInfo}>
           <div
-            className={styles.username}
+            className={`${styles.username} ${isPremium ? styles.premiumUsername : ''}`}
             style={{ fontWeight }}
           >
             {displayName || 'Unknown'}

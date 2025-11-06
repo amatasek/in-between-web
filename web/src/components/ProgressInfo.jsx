@@ -20,7 +20,6 @@ const ProgressInfo = ({ userId, balance }) => {
     <div className={`panel-frost ${styles.progressContainer}`}>
       <div className={styles.balanceSection}>
         <div className={styles.balanceLeft}>
-          <span className={styles.balanceLabel}>Balance:</span>
           <CurrencyAmount amount={Number(balance) || 0} size="medium" />
         </div>
         {isPremium && (

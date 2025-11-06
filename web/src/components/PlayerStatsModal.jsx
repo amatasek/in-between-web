@@ -244,19 +244,24 @@ const PlayerStatsModal = ({ onClose }) => {
           {/* Game History Tab Content */}
           {activeTab === 'history' && (
             <div className="tab-content">
-              {loading ? (
-                <div className={styles.loadingMessage}>
-                  <div className={styles.loadingSpinner} />
-                  Loading your game history...
-                </div>
-              ) : error ? (
-                <div className={styles.errorMessage}>Error: {error}</div>
-              ) : historyData.games.length === 0 ? (
-                <div className={styles.statsPlaceholder}>
-                  <p>No games found in your history.</p>
-                </div>
-              ) : (
-                <>
+              <div className={styles.historyContent}>
+                {loading ? (
+                  <div className={`panel-alt ${styles.historyTable}`}>
+                    <div className={styles.loadingMessageFullHeight}>
+                      <div className={styles.loadingSpinner} />
+                    </div>
+                  </div>
+                ) : error ? (
+                  <div className={`panel-alt ${styles.historyTable}`}>
+                    <div className={styles.errorMessageFullHeight}>Error: {error}</div>
+                  </div>
+                ) : historyData.games.length === 0 ? (
+                  <div className={`panel-alt ${styles.historyTable}`}>
+                    <div className={styles.statsPlaceholderFullHeight}>
+                      <p>No games found in your history.</p>
+                    </div>
+                  </div>
+                ) : (
                   <div className={`panel-alt ${styles.historyTable}`}>
                     <div className={styles.tableHeader}>
                       <div className={styles.gameNameHeader}>Game</div>
@@ -293,36 +298,36 @@ const PlayerStatsModal = ({ onClose }) => {
                       ))}
                     </div>
                   </div>
+                )}
+              </div>
 
-                  <div className={styles.pageInfo}>
-                    <button
-                      type="button"
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 0}
-                      className={styles.pageButton}
-                      aria-label="Previous page"
-                      data-gamepad-focusable="true"
-                    >
-                      &larr;
-                    </button>
+              <div className={styles.pageInfo}>
+                <button
+                  type="button"
+                  onClick={handlePreviousPage}
+                  disabled={loading || currentPage === 0}
+                  className={styles.pageButton}
+                  aria-label="Previous page"
+                  data-gamepad-focusable="true"
+                >
+                  &larr;
+                </button>
 
-                    Page {currentPage + 1}
-                    {historyData.pagination && historyData.pagination.total ?
-                      ` of ${Math.ceil(historyData.pagination.total / pageSize)}` : ''}
+                Page {currentPage + 1}
+                {historyData.pagination && historyData.pagination.total ?
+                  ` of ${Math.ceil(historyData.pagination.total / pageSize)}` : ''}
 
-                    <button
-                      type="button"
-                      onClick={handleNextPage}
-                      disabled={!historyData.pagination || historyData.games.length < pageSize}
-                      className={styles.pageButton}
-                      aria-label="Next page"
-                      data-gamepad-focusable="true"
-                    >
-                      &rarr;
-                    </button>
-                  </div>
-                </>
-              )}
+                <button
+                  type="button"
+                  onClick={handleNextPage}
+                  disabled={loading || !historyData.pagination || historyData.games.length < pageSize}
+                  className={styles.pageButton}
+                  aria-label="Next page"
+                  data-gamepad-focusable="true"
+                >
+                  &rarr;
+                </button>
+              </div>
             </div>
           )}
       </BaseModal>

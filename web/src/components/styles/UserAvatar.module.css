@@ -98,6 +98,11 @@
   white-space: nowrap;
 }
 
+.premiumUsername {
+  color: #ff73fa;
+  text-shadow: 0 0 8px rgba(255, 115, 250, 0.4);
+}
+
 .userTitle {
   font-size: 0.75em;
   color: var(--text-info);
